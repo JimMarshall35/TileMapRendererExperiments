@@ -1,4 +1,4 @@
-﻿  OpenGlRenderer.cpp
+﻿  main.cpp
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data

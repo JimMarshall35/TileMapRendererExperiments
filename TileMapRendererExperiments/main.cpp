@@ -132,7 +132,7 @@ int main()
 
     cam = Camera2D();
     cam.FocusPosition = { 0,0 };
-    cam.Zoom = 1.0f;
+    cam.Zoom = 3.0f;
 
 
     //tilemap.DebugDumpTiles("");
@@ -159,7 +159,7 @@ int main()
             chunk.GetVerticesHandle(),
             25,
             { 5,5 },
-            { -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
+            {0,0}, //{ -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
             { 16,16 },
             0.0f,
             cam
