@@ -10,6 +10,7 @@
 #include "OpenGlRenderer.h"
 #include "TileChunk.h"
 #include "Camera2D.h"
+#include "flecs.h"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -136,6 +137,8 @@ int main()
 
 
     //tilemap.DebugDumpTiles("");
+    flecs::world ecs;
+    ecs.set_target_fps(30);
 
     // render loop
     // -----------
@@ -167,6 +170,8 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        ecs.progress();
     }
 
     glfwTerminate();

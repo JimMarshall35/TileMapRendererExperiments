@@ -10,9 +10,10 @@
 
 
 OpenGlRenderer::OpenGlRenderer(u32 windowWidth, u32 windowHeight)
-	:_windowWidth(windowWidth), _windowHeight(windowHeight)
+	:_windowWidth(windowWidth), _windowHeight(windowHeight),
+	_tileMapShader("shaders\\TileMapVert.glsl", "shaders\\TileMapFrag.glsl", "shaders\\TileMapGeom.glsl")
 {
-	_tileMapShader = Shader("shaders\\TileMapVert.glsl", "shaders\\TileMapFrag.glsl", "shaders\\TileMapGeom.glsl");
+	//_tileMapShader = Shader("shaders\\TileMapVert.glsl", "shaders\\TileMapFrag.glsl", "shaders\\TileMapGeom.glsl");
 }
 
 bool OpenGlRenderer::GPULoadAtlasTexture(const unsigned char* data, unsigned int width, unsigned int height, unsigned int* id)
