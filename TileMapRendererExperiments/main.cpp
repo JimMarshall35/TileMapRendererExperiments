@@ -9,7 +9,7 @@
 #include "AtlasLoader.h"
 #include "OpenGlRenderer.h"
 #include "TileChunk.h"
-#include "Camera2D.h"
+#include "EditorCamera.h"
 #include "flecs.h"
 
 #define SCR_WIDTH 800
@@ -22,7 +22,8 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 
 float deltaTime = 0;
 float lastFrame = 0;
-Camera2D cam;
+EditorCamera* cam;
+IRenderer* gRenderer;
 
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -37,10 +38,21 @@ static void GLAPIENTRY MessageCallback(GLenum source,
         type, severity, message);
 }
 
+inline u32 GetRandomIntBetween(u32 min, u32 max) {
+    return (u32)rand() % (max - min + 1) + min;
+}
 
+static std::vector<u32> GetRandomTileMap(int rows, int cols, int minTileValue, int maxTileValue) {
+    auto tileMap = std::vector<u32>(rows * cols);
+    for (int i = 0; i < rows * cols; i++) {
+        tileMap[i] = GetRandomIntBetween(minTileValue, maxTileValue);
+    }
+    return tileMap;
+}
 
 int main()
 {
+    srand(time(0));
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -91,6 +103,8 @@ int main()
     auto config = TileMapConfigOptions();
     config.AtlasWidthPx = 1280;
     auto renderer = std::make_shared<OpenGlRenderer>(SCR_WIDTH,SCR_HEIGHT);
+    gRenderer = renderer.get();
+
     auto atlasLoader = AtlasLoader(config, renderer);
 
     atlasLoader.StartLoadingTilesets();
@@ -119,26 +133,40 @@ int main()
 
     atlasLoader.StopLoadingTilesets();
 
-    auto map = std::unique_ptr<u32[]>(
+   /* auto map = std::unique_ptr<u32[]>(
         new u32[25]{
-            2,2,2,2,2,
+            959,959,2,2,2,
             2,2,2,2,2,
             0,1,35,293,0,
             28,29,31,420,837,
-            2,2,2,2,2,
+            1040,907,796,715,2,
 
-        });
+        });*/
+    const auto tilemapRows = 64;
+    const auto tilemapCols = 64;
 
-    auto chunk = TileChunk(map, 5, 5, renderer.get());
 
-    cam = Camera2D();
-    cam.FocusPosition = { 0,0 };
-    cam.Zoom = 3.0f;
+    auto tm = GetRandomTileMap(tilemapRows, tilemapCols, 0, 1000);
+    auto map = std::unique_ptr<u32[]>(std::move(tm.data()));
+
+    auto chunk = TileChunk(map, tilemapCols, tilemapRows,0,0, renderer.get());
+
+    EditorCameraInitializationSettings settings;
+    settings.moveSpeed = 30.0f;
+    auto camera = EditorCamera(settings);
+    camera.FocusPosition = { 0,0 };
+    camera.Zoom = 3.0f;
+
+    cam = &camera;
 
 
     //tilemap.DebugDumpTiles("");
     flecs::world ecs;
-    ecs.set_target_fps(30);
+    ecs.system<>()
+        .iter([](flecs::iter& it) {
+        //std::cout << "delta_time: " << it.delta_time() << std::endl;
+            });
+    ecs.set_target_fps(30.0f);
 
     // render loop
     // -----------
@@ -159,13 +187,13 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer->DrawTileMap(
-            chunk.GetVerticesHandle(),
-            25,
-            { 5,5 },
+            chunk.GetVaoHandle(),
+            tilemapCols * tilemapRows,
+            { tilemapCols,tilemapRows },
             {0,0}, //{ -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
             { 16,16 },
             0.0f,
-            cam
+            camera
         );
 
         glfwSwapBuffers(window);
@@ -180,8 +208,54 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
+std::vector<bool> wasdKeys((u32)Directions::NUMDIRECTIONS);
+
 void processInput(GLFWwindow* window)
 {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) {
+        wasdKeys[(u32)Directions::UP] = false;
+    }
+    else if ((glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) || wasdKeys[(u32)Directions::UP]) {
+        cam->UpdatePosition(Directions::UP, deltaTime);
+        wasdKeys[(u32)Directions::UP] = true;
+    }
+    
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
+        wasdKeys[(u32)Directions::DOWN] = false;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || !wasdKeys[(u32)Directions::DOWN]) {
+        cam->UpdatePosition(Directions::DOWN, deltaTime);
+        wasdKeys[(u32)Directions::DOWN] = true;
+    }
+    
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
+        wasdKeys[(u32)Directions::LEFT] = false;
+
+    }
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || wasdKeys[(u32)Directions::LEFT]) {
+        cam->UpdatePosition(Directions::LEFT, deltaTime);
+        wasdKeys[(u32)Directions::LEFT] = true;
+
+    }
+    
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
+        wasdKeys[(u32)Directions::RIGHT] = false;
+
+    }
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || wasdKeys[(u32)Directions::RIGHT]) {
+        cam->UpdatePosition(Directions::RIGHT, deltaTime);
+        wasdKeys[(u32)Directions::RIGHT] = true;
+
+    }
+    
 
 }
 
@@ -192,6 +266,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    gRenderer->SetWindowWidthAndHeight(width, height);
 }
 
 float lastX = SCR_WIDTH / 2.0f;

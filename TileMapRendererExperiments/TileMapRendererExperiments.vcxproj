@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="flecs.c" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLTextureHelper.cpp" />
@@ -29,12 +30,13 @@
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="AtlasLoader.cpp" />
     <ClCompile Include="TileChunk.cpp" />
-    <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="TileMapWorld.cpp" />
     <ClCompile Include="TypeOfTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="flecs.h" />
     <ClInclude Include="GLTextureHelper.h" />
     <ClInclude Include="IRenderer.h" />
@@ -46,7 +48,7 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="AtlasLoader.h" />
     <ClInclude Include="TileChunk.h" />
-    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TileMapWorld.h" />
     <ClInclude Include="TileMapConfigOptions.h" />
     <ClInclude Include="TileSetInfo.h" />
     <ClInclude Include="TypeOfTile.h" />
@@ -62,26 +64,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

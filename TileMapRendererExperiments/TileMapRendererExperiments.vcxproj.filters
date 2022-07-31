@@ -45,10 +45,13 @@
     <ClCompile Include="Camera2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TileMap.cpp">
+    <ClCompile Include="TileMapWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TileChunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,10 +101,13 @@
     <ClInclude Include="Camera2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TileMap.h">
+    <ClInclude Include="TileMapWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TileChunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -257,7 +257,7 @@ void AtlasLoader::MakeAtlas()
 			tile.UTopLeft = u;
 			tile.VTopLeft = v;
 			CalculateUvFromWritePointerStart(
-				writePtr + (atlasWidthBytes* tileType.GetHeight()) + (tileType.GetWidth() * NUM_CHANNELS),
+				writePtr + (atlasWidthBytes* tileType.GetHeight()) + (tileType.GetWidth() * NUM_CHANNELS) - 1,
 				bytes.get(), rows, _atlasWidth,
 				u, v);
 			tile.UBottomRight = u;

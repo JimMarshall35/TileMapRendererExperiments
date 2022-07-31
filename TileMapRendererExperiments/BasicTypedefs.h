@@ -10,3 +10,12 @@ typedef int16_t i32;
 
 typedef float f32;
 typedef double f64;
+
+enum class Directions : u32 {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+
+	NUMDIRECTIONS
+};
