@@ -224,6 +224,7 @@ static void CalculateUvFromWritePointerStart(
 }
 
 void CopyASingleTile(const Tile& tile, u8*& writePtr, u32 atlasWidthBytes) {
+
 	for (u32 i = 0; i < tile.GetPixelsRows(); i++) {
 		memcpy(
 			writePtr,
@@ -251,17 +252,15 @@ void AtlasLoader::MakeAtlas()
 			if (tile.GetTypeOfTile() != tileType) {
 				continue;
 			}
-			float u, v;
+
 			CalculateUvFromWritePointerStart(writePtr, bytes.get(), rows, _atlasWidth,
-				u, v);
-			tile.UTopLeft = u;
-			tile.VTopLeft = v;
+				tile.UTopLeft, tile.VTopLeft);
+
 			CalculateUvFromWritePointerStart(
 				writePtr + (atlasWidthBytes* tileType.GetHeight()) + (tileType.GetWidth() * NUM_CHANNELS) - 1,
 				bytes.get(), rows, _atlasWidth,
-				u, v);
-			tile.UBottomRight = u;
-			tile.VBottomRight = v;
+				tile.UBottomRight, tile.VBottomRight);
+
 
 			CopyASingleTile(tile, writePtr, atlasWidthBytes);
 			// set the write ptr to write the next tile in the row
