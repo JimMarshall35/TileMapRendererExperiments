@@ -33,6 +33,12 @@ public:
 	TileSetFrameHandle GetTilesetFrameHandle();
 	// delete all tiles that were loaded after the handle was called
 	void ReleaseTilesetFrameHandle(TileSetFrameHandle handle);
+	inline const std::vector<Tile>& GetIndividualTiles() {
+		return _individualTiles;
+	}
+	inline u32 GetAtlasTextureHandle() {
+		return _atlasTextureHandle;
+	}
 private:
 	u32 GetRequiredAtlasSizeInBytes(u32& rows);
 	void MakeAtlas();

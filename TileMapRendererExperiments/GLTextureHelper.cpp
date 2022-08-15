@@ -22,8 +22,8 @@ bool OpenGlGPULoadUVsTexture(const float* data, unsigned int length,  unsigned i
 	glBindTexture(GL_TEXTURE_1D, *id);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEAREST is the better filtering option for this game
-	//glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // as gives better more "pixelated" (less "smoothed out") textures
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEAREST is the better filtering option for this game
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // as gives better more "pixelated" (less "smoothed out") textures
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, length, 0,GL_RGBA, GL_FLOAT, data);
 	glGenerateMipmap(GL_TEXTURE_1D);
 	return true;

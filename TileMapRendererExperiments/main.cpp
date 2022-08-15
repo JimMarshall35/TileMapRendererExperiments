@@ -12,6 +12,11 @@
 #include "EditorCamera.h"
 #include "flecs.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
 
@@ -19,11 +24,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 float deltaTime = 0;
 float lastFrame = 0;
 EditorCamera* cam;
 IRenderer* gRenderer;
+static bool wantMouseInput = false;
+static bool wantKeyboardInput = false;
+
 
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -73,10 +82,32 @@ int main()
         glfwTerminate();
         return -1;
     }
+
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    //glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 130";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+
 
     // tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -101,7 +132,7 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     auto config = TileMapConfigOptions();
-    config.AtlasWidthPx = 1280;
+    config.AtlasWidthPx = 800;
     auto renderer = std::make_shared<OpenGlRenderer>(SCR_WIDTH,SCR_HEIGHT);
     gRenderer = renderer.get();
 
@@ -133,17 +164,17 @@ int main()
 
     atlasLoader.StopLoadingTilesets();
 
-   /* auto map = std::unique_ptr<u32[]>(
+   /*auto map = std::unique_ptr<u32[]>(
         new u32[25]{
-            959,959,2,2,2,
+            1036,1036,1036,1036,1036,
             2,2,2,2,2,
             0,1,35,293,0,
             28,29,31,420,837,
             1040,907,796,715,2,
 
         });*/
-    const auto tilemapRows = 64;
-    const auto tilemapCols = 64;
+    const auto tilemapRows = 50;
+    const auto tilemapCols = 50;
 
 
     auto tm = GetRandomTileMap(tilemapRows, tilemapCols, 0, 1000);
@@ -152,7 +183,7 @@ int main()
     auto chunk = TileChunk(map, tilemapCols, tilemapRows,0,0, renderer.get());
 
     EditorCameraInitializationSettings settings;
-    settings.moveSpeed = 30.0f;
+    settings.moveSpeed = 60;
     auto camera = EditorCamera(settings);
     camera.FocusPosition = { 0,0 };
     camera.Zoom = 3.0f;
@@ -167,6 +198,8 @@ int main()
         //std::cout << "delta_time: " << it.delta_time() << std::endl;
             });
     ecs.set_target_fps(30.0f);
+    
+    bool show_demo_window = true;
 
     // render loop
     // -----------
@@ -177,13 +210,48 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        wantMouseInput = io.WantCaptureMouse;
+        wantKeyboardInput = io.WantCaptureKeyboard;
+
 
         // input
         // -----
         processInput(window);
 
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+
+        ImGui::Begin("Tiles");
+        auto windowWidth = ImGui::GetWindowWidth();
+        auto accumulatedWidth = 0;
+        auto zoom = 3.0f;
+        for (const auto& t : atlasLoader.GetIndividualTiles()) {
+            if (ImGui::ImageButton((void*)(intptr_t)atlasLoader.GetAtlasTextureHandle(),
+                { (float)t.GetPixelsCols()* zoom, (float)t.GetPixelsRows() * zoom },
+                { t.UTopLeft, t.VTopLeft },
+                { t.UBottomRight, t.VBottomRight })) {
+
+            }
+            accumulatedWidth += t.GetPixelsCols() * zoom;
+            if (accumulatedWidth + t.GetPixelsCols() * zoom < windowWidth) {
+                ImGui::SameLine();
+                
+            }
+            else {
+                accumulatedWidth = 0;
+            }
+            
+        }
+        ImGui::End();
+
+        cam->OnUpdate(deltaTime);
+
         // render
         // ------
+        ImGui::Render();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer->DrawTileMap(
@@ -195,12 +263,19 @@ int main()
             0.0f,
             camera
         );
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         ecs.progress();
     }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;
@@ -255,14 +330,17 @@ void processInput(GLFWwindow* window)
         wasdKeys[(u32)Directions::RIGHT] = true;
 
     }
-    
 
 }
 
+int WindowW = SCR_WIDTH;
+int WindowH = SCR_HEIGHT;
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    WindowW = width;
+    WindowH = height;
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
@@ -272,15 +350,37 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-// glfw: whenever the mouse moves, this callback is called
+bool dragging = false;
+float dragStartX, dragStartY;
+float maxScaler = 0;
+
+// glfw: whenever the mouse moves, this dcallback is called
 // -------------------------------------------------------
+
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
+    lastX = xposIn;
+    lastY = yposIn;
+    cam->OnMouseMove(lastX, lastY, WindowW, WindowH, deltaTime);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    if (!wantMouseInput) {
+        cam->Zoom *= yoffset > 0 ? (1.2 * yoffset) : 0.8 / abs(yoffset);
+    }
+}
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        if (!wantMouseInput) {
+            cam->StartDrag(lastX, lastY);
+        }
+    }
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+        cam->StopDrag();
+    }
 }

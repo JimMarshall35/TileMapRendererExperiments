@@ -5,7 +5,7 @@
 #include "TileSetInfo.h"
 #include "TileMapConfigOptions.h"
 #include "IRenderer.h"
-//#define DEBUG_OUTPUT_ATLAS_PNG
+#define DEBUG_OUTPUT_ATLAS_PNG
 //#define DEBUG_OUTPUT_TILES
 
 #pragma region defines
@@ -196,10 +196,10 @@ u32 AtlasLoader::GetRequiredAtlasSizeInBytes(u32& rows)
 		const auto& tileType = kv.first;
 		const auto numberOfThisTileType = kv.second;
 
-		auto numberOfTilesPerAtlasRow = _atlasWidth / tileType.GetWidth();
+		auto numberOfTilesPerAtlasRow = _atlasWidth / (tileType.GetWidth() + 2); // +2 for padding left and right
 		auto atlasHeightIncrement = numberOfThisTileType / numberOfTilesPerAtlasRow;
 		if (numberOfThisTileType % numberOfTilesPerAtlasRow > 0) atlasHeightIncrement++;
-		atlasHeightPx += atlasHeightIncrement * tileType.GetHeight();
+		atlasHeightPx += atlasHeightIncrement * (tileType.GetHeight() + 2); // +2 for padding top and bottom
 		//auto 
 	}
 	rows = atlasHeightPx;
@@ -223,13 +223,34 @@ static void CalculateUvFromWritePointerStart(
 	v = ((float)yRows / (float)(atlasRows));
 }
 
+void CopyASingleRow(const Tile& tile, u8*& writePtr, u32 atlasWidthBytes, int tileRow) {
+	memcpy(writePtr, tile.GetBytesPtr() + ((tileRow) * (tile.GetPixelsCols() * NUM_CHANNELS)), NUM_CHANNELS);
+	memcpy(
+		writePtr + ((tile.GetPixelsCols() + 1) * NUM_CHANNELS),
+		tile.GetBytesPtr() + ((tileRow) * (tile.GetPixelsCols() * NUM_CHANNELS)) + ((tile.GetPixelsCols() - 1) * NUM_CHANNELS),
+		NUM_CHANNELS);
+
+	memcpy(
+		writePtr + NUM_CHANNELS,
+		tile.GetBytesPtr() + ((tileRow) * (tile.GetPixelsCols() * NUM_CHANNELS)),
+		tile.GetPixelsCols() * NUM_CHANNELS);
+}
+
 void CopyASingleTile(const Tile& tile, u8*& writePtr, u32 atlasWidthBytes) {
 
-	for (u32 i = 0; i < tile.GetPixelsRows(); i++) {
-		memcpy(
-			writePtr,
-			tile.GetBytesPtr() + (i * (tile.GetPixelsCols() * NUM_CHANNELS)),
-			tile.GetPixelsCols() * NUM_CHANNELS);
+	for (u32 i = 0; i < (tile.GetPixelsRows() + 2); i++) {
+		if (i > 0 && i < tile.GetPixelsRows() + 1) {
+			CopyASingleRow(tile, writePtr, atlasWidthBytes, i - 1);
+			
+		}
+		else if (i == 0) {
+
+			CopyASingleRow(tile, writePtr, atlasWidthBytes, 0);
+		}
+		else if (i == tile.GetPixelsRows() + 1) {
+			CopyASingleRow(tile, writePtr, atlasWidthBytes, tile.GetPixelsRows() - 1);
+		}
+		
 		writePtr += atlasWidthBytes;
 	}
 }
@@ -244,7 +265,7 @@ void AtlasLoader::MakeAtlas()
 	for (const auto& kv : _numberOfEachTileType) {
 		const auto& tileType = kv.first;
 		const auto numberOfThisTileType = kv.second;
-		auto numberOfTilesPerAtlasRow = _atlasWidth / tileType.GetWidth();
+		auto numberOfTilesPerAtlasRow = _atlasWidth / (tileType.GetWidth() + 2);
 
 		auto numTilesThisRow = 0;
 		// for each type of tile copy all tiles of that type to the atlas
@@ -253,26 +274,34 @@ void AtlasLoader::MakeAtlas()
 				continue;
 			}
 
-			CalculateUvFromWritePointerStart(writePtr, bytes.get(), rows, _atlasWidth,
-				tile.UTopLeft, tile.VTopLeft);
+			CalculateUvFromWritePointerStart(
+				writePtr,
+				bytes.get(),
+				rows,
+				_atlasWidth,
+				tile.UTopLeft,
+				tile.VTopLeft);
 
 			CalculateUvFromWritePointerStart(
-				writePtr + (atlasWidthBytes* tileType.GetHeight()) + (tileType.GetWidth() * NUM_CHANNELS) - 1,
-				bytes.get(), rows, _atlasWidth,
-				tile.UBottomRight, tile.VBottomRight);
+				writePtr + (atlasWidthBytes* (tileType.GetHeight())) + ((tileType.GetWidth()) * NUM_CHANNELS),//- 1,// not sure what this was about...
+				bytes.get(),
+				rows,
+				_atlasWidth,
+				tile.UBottomRight,
+				tile.VBottomRight);
 
 
 			CopyASingleTile(tile, writePtr, atlasWidthBytes);
 			// set the write ptr to write the next tile in the row
-			writePtr -= (tile.GetPixelsRows() * atlasWidthBytes);
-			writePtr += tile.GetPixelsCols() * NUM_CHANNELS;
+			writePtr -= ((tile.GetPixelsRows() + 2) * atlasWidthBytes);// +2 for padding top and bottom
+			writePtr += (tile.GetPixelsCols() + 2) * NUM_CHANNELS;     // +2 for padding left and right
 
 			// if the number of rows has overflowed the allowed number per row
-			// the set the write ptr to the next row down, at the left hand edge
+			// then set the write ptr to the next row down, at the left hand edge
 			numTilesThisRow++;
 			if (numTilesThisRow >= numberOfTilesPerAtlasRow) {
-				writePtr -= numberOfTilesPerAtlasRow * tileType.GetWidth() * NUM_CHANNELS;
-				writePtr += atlasWidthBytes * tile.GetPixelsRows();
+				writePtr -= numberOfTilesPerAtlasRow * (tileType.GetWidth() + 2) * NUM_CHANNELS; // +2 for padding left and right
+				writePtr += atlasWidthBytes * (tile.GetPixelsRows() + 2);                        // +2 for padding top and bottom
 				numTilesThisRow = 0;
 			}
 		}
@@ -280,8 +309,8 @@ void AtlasLoader::MakeAtlas()
 		// we need to set the write pointer back to the start and down a row 
 		// to start drawing the next type of tile
 		if (numTilesThisRow != 0) {
-			writePtr -= numTilesThisRow * tileType.GetWidth() * NUM_CHANNELS;
-			writePtr += atlasWidthBytes * tileType.GetHeight();
+			writePtr -= numTilesThisRow * (tileType.GetWidth() + 2) * NUM_CHANNELS; // +2 for padding left and right
+			writePtr += atlasWidthBytes * (tileType.GetHeight() + 2);               // +2 for padding top and bottom
 		}
 	}
 
