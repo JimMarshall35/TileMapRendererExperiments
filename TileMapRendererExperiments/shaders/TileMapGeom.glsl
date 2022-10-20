@@ -19,8 +19,6 @@ out vec2 texCoord;
 layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-const float B = 0;//1 / (MAX_NUM_TILES );
-const float padding = 0.0;
 
 void main() {
     uint tileId = gs_in[0].tileId;
@@ -33,24 +31,20 @@ void main() {
 
 
     gl_Position = projection * model * gl_in[0].gl_Position; // top left
-    //texCoord = vec2(0.0f, 0.0f);
-    texCoord = vec2(left + B,top + B);
+    texCoord = vec2(left,top);
     EmitVertex();
 
-    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(1.0 + padding, 0.0, 0.0, 0.0)); // top right
-    //texCoord = vec2(0.01875f, 0.0f);
-    texCoord = vec2(right-B,top+B);
+    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(1.0, 0.0, 0.0, 0.0)); // top right
+    texCoord = vec2(right,top);
     EmitVertex();
 
-    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(0.0, 1.0 + padding, 0.0, 0.0)); // bottom left
-    //texCoord = vec2(0.0f, 0.103448276f);
-    texCoord = vec2(left +B,bottom-B);
+    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(0.0, 1.0, 0.0, 0.0)); // bottom left
+    texCoord = vec2(left,bottom);
 
     EmitVertex();
 
-    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(1.0 + padding, 1.0 + padding, 0.0, 0.0)); // bottom right
-    //texCoord = vec2(0.01875f, 0.103448276f);
-    texCoord = vec2(right - B,bottom - B);
+    gl_Position = projection * model * (gl_in[0].gl_Position + vec4(1.0, 1.0, 0.0, 0.0)); // bottom right
+    texCoord = vec2(right,bottom);
 
 
     EmitVertex();

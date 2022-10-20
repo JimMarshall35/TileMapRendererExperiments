@@ -5,6 +5,7 @@
 #include "TileSetInfo.h"
 #include "TileMapConfigOptions.h"
 #include "IRenderer.h"
+#include <glad/glad.h>
 #define DEBUG_OUTPUT_ATLAS_PNG
 //#define DEBUG_OUTPUT_TILES
 
@@ -99,7 +100,8 @@ void AtlasLoader::StopLoadingTilesets()
 	switch (_currentState)
 	{
 	case AtlasLoaderStates::Loading:
-		MakeAtlas();
+		//MakeAtlas();
+		MakeAtlasAsArrayTexture();
 		_currentState = AtlasLoaderStates::FinishedLoading;
 		break;
 	case AtlasLoaderStates::Unloaded:
@@ -219,7 +221,7 @@ static void CalculateUvFromWritePointerStart(
 	u32 yRows = bytesOffsetFromStart / (atlasCols * NUM_CHANNELS);
 	
 
-	u = (float)xBytes / (float)(atlasCols * NUM_CHANNELS);
+	u = (float)xBytes / (float)((atlasCols * NUM_CHANNELS));
 	v = ((float)yRows / (float)(atlasRows));
 }
 
@@ -275,7 +277,7 @@ void AtlasLoader::MakeAtlas()
 			}
 
 			CalculateUvFromWritePointerStart(
-				writePtr,
+				writePtr + (atlasWidthBytes) + NUM_CHANNELS,
 				bytes.get(),
 				rows,
 				_atlasWidth,
@@ -283,7 +285,7 @@ void AtlasLoader::MakeAtlas()
 				tile.VTopLeft);
 
 			CalculateUvFromWritePointerStart(
-				writePtr + (atlasWidthBytes* (tileType.GetHeight())) + ((tileType.GetWidth()) * NUM_CHANNELS),//- 1,// not sure what this was about...
+				(writePtr + (atlasWidthBytes)+NUM_CHANNELS) + ((atlasWidthBytes * tile.GetPixelsRows()) + tile.GetPixelsCols() * NUM_CHANNELS),//- 1,// not sure what this was about...
 				bytes.get(),
 				rows,
 				_atlasWidth,
@@ -333,4 +335,53 @@ void AtlasLoader::MakeAtlas()
 		rows,
 		&_atlasTextureHandle);
 	_renderer->GPULoadTileData(_individualTiles);
+}
+
+void AtlasLoader::MakeAtlasAsArrayTexture()
+{
+	
+	u32 rows;
+	u32 bytesRequired = GetRequiredAtlasSizeInBytes(rows);
+	const u32 atlasWidthBytes = _atlasWidth * NUM_CHANNELS;
+	auto bytes = std::make_unique<u8[]>(bytesRequired);
+	u8* writePtr = bytes.get();
+	for (auto& kv : _numberOfEachTileType) {
+		auto& tileType = kv.first;
+		const auto numberOfThisTileType = kv.second;
+		auto numberOfTilesPerAtlasRow = _atlasWidth / (tileType.GetWidth() + 2);
+		auto tilesize = tileType.GetWidth() * tileType.GetHeight() * NUM_CHANNELS;
+		auto numTilesThisRow = 0;
+		auto bytesSizeForThisType = tilesize * numberOfThisTileType;
+		auto thisTypeBuffer = std::make_unique<u8[]>(bytesSizeForThisType);
+		u8* writePtr = &thisTypeBuffer[0];
+		// for each type of tile copy all tiles of that type to the atlas
+		for (Tile& tile : _individualTiles) {
+			if (tile.GetTypeOfTile() != tileType) {
+				continue;
+			}
+			memcpy(writePtr, tile.GetBytesPtr(), tilesize);
+			writePtr += tilesize;
+
+		}
+		stbi_write_png(
+			"atlad2.png",
+			tileType.GetWidth(),
+			tileType.GetHeight() * numberOfThisTileType,
+			NUM_CHANNELS,
+			thisTypeBuffer.get(),
+			tileType.GetWidth() * NUM_CHANNELS);
+
+		glGenTextures(1, &_arrayTextureForType[tileType]);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _arrayTextureForType[tileType]);
+
+		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 3, GL_RGBA8, tileType.GetWidth(), tileType.GetHeight(), numberOfThisTileType);
+
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, tileType.GetWidth(), tileType.GetHeight(), numberOfThisTileType, GL_RGBA, GL_UNSIGNED_BYTE, thisTypeBuffer.get());
+		// Always set reasonable texture parameters
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	}
 }

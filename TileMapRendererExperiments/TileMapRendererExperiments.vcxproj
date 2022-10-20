@@ -32,6 +32,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NewRenderer.cpp" />
     <ClCompile Include="OpenGlRenderer.cpp" />
     <ClCompile Include="stbi_image.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -56,6 +57,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="NewRenderer.h" />
     <ClInclude Include="OpenGlRenderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />

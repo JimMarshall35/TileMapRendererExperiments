@@ -15,6 +15,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "NewRenderer.h"
 
 
 #define SCR_WIDTH 800
@@ -133,10 +134,18 @@ int main()
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     auto config = TileMapConfigOptions();
     config.AtlasWidthPx = 800;
-    auto renderer = std::make_shared<OpenGlRenderer>(SCR_WIDTH,SCR_HEIGHT);
-    gRenderer = renderer.get();
+    //auto renderer = std::make_shared<OpenGlRenderer>(SCR_WIDTH,SCR_HEIGHT);
+    auto rendererInit = NewRendererInitialisationInfo();
+    rendererInit.chunkSizeX = 20;
+    rendererInit.chunkSizeY = 20;
+    rendererInit.tilemapSizeX = 1000;
+    rendererInit.tilemapSizeY = 1000;
+    rendererInit.windowHeight = SCR_HEIGHT;
+    rendererInit.windowWidth = SCR_WIDTH;
+    auto newRenderer = NewRenderer(rendererInit);
+    //gRenderer = renderer.get();
 
-    auto atlasLoader = AtlasLoader(config, renderer);
+    auto atlasLoader = AtlasLoader(config, nullptr);
 
     atlasLoader.StartLoadingTilesets();
     TileSetInfo info;
@@ -151,16 +160,16 @@ int main()
     info.Path = "sprites\\roguelikeCity_magenta.png";//"C:\\Users\\james.marshall\\source\\repos\\Platformer\\Platformer\\batch1.png";
     atlasLoader.TryLoadTileset(info);
 
-    info.BottomMargin = 0;
-    info.RightMargin = 0;
-    info.PixelColStart = 0;
-    info.PixelRowStart = 0;
-    info.TileHeight = 24;
-    info.TileWidth = 24;
-    info.RowsOfTiles = 6;
-    info.ColsOfTiles = 4;
-    info.Path = "sprites\\24by24ModernRPGGuy_edit.png";//"C:\\Users\\james.marshall\\source\\repos\\Platformer\\Platformer\\batch1.png";
-    atlasLoader.TryLoadTileset(info);
+    //info.BottomMargin = 0;
+    //info.RightMargin = 0;
+    //info.PixelColStart = 0;
+    //info.PixelRowStart = 0;
+    //info.TileHeight = 24;
+    //info.TileWidth = 24;
+    //info.RowsOfTiles = 6;
+    //info.ColsOfTiles = 4;
+    //info.Path = "sprites\\24by24ModernRPGGuy_edit.png";//"C:\\Users\\james.marshall\\source\\repos\\Platformer\\Platformer\\batch1.png";
+    //atlasLoader.TryLoadTileset(info);
 
     atlasLoader.StopLoadingTilesets();
 
@@ -177,10 +186,10 @@ int main()
     const auto tilemapCols = 50;
 
 
-    auto tm = GetRandomTileMap(tilemapRows, tilemapCols, 0, 1000);
-    auto map = std::unique_ptr<u32[]>(std::move(tm.data()));
+    //auto tm = GetRandomTileMap(tilemapRows, tilemapCols, 0, 1000);
+    //auto map = std::unique_ptr<u32[]>(std::move(tm.data()));
 
-    auto chunk = TileChunk(map, tilemapCols, tilemapRows,0,0, renderer.get());
+    //auto chunk = TileChunk(map, tilemapCols, tilemapRows,0,0, renderer.get());
 
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;
@@ -227,7 +236,7 @@ int main()
         ImGui::Begin("Tiles");
         auto windowWidth = ImGui::GetWindowWidth();
         auto accumulatedWidth = 0;
-        auto zoom = 3.0f;
+        auto zoom = 10.0f;
         for (const auto& t : atlasLoader.GetIndividualTiles()) {
             if (ImGui::ImageButton((void*)(intptr_t)atlasLoader.GetAtlasTextureHandle(),
                 { (float)t.GetPixelsCols()* zoom, (float)t.GetPixelsRows() * zoom },
@@ -254,15 +263,23 @@ int main()
         ImGui::Render();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderer->DrawTileMap(
-            chunk.GetVaoHandle(),
-            tilemapCols * tilemapRows,
-            { tilemapCols,tilemapRows },
-            {0,0}, //{ -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
-            { 16,16 },
-            0.0f,
-            camera
-        );
+        //renderer->DrawTileMap(
+        //    chunk.GetVaoHandle(),
+        //    tilemapCols * tilemapRows,
+        //    { tilemapCols,tilemapRows },
+        //    {0,0}, //{ -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
+        //    { 16,16 },
+        //    0.0f,
+        //    camera
+        //);
+        newRenderer.DrawChunk(
+            { 0,0 },
+            { 0,0 },
+            { 1,1 },
+            0,
+            atlasLoader.TestGetFirstArrayTexture(),
+            camera);
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
 

@@ -39,12 +39,26 @@ public:
 	inline u32 GetAtlasTextureHandle() {
 		return _atlasTextureHandle;
 	}
+	const inline std::map<TypeOfTile, u32>& GetrrayTexureMap() {
+		return _arrayTextureForType;
+	}; 
+	u32 TestGetFirstArrayTexture() {
+		for (auto& pair : _arrayTextureForType) {
+			if ("sprites\\roguelikeCity_magenta.png") {
+				return pair.second;
+			}
+		}
+	}
 private:
 	u32 GetRequiredAtlasSizeInBytes(u32& rows);
 	void MakeAtlas();
+	void MakeAtlasAsArrayTexture();
+	
 private:
 	std::vector<Tile> _individualTiles;
 	std::map<TypeOfTile, u32> _numberOfEachTileType;
+	std::map<TypeOfTile, u32> _arrayTextureForType;
+
 	u32 _atlasWidth;
 	u32 _atlasTextureHandle = 0;
 	AtlasLoaderStates _currentState;

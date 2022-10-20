@@ -19,6 +19,7 @@ public:
 	inline std::string GetFilePath() const {
 		return _filePath;
 	}
+	u32 TextureArrayHandle;
 private:
 	u32 _width;
 	u32 _height;
