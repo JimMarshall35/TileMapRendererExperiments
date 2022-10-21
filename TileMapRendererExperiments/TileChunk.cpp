@@ -36,9 +36,9 @@ void TileChunk::DrawVisibleChunks(ArrayTexture2DHandle tilesTexture, const NewRe
 		}
 	}
 
-	std::cout << "tl x: " << chunkTL.x <<
-		" tl y: " << chunkTL.y <<
-		" br x: " << chunkBR.x <<
-		" br y: " << chunkBR.y << 
-		" chunks drawn: "<< chunksDrawn << "\n\n\n";
+	//std::cout << "tl x: " << chunkTL.x <<
+	//	" tl y: " << chunkTL.y <<
+	//	" br x: " << chunkBR.x <<
+	//	" br y: " << chunkBR.y << 
+	//	" chunks drawn: "<< chunksDrawn << "\n\n\n";
 }

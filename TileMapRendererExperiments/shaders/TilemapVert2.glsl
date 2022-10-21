@@ -45,13 +45,9 @@ void main()
 
     // set the z coord of the tex coords passed based on what tile is here
     // in the master tile map.
-
-    // based on shader output all steps up to here are successful, a grid is drawn.
-    // The problem is the texelFetch is not working, it's always the same tile drawn.
     TexCoords = vec3(
     	baseVertex.zw,
-    	// changing this to different hard coded values does change what tile is drawn as expectd so sampler2DArray is setup correctly
-    	float(texelFetchOffset(masterTileTexture, tilexy, 0,chunkOffset).r)); 
+    	float(texelFetch(masterTileTexture, tilexy + chunkOffset, 0).r)); 
 
     gl_Position = vpMatrix * modelMatrix * vec4(baseVertex.xy, 0.0, 1.0);
 
