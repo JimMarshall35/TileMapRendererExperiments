@@ -22,19 +22,31 @@ NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 	m_worldMapSize(info.tilemapSizeX, info.tilemapSizeY),
 	m_tilemapChunkSize(info.chunkSizeX, info.chunkSizeY),
 	m_windowWidth(info.windowWidth),
-	m_windowHeight(info.windowHeight)
+	m_windowHeight(info.windowHeight),
+	m_numLayers(info.numLayers)
 {
 	using namespace std;
 	const u32 mapsize = info.tilemapSizeX * info.tilemapSizeY;
-	m_worldTextureBytes = make_unique<u16[]>(mapsize);
-	GetRandomTileMap(m_worldTextureBytes.get(), mapsize);
-	glGenTextures(1, &m_worldTextureHandle);
-	glBindTexture(GL_TEXTURE_2D, m_worldTextureHandle);
+	glGenTextures(m_numLayers, m_worldTexturesHandles);
 
-	// must set these two or it won't work
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, info.tilemapSizeX, info.tilemapSizeY, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, m_worldTextureBytes.get());
+	for (int i = 0; i < info.numLayers; i++) {
+		m_worldTexturesBytes[i] = make_unique<u16[]>(mapsize);
+		if (i > 0) {
+			GetRandomTileMap(m_worldTexturesBytes[i].get(), mapsize);
+		}
+		else {
+			memset(m_worldTexturesBytes[i].get(), 0, mapsize);
+		}
+
+
+		glBindTexture(GL_TEXTURE_2D, m_worldTexturesHandles[i]);
+
+		// must set these two or it won't work
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, info.tilemapSizeX, info.tilemapSizeY, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, m_worldTexturesBytes[i].get());
+	}
+	
 
 	glGenVertexArrays(1, &m_vao);
 }
@@ -61,12 +73,14 @@ void NewRenderer::DrawChunk(
 	m_tileShader.setInt("masterTileTexture", 0);
 	m_tileShader.setInt("atlasSampler", 1);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_worldTextureHandle);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
-
 	glBindVertexArray(m_vao);
-	glDrawArrays(GL_TRIANGLES, 0, m_tilemapChunkSize.x * m_tilemapChunkSize.y * TILE_NUM_INDICES);
 
+	for (int i = 0; i < m_numLayers; i++) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_worldTexturesHandles[i]);
+
+		glDrawArrays(GL_TRIANGLES, 0, m_tilemapChunkSize.x * m_tilemapChunkSize.y * TILE_NUM_INDICES);
+	}
 }

@@ -9,16 +9,16 @@ EditorCamera::EditorCamera(const EditorCameraInitializationSettings& init)
 void EditorCamera::UpdatePosition(Directions direction,float deltaT)
 {
 	switch (direction) {
-	case Directions::UP:
+	case UP:
 		FocusPosition.y -= _moveSpeed * deltaT;
 		break;
-	case Directions::DOWN:
+	case DOWN:
 		FocusPosition.y += _moveSpeed * deltaT;
 		break;
-	case Directions::LEFT:
+	case LEFT:
 		FocusPosition.x -= _moveSpeed * deltaT;
 		break;
-	case Directions::RIGHT:
+	case RIGHT:
 		FocusPosition.x += _moveSpeed * deltaT;
 		break;
 	default:

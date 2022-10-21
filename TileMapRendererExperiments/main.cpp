@@ -123,7 +123,7 @@ int main()
 
     // configure global opengl state
     // -----------------------------
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // During init, enable debug output
@@ -142,6 +142,7 @@ int main()
     rendererInit.tilemapSizeY = 1000;
     rendererInit.windowHeight = SCR_HEIGHT;
     rendererInit.windowWidth = SCR_WIDTH;
+    rendererInit.numLayers = 3;
     auto newRenderer = NewRenderer(rendererInit);
     //gRenderer = renderer.get();
 
@@ -262,7 +263,7 @@ int main()
         // ------
         ImGui::Render();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         //renderer->DrawTileMap(
         //    chunk.GetVaoHandle(),
         //    tilemapCols * tilemapRows,
@@ -300,7 +301,7 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-std::vector<bool> wasdKeys((u32)Directions::NUMDIRECTIONS);
+std::vector<bool> wasdKeys((u32)NUMDIRECTIONS);
 
 void processInput(GLFWwindow* window)
 {
@@ -310,41 +311,41 @@ void processInput(GLFWwindow* window)
 
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) {
-        wasdKeys[(u32)Directions::UP] = false;
+        wasdKeys[(u32)UP] = false;
     }
-    else if ((glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) || wasdKeys[(u32)Directions::UP]) {
-        cam->UpdatePosition(Directions::UP, deltaTime);
-        wasdKeys[(u32)Directions::UP] = true;
+    else if ((glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) || wasdKeys[(u32)UP]) {
+        cam->UpdatePosition(UP, deltaTime);
+        wasdKeys[(u32)UP] = true;
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
-        wasdKeys[(u32)Directions::DOWN] = false;
+        wasdKeys[(u32)DOWN] = false;
     }
-    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || !wasdKeys[(u32)Directions::DOWN]) {
-        cam->UpdatePosition(Directions::DOWN, deltaTime);
-        wasdKeys[(u32)Directions::DOWN] = true;
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || !wasdKeys[(u32)DOWN]) {
+        cam->UpdatePosition(DOWN, deltaTime);
+        wasdKeys[(u32)DOWN] = true;
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
-        wasdKeys[(u32)Directions::LEFT] = false;
+        wasdKeys[(u32)LEFT] = false;
 
     }
-    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || wasdKeys[(u32)Directions::LEFT]) {
-        cam->UpdatePosition(Directions::LEFT, deltaTime);
-        wasdKeys[(u32)Directions::LEFT] = true;
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || wasdKeys[(u32)LEFT]) {
+        cam->UpdatePosition(LEFT, deltaTime);
+        wasdKeys[(u32)LEFT] = true;
 
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
-        wasdKeys[(u32)Directions::RIGHT] = false;
+        wasdKeys[(u32)RIGHT] = false;
 
     }
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || wasdKeys[(u32)Directions::RIGHT]) {
-        cam->UpdatePosition(Directions::RIGHT, deltaTime);
-        wasdKeys[(u32)Directions::RIGHT] = true;
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || wasdKeys[(u32)RIGHT]) {
+        cam->UpdatePosition(RIGHT, deltaTime);
+        wasdKeys[(u32)RIGHT] = true;
 
     }
 
