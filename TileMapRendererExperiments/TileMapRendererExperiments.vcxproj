@@ -40,6 +40,7 @@
     <ClCompile Include="TileChunk.cpp" />
     <ClCompile Include="TiledWorld.cpp" />
     <ClCompile Include="TypeOfTile.cpp" />
+    <ClCompile Include="Undo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicTypedefs.h" />
@@ -70,6 +71,7 @@
     <ClInclude Include="TileMapConfigOptions.h" />
     <ClInclude Include="TileSetInfo.h" />
     <ClInclude Include="TypeOfTile.h" />
+    <ClInclude Include="Undo.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

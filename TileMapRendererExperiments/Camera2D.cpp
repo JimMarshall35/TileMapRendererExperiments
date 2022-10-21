@@ -34,7 +34,7 @@ glm::vec2 Camera2D::MouseScreenPosToWorld(double mousex, double mousey, unsigned
     float view_w = tlbr[3] - tlbr[1];
     float view_h = tlbr[2] - tlbr[0];
     return glm::vec2(
-        tlbr[1] + norm.x * (tlbr[3] - tlbr[1]),
-        tlbr[0] + norm.y * (tlbr[2] - tlbr[0])
+        tlbr[1] + norm.x * view_w,
+        tlbr[0] + norm.y * view_h
     );
 }

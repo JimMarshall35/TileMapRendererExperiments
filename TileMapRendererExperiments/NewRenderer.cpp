@@ -44,7 +44,10 @@ void NewRenderer::DrawChunk(
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
 	glBindVertexArray(m_vao);
 
-	world.IterateTileLayers([this](const TextureHandle& texture, u16* data) {
+	world.IterateTileLayers([this](const TextureHandle& texture, u16* data, bool visible) {
+		if (!visible) {
+			return;
+		}
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
