@@ -32,6 +32,7 @@ float deltaTime = 0;
 float lastFrame = 0;
 EditorCamera* cam;
 IRenderer* gRenderer;
+TiledWorld* gTiledWorld;
 static bool wantMouseInput = false;
 static bool wantKeyboardInput = false;
 
@@ -151,6 +152,7 @@ int main()
     gRenderer = &newRenderer;
 
     auto tiledWorld = TiledWorld(2000, 2000, 3);
+    gTiledWorld = &tiledWorld;
 
     auto atlasLoader = AtlasLoader(config);
 
@@ -366,10 +368,16 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         if (!wantMouseInput) {
-            cam->StartDrag(lastX, lastY);
+            //cam->StartDrag(lastX, lastY);
+            auto world = cam->MouseScreenPosToWorld(lastX, lastY, WindowW, WindowH);
+            int tileX = world.x - 0.5f;
+            int tileY = world.y - 0.5f;
+
+            gTiledWorld->SetTile(tileX, tileY, 2, 1);
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        cam->StopDrag();
+        //cam->StopDrag();
     }
+
 }

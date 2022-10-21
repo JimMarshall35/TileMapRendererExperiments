@@ -12,6 +12,7 @@ struct TiledWorld
 public:
 	TiledWorld(u32 sizeW, u32 sizeH, u32 numLayers);
 	void IterateTileLayers(IterateTileLayersFunc iterationFunc) const;
+	void SetTile(u32 x, u32 y, u32 z, u32 newTileIndex);
 public:
 	// getters
 	inline u32 GetNumLayers() const { return m_numLayers; }

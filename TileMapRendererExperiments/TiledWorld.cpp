@@ -44,3 +44,13 @@ void TiledWorld::IterateTileLayers(IterateTileLayersFunc iterationFunc) const
 		iterationFunc(m_layerTextureHandles[i], m_layersData[i].get());
 	}
 }
+
+void TiledWorld::SetTile(u32 x, u32 y, u32 z, u32 newTileIndex)
+{
+	auto flatIndex = (y * m_mapWidthTiles) + x;
+	if (flatIndex < 0 || flatIndex > m_mapHeightTiles * m_mapWidthTiles) {
+		return;
+	}
+	m_layersData[z].get()[flatIndex] = newTileIndex;
+	glTextureSubImage2D(m_layerTextureHandles[z], 0, x, y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_SHORT, &newTileIndex);
+}
