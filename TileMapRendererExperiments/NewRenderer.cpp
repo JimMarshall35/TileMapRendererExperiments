@@ -6,13 +6,14 @@
 
 #define TILE_NUM_INDICES 6
 
-inline static u32 GetRandomIntBetween(u32 min, u32 max) {
-	return (u32)rand() % (max - min + 1) + min;
+inline static u16 GetRandomIntBetween(u16 min, u16 max) {
+	return (u16)rand() % (max - min + 1) + min;
 }
 
-static void GetRandomTileMap(u32* map, u32 size) {
+
+static void GetRandomTileMap(u16* map, u32 size) {
 	for (int i = 0; i < size; i++) {
-		u32 r = GetRandomIntBetween(0, (28*37));
+		u16 r = GetRandomIntBetween(0, (28*37));
 		map[i] = r;
 	}
 }
@@ -25,7 +26,7 @@ NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 {
 	using namespace std;
 	const u32 mapsize = info.tilemapSizeX * info.tilemapSizeY;
-	m_worldTextureBytes = make_unique<u32[]>(mapsize);
+	m_worldTextureBytes = make_unique<u16[]>(mapsize);
 	GetRandomTileMap(m_worldTextureBytes.get(), mapsize);
 	glGenTextures(1, &m_worldTextureHandle);
 	glBindTexture(GL_TEXTURE_2D, m_worldTextureHandle);
@@ -33,7 +34,7 @@ NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 	// must set these two or it won't work
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, info.tilemapSizeX, info.tilemapSizeY, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, m_worldTextureBytes.get());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, info.tilemapSizeX, info.tilemapSizeY, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, m_worldTextureBytes.get());
 
 	glGenVertexArrays(1, &m_vao);
 }
