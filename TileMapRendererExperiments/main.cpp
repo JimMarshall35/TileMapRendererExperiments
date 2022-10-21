@@ -16,7 +16,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "NewRenderer.h"
-
+#include "TiledWorld.h"
+#include "TileChunk.h"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -34,6 +35,9 @@ IRenderer* gRenderer;
 static bool wantMouseInput = false;
 static bool wantKeyboardInput = false;
 
+
+u32 WindowW = SCR_WIDTH;
+u32 WindowH = SCR_HEIGHT;
 
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -136,17 +140,19 @@ int main()
     config.AtlasWidthPx = 800;
     //auto renderer = std::make_shared<OpenGlRenderer>(SCR_WIDTH,SCR_HEIGHT);
     auto rendererInit = NewRendererInitialisationInfo();
-    rendererInit.chunkSizeX = 20;
-    rendererInit.chunkSizeY = 20;
+    rendererInit.chunkSizeX = 64;
+    rendererInit.chunkSizeY = 64;
     rendererInit.tilemapSizeX = 1000;
     rendererInit.tilemapSizeY = 1000;
     rendererInit.windowHeight = SCR_HEIGHT;
     rendererInit.windowWidth = SCR_WIDTH;
     rendererInit.numLayers = 3;
     auto newRenderer = NewRenderer(rendererInit);
-    //gRenderer = renderer.get();
+    gRenderer = &newRenderer;
 
-    auto atlasLoader = AtlasLoader(config, nullptr);
+    auto tiledWorld = TiledWorld(2000, 2000, 3);
+
+    auto atlasLoader = AtlasLoader(config);
 
     atlasLoader.StartLoadingTilesets();
     TileSetInfo info;
@@ -172,25 +178,8 @@ int main()
     //info.Path = "sprites\\24by24ModernRPGGuy_edit.png";//"C:\\Users\\james.marshall\\source\\repos\\Platformer\\Platformer\\batch1.png";
     //atlasLoader.TryLoadTileset(info);
 
-    atlasLoader.StopLoadingTilesets();
+    atlasLoader.StopLoadingTilesets(AtlasLoaderAtlasType::ArrayTexture | AtlasLoaderAtlasType::SingleTextureAtlas);
 
-   /*auto map = std::unique_ptr<u32[]>(
-        new u32[25]{
-            1036,1036,1036,1036,1036,
-            2,2,2,2,2,
-            0,1,35,293,0,
-            28,29,31,420,837,
-            1040,907,796,715,2,
-
-        });*/
-    const auto tilemapRows = 50;
-    const auto tilemapCols = 50;
-
-
-    //auto tm = GetRandomTileMap(tilemapRows, tilemapCols, 0, 1000);
-    //auto map = std::unique_ptr<u32[]>(std::move(tm.data()));
-
-    //auto chunk = TileChunk(map, tilemapCols, tilemapRows,0,0, renderer.get());
 
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;
@@ -200,8 +189,6 @@ int main()
 
     cam = &camera;
 
-
-    //tilemap.DebugDumpTiles("");
     flecs::world ecs;
     ecs.system<>()
         .iter([](flecs::iter& it) {
@@ -264,22 +251,8 @@ int main()
         ImGui::Render();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        //renderer->DrawTileMap(
-        //    chunk.GetVaoHandle(),
-        //    tilemapCols * tilemapRows,
-        //    { tilemapCols,tilemapRows },
-        //    {0,0}, //{ -(SCR_WIDTH/2),-(SCR_HEIGHT / 2) },
-        //    { 16,16 },
-        //    0.0f,
-        //    camera
-        //);
-        newRenderer.DrawChunk(
-            { 0,0 },
-            { 0,0 },
-            { 1,1 },
-            0,
-            atlasLoader.TestGetFirstArrayTexture(),
-            camera);
+
+        TileChunk::DrawVisibleChunks(atlasLoader.TestGetFirstArrayTexture(), newRenderer, *cam, tiledWorld, rendererInit.chunkSizeX, rendererInit.chunkSizeY, WindowW, WindowH);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
@@ -351,8 +324,6 @@ void processInput(GLFWwindow* window)
 
 }
 
-int WindowW = SCR_WIDTH;
-int WindowH = SCR_HEIGHT;
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

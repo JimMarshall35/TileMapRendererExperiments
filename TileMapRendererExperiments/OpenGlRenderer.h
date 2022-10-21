@@ -2,28 +2,28 @@
 #include "IRenderer.h"
 #include "BasicTypedefs.h"
 #include "Shader.h"
-class OpenGlRenderer : public IRenderer
+class OpenGlRenderer
 {
 public:
 	OpenGlRenderer(u32 windowWidth, u32 windowHeight);
 	// Inherited via IRenderer
-	virtual bool GPULoadAtlasTexture(const unsigned char* data, unsigned int width, unsigned int height, unsigned int* id) override;
+	bool GPULoadAtlasTexture(const unsigned char* data, unsigned int width, unsigned int height, unsigned int* id);
 	// Inherited via IRenderer
-	virtual void DrawTileMap(
+	void DrawTileMap(
 		VertexBufferObjectHandle vertexBufferHandle,
 		u32 numVertices,
 		const glm::ivec2& mapSize,
 		const glm::vec2& pos,
 		const glm::vec2& scale,
 		float rotation,
-		const Camera2D& cam)const override;
+		const Camera2D& cam)const;
 	// Inherited via IRenderer
-	virtual bool GPULoadTileData(const std::vector<Tile>& tiles) override;
+	bool GPULoadTileData(const std::vector<Tile>& tiles);
 	// Inherited via IRenderer
-	virtual void SetWindowWidthAndHeight(u32 width, u32 height) override;
+	void SetWindowWidthAndHeight(u32 width, u32 height);
 	// Inherited via IRenderer
-	virtual void UploadTilemapVerticesBuffer(const u32* vertices, u32 tilesWidth, u32 tilesHeight,
-		VertexBufferObjectHandle& vbo, VertexAttributeObjectHandle& vao) const override ;
+	void UploadTilemapVerticesBuffer(const u32* vertices, u32 tilesWidth, u32 tilesHeight,
+		VertexBufferObjectHandle& vbo, VertexAttributeObjectHandle& vao) const;
 
 private:
 	u32 _atlasUvsTexture = 0;

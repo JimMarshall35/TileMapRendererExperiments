@@ -6,6 +6,7 @@
 #include "TileMapConfigOptions.h"
 #include "IRenderer.h"
 #include <glad/glad.h>
+#include "GLTextureHelper.h"
 #define DEBUG_OUTPUT_ATLAS_PNG
 //#define DEBUG_OUTPUT_TILES
 
@@ -55,10 +56,9 @@ static bool validateTileset(const TileSetInfo& info, int img_w, int img_h, int n
 
 #pragma endregion
 
-AtlasLoader::AtlasLoader(const TileMapConfigOptions& configOptions, const std::shared_ptr<IRenderer>& renderer)
+AtlasLoader::AtlasLoader(const TileMapConfigOptions& configOptions)
 	:_atlasWidth(configOptions.AtlasWidthPx),
-	_currentState(AtlasLoaderStates::Unloaded),
-	_renderer(renderer)
+	_currentState(AtlasLoaderStates::Unloaded)
 {
 }
 
@@ -95,13 +95,18 @@ void AtlasLoader::StartLoadingTilesets()
 	}
 }
 
-void AtlasLoader::StopLoadingTilesets()
+void AtlasLoader::StopLoadingTilesets(AtlasLoaderAtlasType atlasTypeToMake)
 {
 	switch (_currentState)
 	{
 	case AtlasLoaderStates::Loading:
 		//MakeAtlas();
-		MakeAtlasAsArrayTexture();
+		if (atlasTypeToMake & AtlasLoaderAtlasType::ArrayTexture) {
+			MakeAtlasAsArrayTexture();
+		}
+		if (atlasTypeToMake & AtlasLoaderAtlasType::SingleTextureAtlas) {
+			MakeAtlas();
+		}
 		_currentState = AtlasLoaderStates::FinishedLoading;
 		break;
 	case AtlasLoaderStates::Unloaded:
@@ -329,12 +334,11 @@ void AtlasLoader::MakeAtlas()
 	DebugDumpTiles("tiledump\\");
 #endif
 
-	_renderer->GPULoadAtlasTexture(
+	OpenGlGPULoadTexture(
 		bytes.get(),
 		_atlasWidth,
 		rows,
 		&_atlasTextureHandle);
-	_renderer->GPULoadTileData(_individualTiles);
 }
 
 void AtlasLoader::MakeAtlasAsArrayTexture()

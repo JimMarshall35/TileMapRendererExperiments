@@ -21,12 +21,26 @@ enum class AtlasLoaderStates {
 	NumStates
 };
 
+enum class AtlasLoaderAtlasType : u32 {
+	SingleTextureAtlas = 1,
+	ArrayTexture = 2
+};
+inline AtlasLoaderAtlasType operator|(AtlasLoaderAtlasType a, AtlasLoaderAtlasType b)
+{
+	return static_cast<AtlasLoaderAtlasType>(static_cast<u32>(a) | static_cast<u32>(b));
+}
+inline u32 operator&(AtlasLoaderAtlasType a, AtlasLoaderAtlasType b)
+{
+	return static_cast<u32>(a) & static_cast<u32>(b);
+}
+
+
 class AtlasLoader
 {
 public:
-	AtlasLoader(const TileMapConfigOptions& configOptions, const std::shared_ptr<IRenderer>& renderer);
+	AtlasLoader(const TileMapConfigOptions& configOptions);
 	void StartLoadingTilesets();
-	void StopLoadingTilesets();
+	void StopLoadingTilesets(AtlasLoaderAtlasType atlasTypeToMake);
 	bool TryLoadTileset(const TileSetInfo& info);
 	void DebugDumpTiles(std::string path);
 	// get a handle that can be used to free tiles that were loaded afterwards
@@ -62,6 +76,5 @@ private:
 	u32 _atlasWidth;
 	u32 _atlasTextureHandle = 0;
 	AtlasLoaderStates _currentState;
-	std::shared_ptr<IRenderer> _renderer;
 };
 
