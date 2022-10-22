@@ -1,15 +1,15 @@
 ﻿  AtlasLoader.cpp
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(21,22): warning C4018: '>': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(25,21): warning C4018: '>': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(29,25): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(33,25): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(40,50): warning C4018: '>': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(47,51): warning C4018: '>': signed/unsigned mismatch
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(217,27): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(302,24): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(22,22): warning C4018: '>': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(26,21): warning C4018: '>': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(30,25): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(34,25): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(41,50): warning C4018: '>': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(48,51): warning C4018: '>': signed/unsigned mismatch
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(219,27): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(304,24): warning C4018: '>=': signed/unsigned mismatch
   Generating code
-  3 of 4275 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 4177 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    25 functions had inline decision re-evaluated but remain unchanged
+    26 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   TileMapRendererExperiments.vcxproj -> C:\Users\james.marshall\source\repos\TileMapRendererExperiments\x64\Release\TileMapRendererExperiments.exe

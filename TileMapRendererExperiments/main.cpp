@@ -11,8 +11,8 @@
 #include "TileChunk.h"
 #include "EditorCamera.h"
 #include "flecs.h"
+#include "EditorUi.h"
 
-#include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "NewRenderer.h"
@@ -31,14 +31,12 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 float deltaTime = 0;
 float lastFrame = 0;
-int layerToSet = 0;
-int tileIndexToSet = 0;
 EditorCamera* cam;
 IRenderer* gRenderer;
 TiledWorld* gTiledWorld;
+EditorUi* gEditorUi;
 static bool wantMouseInput = false;
 static bool wantKeyboardInput = false;
-
 
 u32 WindowW = SCR_WIDTH;
 u32 WindowH = SCR_HEIGHT;
@@ -202,6 +200,9 @@ int main()
             });
     ecs.set_target_fps(30.0f);
     
+    EditorUi editorUi(&tiledWorld, &atlasLoader, &ecs);
+    gEditorUi = &editorUi;
+
     bool show_demo_window = true;
 
     // render loop
@@ -227,44 +228,7 @@ int main()
         ImGui::NewFrame();
 
 
-        ImGui::Begin("Tiles");
-        auto windowWidth = ImGui::GetWindowWidth();
-        auto accumulatedWidth = 0;
-        auto onIndex = 0;;
-        auto zoom = 5.0f;
-        ImGui::SliderInt("layer", &layerToSet,0,tiledWorld.GetNumLayers()-1);
-        bool* visibilities = tiledWorld.GetLayersVisibilities();
-        for (int i = 0; i < tiledWorld.GetNumLayers(); i++) {
-            ImGui::Checkbox((std::string("layer ") + std::to_string(i)).c_str(), &visibilities[i]);
-        }
-        ImGui::Text((std::string("Selected tile ") + std::to_string(tileIndexToSet)).c_str());
-        ImGui::Separator();
-
-        ImGui::BeginChild("tiles");
-
-        for (const auto& t : atlasLoader.GetIndividualTiles()) {
-            ImGui::PushID(onIndex);
-            if (ImGui::ImageButton((void*)(intptr_t)atlasLoader.GetAtlasTextureHandle(),
-                { (float)t.GetPixelsCols()* zoom, (float)t.GetPixelsRows() * zoom },
-                { t.UTopLeft, t.VTopLeft },
-                { t.UBottomRight, t.VBottomRight })) {
-                tileIndexToSet = onIndex;
-            }
-            ImGui::PopID();
-            accumulatedWidth += t.GetPixelsCols() * zoom;
-            if (accumulatedWidth + t.GetPixelsCols() * zoom < windowWidth) {
-                ImGui::SameLine();
-                
-            }
-            else {
-                accumulatedWidth = 0;
-            }
-            onIndex++;
-        }
-        ImGui::EndChild();
-        
-
-        ImGui::End();
+        editorUi.DoUiWindow();
 
         cam->OnUpdate(deltaTime);
 
@@ -354,7 +318,7 @@ void processInput(GLFWwindow* window)
         lastZPressed = false;
     }
     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && !lastZPressed) {
-        Undo(*gTiledWorld);
+        Undo(*gTiledWorld, *gEditorUi);
         lastZPressed = true;
     }
     static bool lastYPressed = false;
@@ -362,7 +326,7 @@ void processInput(GLFWwindow* window)
         lastYPressed = false;
     }
     if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS && !lastYPressed) {
-        Redo(*gTiledWorld);
+        Redo(*gTiledWorld, *gEditorUi);
         lastYPressed = true;
     }
 
@@ -411,24 +375,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         if (!wantMouseInput) {
             //cam->StartDrag(lastX, lastY);
-            auto world = cam->MouseScreenPosToWorld(lastX, lastY, WindowW, WindowH);
-            std::cout << world.x << " " << world.y << "\n";//(int)(world.x - 0.5f) << " " << (int)(world.y - 0.5f) << "\n";
-            int tileX = world.x - 0.5f;
-            int tileY = world.y - 0.5f;
-            auto edit = UndoableEdit{ EditType::SingleTile };
-            SingleTileEditData& d = edit.data.singleTile;
-            d.oldVal = gTiledWorld->GetTile(tileX + 1, tileY + 1, layerToSet);
-            d.newVal = tileIndexToSet;
-            d.x = tileX + 1;
-            d.y = tileY + 1;
-            d.z = layerToSet;
-            gTiledWorld->SetTile(tileX + 1, tileY + 1, layerToSet, tileIndexToSet);
-            PushEdit(edit);
+            gEditorUi->MouseButtonCallback(lastX, lastY, WindowW, WindowH, *cam);
 
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         //cam->StopDrag();
     }
-
 }

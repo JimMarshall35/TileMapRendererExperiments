@@ -1,9 +1,25 @@
 #pragma once
 #include "BasicTypedefs.h"
+
 class TiledWorld;
+class EditorUi;
+
 enum class EditType {
-	SingleTile
+	SingleTile,
+	TileToolLUTCasePush,
+	TileToolLUTCasePop,
 };
+
+struct TileToolLUTCasePopData {
+	u8 lutCase;
+	u32 valuePopped;
+};
+
+struct TileToolLUTCasePushData {
+	u8 lutCase;
+	u32 valuePushed;
+};
+
 struct SingleTileEditData {
 	u32 x;
 	u32 y;
@@ -11,8 +27,11 @@ struct SingleTileEditData {
 	u16 oldVal;
 	u16 newVal;
 };
+
 union UndoableEditDataUnion {
 	SingleTileEditData singleTile; 
+	TileToolLUTCasePopData tileToolLUTPop;
+	TileToolLUTCasePushData tileToolLUTPush;
 };
 struct UndoableEdit {
 	EditType type;
@@ -20,5 +39,5 @@ struct UndoableEdit {
 };
 
 void PushEdit(const UndoableEdit& edit, bool invalidateRedoStack = true);
-void Undo(TiledWorld& world);
-void Redo(TiledWorld& world);
+void Undo(TiledWorld& world, EditorUi& editorUi);
+void Redo(TiledWorld& world, EditorUi& editorUi);

@@ -1,5 +1,7 @@
 #include "Undo.h"
 #include "TiledWorld.h"
+#include "EditorUi.h"
+
 #define EDIT_STACK_SIZE 64
 static UndoableEdit s_undoStack[EDIT_STACK_SIZE];
 static UndoableEdit s_redoStack[EDIT_STACK_SIZE];
@@ -20,7 +22,7 @@ static void PushRedoEdit(const UndoableEdit& edit) {
 	}
 }
 
-void Redo(TiledWorld& world) {
+void Redo(TiledWorld& world, EditorUi& editorUi) {
 	if (s_numRedos == 0) {
 		return;
 	}
@@ -39,6 +41,12 @@ void Redo(TiledWorld& world) {
 			edit.data.singleTile.y,
 			edit.data.singleTile.z,
 			edit.data.singleTile.newVal);
+		break;
+	case EditType::TileToolLUTCasePush:
+		editorUi.PushLookupTableCase(edit.data.tileToolLUTPush.lutCase, edit.data.tileToolLUTPush.valuePushed);
+		break;
+	case EditType::TileToolLUTCasePop:
+		editorUi.PopLookupTableCase(edit.data.tileToolLUTPop.lutCase);
 		break;
 	default:
 		break;
@@ -62,7 +70,7 @@ void PushEdit(const UndoableEdit& edit, bool invalidateRedoStack)
 	}
 }
 
-void Undo(TiledWorld& world)
+void Undo(TiledWorld& world, EditorUi& editorUi)
 {
 	if (s_numEdits == 0) {
 		return;
@@ -82,6 +90,12 @@ void Undo(TiledWorld& world)
 			edit.data.singleTile.y,
 			edit.data.singleTile.z,
 			edit.data.singleTile.oldVal);
+		break;
+	case EditType::TileToolLUTCasePush:
+		editorUi.PopLookupTableCase(edit.data.tileToolLUTPush.lutCase);
+		break;
+	case EditType::TileToolLUTCasePop:
+		editorUi.PushLookupTableCase(edit.data.tileToolLUTPop.lutCase, edit.data.tileToolLUTPop.valuePopped);
 		break;
 	default:
 		break;

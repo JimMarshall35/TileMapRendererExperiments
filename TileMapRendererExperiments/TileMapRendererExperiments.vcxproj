@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorUi.cpp" />
     <ClCompile Include="flecs.c" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLTextureHelper.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorUi.h" />
     <ClInclude Include="flecs.h" />
     <ClInclude Include="GLTextureHelper.h" />
     <ClInclude Include="imgui\imconfig.h" />
