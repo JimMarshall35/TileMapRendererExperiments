@@ -1,6 +1,6 @@
 #include "Undo.h"
 #include "TiledWorld.h"
-#define EDIT_STACK_SIZE 128
+#define EDIT_STACK_SIZE 64
 static UndoableEdit s_undoStack[EDIT_STACK_SIZE];
 static UndoableEdit s_redoStack[EDIT_STACK_SIZE];
 
@@ -19,6 +19,7 @@ static void PushRedoEdit(const UndoableEdit& edit) {
 		s_numRedos++;
 	}
 }
+
 void Redo(TiledWorld& world) {
 	if (s_numRedos == 0) {
 		return;
@@ -33,14 +34,12 @@ void Redo(TiledWorld& world) {
 	switch (edit.type)
 	{
 	case EditType::SingleTile:
-	{
 		world.SetTile(
 			edit.data.singleTile.x,
 			edit.data.singleTile.y,
 			edit.data.singleTile.z,
 			edit.data.singleTile.newVal);
-	}
-	break;
+		break;
 	default:
 		break;
 	}
@@ -78,13 +77,11 @@ void Undo(TiledWorld& world)
 	switch (edit.type)
 	{
 	case EditType::SingleTile:
-		{
 		world.SetTile(
 			edit.data.singleTile.x,
 			edit.data.singleTile.y,
 			edit.data.singleTile.z,
 			edit.data.singleTile.oldVal);
-		}
 		break;
 	default:
 		break;

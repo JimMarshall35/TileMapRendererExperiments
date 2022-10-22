@@ -61,7 +61,11 @@ void TiledWorld::SetTile(u32 x, u32 y, u32 z, u32 newTileIndex)
 
 u32 TiledWorld::GetTile(u32 x, u32 y, u32 z)
 {
+
 	auto flatIndex = (y * m_mapWidthTiles) + x;
+	if (flatIndex >= m_mapHeightTiles * m_mapWidthTiles) {
+		return 0;
+	}
 	return m_layersData[z].get()[flatIndex];
 }
 
@@ -78,17 +82,17 @@ u32 SelectWeighted(const f32* weights, u32 numWeights) {
 }
 void TiledWorld::ProcedurallyGenerate(u32 layer)
 {
-	const u16 MUD_CENTERS[] = {892,893,973,1008,};
-	const u16 GRASS_CENTERS[] = { 1018,888,889 };
-	const u16 GRASS_CENTER_MUD_L = 962;
-	const u16 GRASS_CENTER_MUD_R = 964;
-	const u16 GRASS_CENTER_MUD_T = 926;
-	const u16 GRASS_CENTER_MUD_B = 1000;
+	const u16 MUD_CENTERS[] = {893,894,974,1009,};
+	const u16 GRASS_CENTERS[] = { 1019,889,890 };
+	const u16 GRASS_CENTER_MUD_L = 963;
+	const u16 GRASS_CENTER_MUD_R = 965;
+	const u16 GRASS_CENTER_MUD_T = 927;
+	const u16 GRASS_CENTER_MUD_B = 1001;
 
-	const u16 GRASS_CENTER_MUD_BR = 1001;
-	const u16 GRASS_CENTER_MUD_BL = 999;
-	const u16 GRASS_CENTER_MUD_TL = 925;
-	const u16 GRASS_CENTER_MUD_TR = 927;
+	const u16 GRASS_CENTER_MUD_BR = 1002;
+	const u16 GRASS_CENTER_MUD_BL = 1000;
+	const u16 GRASS_CENTER_MUD_TL = 926;
+	const u16 GRASS_CENTER_MUD_TR = 928;
 
 	const f32 MUD_CENTER_PROBABILITY[] = {0.3,0.3,0.3,0.1};
 

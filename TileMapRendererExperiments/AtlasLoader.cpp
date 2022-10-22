@@ -141,6 +141,15 @@ bool AtlasLoader::TryLoadTileset(const TileSetInfo& info)
 		return false;
 	}
 
+	// add an empty tile
+	u32 tileSizeBytes = ((info.TileWidth * NUM_CHANNELS) * info.TileHeight);
+	auto Bytes = std::make_unique<u8[]>(tileSizeBytes);
+	u32 PixelsCols = info.TileWidth;
+	u32 PixelsRows = info.TileHeight;
+	u8* writePtr = Bytes.get();
+	memset(writePtr, 0, tileSizeBytes);
+	_individualTiles.push_back(Tile(Bytes, PixelsRows, PixelsCols, info.Path));
+
 	/* split tileset into tiles and store in _individualTiles vector */
 	const u8* readPtr;
 	for (u32 tileRow = 0; tileRow < info.RowsOfTiles; tileRow++) {
@@ -166,7 +175,7 @@ bool AtlasLoader::TryLoadTileset(const TileSetInfo& info)
 	}
 	auto type = TypeOfTile(info.TileWidth, info.TileHeight, info.Path);
 
-	_numberOfEachTileType[type] += (info.RowsOfTiles * info.ColsOfTiles);
+	_numberOfEachTileType[type] += (info.RowsOfTiles * info.ColsOfTiles) + 1;
 	return true;
 }
 
