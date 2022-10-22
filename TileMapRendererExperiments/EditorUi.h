@@ -21,6 +21,9 @@ public:
 	void PopLookupTableCase(u8 caseIndex);
 	void MouseButtonCallback(float lastX, float lastY, u32 windowW, u32 windowH, const Camera2D& cam);
 private:
+	void LookupTableToolHandleMouse(i32 x, i32 y, i32 z);
+	u8 GetLutCaseIndex(i32 x, i32 y, i32 z);
+	bool IsTileIndexInLut(u16 tileIndex);
 	void PushLookupTableCase();
 	void PopLookupTableCase();
 	u32 PeekLUTTableTop(u8 caseIndex) { return m_tileToolLookupTable[caseIndex][m_tileToolLookupTableEntriesPerCase[caseIndex] - 1]; }

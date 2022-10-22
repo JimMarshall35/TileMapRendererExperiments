@@ -150,8 +150,67 @@ void EditorUi::MouseButtonCallback(float lastX, float lastY, u32 windowW, u32 wi
     d.x = tileX + 1;
     d.y = tileY + 1;
     d.z = m_layerToSet;
-    m_tiledWorld->SetTile(tileX + 1, tileY + 1, m_layerToSet, m_tileIndexToSet);
+    //m_tiledWorld->SetTile(tileX + 1, tileY + 1, m_layerToSet, m_tileIndexToSet);
+    LookupTableToolHandleMouse(tileX + 1, tileY + 1, m_layerToSet);
     PushEdit(edit);
+}
+
+void EditorUi::LookupTableToolHandleMouse(i32 x, i32 y, i32 z)
+{
+    u8 caseIndex = GetLutCaseIndex(x, y, z);
+    u32 numThisCase = m_tileToolLookupTableEntriesPerCase[caseIndex];
+    u16 tile = numThisCase > 0 ? m_tileToolLookupTable[caseIndex][0] : m_tileToolLookupTable[0][0];
+    m_tiledWorld->SetTile(x, y, z, tile);
+}
+
+u8 EditorUi::GetLutCaseIndex(i32 x, i32 y, i32 z)
+{
+    u8 r = 0x00;
+    if (y - 1 < 0 || x - 1 < 0 || IsTileIndexInLut(m_tiledWorld->GetTile(x - 1, y - 1, z))) {
+        r |= (1 << 0);
+    }
+    if (y - 1 < 0 || IsTileIndexInLut(m_tiledWorld->GetTile(x, y - 1, z))) {
+        r |= (1 << 1);
+
+    }
+    if (y - 1 < 0 || IsTileIndexInLut(m_tiledWorld->GetTile(x + 1, y - 1, z))) {
+        r |= (1 << 2);
+
+    }
+    if (x - 1 < 0 || IsTileIndexInLut(m_tiledWorld->GetTile(x - 1, y, z))) {
+        r |= (1 << 3);
+
+    }
+    if (IsTileIndexInLut(m_tiledWorld->GetTile(x + 1, y, z))) {
+        r |= (1 << 4);
+
+    }
+    if (x - 1 < 0 || IsTileIndexInLut(m_tiledWorld->GetTile(x - 1, y + 1, z))) {
+        r |= (1 << 5);
+
+    }
+    if (IsTileIndexInLut(m_tiledWorld->GetTile(x, y + 1, z))) {
+        r |= (1 << 6);
+
+    }
+    if (IsTileIndexInLut(m_tiledWorld->GetTile(x + 1, y + 1, z))) {
+        r |= (1 << 7);
+
+    }
+    return r;
+}
+
+bool EditorUi::IsTileIndexInLut(u16 tileIndex)
+{
+    for (int i = 0; i < 256; i++) {
+        u32 thisCaseSize = m_tileToolLookupTableEntriesPerCase[i];
+        for (int j = 0; j < thisCaseSize; j++) {
+            if (m_tileToolLookupTable[i][j] == tileIndex) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void EditorUi::PushLookupTableCase()
