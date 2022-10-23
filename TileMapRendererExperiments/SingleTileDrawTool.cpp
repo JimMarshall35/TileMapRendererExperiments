@@ -19,11 +19,13 @@ void SingleTileDrawTool::RecieveTileClick(i32 x, i32 y, i32 z)
     SingleTileEditData& d = edit.data.singleTile;
     d.oldVal = m_tiledWorld->GetTile(x, y, z);
     d.newVal = m_selectedTile;
-    d.x = x;
-    d.y = y;
-    d.z = z;
-    PushEdit(edit);
-    m_tiledWorld->SetTile(x, y, z, m_selectedTile);
+    if (d.oldVal != d.newVal) {
+        d.x = x;
+        d.y = y;
+        d.z = z;
+        PushEdit(edit);
+        m_tiledWorld->SetTile(x, y, z, m_selectedTile);
+    }
 }
 
 void SingleTileDrawTool::TileSelectionChanged(u32 newTile)

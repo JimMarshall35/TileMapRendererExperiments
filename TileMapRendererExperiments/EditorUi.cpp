@@ -82,7 +82,6 @@ void EditorUi::DoUiWindow()
 void EditorUi::MouseButtonCallback(float lastX, float lastY, u32 windowW, u32 windowH, const Camera2D& cam)
 {
     auto world = cam.MouseScreenPosToWorld(lastX, lastY, windowW, windowH);
-    std::cout << world.x << " " << world.y << "\n";//(int)(world.x - 0.5f) << " " << (int)(world.y - 0.5f) << "\n";
     int tileX = world.x - 0.5f;
     int tileY = world.y - 0.5f;
     

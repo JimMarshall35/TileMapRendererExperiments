@@ -77,12 +77,14 @@ void LutDrawTool::RecieveTileClick(i32 x, i32 y, i32 z)
     SingleTileEditData& d = edit.data.singleTile;
     d.oldVal = m_tiledWorld->GetTile(x, y, z);
     d.newVal = tile;
-    d.x = x;
-    d.y = y;
-    d.z = z;
-    PushEdit(edit);
-
-    m_tiledWorld->SetTile(x, y, z, tile);
+    
+    if (d.newVal != d.oldVal) {
+        d.x = x;
+        d.y = y;
+        d.z = z;
+        PushEdit(edit);
+        m_tiledWorld->SetTile(x, y, z, tile);
+    }
 }
 
 void LutDrawTool::TileSelectionChanged(u32 newTile)

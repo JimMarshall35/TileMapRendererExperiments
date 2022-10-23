@@ -103,8 +103,6 @@ u32 GetMudCenterTile() {
 
 void TiledWorld::ProcedurallyGenerate(u32 layer)
 {
-
-
 	if (layer != 0) {
 		return;
 	}

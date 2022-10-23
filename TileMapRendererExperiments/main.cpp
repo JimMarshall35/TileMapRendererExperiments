@@ -373,6 +373,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xposIn;
     lastY = yposIn;
     cam->OnMouseMove(lastX, lastY, WindowW, WindowH, deltaTime);
+    if (dragging) {
+        gEditorUi->MouseButtonCallback(lastX, lastY, WindowW, WindowH, *cam);
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -390,10 +393,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         if (!wantMouseInput) {
             //cam->StartDrag(lastX, lastY);
             gEditorUi->MouseButtonCallback(lastX, lastY, WindowW, WindowH, *cam);
-
+            dragging = true;
         }
     }
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         //cam->StopDrag();
+        dragging = false;
     }
 }
