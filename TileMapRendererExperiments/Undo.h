@@ -2,7 +2,7 @@
 #include "BasicTypedefs.h"
 
 class TiledWorld;
-class EditorUi;
+class LutDrawTool;
 
 enum class EditType {
 	SingleTile,
@@ -39,5 +39,5 @@ struct UndoableEdit {
 };
 
 void PushEdit(const UndoableEdit& edit, bool invalidateRedoStack = true);
-void Undo(TiledWorld& world, EditorUi& editorUi);
-void Redo(TiledWorld& world, EditorUi& editorUi);
+void Undo(TiledWorld& world, LutDrawTool& editorUi);
+void Redo(TiledWorld& world, LutDrawTool& editorUi);

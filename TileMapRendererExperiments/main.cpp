@@ -19,6 +19,9 @@
 #include "TiledWorld.h"
 #include "TileChunk.h"
 #include "Undo.h"
+#include "WindowsFilesystem.h"
+#include "LutDrawTool.h"
+#include "SingleTileDrawTool.h"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -35,6 +38,7 @@ EditorCamera* cam;
 IRenderer* gRenderer;
 TiledWorld* gTiledWorld;
 EditorUi* gEditorUi;
+LutDrawTool* gLutDrawTool;
 static bool wantMouseInput = false;
 static bool wantKeyboardInput = false;
 
@@ -199,9 +203,19 @@ int main()
         //std::cout << "delta_time: " << it.delta_time() << std::endl;
             });
     ecs.set_target_fps(30.0f);
-    
-    EditorUi editorUi(&tiledWorld, &atlasLoader, &ecs);
+    WindowsFilesystem fs;
+
+    LutDrawTool lut((IFileSystem*)&fs, &tiledWorld, &atlasLoader);
+    SingleTileDrawTool singleTileDraw(&tiledWorld);
+
+    const u32 NUM_TOOLS = 2;
+    EditorToolBase* toolBasePtrs[NUM_TOOLS] = {(EditorToolBase*)&lut, (EditorToolBase*)&singleTileDraw};
+
+    EditorUi editorUi(&tiledWorld, &atlasLoader, &ecs, (IFileSystem*)&fs,
+        (EditorToolBase**)toolBasePtrs, NUM_TOOLS);
+
     gEditorUi = &editorUi;
+
 
     bool show_demo_window = true;
 
@@ -318,7 +332,7 @@ void processInput(GLFWwindow* window)
         lastZPressed = false;
     }
     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && !lastZPressed) {
-        Undo(*gTiledWorld, *gEditorUi);
+        Undo(*gTiledWorld, *gLutDrawTool);
         lastZPressed = true;
     }
     static bool lastYPressed = false;
@@ -326,7 +340,7 @@ void processInput(GLFWwindow* window)
         lastYPressed = false;
     }
     if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS && !lastYPressed) {
-        Redo(*gTiledWorld, *gEditorUi);
+        Redo(*gTiledWorld, *gLutDrawTool);
         lastYPressed = true;
     }
 

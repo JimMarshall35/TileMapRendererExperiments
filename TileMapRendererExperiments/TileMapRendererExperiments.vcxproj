@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorToolBase.cpp" />
     <ClCompile Include="EditorUi.cpp" />
     <ClCompile Include="flecs.c" />
     <ClCompile Include="glad.c" />
@@ -32,9 +33,11 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="LutDrawTool.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NewRenderer.cpp" />
     <ClCompile Include="OpenGlRenderer.cpp" />
+    <ClCompile Include="SingleTileDrawTool.cpp" />
     <ClCompile Include="stbi_image.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="AtlasLoader.cpp" />
@@ -42,12 +45,18 @@
     <ClCompile Include="TiledWorld.cpp" />
     <ClCompile Include="TypeOfTile.cpp" />
     <ClCompile Include="Undo.cpp" />
+    <ClCompile Include="WindowsFilesystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorToolBase.h" />
     <ClInclude Include="EditorUi.h" />
+    <ClInclude Include="IFilesystem.h" />
+    <ClInclude Include="LutDrawTool.h" />
+    <ClInclude Include="SingleTileDrawTool.h" />
+    <ClInclude Include="WindowsFilesystem.h" />
     <ClInclude Include="flecs.h" />
     <ClInclude Include="GLTextureHelper.h" />
     <ClInclude Include="imgui\imconfig.h" />
