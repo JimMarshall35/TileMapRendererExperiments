@@ -4,11 +4,15 @@
 #include <fstream>
 #include "Undo.h"
 #include "TiledWorld.h"
+#include "IFilesystem.h"
 
-LutDrawTool::LutDrawTool(IFileSystem* fs, TiledWorld* tw, AtlasLoader* al)
+LutDrawTool::LutDrawTool(IFilesystem* fs, TiledWorld* tw, AtlasLoader* al)
     :m_fileSystem(fs),
     m_tiledWorld(tw),
-    m_atlasLoader(al)
+    m_atlasLoader(al),
+    m_maxFilePathLength(fs->GetMaxFilepathLength()),
+    m_filesInLutFolder(fs->ListFilesInDirectory(m_lutFolder)),
+    m_newLutInputBuffer(std::make_unique<char[]>(m_maxFilePathLength + 1))
 {
 }
 
@@ -37,21 +41,46 @@ void LutDrawTool::DoUi()
     ImGui::SameLine();
     ImGui::Checkbox("##tiletool8", &m_tileToolBoxes[7]);
 
-    ImGui::SameLine();
-    if (ImGui::Button("Push tile to LUT")) {
-        PushLookupTableCase();
+    
+    if (m_currentLutFile != UNLOADED_LUT_FILE_STRING) {
+        ImGui::SameLine();
+        if (ImGui::Button("Push tile to LUT")) {
+            PushLookupTableCase();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("PopTileFrom LUT")) {
+            PopLookupTableCase();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Save LUT")) {
+            SaveToolLUT(m_lutFolder + "\\" + m_currentLutFile);
+        }
     }
+    
     ImGui::SameLine();
-    if (ImGui::Button("PopTileFrom LUT")) {
-        PopLookupTableCase();
+    if (ImGui::BeginCombo("Choose lookup table", m_currentLutFile.c_str())) {
+        for (u32 i = 1; i < m_filesInLutFolder.size(); i++) {
+            bool is_selected = (m_currentLutFile == m_filesInLutFolder[i]);
+            if (ImGui::Selectable(m_filesInLutFolder[i].c_str(), is_selected)) {
+                m_currentLutFile = m_filesInLutFolder[i];
+                LoadToolLUT(m_lutFolder + "\\" + m_currentLutFile);
+            }
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
     }
-    ImGui::SameLine();
-    if (ImGui::Button("Save LUT")) {
-        SaveToolLUT("Tool.lut");
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load LUT")) {
+    /*if (ImGui::Button("Load LUT")) {
         LoadToolLUT("Tool.lut");
+    }*/
+
+
+    ImGui::InputText("New lookup table name", m_newLutInputBuffer.get(), m_maxFilePathLength);
+    ImGui::SameLine();
+    if (ImGui::Button("Save new lookup table")) {
+        SaveEmptyLUT(m_lutFolder +"\\"+ std::string(m_newLutInputBuffer.get())+".lut");
+        m_filesInLutFolder = m_fileSystem->ListFilesInDirectory(m_lutFolder);
     }
 
     const auto& tiles = m_atlasLoader->GetIndividualTiles();
@@ -241,4 +270,12 @@ void LutDrawTool::LoadToolLUT(std::string pathToLoad)
         memcpy(&m_tileToolLookupTable[i], readPtr, sizeof(u16) * MAX_TILES_PER_LUT_CASE);
         readPtr += sizeof(u16) * MAX_TILES_PER_LUT_CASE;
     }
+}
+
+void LutDrawTool::SaveEmptyLUT(std::string pathToSave)
+{
+    using namespace std;
+    memset(s_saveLoadBuffer, 0, LUT_TOOL_SAVE_LOAD_BUFFER_SIZE);
+    ofstream wf(pathToSave, ios::out | ios::binary);
+    wf.write((char*)s_saveLoadBuffer, LUT_TOOL_SAVE_LOAD_BUFFER_SIZE);
 }

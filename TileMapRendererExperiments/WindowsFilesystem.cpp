@@ -8,9 +8,7 @@
 
 #pragma comment(lib, "User32.lib")
 
-std::vector<std::string>
-list_directory(
-	const std::string& directory)
+std::vector<std::string> list_directory(const std::string& directory)
 {
 	WIN32_FIND_DATAA findData;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -39,4 +37,9 @@ std::vector<std::string> WindowsFilesystem::ListFilesInDirectory(std::string dir
 		std::cout << s << "\n";
 	}
 	return v;
+}
+
+u32 WindowsFilesystem::GetMaxFilepathLength() const
+{
+	return MAX_PATH;
 }

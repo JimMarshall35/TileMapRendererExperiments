@@ -194,7 +194,8 @@ int main()
     auto camera = EditorCamera(settings);
     camera.FocusPosition = { 0,0 };
     camera.Zoom = 3.0f;
-
+    auto cameraStart = glm::vec2(camera.GetTLBR(WindowW, WindowH)[1], camera.GetTLBR(WindowW, WindowH)[0]);
+    camera.FocusPosition += -cameraStart;
     cam = &camera;
 
     flecs::world ecs;
@@ -205,7 +206,7 @@ int main()
     ecs.set_target_fps(30.0f);
     WindowsFilesystem fs;
 
-    LutDrawTool lut((IFileSystem*)&fs, &tiledWorld, &atlasLoader);
+    LutDrawTool lut((IFilesystem*)&fs, &tiledWorld, &atlasLoader);
     SingleTileDrawTool singleTileDraw(&tiledWorld);
 
     const u32 NUM_TOOLS = 2;

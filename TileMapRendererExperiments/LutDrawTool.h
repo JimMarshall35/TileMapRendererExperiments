@@ -1,10 +1,13 @@
 #pragma once
 #include "EditorToolBase.h"
+#include <vector>
+#include <string>
+#include <memory>
 
 #define MAX_TILES_PER_LUT_CASE 20
+#define UNLOADED_LUT_FILE_STRING "select file"
 
-
-class IFileSystem;
+class IFilesystem;
 class TiledWorld;
 class AtlasLoader;
 
@@ -12,7 +15,7 @@ class LutDrawTool
 	:public EditorToolBase
 {
 public:
-	LutDrawTool(IFileSystem* fs, TiledWorld* tw, AtlasLoader* atlasLoader);
+	LutDrawTool(IFilesystem* fs, TiledWorld* tw, AtlasLoader* atlasLoader);
 	// Inherited via EditorToolBase
 	virtual void DoUi() override;
 	virtual void RecieveTileClick(i32 x, i32 y, i32 z) override;
@@ -29,13 +32,19 @@ private:
 	u8 GetCurrentLookupTableCaseIndex();
 	void SaveToolLUT(std::string pathToSave);
 	void LoadToolLUT(std::string pathToLoad);
+	void SaveEmptyLUT(std::string pathToSave);
 private:
-	const IFileSystem* m_fileSystem;
+	const std::string m_lutFolder = "lookup_table_files";
+	const IFilesystem* m_fileSystem;
 	TiledWorld* m_tiledWorld;
 	bool m_tileToolBoxes[8] = { false,false,false,false,false,false,false,false, };
 	u16 m_tileToolLookupTable[256][MAX_TILES_PER_LUT_CASE];
 	u32 m_tileToolLookupTableEntriesPerCase[256];
 	u32 m_tileIndexToSet = 0;
 	AtlasLoader* m_atlasLoader;
+	u32 m_maxFilePathLength;
+	std::vector<std::string> m_filesInLutFolder;
+	std::unique_ptr<char[]> m_newLutInputBuffer;
+	std::string m_currentLutFile = UNLOADED_LUT_FILE_STRING;
 };
 
