@@ -1,4 +1,5 @@
 
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -7,9 +8,11 @@
 #include "TileMapConfigOptions.h"
 #include "TileSetInfo.h"
 #include "AtlasLoader.h"
-#include "OpenGlRenderer.h"
-#include "TileChunk.h"
+//#include "OpenGlRenderer.h"
+#include "ProceduralCppTiledWorldPopulater.h"
+
 #include "EditorCamera.h"
+#include "TileChunk.h"
 #include "flecs.h"
 #include "EditorUi.h"
 
@@ -17,11 +20,14 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "NewRenderer.h"
 #include "TiledWorld.h"
-#include "TileChunk.h"
 #include "Undo.h"
 #include "WindowsFilesystem.h"
 #include "LutDrawTool.h"
 #include "SingleTileDrawTool.h"
+#include "TileInfoTool.h"
+#include "JanetVmService.h"
+#include "JanetScriptProceduralPopulater.h"
+
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -152,11 +158,17 @@ int main()
     rendererInit.tilemapSizeY = 1000;
     rendererInit.windowHeight = SCR_HEIGHT;
     rendererInit.windowWidth = SCR_WIDTH;
-    rendererInit.numLayers = 3;
+    rendererInit.numLayers = 6;
     auto newRenderer = NewRenderer(rendererInit);
     gRenderer = &newRenderer;
 
-    auto tiledWorld = TiledWorld(2000, 2000, 3);
+    auto vm = JanetVmService();
+
+    auto janetPopulator = JanetScriptProceduralPopulater(&vm);
+
+    auto populater = ProceduralCppTiledWorldPopulater();
+
+    auto tiledWorld = TiledWorld(2000, 2000, 6, &janetPopulator);
     gTiledWorld = &tiledWorld;
 
     auto atlasLoader = AtlasLoader(config);
@@ -208,9 +220,10 @@ int main()
 
     LutDrawTool lut((IFilesystem*)&fs, &tiledWorld, &atlasLoader);
     SingleTileDrawTool singleTileDraw(&tiledWorld);
+    TileInfoTool tileInfo(&atlasLoader);
 
-    const u32 NUM_TOOLS = 2;
-    EditorToolBase* toolBasePtrs[NUM_TOOLS] = {(EditorToolBase*)&lut, (EditorToolBase*)&singleTileDraw};
+    const u32 NUM_TOOLS = 3;
+    EditorToolBase* toolBasePtrs[NUM_TOOLS] = {(EditorToolBase*)&lut, (EditorToolBase*)&singleTileDraw, (EditorToolBase*)&tileInfo};
 
     EditorUi editorUi(&tiledWorld, &atlasLoader, &ecs, (IFileSystem*)&fs,
         (EditorToolBase**)toolBasePtrs, NUM_TOOLS);

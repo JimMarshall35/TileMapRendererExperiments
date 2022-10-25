@@ -1,26 +1,15 @@
 #include "TiledWorld.h"
 #include <glad/glad.h>
-
-inline static u16 GetRandomIntBetween(u16 min, u16 max) {
-	return (u16)rand() % (max - min + 1) + min;
-}
-
-inline static f32 GetRandomFloatZeroToOne() {
-	return rand() / (RAND_MAX + 1.);
-}
+#include <glm/glm.hpp>
+#include <vector>
+#include "ITiledWorldPopulater.h"
 
 
-static void GetRandomTileMap(u16* map, u32 size) {
-	for (int i = 0; i < size; i++) {
-		u16 r = GetRandomIntBetween(0, (28 * 37));
-		map[i] = r;
-	}
-}
-
-TiledWorld::TiledWorld(u32 sizeW, u32 sizeH, u32 numLayers)
+TiledWorld::TiledWorld(u32 sizeW, u32 sizeH, u32 numLayers, ITiledWorldPopulater* populater)
 	:m_mapHeightTiles(sizeH),
 	m_mapWidthTiles(sizeW),
-	m_numLayers(numLayers)
+	m_numLayers(numLayers),
+	m_populater(populater)
 {
 	using namespace std;
 	const u32 mapsize = sizeW * sizeH;
@@ -31,8 +20,8 @@ TiledWorld::TiledWorld(u32 sizeW, u32 sizeH, u32 numLayers)
 		//GetRandomTileMap(m_layersData[i].get(), mapsize);
 		memset(m_layersData[i].get(), 0, mapsize);
 		m_layersVisible[i] = true;
-		ProcedurallyGenerate(i);
-
+		//ProcedurallyGenerate(i);
+		m_populater->PopulateLayer(i, m_layersData[i].get(), m_mapWidthTiles, m_mapHeightTiles);
 		glBindTexture(GL_TEXTURE_2D, m_layerTextureHandles[i]);
 
 		// must set these two or it won't work
@@ -69,48 +58,3 @@ u32 TiledWorld::GetTile(u32 x, u32 y, u32 z)
 	return m_layersData[z].get()[flatIndex];
 }
 
-u32 SelectWeighted(const f32* weights, u32 numWeights) {
-	f32 randOneToZero = GetRandomFloatZeroToOne();
-	f32 accumulatedWeight = 0.0f;
-	for (int i = 0; i < numWeights; i++) {
-		accumulatedWeight += weights[i];
-		if (accumulatedWeight >= randOneToZero) {
-			return i;
-		}
-	}
-	return 0;
-}
-
-static const u16 MUD_CENTERS[] = { 893,894,974,1009, };
-static const u16 GRASS_CENTERS[] = { 1019,889,890 };
-static const u16 GRASS_CENTER_MUD_L = 963;
-static const u16 GRASS_CENTER_MUD_R = 965;
-static const u16 GRASS_CENTER_MUD_T = 927;
-static const u16 GRASS_CENTER_MUD_B = 1001;
-
-static const u16 GRASS_CENTER_MUD_BR = 1002;
-static const u16 GRASS_CENTER_MUD_BL = 1000;
-static const u16 GRASS_CENTER_MUD_TL = 926;
-static const u16 GRASS_CENTER_MUD_TR = 928;
-
-const f32 MUD_CENTER_PROBABILITY[] = { 0.3,0.3,0.3,0.1 };
-
-u32 GetMudCenterTile() {
-	return MUD_CENTERS[SelectWeighted(MUD_CENTER_PROBABILITY, 4)];
-}
-
-
-
-void TiledWorld::ProcedurallyGenerate(u32 layer)
-{
-	if (layer != 0) {
-		return;
-	}
-
-	u32 layerSize = m_mapWidthTiles * m_mapHeightTiles;
-
-	for (u32 i = 0; i < layerSize; i++) {
-		m_layersData[layer][i] = GetMudCenterTile();
-	}
-
-}

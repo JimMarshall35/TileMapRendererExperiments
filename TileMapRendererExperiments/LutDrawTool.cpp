@@ -71,10 +71,6 @@ void LutDrawTool::DoUi()
         }
         ImGui::EndCombo();
     }
-    /*if (ImGui::Button("Load LUT")) {
-        LoadToolLUT("Tool.lut");
-    }*/
-
 
     ImGui::InputText("New lookup table name", m_newLutInputBuffer.get(), m_maxFilePathLength);
     ImGui::SameLine();

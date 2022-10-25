@@ -63,6 +63,7 @@ public:
 			}
 		}
 	}
+	inline u32 GetNumTiles() const { return _individualTiles.size(); }
 private:
 	u32 GetRequiredAtlasSizeInBytes(u32& rows);
 	void MakeAtlas();

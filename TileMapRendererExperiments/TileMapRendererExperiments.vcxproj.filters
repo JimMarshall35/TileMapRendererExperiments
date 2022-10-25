@@ -96,6 +96,24 @@
     <ClCompile Include="LutDrawTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TileInfoTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="janet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JanetScriptProceduralPopulater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JanetVmService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -201,6 +219,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LutDrawTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileInfoTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedTileDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="janet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITiledWorldPopulater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralCppTiledWorldPopulater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JanetScriptProceduralPopulater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JanetVmService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

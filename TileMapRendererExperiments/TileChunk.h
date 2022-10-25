@@ -4,7 +4,7 @@
 
 class Camera2D;
 class NewRenderer;
-struct TiledWorld;
+class TiledWorld;
 using ArrayTexture2DHandle = u32;
 
 class TileChunk

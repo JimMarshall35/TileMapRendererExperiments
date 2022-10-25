@@ -9,7 +9,7 @@
 
 using ArrayTexture2DHandle = u32;
 class Camera2D;
-struct TiledWorld;
+class TiledWorld;
 
 
 struct NewRendererInitialisationInfo {
