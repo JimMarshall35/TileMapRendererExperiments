@@ -79,9 +79,9 @@ void EditorUi::DoUiWindow()
     ImGui::End();
 }
 
-void EditorUi::MouseButtonCallback(float lastX, float lastY, u32 windowW, u32 windowH, const Camera2D& cam)
+void EditorUi::MouseButtonCallback(float lastX, float lastY, const Camera2D& cam)
 {
-    auto world = cam.MouseScreenPosToWorld(lastX, lastY, windowW, windowH);
+    auto world = cam.MouseScreenPosToWorld(lastX, lastY);
     int tileX = world.x - 0.5f;
     int tileY = world.y - 0.5f;
     

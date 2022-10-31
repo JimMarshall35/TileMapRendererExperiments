@@ -202,11 +202,12 @@ int main()
 
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;
-    
+    settings.screenHeight = SCR_HEIGHT;
+    settings.screenWidth = SCR_WIDTH;
     auto camera = EditorCamera(settings);
     camera.FocusPosition = { 0,0 };
     camera.Zoom = 3.0f;
-    auto cameraStart = glm::vec2(camera.GetTLBR(WindowW, WindowH)[1], camera.GetTLBR(WindowW, WindowH)[0]);
+    auto cameraStart = glm::vec2(camera.GetTLBR()[1], camera.GetTLBR()[0]);
     camera.FocusPosition += -cameraStart;
     cam = &camera;
 
@@ -370,6 +371,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
     gRenderer->SetWindowWidthAndHeight(width, height);
+    cam->SetWindowWidthAndHeight(width, height);
 }
 
 float lastX = SCR_WIDTH / 2.0f;
@@ -386,9 +388,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
     lastX = xposIn;
     lastY = yposIn;
-    cam->OnMouseMove(lastX, lastY, WindowW, WindowH, deltaTime);
+    cam->OnMouseMove(lastX, lastY, deltaTime);
     if (dragging) {
-        gEditorUi->MouseButtonCallback(lastX, lastY, WindowW, WindowH, *cam);
+        gEditorUi->MouseButtonCallback(lastX, lastY, *cam);
     }
 }
 
@@ -406,7 +408,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         if (!wantMouseInput) {
             //cam->StartDrag(lastX, lastY);
-            gEditorUi->MouseButtonCallback(lastX, lastY, WindowW, WindowH, *cam);
+            gEditorUi->MouseButtonCallback(lastX, lastY, *cam);
             dragging = true;
         }
     }

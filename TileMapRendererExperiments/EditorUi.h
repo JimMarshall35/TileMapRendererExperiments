@@ -19,7 +19,7 @@ class EditorUi
 public:
 	EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, flecs::world* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools);
 	void DoUiWindow();
-	void MouseButtonCallback(float lastX, float lastY, u32 windowW, u32 windowH, const Camera2D& cam);
+	void MouseButtonCallback(float lastX, float lastY, const Camera2D& cam);
 private:
 
 private:

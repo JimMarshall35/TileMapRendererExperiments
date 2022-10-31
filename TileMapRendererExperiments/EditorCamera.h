@@ -3,6 +3,8 @@
 #include "BasicTypedefs.h"
 struct EditorCameraInitializationSettings {
     float moveSpeed;
+    u32 screenWidth;
+    u32 screenHeight;
 };
 class EditorCamera :
     public Camera2D
@@ -12,8 +14,9 @@ public:
     void UpdatePosition(Directions direction, float deltaT);
     void StartDrag(double x, double y);
     void StopDrag();
-    void OnMouseMove(double lastX, double lastY, int WindowW, int WindowH, float deltaTime);
+    void OnMouseMove(double lastX, double lastY, float deltaTime);
     void OnUpdate(float deltaTime);
+    
 
 private:
     bool _isBeingDragged = false;

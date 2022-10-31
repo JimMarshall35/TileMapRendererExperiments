@@ -1,4 +1,5 @@
 #include "ProceduralHelpers.h"
+#include "AtlasLoader.h"
 
 
 void GetRandomTileMap(u16* map, u32 size) {
@@ -18,4 +19,8 @@ u32 SelectWeighted(const f32* weights, u32 numWeights) {
 		}
 	}
 	return 0;
+}
+
+void GenerateTilesetAdjacencyData(const AtlasLoader& atlas) {
+
 }

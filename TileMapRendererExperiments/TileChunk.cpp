@@ -10,7 +10,7 @@
 void TileChunk::DrawVisibleChunks(ArrayTexture2DHandle tilesTexture, const NewRenderer& renderer, const Camera2D& cam, const TiledWorld& world, u32 chunkSizeX, u32 chunkSizeY, u32 screenW, u32 screenH)
 {
 	using namespace glm;
-	auto tlbr = cam.GetTLBR(screenW,screenH);
+	auto tlbr = cam.GetTLBR();
 	auto chunkTL = ivec2(tlbr[1] / chunkSizeX, tlbr[0] / chunkSizeY);
 	auto chunkBR = ivec2(tlbr[3] / chunkSizeX, tlbr[2] / chunkSizeY);
 

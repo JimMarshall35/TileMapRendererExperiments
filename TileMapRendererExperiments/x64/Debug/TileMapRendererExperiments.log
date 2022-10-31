@@ -1,20 +1,13 @@
 ﻿  main.cpp
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(66,33): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.h(14,13): warning C4099: 'flecs::world': type name first seen using 'struct' now seen using 'class'
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\flecs.h(15218): message : see declaration of 'flecs::world'
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.h(7,17): warning C4099: 'TiledWorld': type name first seen using 'struct' now seen using 'class'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileChunk.h(7): message : see declaration of 'TiledWorld'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.h(14,13): warning C4099: 'flecs::world': type name first seen using 'struct' now seen using 'class'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\flecs.h(15218): message : see declaration of 'flecs::world'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Undo.h(4,17): warning C4099: 'TiledWorld': type name first seen using 'struct' now seen using 'class'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TiledWorld.h(10): message : see declaration of 'TiledWorld'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\LutDrawTool.h(8,17): warning C4099: 'TiledWorld': type name first seen using 'struct' now seen using 'class'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Undo.h(4): message : see declaration of 'TiledWorld'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\SingleTileDrawTool.h(3,17): warning C4099: 'TiledWorld': type name first seen using 'struct' now seen using 'class'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\LutDrawTool.h(8): message : see declaration of 'TiledWorld'
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(75,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(373,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(374,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(386,30): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(81,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(389,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(390,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(402,30): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
 C:\Users\james.marshall\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(65): warning C4715: 'AtlasLoader::TestGetFirstArrayTexture': not all control paths return a value
   TileMapRendererExperiments.vcxproj -> C:\Users\james.marshall\source\repos\TileMapRendererExperiments\x64\Debug\TileMapRendererExperiments.exe

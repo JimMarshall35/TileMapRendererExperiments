@@ -1,12 +1,12 @@
 #include "EditorCamera.h"
 
 EditorCamera::EditorCamera(const EditorCameraInitializationSettings& init)
-	:Camera2D(),
+	:Camera2D(init.screenWidth, init.screenHeight),
 	_moveSpeed(init.moveSpeed)
 {
 }
 
-void EditorCamera::UpdatePosition(Directions direction,float deltaT)
+void EditorCamera::UpdatePosition(Directions direction, float deltaT)
 {
 	switch (direction) {
 	case UP:
@@ -24,6 +24,7 @@ void EditorCamera::UpdatePosition(Directions direction,float deltaT)
 	default:
 		break;
 	}
+	//auto tlbr = GetTLBR()
 }
 
 void EditorCamera::StartDrag(double x, double y)
@@ -40,13 +41,13 @@ void EditorCamera::StopDrag()
 	_cameraMoveVector = glm::dvec2(0.0f);
 }
 
-void EditorCamera::OnMouseMove(double lastX, double lastY, int WindowW, int WindowH, float deltaTime)
+void EditorCamera::OnMouseMove(double lastX, double lastY, float deltaTime)
 {
 	const auto aLargeScrollMagnitude = 1500.0f;
 	if (_isBeingDragged) {
 		const auto MAX_MOVE_SPEED = 1200.0f;
-		auto worldposDragStart = MouseScreenPosToWorld(_dragStartScreenPixelCoords.x, _dragStartScreenPixelCoords.y, WindowW, WindowH);
-		auto worldposDragLast = MouseScreenPosToWorld(lastX, lastY, WindowW, WindowH);
+		auto worldposDragStart = MouseScreenPosToWorld(_dragStartScreenPixelCoords.x, _dragStartScreenPixelCoords.y);
+		auto worldposDragLast = MouseScreenPosToWorld(lastX, lastY);
 
 		auto scaler = glm::distance(worldposDragStart, worldposDragLast) / aLargeScrollMagnitude;
 		if (scaler > _maxScalar) {
@@ -66,3 +67,5 @@ void EditorCamera::OnUpdate(float deltaTime)
 
 	}
 }
+
+
