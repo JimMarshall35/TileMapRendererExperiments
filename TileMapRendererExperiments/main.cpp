@@ -289,52 +289,58 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-std::vector<bool> wasdKeys((u32)NUMDIRECTIONS);
+std::vector<bool> wasdKeys(9);
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
-
+    
+    Directions dir = Directions::NONE;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) {
-        wasdKeys[(u32)UP] = false;
+        wasdKeys[(u32)Directions::UP] = false;
     }
-    else if ((glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) || wasdKeys[(u32)UP]) {
-        cam->UpdatePosition(UP, deltaTime);
-        wasdKeys[(u32)UP] = true;
+    else if ((glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) || wasdKeys[(u32)Directions::UP]) {
+        wasdKeys[(u32)Directions::UP] = true;
+        dir |= Directions::UP;
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
-        wasdKeys[(u32)DOWN] = false;
+        wasdKeys[(u32)Directions::DOWN] = false;
     }
-    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || !wasdKeys[(u32)DOWN]) {
-        cam->UpdatePosition(DOWN, deltaTime);
-        wasdKeys[(u32)DOWN] = true;
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || !wasdKeys[(u32)Directions::DOWN]) {
+        wasdKeys[(u32)Directions::DOWN] = true;
+        dir |= Directions::DOWN;
+
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
-        wasdKeys[(u32)LEFT] = false;
+        wasdKeys[(u32)Directions::LEFT] = false;
 
     }
-    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || wasdKeys[(u32)LEFT]) {
-        cam->UpdatePosition(LEFT, deltaTime);
-        wasdKeys[(u32)LEFT] = true;
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || wasdKeys[(u32)Directions::LEFT]) {
+        wasdKeys[(u32)Directions::LEFT] = true;
+        dir |= Directions::LEFT;
 
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
-        wasdKeys[(u32)RIGHT] = false;
+        wasdKeys[(u32)Directions::RIGHT] = false;
 
     }
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || wasdKeys[(u32)RIGHT]) {
-        cam->UpdatePosition(RIGHT, deltaTime);
-        wasdKeys[(u32)RIGHT] = true;
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || wasdKeys[(u32)Directions::RIGHT]) {
+        wasdKeys[(u32)Directions::RIGHT] = true;
+        dir |= Directions::RIGHT;
 
     }
+
+    cam->UpdatePosition(dir, deltaTime);
+
+
     static bool controlPressed = false;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
         controlPressed = false;

@@ -8,23 +8,32 @@ EditorCamera::EditorCamera(const EditorCameraInitializationSettings& init)
 
 void EditorCamera::UpdatePosition(Directions direction, float deltaT)
 {
-	switch (direction) {
-	case UP:
-		FocusPosition.y -= _moveSpeed * deltaT;
-		break;
-	case DOWN:
-		FocusPosition.y += _moveSpeed * deltaT;
-		break;
-	case LEFT:
-		FocusPosition.x -= _moveSpeed * deltaT;
-		break;
-	case RIGHT:
-		FocusPosition.x += _moveSpeed * deltaT;
-		break;
-	default:
-		break;
+	glm::vec2 moveVec = { 0,0 };
+	bool move = false;
+	if (direction & Directions::UP) {
+		moveVec.y = -1.0f;
+		move = true;
 	}
-	//auto tlbr = GetTLBR()
+	if (direction & Directions::DOWN) {
+		moveVec.y = 1.0f;
+		move = true;
+
+	}
+	if (direction & Directions::LEFT) {
+		moveVec.x = -1.0f;
+		move = true;
+
+	}
+	if (direction & Directions::RIGHT) {
+		moveVec.x = 1.0f;
+		move = true;
+
+	}
+
+	if (move) {
+		FocusPosition += glm::normalize(moveVec) * _moveSpeed * deltaT;
+	}
+
 }
 
 void EditorCamera::StartDrag(double x, double y)
@@ -64,7 +73,6 @@ void EditorCamera::OnUpdate(float deltaTime)
 	if (_isBeingDragged) {
 		FocusPosition.x += _cameraMoveVector.x;
 		FocusPosition.y += _cameraMoveVector.y;
-
 	}
 }
 
