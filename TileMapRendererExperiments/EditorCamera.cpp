@@ -64,7 +64,6 @@ void EditorCamera::OnMouseMove(double lastX, double lastY, float deltaTime)
 		}
 
 		_cameraMoveVector = -(glm::normalize(glm::vec2(lastX, lastY) - glm::vec2(_dragStartScreenPixelCoords)) * deltaTime * MAX_MOVE_SPEED * _maxScalar);
-
 	}
 }
 

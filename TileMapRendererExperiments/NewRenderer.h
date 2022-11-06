@@ -10,6 +10,7 @@
 using ArrayTexture2DHandle = u32;
 class Camera2D;
 class TiledWorld;
+class MetaAtlas;
 
 
 struct NewRendererInitialisationInfo {
@@ -25,7 +26,8 @@ class NewRenderer : public IRenderer
 {
 public:
 	NewRenderer(const NewRendererInitialisationInfo& info);
-	void DrawChunk(const glm::ivec2& chunkWorldMapOffset, const glm::vec2& pos, const glm::vec2& scale, float rotation, const TiledWorld& world,ArrayTexture2DHandle texArray, const Camera2D& camArray) const;
+	void DrawChunk(const glm::ivec2& chunkWorldMapOffset, const glm::vec2& pos, const glm::vec2& scale, float rotation, const TiledWorld& world, ArrayTexture2DHandle texArray, const Camera2D& camArray) const;
+	void DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, const glm::vec2& scale, float rotation, const MetaAtlas& atlas, ArrayTexture2DHandle texArray, const Camera2D& cam) const;
 private:
 	//std::unique_ptr<u16[]> m_worldTexturesBytes[MAX_NUM_Z_LAYERS];
 	//u32 m_worldTexturesHandles[MAX_NUM_Z_LAYERS];

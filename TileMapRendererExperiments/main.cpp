@@ -27,6 +27,9 @@
 #include "TileInfoTool.h"
 #include "JanetVmService.h"
 #include "JanetScriptProceduralPopulater.h"
+#include "WaveFunctionCollapseTool.h"
+#include "MetaspriteTool.h"
+#include "MetaAtlas.h"
 
 
 #define SCR_WIDTH 800
@@ -219,12 +222,16 @@ int main()
     ecs.set_target_fps(30.0f);
     WindowsFilesystem fs;
 
+    MetaAtlas metaAtlas(100, 100);
+
     LutDrawTool lut((IFilesystem*)&fs, &tiledWorld, &atlasLoader);
     SingleTileDrawTool singleTileDraw(&tiledWorld);
     TileInfoTool tileInfo(&atlasLoader);
+    WaveFunctionCollapseTool waveFunctionCollapse;
+    MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader);
 
-    const u32 NUM_TOOLS = 3;
-    EditorToolBase* toolBasePtrs[NUM_TOOLS] = {(EditorToolBase*)&lut, (EditorToolBase*)&singleTileDraw, (EditorToolBase*)&tileInfo};
+    const u32 NUM_TOOLS = 5;
+    EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool };
 
     EditorUi editorUi(&tiledWorld, &atlasLoader, &ecs, (IFileSystem*)&fs,
         (EditorToolBase**)toolBasePtrs, NUM_TOOLS);
@@ -266,8 +273,18 @@ int main()
         ImGui::Render();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        
 
         TileChunk::DrawVisibleChunks(atlasLoader.TestGetFirstArrayTexture(), newRenderer, *cam, tiledWorld, rendererInit.chunkSizeX, rendererInit.chunkSizeY, WindowW, WindowH);
+
+
+        const MetaSpriteDescription* sprites;
+        u32 numSprites;
+        metaAtlas.GetSprites(&sprites, &numSprites);
+        if (numSprites > 0) {
+            newRenderer.DrawMetaSprite(numSprites - 1, { 100,100 }, { 1,1 }, 0, metaAtlas, atlasLoader.GetAtlasTextureHandle(), *cam);
+        }
+
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         

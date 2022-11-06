@@ -7,7 +7,7 @@
 (def house-max-h 20)
 (def house-min-h 4)
 
-(def roof-max-h 20)
+(def roof-max-h 7)
 (def roof-min-h 4)
 
 (def house-bottom-left-edge 445)
@@ -28,6 +28,8 @@
 (def house-roof-middle 7)
 
 (def doors [983 984 986 989 1020 1021 1023 1024 1026 1027])
+
+(def windows [692 693 694 729 730 731])
 
 (def house-middle 188)
 
@@ -66,7 +68,7 @@
     (loop [x :range [0 random-w]]
         (loop [y :range [0 random-h]]
             (set-tile-at (+ bottom-left-x x) (- bottom-left-y y) (get-tile-of-house-body x y random-w random-h))))
-    { 
+    @{ 
         :bottom-left { :x bottom-left-x :y bottom-left-y}
         :dimensions { :x random-w :y random-h}
     })
@@ -85,11 +87,7 @@
     (loop [x :range [0 house-base-w]]
         (loop [y :range [0 random-h]]
             (set-tile-at (+ bottom-left-x x) (- bottom-left-y y) (get-tile-of-house-roof x y house-base-w random-h))))
-    {
-        :bottom-left { :x bottom-left-x :y house-base-bottom-left-y}
-        :dimensions { :x house-base-w :y house-base-h}
-        :roof-dimensions { :x house-base-w :y random-h}
-    })
+    (put house-base :roof-dimensions { :x house-base-w :y random-h}))
 
 (defn generate-random-house-doors
     "adds doors to a single house"
@@ -98,17 +96,38 @@
     (def house-w (get (get house :dimensions):x))
     (def door-x (random-u32-between 0 (- house-w 1)))
     (def door-tile (get doors (random-u32-between 0 (-(length doors)1))))
-    (set-tile-at ( + (get house-bottom-left :x) door-x) (get house-bottom-left :y) door-tile))
+    (set-tile-at 
+        ( + (get house-bottom-left :x) door-x) 
+        (get house-bottom-left :y) 
+        door-tile)
+    (put house :doors 
+        [{:x ( + (get house-bottom-left :x) door-x) 
+            :y (get house-bottom-left :y)}]))
+
+
+(defn generate-random-house-windows
+    "adds windows to a single house"
+    [house]
+    (def house-bottom-left (get house :bottom-left))
+    (def house-w (get (get house :dimensions):x))
+    (def house-h (get (get house :dimensions):y))
+    (def doors (get house :doors))
+    (def row (random-u32-between (- (get house-bottom-left :y) house-h)(- (get house-bottom-left :y) 1)))
+    (loop [x :range [0 house-w]]
+        (set-tile-at 
+            (+ x (get house-bottom-left :x))
+            row
+            (get windows 0))))
 
 (defn add-roofs-to-houses
     "adds roofs to a list of houses"
     [houses]
     (map (fn[house] (generate-random-house-roof house)) houses))
 
-(defn add-doors-to-houses
+(defn add-doors-and-roofs-to-houses
     "adds doors to a list of houses"
     [houses]
-    (map (fn[house] (generate-random-house-doors house)) houses))
+    (map (fn[house] (generate-random-house-windows (generate-random-house-doors house))) houses))
 
 (defn generate-map
     "called by game when the tiled world needs to be generated"
@@ -117,5 +136,5 @@
         0 (flood-layer-weighted grass-centers grass-center-weights)
         1 (array/push houses (generate-random-house-body 100 100))
         2 (set houses (add-roofs-to-houses houses))
-        3 (add-doors-to-houses houses)
+        3 (add-doors-and-roofs-to-houses houses)
         4 (add-roofs-to-houses houses)))

@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\components">
+      <UniqueIdentifier>{ac2c23ca-ee80-4fc6-a28c-c23151e025bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\systems">
+      <UniqueIdentifier>{0e4ef92b-59ba-4813-99eb-835e59cefee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editor tools">
+      <UniqueIdentifier>{26303b05-e267-4c37-b9ef-9197d3eea94b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\editor tools">
+      <UniqueIdentifier>{b5f0d0d0-82c7-4bde-97d5-8d7159718cb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -87,18 +99,6 @@
     <ClCompile Include="WindowsFilesystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditorToolBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SingleTileDrawTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LutDrawTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TileInfoTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="janet.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -113,6 +113,30 @@
     </ClCompile>
     <ClCompile Include="ProceduralHelpers.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawMetaSpriteSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaAtlas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LutDrawTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="TileInfoTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveFunctionCollapseTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleTileDrawTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorToolBase.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaspriteTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,18 +236,6 @@
     <ClInclude Include="IFilesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EditorToolBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SingleTileDrawTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LutDrawTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TileInfoTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedTileDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -244,6 +256,42 @@
     </ClInclude>
     <ClInclude Include="ProceduralHelpers.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaSpriteComponent.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawMetaSpriteSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaSpriteManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileInfoTool.h">
+      <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleTileDrawTool.h">
+      <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveFunctionCollapseTool.h">
+      <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="LutDrawTool.h">
+      <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorToolBase.h">
+      <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaspriteTool.h">
+      <Filter>editor tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
