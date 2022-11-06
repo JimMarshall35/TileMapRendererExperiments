@@ -278,12 +278,12 @@ int main()
         TileChunk::DrawVisibleChunks(atlasLoader.TestGetFirstArrayTexture(), newRenderer, *cam, tiledWorld, rendererInit.chunkSizeX, rendererInit.chunkSizeY, WindowW, WindowH);
 
 
-        const MetaSpriteDescription* sprites;
+        /*const MetaSpriteDescription* sprites;
         u32 numSprites;
         metaAtlas.GetSprites(&sprites, &numSprites);
         if (numSprites > 0) {
             newRenderer.DrawMetaSprite(numSprites - 1, { 100,100 }, { 1,1 }, 0, metaAtlas, atlasLoader.GetAtlasTextureHandle(), *cam);
-        }
+        }*/
 
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
