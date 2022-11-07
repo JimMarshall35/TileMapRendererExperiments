@@ -178,7 +178,7 @@ int main()
     auto tiledWorld = TiledWorld(2000, 2000, 6, &janetPopulator);
     gTiledWorld = &tiledWorld;
 
-    auto metaspritesQuadTree = StaticQuadTree<MetaSpriteComponent>({ {-0.5,-0.5}, {2000,2000} });
+    auto metaspritesQuadTree = DynamicQuadTreeContainer<MetaSpriteComponent>({ {-0.5,-0.5}, {2000,2000} });
 
     auto atlasLoader = AtlasLoader(config);
 
@@ -290,11 +290,11 @@ int main()
 
         r.dims.x = camTLBR.w - camTLBR.y;
         r.dims.y = camTLBR.z - camTLBR.x;
-        auto vis = metaspritesQuadTree.Search(r);
+        auto vis = metaspritesQuadTree.search(r);
         for (const auto& sprite : vis) {
             newRenderer.DrawMetaSprite(
-                sprite.handle,
-                sprite.pos,
+                sprite->item.handle,
+                sprite->item.pos,
                 { 1,1 },
                 0,
                 metaAtlas,

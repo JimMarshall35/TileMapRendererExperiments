@@ -45,7 +45,6 @@
     <ClCompile Include="OpenGlRenderer.cpp" />
     <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp" />
     <ClCompile Include="ProceduralHelpers.cpp" />
-    <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="SingleTileDrawTool.cpp" />
     <ClCompile Include="stbi_image.cpp" />
     <ClCompile Include="Tile.cpp" />

@@ -5,7 +5,7 @@
 #include "MetaspriteComponent.h"
 #include "QuadTree.h"
 
-MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, StaticQuadTree<MetaSpriteComponent>* metaspritesQuadTree)
+MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<MetaSpriteComponent>* metaspritesQuadTree)
     :m_metaAtlas(metaAtlas),
     m_atlasLoader(atlasLoader),
     m_metaspritesQuadTree(metaspritesQuadTree)
@@ -36,9 +36,11 @@ void MetaspriteTool::DoUi()
         }
         ImGui::NewLine();
     }
+    static char metaspriteNameBuffer[200];
+    ImGui::InputText("metasprite name", metaspriteNameBuffer, 200);
     if(ImGui::Button("Save Ms")) {
         MetaSpriteDescription d;
-        d.name = "test";
+        d.name = std::string(metaspriteNameBuffer);
         d.numTiles = m_currentMetaspriteWidth * m_currentMetaspriteHeight;
         d.spriteTilesHeight = m_currentMetaspriteHeight;
         d.spriteTilesWidth = m_currentMetaspriteWidth;
@@ -73,5 +75,5 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
     r.pos = click;
     r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
 
-    m_metaspritesQuadTree->Insert(c, r);
+    m_metaspritesQuadTree->insert(c, r);
 }

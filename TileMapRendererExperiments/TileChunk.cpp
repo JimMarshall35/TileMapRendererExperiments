@@ -12,36 +12,35 @@ void TileChunk::DrawVisibleChunks(ArrayTexture2DHandle tilesTexture, const NewRe
 {
 	using namespace glm;
 	auto tlbr = cam.GetTLBR();
-	auto chunkTL = ivec2(tlbr[1] / chunkSizeX, tlbr[0] / chunkSizeY);
-	auto chunkBR = ivec2(tlbr[3] / chunkSizeX, tlbr[2] / chunkSizeY);
+	
+	auto rawTL = ivec2(tlbr[1], tlbr[0]);
+	auto rawBR = ivec2(tlbr[3], tlbr[2]);
+	rawTL -= 0.5f;
+	rawBR -= 0.5f;
 
+	rawTL.x = rawTL.x < 0 ? 0 : rawTL.x;
+	rawTL.y = rawTL.y < 0 ? 0 : rawTL.y;
 
-	int startX = chunkTL.x;
-	int finishX = chunkBR.x;
-	int startY = chunkTL.y;
-	int finishY = chunkBR.y;
-	u32 chunksDrawn = 0;
-	for (int y = startY; y <= finishY; y++) {
-		for (int x = startX; x <= finishX; x++) {
-			if (x < 0 || y < 0 || x * chunkSizeX >= world.GetMapWidth() || y * chunkSizeY >= world.GetMapHeight()) {
-				continue;
-			}
-			chunksDrawn++;
-			renderer.DrawChunk(
-				{ chunkSizeX * x, chunkSizeY * y },
-				{ chunkSizeX * x, chunkSizeY * y },
-				{ 1,1 },
-				0,
-				world,
-				tilesTexture,
-				cam
-			);
-		}
-	}
+	rawTL.x >= world.GetMapWidth() ? world.GetMapWidth() - 1 : rawTL.x;
+	rawTL.y >= world.GetMapHeight() ? world.GetMapHeight() - 1 : rawTL.y;
 
-	//std::cout << "tl x: " << chunkTL.x <<
-	//	" tl y: " << chunkTL.y <<
-	//	" br x: " << chunkBR.x <<
-	//	" br y: " << chunkBR.y << 
-	//	" chunks drawn: "<< chunksDrawn << "\n\n\n";
+	rawBR.x = rawBR.x < 0 ? 0 : rawBR.x;
+	rawBR.y = rawBR.y < 0 ? 0 : rawBR.y;
+
+	rawBR.x >= world.GetMapWidth() ? world.GetMapWidth() - 1 : rawBR.x;
+	rawBR.y >= world.GetMapHeight() ? world.GetMapHeight() - 1 : rawBR.y;
+
+	const auto padding = 2;
+	auto chunkSize = ivec2{ (rawBR.x - rawTL.x) + padding, (rawBR.y - rawTL.y) + padding };
+	renderer.DrawChunk(
+		rawTL,
+		rawTL,
+		{1,1},
+		0,
+		world,
+		tilesTexture,
+		cam,
+		chunkSize
+	);
+
 }

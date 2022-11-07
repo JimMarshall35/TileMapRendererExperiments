@@ -25,7 +25,8 @@ void NewRenderer::DrawChunk(
 	float rotation,
 	const TiledWorld& world,
 	ArrayTexture2DHandle texArray,
-	const Camera2D& cam
+	const Camera2D& cam,
+	const glm::ivec2& chunkSize
 ) const
 {
 	m_tileShader.use();
@@ -37,7 +38,7 @@ void NewRenderer::DrawChunk(
 	m_tileShader.setMat4("vpMatrix", cam.GetProjectionMatrix(m_windowWidth, m_windowHeight));
 	m_tileShader.setMat4("modelMatrix", model);
 	m_tileShader.SetIVec2("chunkOffset", chunkWorldMapOffset);
-	m_tileShader.SetIVec2("chunkSize", m_tilemapChunkSize);
+	m_tileShader.SetIVec2("chunkSize", chunkSize);
 	m_tileShader.setInt("masterTileTexture", 0);
 	m_tileShader.setInt("atlasSampler", 1);
 
@@ -45,14 +46,14 @@ void NewRenderer::DrawChunk(
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
 	glBindVertexArray(m_vao);
 
-	world.IterateTileLayers([this](const TextureHandle& texture, u16* data, bool visible) {
+	world.IterateTileLayers([this, chunkSize](const TextureHandle& texture, u16* data, bool visible) {
 		if (!visible) {
 			return;
 		}
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		glDrawArrays(GL_TRIANGLES, 0, m_tilemapChunkSize.x * m_tilemapChunkSize.y * TILE_NUM_INDICES);
+		glDrawArrays(GL_TRIANGLES, 0, chunkSize.x * chunkSize.y * TILE_NUM_INDICES);
 	});
 
 }
