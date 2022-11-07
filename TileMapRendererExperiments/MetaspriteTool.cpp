@@ -2,10 +2,13 @@
 #include "imgui/imgui.h"
 #include "AtlasLoader.h"
 #include "MetaAtlas.h"
+#include "MetaspriteComponent.h"
+#include "QuadTree.h"
 
-MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader)
+MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, StaticQuadTree<MetaSpriteComponent>* metaspritesQuadTree)
     :m_metaAtlas(metaAtlas),
-    m_atlasLoader(atlasLoader)
+    m_atlasLoader(atlasLoader),
+    m_metaspritesQuadTree(metaspritesQuadTree)
 {
 }
 
@@ -40,7 +43,7 @@ void MetaspriteTool::DoUi()
         d.spriteTilesHeight = m_currentMetaspriteHeight;
         d.spriteTilesWidth = m_currentMetaspriteWidth;
         memcpy(d.tiles, &m_currentMetasprite[0], sizeof(u16) * d.numTiles);
-        m_metaAtlas->LoadMetaSprite(d);
+        m_currentMetaspriteHandle = m_metaAtlas->LoadMetaSprite(d);
     }
 }
 
@@ -57,4 +60,18 @@ const std::string& MetaspriteTool::GetName()
 {
     static std::string name = "Meta sprite";
     return name;
+}
+
+void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
+{
+    if (m_currentMetaspriteHandle < 0) {
+        return;
+    }
+    const auto d = m_metaAtlas->getDescription(m_currentMetaspriteHandle);
+    MetaSpriteComponent c = {m_currentMetaspriteHandle, click, d};
+    Rect r;
+    r.pos = click;
+    r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
+
+    m_metaspritesQuadTree->Insert(c, r);
 }

@@ -138,6 +138,9 @@
     <ClCompile Include="MetaspriteTool.cpp">
       <Filter>Source Files\editor tools</Filter>
     </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="MetaspriteTool.h">
       <Filter>editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

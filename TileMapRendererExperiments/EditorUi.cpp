@@ -85,6 +85,7 @@ void EditorUi::MouseButtonCallback(float lastX, float lastY, const Camera2D& cam
     int tileX = world.x - 0.5f;
     int tileY = world.y - 0.5f;
     
+    m_tools[m_selectedTool]->RecieveWorldspaceClick(world);
     //m_tiledWorld->SetTile(tileX + 1, tileY + 1, m_layerToSet, m_tileIndexToSet);
     m_tools[m_selectedTool]->RecieveTileClick(tileX + 1, tileY + 1, m_layerToSet);
 }

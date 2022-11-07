@@ -30,6 +30,8 @@
 #include "WaveFunctionCollapseTool.h"
 #include "MetaspriteTool.h"
 #include "MetaAtlas.h"
+#include "QuadTree.h"
+#include "MetaSpriteComponent.h"
 
 
 #define SCR_WIDTH 800
@@ -78,6 +80,8 @@ static std::vector<u32> GetRandomTileMap(int rows, int cols, int minTileValue, i
     }
     return tileMap;
 }
+
+
 
 int main()
 {
@@ -174,6 +178,8 @@ int main()
     auto tiledWorld = TiledWorld(2000, 2000, 6, &janetPopulator);
     gTiledWorld = &tiledWorld;
 
+    auto metaspritesQuadTree = StaticQuadTree<MetaSpriteComponent>({ {-0.5,-0.5}, {2000,2000} });
+
     auto atlasLoader = AtlasLoader(config);
 
     atlasLoader.StartLoadingTilesets();
@@ -228,7 +234,7 @@ int main()
     SingleTileDrawTool singleTileDraw(&tiledWorld);
     TileInfoTool tileInfo(&atlasLoader);
     WaveFunctionCollapseTool waveFunctionCollapse;
-    MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader);
+    MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree);
 
     const u32 NUM_TOOLS = 5;
     EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool };
@@ -277,13 +283,31 @@ int main()
 
         TileChunk::DrawVisibleChunks(atlasLoader.TestGetFirstArrayTexture(), newRenderer, *cam, tiledWorld, rendererInit.chunkSizeX, rendererInit.chunkSizeY, WindowW, WindowH);
 
+        auto camTLBR = cam->GetTLBR();
+        Rect r;
+        r.pos.x = camTLBR.y;
+        r.pos.y = camTLBR.x;
 
-        /*const MetaSpriteDescription* sprites;
+        r.dims.x = camTLBR.w - camTLBR.y;
+        r.dims.y = camTLBR.z - camTLBR.x;
+        auto vis = metaspritesQuadTree.Search(r);
+        for (const auto& sprite : vis) {
+            newRenderer.DrawMetaSprite(
+                sprite.handle,
+                sprite.pos,
+                { 1,1 },
+                0,
+                metaAtlas,
+                atlasLoader.GetAtlasTextureHandle(),
+                *cam);
+        }
+
+        const MetaSpriteDescription* sprites;
         u32 numSprites;
         metaAtlas.GetSprites(&sprites, &numSprites);
         if (numSprites > 0) {
             newRenderer.DrawMetaSprite(numSprites - 1, { 100,100 }, { 1,1 }, 0, metaAtlas, atlasLoader.GetAtlasTextureHandle(), *cam);
-        }*/
+        }
 
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

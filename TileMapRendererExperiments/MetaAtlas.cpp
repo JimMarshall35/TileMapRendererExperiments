@@ -74,7 +74,7 @@ void MetaAtlas::AddMetaSpriteComponentToEntity(flecs::entity& entity, MetaSprite
 	assert(handle < MAX_NUM_METASPRITES);
 	assert(handle < m_numLoadedMetasprites);
 	entity.add<MetaSpriteComponent>();
-	entity.set<MetaSpriteComponent>({ handle, &m_loadedMetaspriteDescriptions[handle] });
+	//entity.set<MetaSpriteComponent>({ handle, &m_loadedMetaspriteDescriptions[handle] });
 }
 
 void MetaAtlas::GetSprites(const MetaSpriteDescription** sprites, u32* numsprites)
