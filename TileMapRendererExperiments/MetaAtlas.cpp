@@ -1,6 +1,7 @@
 #include "MetaAtlas.h"
 #include <glad/glad.h>
 #include <iostream>
+#include <fstream>      // std::ifstream
 #include "flecs.h"
 #include "MetaSpriteComponent.h"
 
@@ -11,7 +12,8 @@ MetaAtlas::MetaAtlas(u32 width, u32 height)
 	m_atlasSize(width * height)
 {
 	memset(m_atlasData.get(), 0, m_atlasSize * sizeof(u16));
-	CreateGlTextureFromAtlas();
+	//CreateGlTextureFromAtlas();
+	LoadFromFile("data\\metasprites.atlas");
 }
 
 
@@ -55,7 +57,8 @@ MetaSpriteHandle MetaAtlas::LoadMetaSprite(const MetaSpriteDescription& descript
 	int onTile = 0;
 	for (int i = writeY; i<writeY+descriptionDest.spriteTilesHeight; i++) {
 		for (int j = writeX; j < writeX + descriptionDest.spriteTilesWidth; j++) {
-			glTextureSubImage2D(m_atlasTextureHandle, 0, j, i, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_SHORT, &description.tiles[onTile++]);
+			glTextureSubImage2D(m_atlasTextureHandle, 0, j, i, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_SHORT, &description.tiles[onTile]);
+			m_atlasData[(m_atlasWidth * i) + j] = description.tiles[onTile++];
 		}
 	}
 
@@ -104,6 +107,153 @@ const MetaSpriteDescription* MetaAtlas::getDescription(MetaSpriteHandle handle) 
 		return nullptr;
 	}
 	return &m_loadedMetaspriteDescriptions[handle];
+}
+
+u32 GetSizeNeededForDescription(const MetaSpriteDescription& m) {
+	u32 totalSize = 0;
+	totalSize += sizeof(m.numTiles);
+	totalSize += sizeof(m.spriteTilesHeight);
+	totalSize += sizeof(m.spriteTilesWidth);
+	totalSize += sizeof(u16) * m.numTiles; // tiles
+	totalSize += m.name.length() + 1;// + 1 for null character
+	return totalSize;
+}
+
+u32 MetaAtlas::GetBufferSizeRequiredToSave() const
+{
+	u32 bufferSize = 0;
+	bufferSize += sizeof(m_atlasWidth);
+	bufferSize += sizeof(m_atlasHeight);
+	bufferSize += m_atlasSize * sizeof(u16);
+	for (int i = 0; i < m_numLoadedMetasprites; i++) {
+		bufferSize += GetSizeNeededForDescription(m_loadedMetaspriteDescriptions[i]);
+		bufferSize += sizeof(glm::ivec2);
+	}
+	bufferSize += sizeof(m_numLoadedMetasprites);
+	bufferSize += sizeof(m_nextX);
+	bufferSize += sizeof(m_nextY);
+	bufferSize += sizeof(m_currentY);
+	return bufferSize;
+}
+
+
+
+void WriteU32(u8*& writePtr, u32 val) {
+	*(u32*)writePtr = val;
+	writePtr += sizeof(u32);
+}
+
+void WriteU16Array(u8*& writePtr, const u16* val, u32 numU16s) {
+	memcpy(writePtr, val, numU16s * sizeof(u16));
+	writePtr += numU16s * sizeof(u16);
+}
+
+void WriteString(u8*& writePtr, std::string string) {
+	for (int i = 0; i < string.length(); i++) {
+		*(writePtr++) = string[i];
+	}
+	*(writePtr++) = '\0';
+}
+
+void WriteF32(u8*& writePtr, f32 val) {
+	*(f32*)writePtr = val;
+	writePtr += sizeof(f32);
+}
+
+void WriteIVec2(u8*& writePtr, const glm::ivec2& val) {
+	WriteU32(writePtr, val.x);
+	WriteU32(writePtr, val.y);
+}
+
+
+
+void ReadU32(u32& in, std::ifstream& fs) {
+	fs.read((char*)&in, sizeof(u32));
+}
+
+void ReadI32(i32& in, std::ifstream& fs) {
+	fs.read((char*)&in, sizeof(i32));
+}
+
+void ReadU16Array(u16* out, u32 arraySize, std::ifstream& fs) {
+	fs.read((char*)out, arraySize * sizeof(u16));
+}
+
+void ReadF32(f32& in, std::ifstream& fs) {
+	fs.read((char*)&in, sizeof(f32));
+}
+
+void ReadIVec2(glm::ivec2& in, std::ifstream& fs) {
+	ReadI32((i32&)in.x, fs);
+	ReadI32((i32&)in.y, fs);
+}
+
+void ReadString(std::string& in, std::ifstream& fs) {
+	char buffer[300];
+	u32 writeIndex = 0;
+	auto pos = fs.tellg();
+	do{
+		 fs.read(&buffer[writeIndex++], sizeof(char));
+	} while (buffer[writeIndex - 1] != '\0');
+
+	in = std::string(buffer);
+}
+
+void MetaAtlas::SaveToFile(std::string path) const
+{
+	u32 size = GetBufferSizeRequiredToSave();
+	auto buffer = std::make_unique<u8[]>(size);
+	u8* writePtr = buffer.get();
+
+	WriteU32(writePtr, m_atlasWidth);
+	WriteU32(writePtr, m_atlasHeight);
+	WriteU16Array(writePtr, m_atlasData.get(), m_atlasSize);
+	WriteU32(writePtr, m_numLoadedMetasprites);
+	for (int i = 0; i < m_numLoadedMetasprites; i++) {
+		const auto& d = m_loadedMetaspriteDescriptions[i];
+		const auto& o = m_loadedMetaSpriteOffsets[i];
+		WriteIVec2(writePtr, o);
+		WriteString(writePtr, d.name);
+		WriteU32(writePtr, d.spriteTilesWidth);
+		WriteU32(writePtr, d.spriteTilesHeight);
+		WriteU32(writePtr, d.numTiles);
+		WriteU16Array(writePtr, d.tiles, d.numTiles);
+	}
+	WriteU32(writePtr, m_nextX);
+	WriteU32(writePtr, m_nextY);
+	WriteU32(writePtr, m_currentY);
+
+	std::ofstream fs(path, std::ios::binary);
+	fs.write((const char*)buffer.get(), size);
+}
+
+void MetaAtlas::LoadFromFile(std::string path)
+{
+	auto fs = std::ifstream(path, std::ios::binary);
+	ReadU32(m_atlasWidth, fs);
+	ReadU32(m_atlasHeight, fs);
+	if (m_atlasData.get()) {
+		m_atlasData.reset();
+	}
+	m_atlasSize = m_atlasWidth * m_atlasHeight;
+	m_atlasData = std::make_unique<u16[]>(m_atlasSize);
+	ReadU16Array(m_atlasData.get(), m_atlasSize, fs);
+	
+	ReadU32(m_numLoadedMetasprites, fs);
+	auto pos = fs.tellg();
+	for (int i = 0; i < m_numLoadedMetasprites; i++) {
+		ReadIVec2(m_loadedMetaSpriteOffsets[i], fs);
+		auto& d = m_loadedMetaspriteDescriptions[i];
+		ReadString(d.name, fs);
+		ReadU32(d.spriteTilesWidth, fs);
+		ReadU32(d.spriteTilesHeight, fs);
+		ReadU32(d.numTiles, fs);
+		ReadU16Array(d.tiles, d.numTiles, fs);
+	}
+	ReadU32(m_nextX, fs);
+	ReadU32(m_nextY, fs);
+	ReadU32(m_currentY, fs);
+	CreateGlTextureFromAtlas();
 }
 
 
@@ -156,3 +306,4 @@ void MetaAtlas::CreateGlTextureFromAtlas()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, m_atlasWidth, m_atlasHeight, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, m_atlasData.get());
 }
+

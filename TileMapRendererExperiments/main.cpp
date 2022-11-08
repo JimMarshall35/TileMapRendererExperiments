@@ -225,7 +225,7 @@ int main()
         .iter([](flecs::iter& it) {
         //std::cout << "delta_time: " << it.delta_time() << std::endl;
             });
-    ecs.set_target_fps(30.0f);
+    ecs.set_target_fps(60.0f);
     WindowsFilesystem fs;
 
     MetaAtlas metaAtlas(100, 100);
@@ -271,6 +271,7 @@ int main()
 
 
         editorUi.DoUiWindow();
+        ImGui::ShowDemoWindow();
 
         cam->OnUpdate(deltaTime);
 
@@ -282,7 +283,7 @@ int main()
         
 
         TileChunk::DrawVisibleChunks(atlasLoader.TestGetFirstArrayTexture(), newRenderer, *cam, tiledWorld, rendererInit.chunkSizeX, rendererInit.chunkSizeY, WindowW, WindowH);
-
+        
         auto camTLBR = cam->GetTLBR();
         Rect r;
         r.pos.x = camTLBR.y;

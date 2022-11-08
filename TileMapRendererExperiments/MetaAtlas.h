@@ -30,10 +30,13 @@ public:
 	u32 GetAtlasTextureHandle() const;
 	const glm::ivec2* GetOffset(MetaSpriteHandle handle) const;
 	const MetaSpriteDescription* getDescription(MetaSpriteHandle handle) const;
+	void SaveToFile(std::string path) const;
+	void LoadFromFile(std::string path);
 private:
 	void ExpandAtlas(u32 tooBigSpriteSizeW = 0, u32 tooBigSpriteSizeH=0);
 	void DoubleAtlasDims();
 	void CreateGlTextureFromAtlas();
+	u32 GetBufferSizeRequiredToSave() const;
 private:
 	u32 m_atlasWidth;
 	u32 m_atlasHeight;

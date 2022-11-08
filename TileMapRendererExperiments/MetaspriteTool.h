@@ -22,6 +22,7 @@ public:
 	
 	virtual const std::string& GetName() override;
 private:
+	void SaveMetaSprite(std::string name);
 	u32 m_selectedMetaspriteTileIndex = 0;
 	u32 m_currentMetaspriteWidth = 4;
 	u32 m_currentMetaspriteHeight = 4;
@@ -30,5 +31,6 @@ private:
 	std::vector<u16> m_currentMetasprite = std::vector<u16>(4*4);
 	DynamicQuadTreeContainer<MetaSpriteComponent>* m_metaspritesQuadTree;
 	i32 m_currentMetaspriteHandle = -1;
+	bool m_autoAdvance = true;
 };
 
