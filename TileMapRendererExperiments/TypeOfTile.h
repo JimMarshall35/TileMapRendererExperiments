@@ -6,7 +6,7 @@ class TypeOfTile
 {
 
 public:
-	TypeOfTile(u32 width, u32 height, std::string filePath);
+	TypeOfTile(u32 width, u32 height, std::string filePath, std::string name);
 	bool operator!=(const TypeOfTile& rhs) const;
 	bool operator==(const TypeOfTile& rhs) const;
 	bool operator<(const TypeOfTile& o)  const;
@@ -19,10 +19,14 @@ public:
 	inline std::string GetFilePath() const {
 		return _filePath;
 	}
+	inline std::string GetName() const {
+		return _name;
+	}
 	u32 TextureArrayHandle;
 private:
 	u32 _width;
 	u32 _height;
 	std::string _filePath;
+	std::string _name;
 };
 

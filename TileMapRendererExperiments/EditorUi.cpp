@@ -9,14 +9,48 @@
 #include <iostream>
 #include <fstream>
 #include "EditorToolBase.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+#include "GameInput.h"
+#include "CameraManager.h"
+#include "EditorCamera.h"
+#include "Undo.h"
 
-EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, flecs::world* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools)
+#define EDITOR_CAM_NAME "Editor"
+
+
+EditorUi::~EditorUi()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
+EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, flecs::world* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools, GLFWwindow* window, CameraManager* camManager)
 	:m_atlasLoader(atlasLoader),
 	m_tiledWorld(tiledWorld),
     m_ecsWorld(ecsWorld),
     m_numTools(numTools),
-    m_tools(tools)
+    m_tools(tools),
+    m_camManager(camManager),
+    m_cam((EditorCamera*)camManager->GetCameraByName(EDITOR_CAM_NAME))
 {
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    m_io = &ImGui::GetIO(); (void)m_io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 130";
+    ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
 void EditorUi::DoUiWindow()
@@ -79,13 +113,145 @@ void EditorUi::DoUiWindow()
     ImGui::End();
 }
 
-void EditorUi::MouseButtonCallback(float lastX, float lastY, const Camera2D& cam)
+void EditorUi::MouseButtonCallback()
 {
-    auto world = cam.MouseScreenPosToWorld(lastX, lastY);
+    auto world = m_cam->MouseScreenPosToWorld(m_lastMouseX, m_lastMouseY);
     int tileX = world.x - 0.5f;
     int tileY = world.y - 0.5f;
     
     m_tools[m_selectedTool]->RecieveWorldspaceClick(world);
     //m_tiledWorld->SetTile(tileX + 1, tileY + 1, m_layerToSet, m_tileIndexToSet);
     m_tools[m_selectedTool]->RecieveTileClick(tileX + 1, tileY + 1, m_layerToSet);
+}
+
+void EditorUi::Draw(const Camera2D& camera) const
+{
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+bool EditorUi::MasksPreviousDrawableLayer() const
+{
+    return false;
+}
+
+std::string EditorUi::GetDrawableLayerName() const
+{
+    return "Editor";
+}
+
+void EditorUi::OnDrawablePush()
+{
+    m_oldCameraName = m_camManager->GetActiveCameraName();
+    m_camManager->SetActiveCamera(EDITOR_CAM_NAME);
+}
+
+void EditorUi::OnDrawablePop()
+{
+    m_camManager->SetActiveCamera(m_oldCameraName);
+}
+
+void EditorUi::ReceiveInput(const GameInput& input)
+{
+    switch (input.type) {
+    case GameInputType::CtrlHeldKeyPress:
+        if (input.data.ctrlKeyCombo.keyPressed == 'z') {
+
+        }
+        else if (input.data.ctrlKeyCombo.keyPressed == 'y') {
+            //Redo(*m_tiledWorld,)
+        }
+        break;
+    case GameInputType::DirectionInput:
+        m_camMoveDirections = input.data.direction.directions;
+        break;
+    case GameInputType::MouseButton:
+        if (m_wantMouseInput) {
+            break;
+        }
+        if (input.data.mouseButton.button == MouseButton::Left && input.data.mouseButton.action == MouseButtonAction::Press) {
+            
+            //cam->StartDrag(lastX, lastY);
+            MouseButtonCallback();
+            m_dragging = true;
+            
+        }
+        else if (input.data.mouseButton.button == MouseButton::Left && input.data.mouseButton.action == MouseButtonAction::Release) {
+            //cam->StopDrag();
+            m_dragging = false;
+        }
+        break;
+    case GameInputType::MouseMove:
+        m_lastMouseX = input.data.mouseMove.xposIn;
+        m_lastMouseY = input.data.mouseMove.yposIn;
+        m_cam->OnMouseMove(m_lastMouseX, m_lastMouseY,m_lastDeltaT);
+        if (m_dragging) {
+            MouseButtonCallback();
+        }
+        break;
+    case GameInputType::MouseScrollWheel:
+        if (!m_wantMouseInput) {
+            m_cam->Zoom *= input.data.mouseScrollWheel.offset > 0 ? (1.1 * input.data.mouseScrollWheel.offset) : 0.9 / abs(input.data.mouseScrollWheel.offset);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+bool EditorUi::MasksPreviousInputLayer() const
+{
+    return true;
+}
+
+std::string EditorUi::GetInputLayerName() const
+{
+    return "Editor";
+}
+
+void EditorUi::OnInputPush()
+{
+}
+
+void EditorUi::OnInputPop()
+{
+}
+
+void EditorUi::Update(float deltaT)
+{
+    m_lastDeltaT = deltaT;
+    m_wantMouseInput = m_io->WantCaptureMouse;
+    m_wantKeyboardInput = m_io->WantCaptureKeyboard;
+
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+
+    DoUiWindow();
+    ImGui::ShowDemoWindow();
+
+    m_cam->OnUpdate(deltaT);
+    m_cam->UpdatePosition(m_camMoveDirections, deltaT);
+    // render
+    // ------
+    ImGui::Render();
+}
+
+bool EditorUi::MasksPreviousUpdateableLayer() const
+{
+    return true;
+}
+
+std::string EditorUi::GetUpdateableLayerName() const
+{
+    return "Editor";
+}
+
+void EditorUi::OnUpdatePush()
+{
+}
+
+void EditorUi::OnUpdatePop()
+{
 }

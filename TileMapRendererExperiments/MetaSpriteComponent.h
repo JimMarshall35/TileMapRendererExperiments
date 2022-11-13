@@ -1,12 +1,17 @@
 #pragma once
 #include "BasicTypedefs.h"
 #include <glm/glm.hpp>
+#include "QuadTree.h"
 
 struct MetaSpriteDescription;
 
-struct MetaSpriteComponent {
+struct MetaSprite {
 	i32 handle;
 	glm::vec2 pos;
-	const MetaSpriteDescription* description;
+	
 };
 
+struct MetaSpriteComponent {
+	std::list<QuadTreeItem<MetaSprite>>::iterator metaSprite;
+	const MetaSpriteDescription* description;
+};

@@ -148,7 +148,7 @@ bool AtlasLoader::TryLoadTileset(const TileSetInfo& info)
 	u32 PixelsRows = info.TileHeight;
 	u8* writePtr = Bytes.get();
 	memset(writePtr, 0, tileSizeBytes);
-	_individualTiles.push_back(Tile(Bytes, PixelsRows, PixelsCols, info.Path));
+	_individualTiles.push_back(Tile(Bytes, PixelsRows, PixelsCols, info.Path, info.Name));
 
 	/* split tileset into tiles and store in _individualTiles vector */
 	const u8* readPtr;
@@ -170,10 +170,10 @@ bool AtlasLoader::TryLoadTileset(const TileSetInfo& info)
 			readPtr -= info.TileHeight * (NUM_CHANNELS * img_w);
 			readPtr += (info.TileWidth * NUM_CHANNELS) + (info.RightMargin * NUM_CHANNELS);
 			
-			_individualTiles.push_back(Tile(Bytes,PixelsRows,PixelsCols, info.Path));
+			_individualTiles.push_back(Tile(Bytes,PixelsRows,PixelsCols, info.Path, info.Name));
 		}
 	}
-	auto type = TypeOfTile(info.TileWidth, info.TileHeight, info.Path);
+	auto type = TypeOfTile(info.TileWidth, info.TileHeight, info.Path, info.Name);
 
 	_numberOfEachTileType[type] += (info.RowsOfTiles * info.ColsOfTiles) + 1;
 	return true;
@@ -203,6 +203,15 @@ TileSetFrameHandle AtlasLoader::GetTilesetFrameHandle()
 
 void AtlasLoader::ReleaseTilesetFrameHandle(TileSetFrameHandle handle)
 {
+}
+
+u32 AtlasLoader::GetArrayTextureByName(const std::string& name)
+{
+	for (auto& pair : _arrayTextureForType) {
+		if (pair.first.GetName() == name) {
+			return pair.second;
+		}
+	}
 }
 
 u32 AtlasLoader::GetRequiredAtlasSizeInBytes(u32& rows)

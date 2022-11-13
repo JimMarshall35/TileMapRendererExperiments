@@ -11,7 +11,6 @@
 
 NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 	:m_tileShader("shaders\\TilemapVert2.glsl", "shaders\\TilemapFrag2.glsl"),
-	m_tilemapChunkSize(info.chunkSizeX, info.chunkSizeY),
 	m_windowWidth(info.windowWidth),
 	m_windowHeight(info.windowHeight)
 {

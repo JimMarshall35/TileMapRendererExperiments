@@ -20,11 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DrawMetaSpriteSystem.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorToolBase.cpp" />
     <ClCompile Include="EditorUi.cpp" />
     <ClCompile Include="flecs.c" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLTextureHelper.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -58,12 +62,18 @@
     <ClCompile Include="WindowsFilesystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutoList.h" />
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DrawMetaSpriteSystem.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorToolBase.h" />
     <ClInclude Include="EditorUi.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="GameInput.h" />
     <ClInclude Include="GeneratedTileDefs.h" />
     <ClInclude Include="IFilesystem.h" />
     <ClInclude Include="ITiledWorldPopulater.h" />
@@ -79,8 +89,10 @@
     <ClInclude Include="ProceduralCppTiledWorldPopulater.h" />
     <ClInclude Include="ProceduralHelpers.h" />
     <ClInclude Include="QuadTree.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="SingleTileDrawTool.h" />
+    <ClInclude Include="TestMoveComponent.h" />
     <ClInclude Include="TileInfoTool.h" />
     <ClInclude Include="WaveFunctionCollapseTool.h" />
     <ClInclude Include="WindowsFilesystem.h" />
@@ -110,6 +122,7 @@
     <ClInclude Include="TileSetInfo.h" />
     <ClInclude Include="TypeOfTile.h" />
     <ClInclude Include="Undo.h" />
+    <ClInclude Include="WindowSizeChangedMessage.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

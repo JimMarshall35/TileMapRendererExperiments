@@ -4,6 +4,7 @@
 
 struct TileSetInfo {
 	std::string Path;
+	std::string Name;
 	u32 TileWidth;
 	u32 TileHeight;
 	// the inital start of the rect containing the tiles, the top left x coord in pixels

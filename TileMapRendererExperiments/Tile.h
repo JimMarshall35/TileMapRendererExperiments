@@ -6,7 +6,7 @@
 
 class Tile {
 public:
-	Tile(std::unique_ptr<u8[]>& bytes, u32 PixelsRows, u32 PixelsCols, const std::string& filePath);
+	Tile(std::unique_ptr<u8[]>& bytes, u32 PixelsRows, u32 PixelsCols, const std::string& filePath, const std::string& tilesetName);
 	inline const u8* GetBytesPtr() const {
 		return _bytes.get();
 	}
@@ -26,5 +26,6 @@ public:
 private:
 	std::unique_ptr<u8[]> _bytes;
 	TypeOfTile _tile;
+	std::string _tilesetName;
 };
 

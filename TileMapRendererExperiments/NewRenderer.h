@@ -14,13 +14,8 @@ class MetaAtlas;
 
 
 struct NewRendererInitialisationInfo {
-	u32 tilemapSizeX;
-	u32 tilemapSizeY;
-	u32 chunkSizeX;
-	u32 chunkSizeY;
 	u32 windowWidth;
 	u32 windowHeight;
-	u32 numLayers;
 };
 class NewRenderer : public IRenderer
 {
@@ -29,14 +24,9 @@ public:
 	void DrawChunk(const glm::ivec2& chunkWorldMapOffset, const glm::vec2& pos, const glm::vec2& scale, float rotation, const TiledWorld& world, ArrayTexture2DHandle texArray, const Camera2D& camArray, const glm::ivec2& chunkSize) const;
 	void DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, const glm::vec2& scale, float rotation, const MetaAtlas& atlas, ArrayTexture2DHandle texArray, const Camera2D& cam) const;
 private:
-	//std::unique_ptr<u16[]> m_worldTexturesBytes[MAX_NUM_Z_LAYERS];
-	//u32 m_worldTexturesHandles[MAX_NUM_Z_LAYERS];
 	Shader m_tileShader;
-	glm::ivec2 m_tilemapChunkSize;
-	//glm::ivec2 m_worldMapSize;
 	u32 m_windowWidth, m_windowHeight;
 	u32 m_vao;
-	//u32 m_numLayers;
 
 	// Inherited via IRenderer
 	virtual void SetWindowWidthAndHeight(u32 width, u32 height) override;

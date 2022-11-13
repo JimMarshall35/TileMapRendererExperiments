@@ -4,17 +4,21 @@
 
 class MetaAtlas;
 class AtlasLoader;
-struct MetaSpriteComponent;
+struct MetaSprite;
 
 template<typename T>
 class DynamicQuadTreeContainer;
+
+namespace flecs {
+	struct world;
+};
 
 class MetaspriteTool
 	:public EditorToolBase
 {
 	// Inherited via EditorToolBase
 public:
-	MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<MetaSpriteComponent>* metaspritesQuadTree);
+	MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<MetaSprite>* metaspritesQuadTree, flecs::world* ecs);
 	virtual void DoUi() override;
 	virtual void RecieveTileClick(i32 x, i32 y, i32 z) override;
 	virtual void RecieveWorldspaceClick(const glm::vec2& click) override;
@@ -29,8 +33,9 @@ private:
 	MetaAtlas* m_metaAtlas;
 	AtlasLoader* m_atlasLoader;
 	std::vector<u16> m_currentMetasprite = std::vector<u16>(4*4);
-	DynamicQuadTreeContainer<MetaSpriteComponent>* m_metaspritesQuadTree;
+	DynamicQuadTreeContainer<MetaSprite>* m_metaspritesQuadTree;
 	i32 m_currentMetaspriteHandle = -1;
 	bool m_autoAdvance = true;
+	flecs::world* m_ecs;
 };
 

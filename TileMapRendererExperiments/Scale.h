@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct scale {
+struct Scale {
 	glm::vec2 val;
 };

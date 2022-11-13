@@ -1,8 +1,8 @@
 #include "TypeOfTile.h"
 #include <functional>
 
-TypeOfTile::TypeOfTile(u32 width, u32 height, std::string filePath)
-    :_width(width), _height(height), _filePath(filePath)
+TypeOfTile::TypeOfTile(u32 width, u32 height, std::string filePath, std::string name)
+    :_width(width), _height(height), _filePath(filePath), _name(name)
 {
 }
 

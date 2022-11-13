@@ -2,8 +2,8 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtx/transform.hpp>
 
-Camera2D::Camera2D(u32 screenW, u32 screenH)
-    :_screenWidth(screenW), _screenHeight(screenH)
+Camera2D::Camera2D(u32 screenW, u32 screenH, std::string name)
+    :_screenWidth(screenW), _screenHeight(screenH), _name(name)
 {
 }
 

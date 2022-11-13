@@ -56,13 +56,7 @@ public:
 	const inline std::map<TypeOfTile, u32>& GetrrayTexureMap() {
 		return _arrayTextureForType;
 	}; 
-	u32 TestGetFirstArrayTexture() {
-		for (auto& pair : _arrayTextureForType) {
-			if ("sprites\\roguelikeCity_magenta.png") {
-				return pair.second;
-			}
-		}
-	}
+	u32 GetArrayTextureByName(const std::string& name);
 	inline u32 GetNumTiles() const { return _individualTiles.size(); }
 private:
 	u32 GetRequiredAtlasSizeInBytes(u32& rows);

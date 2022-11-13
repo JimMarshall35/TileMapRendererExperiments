@@ -76,7 +76,7 @@ void MetaAtlas::AddMetaSpriteComponentToEntity(flecs::entity& entity, MetaSprite
 	assert(handle >= 0);
 	assert(handle < MAX_NUM_METASPRITES);
 	assert(handle < m_numLoadedMetasprites);
-	entity.add<MetaSpriteComponent>();
+	entity.add<MetaSprite>();
 	//entity.set<MetaSpriteComponent>({ handle, &m_loadedMetaspriteDescriptions[handle] });
 }
 
