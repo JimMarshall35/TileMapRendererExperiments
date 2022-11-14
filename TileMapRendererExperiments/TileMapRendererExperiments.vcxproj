@@ -83,7 +83,6 @@
     <ClInclude Include="LutDrawTool.h" />
     <ClInclude Include="MetaAtlas.h" />
     <ClInclude Include="MetaSpriteComponent.h" />
-    <ClInclude Include="MetaSpriteManager.h" />
     <ClInclude Include="MetaspriteTool.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ProceduralCppTiledWorldPopulater.h" />
