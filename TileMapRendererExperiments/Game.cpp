@@ -8,6 +8,7 @@
 #include "CameraManager.h"
 #include "GameCamera.h"
 #include "TiledWorld.h"
+#include "GameInput.h"
 
 #define GAME_CAM_NAME "Game"
 
@@ -33,11 +34,50 @@ Game::Game(
     m_windowHeight(windowY),
     m_windowWidth(windowX)
 {
-    
+    m_tiledWorldSizeX = m_tiledWorld->GetMapWidth();
+    m_tiledWorldSizeY = m_tiledWorld->GetMapHeight();
 }
 
 void Game::ReceiveInput(const GameInput& input)
 {
+    switch (input.type) {
+    case GameInputType::DirectionInput:
+    {
+        glm::vec2 moveVec = { 0,0 };
+        bool move = false;
+        if (input.data.direction.directions & Directions::UP) {
+            moveVec.y = -1.0f;
+            move = true;
+        }
+        if (input.data.direction.directions & Directions::DOWN) {
+            moveVec.y = 1.0f;
+            move = true;
+
+        }
+        if (input.data.direction.directions & Directions::LEFT) {
+            moveVec.x = -1.0f;
+            move = true;
+
+        }
+        if (input.data.direction.directions & Directions::RIGHT) {
+            moveVec.x = 1.0f;
+            move = true;
+
+        }
+
+        if (move) {
+            m_gameCamera->FocusPosition += glm::normalize(moveVec) * 60.0f * m_deltaT;
+            m_gameCamera->ClampPosition();
+        }
+        
+        
+    }
+        break;
+    case GameInputType::MouseScrollWheel:
+        m_gameCamera->Zoom *= input.data.mouseScrollWheel.offset > 0 ? (1.1 * input.data.mouseScrollWheel.offset) : 0.9 / abs(input.data.mouseScrollWheel.offset);
+        m_gameCamera->ClampPosition();
+        break;
+    }
 }
 
 bool Game::MasksPreviousInputLayer() const
@@ -103,6 +143,7 @@ void Game::OnDrawablePop()
 
 void Game::Update(float deltaT)
 {
+    m_deltaT = deltaT;
 }
 
 bool Game::MasksPreviousUpdateableLayer() const

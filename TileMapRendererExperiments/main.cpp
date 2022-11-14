@@ -217,7 +217,7 @@ int main()
     camera.Zoom = 3.0f;
     auto cameraStart = glm::vec2(camera.GetTLBR()[1], camera.GetTLBR()[0]);
     camera.FocusPosition += -cameraStart;
-    auto gameCam = GameCamera();
+    auto gameCam = GameCamera(SCR_WIDTH, SCR_WIDTH, 2000, 2000);
     Camera2D* cameras[] = {&gameCam, &camera};
     auto camManager = CameraManager(cameras, 2);
 

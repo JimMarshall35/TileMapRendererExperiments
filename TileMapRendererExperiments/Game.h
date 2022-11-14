@@ -66,7 +66,9 @@ private:
 	u32 m_windowHeight;
 	GameCamera* m_gameCamera;
 	u32 m_tilesArrayTexture;
-
+	float m_deltaT;
+	u32 m_tiledWorldSizeX;
+	u32 m_tiledWorldSizeY;
 	
 };
 

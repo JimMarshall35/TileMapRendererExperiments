@@ -14,7 +14,7 @@ public:
 	glm::mat4x4 GetProjectionMatrix(int windowWidth, int windowHeight) const;
 	glm::vec4 GetTLBR() const;
 	glm::vec2 MouseScreenPosToWorld(double mousex, double mousey) const;
-	void SetWindowWidthAndHeight(u32 newW, u32 newH);
+	virtual void SetWindowWidthAndHeight(u32 newW, u32 newH);
 	std::string Name() { return _name; }
 protected:
 	u32 _screenWidth;
