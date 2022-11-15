@@ -32,10 +32,10 @@ Game::Game(
     m_gameCamera((GameCamera*)m_camManager->GetCameraByName(GAME_CAM_NAME)),
     m_tilesArrayTexture(m_atlasLoader->GetArrayTextureByName("City tiles")),
     m_windowHeight(windowY),
-    m_windowWidth(windowX)
+    m_windowWidth(windowX),
+    m_tiledWorldSizeX(m_tiledWorld->GetMapWidth()),
+    m_tiledWorldSizeY(m_tiledWorld->GetMapHeight())
 {
-    m_tiledWorldSizeX = m_tiledWorld->GetMapWidth();
-    m_tiledWorldSizeY = m_tiledWorld->GetMapHeight();
 }
 
 void Game::ReceiveInput(const GameInput& input)
@@ -102,7 +102,7 @@ void Game::Draw(const Camera2D& camera) const
 {
     TileChunk::DrawVisibleChunks(m_tilesArrayTexture, *m_renderer, *m_camManager->GetActiveCamera(), *m_tiledWorld, m_windowWidth, m_windowHeight);
 
-    auto camTLBR = m_gameCamera->GetTLBR();
+    auto camTLBR = camera.GetTLBR();
     Rect r;
     r.pos.x = camTLBR.y;
     r.pos.y = camTLBR.x;
