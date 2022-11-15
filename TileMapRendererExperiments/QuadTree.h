@@ -127,7 +127,7 @@ private:
 	u32 m_depth = 0;
 	Rect m_rect;
 	Rect m_childrenTLBRs[4];
-	StaticQuadTree<T>* m_children[4];
+	StaticQuadTree<T>* m_children[4]{ nullptr,nullptr,nullptr,nullptr };;
 
 	StaticQuadTreeContainerType m_items;
 };
@@ -144,7 +144,7 @@ public:
 	}
 
 	~DynamicQuadTree() {
-		Clear();
+		//Clear();
 	}
 
 	void Resize(const Rect& tlbr) {
@@ -162,7 +162,7 @@ public:
 	void Clear() {
 		m_items.clear();
 		for (int i = 0; i < 4; i++) {
-			if (m_children[i]) {
+			if (m_children[i] != nullptr) {
 				m_children[i]->Clear();
 				delete m_children[i];
 			}
@@ -234,7 +234,7 @@ private:
 	u32 m_depth = 0;
 	Rect m_rect;
 	Rect m_childrenTLBRs[4];
-	DynamicQuadTree<T>* m_children[4];
+	DynamicQuadTree<T>* m_children[4]{nullptr,nullptr,nullptr,nullptr};
 
 	DynamicQuadTreeContainerType m_items;
 };
