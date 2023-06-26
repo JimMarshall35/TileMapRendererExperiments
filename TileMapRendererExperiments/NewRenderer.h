@@ -23,10 +23,17 @@ public:
 	NewRenderer(const NewRendererInitialisationInfo& info);
 	void DrawChunk(const glm::ivec2& chunkWorldMapOffset, const glm::vec2& pos, const glm::vec2& scale, float rotation, const TiledWorld& world, ArrayTexture2DHandle texArray, const Camera2D& camArray, const glm::ivec2& chunkSize, float opacity=1.0f) const;
 	void DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, const glm::vec2& scale, float rotation, const MetaAtlas& atlas, ArrayTexture2DHandle texArray, const Camera2D& cam, float opacity = 1.0f) const;
+	void DrawLine(const glm::vec2& point1, const glm::vec2& point2, const glm::vec4& colour, float width, const Camera2D& cam) const;
+private:
+	void InitSingleLineDrawing();
 private:
 	Shader m_tileShader;
+	Shader m_singleLineShader;
+
 	u32 m_windowWidth, m_windowHeight;
 	u32 m_vao;
+	u32 m_singleLineVAO;
+	u32 m_singleLineVBO;
 
 	// Inherited via IRenderer
 	virtual void SetWindowWidthAndHeight(u32 width, u32 height) override;

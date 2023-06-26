@@ -1,12 +1,5 @@
-﻿  main.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
+﻿  NewRenderer.cpp
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(96,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(453,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(454,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   TileMapRendererExperiments.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\TileMapRendererExperiments.exe

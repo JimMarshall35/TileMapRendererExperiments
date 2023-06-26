@@ -203,11 +203,11 @@ int main()
 
     atlasLoader.StopLoadingTilesets(AtlasLoaderAtlasType::ArrayTexture | AtlasLoaderAtlasType::SingleTextureAtlas);
 
-    /*std::string errorString;
+    std::string errorString;
     if (!metaAtlas.LoadFromJSON("data\\json", "city.json", errorString))
     {
         std::cerr << errorString << "\n";
-    }*/
+    }
     ///////////////////////////////////////////////////////////////////// initialise cameras
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;

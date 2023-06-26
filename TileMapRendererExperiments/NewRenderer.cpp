@@ -11,10 +11,12 @@
 
 NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 	:m_tileShader("shaders\\TilemapVert2.glsl", "shaders\\TilemapFrag2.glsl"),
+	m_singleLineShader("shaders\\SingleLineVert.glsl", "shaders\\SingleLineFrag.glsl"),
 	m_windowWidth(info.windowWidth),
 	m_windowHeight(info.windowHeight)
 {
 	glGenVertexArrays(1, &m_vao);
+	InitSingleLineDrawing();
 }
 
 void NewRenderer::DrawChunk(
@@ -85,6 +87,35 @@ void NewRenderer::DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, con
 	glDrawArrays(GL_TRIANGLES, 0, description->spriteTilesWidth * description->spriteTilesHeight * TILE_NUM_INDICES);
 
 }
+
+void NewRenderer::InitSingleLineDrawing()
+{
+	const unsigned int lineVerts[2] = {
+		0,1
+	};
+	// line 
+	glGenVertexArrays(1, &m_singleLineVAO);
+	glGenBuffers(1, &m_singleLineVBO);
+	glBindVertexArray(m_singleLineVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_singleLineVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(lineVerts), lineVerts, GL_STATIC_DRAW);
+	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, sizeof(unsigned int), NULL);
+	glEnableVertexAttribArray(0);
+}
+
+void NewRenderer::DrawLine(const glm::vec2& point1, const glm::vec2& point2, const glm::vec4& colour, float width, const Camera2D& cam) const
+{
+	m_singleLineShader.use();
+	m_singleLineShader.setMat4("projection", cam.GetProjectionMatrix(m_windowWidth, m_windowHeight));
+	m_singleLineShader.setVec4("Colour", colour);
+	m_singleLineShader.setVec2("point1world", point1);
+	m_singleLineShader.setVec2("point2world", point2);
+	glLineWidth(width);
+	glBindVertexArray(m_singleLineVAO);
+	glDrawArrays(GL_LINES, 0, 2);
+	glLineWidth(1);
+}
+
 
 void NewRenderer::SetWindowWidthAndHeight(u32 width, u32 height)
 {
