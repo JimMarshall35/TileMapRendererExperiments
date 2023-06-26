@@ -22,6 +22,7 @@
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="DrawMetaSpriteSystem.cpp" />
+    <ClCompile Include="ECS.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorToolBase.cpp" />
     <ClCompile Include="EditorUi.cpp" />
@@ -41,6 +42,8 @@
     <ClCompile Include="janet.c" />
     <ClCompile Include="JanetScriptProceduralPopulater.cpp" />
     <ClCompile Include="JanetVmService.cpp" />
+    <ClCompile Include="jsonhelper.cpp" />
+    <ClCompile Include="JSONPopulator.cpp" />
     <ClCompile Include="LutDrawTool.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MetaAtlas.cpp" />
@@ -67,6 +70,7 @@
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="DrawMetaSpriteSystem.h" />
+    <ClInclude Include="ECS.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorToolBase.h" />
     <ClInclude Include="EditorUi.h" />
@@ -80,6 +84,8 @@
     <ClInclude Include="janet.h" />
     <ClInclude Include="JanetScriptProceduralPopulater.h" />
     <ClInclude Include="JanetVmService.h" />
+    <ClInclude Include="jsonhelper.h" />
+    <ClInclude Include="JSONPopulator.h" />
     <ClInclude Include="LutDrawTool.h" />
     <ClInclude Include="MetaAtlas.h" />
     <ClInclude Include="MetaSpriteComponent.h" />
@@ -89,6 +95,7 @@
     <ClInclude Include="ProceduralHelpers.h" />
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Rotation.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="SingleTileDrawTool.h" />
     <ClInclude Include="TestMoveComponent.h" />

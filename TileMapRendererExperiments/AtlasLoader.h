@@ -42,6 +42,7 @@ public:
 	void StartLoadingTilesets();
 	void StopLoadingTilesets(AtlasLoaderAtlasType atlasTypeToMake);
 	bool TryLoadTileset(const TileSetInfo& info);
+	bool TryLoadTilesetFromJSONInfo(const std::string& folder, const std::string& file);
 	void DebugDumpTiles(std::string path);
 	// get a handle that can be used to free tiles that were loaded afterwards
 	TileSetFrameHandle GetTilesetFrameHandle();

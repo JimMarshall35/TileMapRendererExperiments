@@ -1,0 +1,28 @@
+{
+	"player":{
+		"tilesheet" : "24by24ModernRPGGuy",
+		"animations" : [
+			{
+				"name" : "walk_up",
+				"fps" : 10,
+				"frames" : [0,1,2,3]
+			},
+			{
+				"name" : "walk_down",
+				"fps" : 10,
+				"frames" : [4,5,6,7]
+			},
+			{
+				"name" : "walk_right",
+				"fps" : 10,
+				"frames" : [8,9,10,11]
+			},
+			{
+				"name" : "walk_left",
+				"fps" : 10,
+				"frames" : [12,13,14,15]
+			}
+			
+		]
+	}
+}

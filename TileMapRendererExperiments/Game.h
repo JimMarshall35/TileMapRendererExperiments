@@ -2,6 +2,7 @@
 #include "GameFramework.h"
 #include "BasicTypedefs.h"
 #include "WindowSizeChangedMessage.h"
+#include "flecs.h"
 
 class CameraManager;
 class NewRenderer;
@@ -23,7 +24,7 @@ public:
 	Game(
 		CameraManager* camManager,
 		NewRenderer* renderer,
-		DynamicQuadTreeContainer<MetaSprite>* metaspritesQuadTree,
+		DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree,
 		MetaAtlas* metaAtlas,
 		AtlasLoader* atlasLoader,
 		TiledWorld* tiledWorld,
@@ -58,7 +59,7 @@ public:
 private:
 	CameraManager* m_camManager;
 	NewRenderer* m_renderer;
-	DynamicQuadTreeContainer<MetaSprite>* m_metaspritesQuadTree;
+	DynamicQuadTreeContainer<flecs::entity>* m_metaspritesQuadTree;
 	MetaAtlas* m_metaAtlas;
 	AtlasLoader* m_atlasLoader;
 	TiledWorld* m_tiledWorld;

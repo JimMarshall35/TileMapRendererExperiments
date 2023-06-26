@@ -1,1 +1,45 @@
-﻿  Camera2D.cpp
+﻿  DrawMetaSpriteSystem.cpp
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  ECS.cpp
+  Game.cpp
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Game.cpp(78,66): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+  MetaAtlas.cpp
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(59,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(60,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(79,2): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(97,27): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(106,27): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(119,31): warning C4267: '+=': conversion from 'size_t' to 'u32', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(129,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(213,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(245,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(273,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(285,21): warning C4018: '<': signed/unsigned mismatch
+  MetaspriteTool.cpp
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaspriteTool.cpp(64,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaspriteTool.cpp(75,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaspriteTool.cpp(23,56): warning C4390: ';': empty controlled statement found; is this the intent?
+  main.cpp
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(96,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(453,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\main.cpp(454,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(290): warning C4715: 'MetaAtlas::LoadFromJSON': not all control paths return a value
+  TileMapRendererExperiments.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\TileMapRendererExperiments.exe

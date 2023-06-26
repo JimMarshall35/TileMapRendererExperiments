@@ -4,6 +4,7 @@
 #include <fstream>      // std::ifstream
 #include "flecs.h"
 #include "MetaSpriteComponent.h"
+#include "jsonhelper.h"
 
 MetaAtlas::MetaAtlas(u32 width, u32 height)
 	:m_atlasData(std::make_unique<u16[]>(width * height)),
@@ -192,8 +193,8 @@ void ReadString(std::string& in, std::ifstream& fs) {
 	char buffer[300];
 	u32 writeIndex = 0;
 	auto pos = fs.tellg();
-	do{
-		 fs.read(&buffer[writeIndex++], sizeof(char));
+	do {
+		fs.read(&buffer[writeIndex++], sizeof(char));
 	} while (buffer[writeIndex - 1] != '\0');
 
 	in = std::string(buffer);
@@ -238,7 +239,7 @@ void MetaAtlas::LoadFromFile(std::string path)
 	m_atlasSize = m_atlasWidth * m_atlasHeight;
 	m_atlasData = std::make_unique<u16[]>(m_atlasSize);
 	ReadU16Array(m_atlasData.get(), m_atlasSize, fs);
-	
+
 	ReadU32(m_numLoadedMetasprites, fs);
 	auto pos = fs.tellg();
 	for (int i = 0; i < m_numLoadedMetasprites; i++) {
@@ -254,6 +255,38 @@ void MetaAtlas::LoadFromFile(std::string path)
 	ReadU32(m_nextY, fs);
 	ReadU32(m_currentY, fs);
 	CreateGlTextureFromAtlas();
+}
+
+bool MetaAtlas::LoadFromJSON(const std::string& folder, const std::string& file, std::string& outErrorMsg)
+{
+	using namespace rapidjson;
+	Document doc;
+	if (!loadJSONFile(doc, (folder + "/" + file).c_str())) {
+		outErrorMsg = "problem loading " + (folder + "\\" + file) + "\n";
+		return false;
+	}
+	if(!checkJSONValue("metasprites", JSONTYPE::ARRAY, doc)){
+		outErrorMsg = "metasprites field doesn't exist or isn't an array\n";
+		return false;
+	}
+	const Value& metaSpritesArray = doc["metasprites"];
+	for (int i = 0; i < metaSpritesArray.Size(); i++)
+	{
+		const Value& metaSprite = metaSpritesArray[i];
+		std::string name = metaSprite["name"].GetString();
+		u32 width = metaSprite["width"].GetUint();
+		const Value& data = metaSprite["tiles"];
+		u32 numTiles = data.Size();
+		MetaSpriteDescription desc;
+		desc.name = name;
+		desc.spriteTilesWidth = width;
+		desc.spriteTilesHeight = numTiles / width;
+		desc.numTiles = numTiles;
+		for (int j = 0; j < numTiles; j++) {
+			desc.tiles[j] = (u16)data[j].GetUint();
+		}
+		MetaSpriteHandle hndl = LoadMetaSprite(desc);
+	}
 }
 
 

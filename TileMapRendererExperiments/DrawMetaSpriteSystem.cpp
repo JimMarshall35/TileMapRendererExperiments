@@ -10,7 +10,7 @@ static NewRenderer* s_renderer;
 
 void MetaspriteSystemSetup(flecs::world& ecs, NewRenderer* renderer)
 {
-    s_renderer = renderer;
+    //s_renderer = renderer;
     //ecs.system<const Position, const Scale, const MetaSpriteComponent>()
     //    .each([](const Position& p, const Scale& s, const MetaSpriteComponent& m) {
     //    

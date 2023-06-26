@@ -7,6 +7,7 @@
 #include "IRenderer.h"
 #include <glad/glad.h>
 #include "GLTextureHelper.h"
+#include "jsonhelper.h"
 #define DEBUG_OUTPUT_ATLAS_PNG
 //#define DEBUG_OUTPUT_TILES
 
@@ -406,4 +407,64 @@ void AtlasLoader::MakeAtlasAsArrayTexture()
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	}
+}
+
+namespace JSONHelpers
+{
+	const char* columnsName = "columns";
+	const char* nameName = "name";
+	const char* tileWidthName = "tilewidth";
+	const char* tileheightName = "tileheight";
+	const char* tilecountName = "tilecount";
+	const char* spacingName = "spacing";
+	const char* marginName = "margin";
+	const char* imageWidthName = "imagewidth";
+	const char* imageHeightName = "imageheight";
+	const char* image = "image";
+
+	bool TilesetFileChecks(const rapidjson::Value& val, std::string& errorOut) {
+		if (!checkJSONValue(columnsName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(image, JSONTYPE::STRING, val)) { return false; }
+		if (!checkJSONValue(imageHeightName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(imageWidthName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(marginName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(nameName, JSONTYPE::STRING, val)) { return false; }
+		if (!checkJSONValue(spacingName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(tilecountName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(tileheightName, JSONTYPE::INT, val)) { return false; }
+		if (!checkJSONValue(tileWidthName, JSONTYPE::INT, val)) { return false; }
+		//if (!checkJSONValue("gensprites", JSONTYPE::BOOL, val)) { return false; }
+		return true;
+	}
+}
+
+
+
+
+bool AtlasLoader::TryLoadTilesetFromJSONInfo(const std::string& folder, const std::string& file)
+{
+	using namespace rapidjson;
+	Document doc;
+	if (!loadJSONFile(doc, (folder + "/" + file).c_str())) {
+		std::cerr << "problem loading " << (folder + "\\" + file).c_str() << std::endl;
+		return false;
+	}
+	std::string fieldsCheckMessage;
+	if (!JSONHelpers::TilesetFileChecks(doc, fieldsCheckMessage)) {
+		return false;
+	}
+	TileSetInfo info;
+	//info.ColsOfTiles = doc[JSONHelpers::columnsName].GetUint();
+	info.Path = folder + "\\" + doc[JSONHelpers::image].GetString();
+	info.Name = doc[JSONHelpers::nameName].GetString();
+	info.TileWidth = doc[JSONHelpers::tileWidthName].GetUint();
+	info.TileHeight = doc[JSONHelpers::tileheightName].GetUint();
+	info.BottomMargin = doc[JSONHelpers::spacingName].GetUint();
+	info.RightMargin = doc[JSONHelpers::spacingName].GetUint();
+	info.PixelColStart = doc[JSONHelpers::marginName].GetUint();
+	info.PixelRowStart = doc[JSONHelpers::marginName].GetUint();
+	info.ColsOfTiles = doc[JSONHelpers::columnsName].GetUint();
+	info.RowsOfTiles = doc[JSONHelpers::tilecountName].GetUint() / doc[JSONHelpers::columnsName].GetUint();
+	
+	return TryLoadTileset(info);
 }

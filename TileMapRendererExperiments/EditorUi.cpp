@@ -27,7 +27,7 @@ EditorUi::~EditorUi()
     ImGui::DestroyContext();
 }
 
-EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, flecs::world* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools, GLFWwindow* window, CameraManager* camManager)
+EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, ECS* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools, GLFWwindow* window, CameraManager* camManager)
 	:m_atlasLoader(atlasLoader),
 	m_tiledWorld(tiledWorld),
     m_ecsWorld(ecsWorld),
@@ -61,9 +61,26 @@ void EditorUi::DoUiWindow()
     auto onIndex = 0;;
     auto zoom = 5.0f;
     ImGui::SliderInt("layer", &m_layerToSet, 0, m_tiledWorld->GetNumLayers() - 1);
-    bool* visibilities = m_tiledWorld->GetLayersVisibilities();
+    //bool* visibilities = m_tiledWorld->GetLayersVisibilities();
+    TiledWorld::TileLayer* tileLayers = m_tiledWorld->GetTileLayers();
     for (int i = 0; i < m_tiledWorld->GetNumLayers(); i++) {
-        ImGui::Checkbox((std::string("layer ") + std::to_string(i)).c_str(), &visibilities[i]);
+        ImGui::BeginGroup();
+
+        ImGui::Columns(2);
+        char buf[256];
+        strcpy(buf, tileLayers[i].Name.c_str());
+        ImGui::InputText("", buf, 256);
+        if (strcmp(buf, tileLayers[i].Name.c_str())!=0)
+        {
+            tileLayers[i].Name = std::string(buf);
+        }
+        
+        ImGui::NextColumn();
+        ImGui::Checkbox((std::string("layer ") + std::to_string(i)).c_str(), &tileLayers[i].Visible);
+        ImGui::NextColumn();
+
+        ImGui::EndGroup();
+
     }
     static const char* current_item = m_tools[m_selectedTool]->GetName().c_str();
     if (ImGui::BeginCombo("##toolcombo", current_item)) {

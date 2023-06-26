@@ -138,3 +138,5 @@
         2 (set houses (add-roofs-to-houses houses))
         3 (add-doors-and-roofs-to-houses houses)
         4 (add-roofs-to-houses houses)))
+
+(defn get-required-layers 6)

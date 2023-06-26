@@ -9,6 +9,7 @@
 #include "GameCamera.h"
 #include "TiledWorld.h"
 #include "GameInput.h"
+#include "Position.h"
 
 #define GAME_CAM_NAME "Game"
 
@@ -16,7 +17,7 @@
 Game::Game(
     CameraManager* camManager,
     NewRenderer* renderer,
-    DynamicQuadTreeContainer<MetaSprite>* metaspritesQuadTree,
+    DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree,
     MetaAtlas* metaAtlas,
     AtlasLoader* atlasLoader,
     TiledWorld* tiledWorld,
@@ -110,10 +111,13 @@ void Game::Draw(const Camera2D& camera) const
     r.dims.x = camTLBR.w - camTLBR.y;
     r.dims.y = camTLBR.z - camTLBR.x;
     auto vis = m_metaspritesQuadTree->search(r);
-    for (const auto& sprite : vis) {
+    for (const auto& qItem : vis) {
+        
+        auto entity = qItem->item;
+        const MetaSpriteComponent* metaSprite = entity.get<MetaSpriteComponent>();
         m_renderer->DrawMetaSprite(
-            sprite->item.handle,
-            sprite->item.pos,
+            metaSprite->handle,
+            metaSprite->pos,
             { 1,1 },
             0,
             *m_metaAtlas,

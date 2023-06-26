@@ -8,8 +8,9 @@
 #include "Position.h"
 #include "Scale.h"
 #include "TestMoveComponent.h"
+#include "ECS.h"
 
-MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<MetaSprite>* metaspritesQuadTree, flecs::world* ecs)
+MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree, ECS* ecs)
     :m_metaAtlas(metaAtlas),
     m_atlasLoader(atlasLoader),
     m_metaspritesQuadTree(metaspritesQuadTree),
@@ -120,27 +121,23 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
         return;
     }
     const auto d = m_metaAtlas->getDescription(m_currentMetaspriteHandle);
-    MetaSprite c = {m_currentMetaspriteHandle, click};
     Rect r;
     r.pos = click;
     r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
+    MetaSpriteComponent comp = { m_currentMetaspriteHandle, click };
 
-    m_metaspritesQuadTree->insert(c, r);
-
-    MetaSpriteComponent comp;
-    comp.description = d;
-    comp.metaSprite = std::prev(m_metaspritesQuadTree->end());
-    m_ecs->entity()
-        .set([click, comp, r](Position& p, MetaSpriteComponent& m, Scale& s, TestMoveComponent& t, Rect& re) {
+    flecs::entity entity = m_ecs->GetWorld()->entity()
+        .set([click, comp, r](Position& p, MetaSpriteComponent& m, Scale& s, Rect& re) {
                 p.val = click;
                 s.val = { 1,1 };
                 m = comp;
-                t.startPos = click;
-                t.endPos = click + glm::vec2{ 30,30 };
-                t.cycleTime = 30.0f;
-                t.t =0.0f;
                 re = r;
             });
+
+    m_metaspritesQuadTree->insert(entity, r);
+    std::list<QuadTreeItem<flecs::entity>>::iterator iter = std::prev(m_metaspritesQuadTree->end());
+    const MetaSpriteComponent* ms = entity.get<MetaSpriteComponent>();
+    entity.set<MetaSpriteComponent>({ ms->handle, ms->pos, iter });
 }
 
 void MetaspriteTool::SaveMetaSprite(std::string name) {

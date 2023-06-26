@@ -1,0 +1,14 @@
+{ "columns":59,
+ "image":"Spritesheet\/Modern_Interiors_v26.4\/Modern_Interiors\/1_Interiors\/16x16\/Room_Builder_16x16.png",
+ "imageheight":976,
+ "imagewidth":944,
+ "margin":0,
+ "name":"interior ",
+ "spacing":0,
+ "tilecount":3599,
+ "tiledversion":"1.5.0",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":1.5
+}

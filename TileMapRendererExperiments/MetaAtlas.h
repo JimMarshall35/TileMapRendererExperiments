@@ -32,6 +32,7 @@ public:
 	const MetaSpriteDescription* getDescription(MetaSpriteHandle handle) const;
 	void SaveToFile(std::string path) const;
 	void LoadFromFile(std::string path);
+	bool LoadFromJSON(const std::string& folder, const std::string& file, std::string& outErrorMsg);
 private:
 	void ExpandAtlas(u32 tooBigSpriteSizeW = 0, u32 tooBigSpriteSizeH=0);
 	void DoubleAtlasDims();

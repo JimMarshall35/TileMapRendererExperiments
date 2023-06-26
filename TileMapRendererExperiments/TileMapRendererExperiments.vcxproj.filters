@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\components">
-      <UniqueIdentifier>{ac2c23ca-ee80-4fc6-a28c-c23151e025bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\systems">
-      <UniqueIdentifier>{0e4ef92b-59ba-4813-99eb-835e59cefee0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\editor tools">
       <UniqueIdentifier>{b5f0d0d0-82c7-4bde-97d5-8d7159718cb8}</UniqueIdentifier>
     </Filter>
@@ -64,20 +58,8 @@
     <Filter Include="Source Files\game framework\framework layers">
       <UniqueIdentifier>{c6d994fb-2187-48f0-b5d1-a746055c9875}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\procedural populators">
-      <UniqueIdentifier>{f6e78bf9-87b8-43f4-ae77-b402a615dddc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\procedural populators">
-      <UniqueIdentifier>{4cddc03a-8934-42ff-9ad2-ef26ce261fc1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\systems">
-      <UniqueIdentifier>{154552c6-7c32-459d-8b1d-3dea8d254515}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\scripting">
       <UniqueIdentifier>{d082d3b5-685b-4c3c-ad4e-e612c57068fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\scripting">
-      <UniqueIdentifier>{b736c026-42b4-46e6-baf5-89e3c7d76663}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\stb image">
       <UniqueIdentifier>{f483a12f-9629-444f-93bf-544df41734a8}</UniqueIdentifier>
@@ -96,6 +78,30 @@
     </Filter>
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{ec17f2b1-801b-436f-9c2c-cf4c84a25955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\populators">
+      <UniqueIdentifier>{f6e78bf9-87b8-43f4-ae77-b402a615dddc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\populators">
+      <UniqueIdentifier>{4cddc03a-8934-42ff-9ad2-ef26ce261fc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\scripting">
+      <UniqueIdentifier>{b736c026-42b4-46e6-baf5-89e3c7d76663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs">
+      <UniqueIdentifier>{e1a6b362-3d7a-44eb-88e4-9fcc73506ce1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\systems">
+      <UniqueIdentifier>{0e4ef92b-59ba-4813-99eb-835e59cefee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\components">
+      <UniqueIdentifier>{ac2c23ca-ee80-4fc6-a28c-c23151e025bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs">
+      <UniqueIdentifier>{0d1056f2-f3ef-4e49-aac0-46b10bc4d151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\systems">
+      <UniqueIdentifier>{154552c6-7c32-459d-8b1d-3dea8d254515}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,13 +184,13 @@
       <Filter>Source Files\editor tools</Filter>
     </ClCompile>
     <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp">
-      <Filter>Source Files\procedural populators</Filter>
+      <Filter>Source Files\populators</Filter>
     </ClCompile>
     <ClCompile Include="JanetScriptProceduralPopulater.cpp">
-      <Filter>Source Files\procedural populators</Filter>
+      <Filter>Source Files\populators</Filter>
     </ClCompile>
     <ClCompile Include="DrawMetaSpriteSystem.cpp">
-      <Filter>Source Files\systems</Filter>
+      <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
     <ClCompile Include="TypeOfTile.cpp">
       <Filter>Source Files\graphics\atlas</Filter>
@@ -222,6 +228,15 @@
     <ClCompile Include="WindowsFilesystem.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="jsonhelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JSONPopulator.cpp">
+      <Filter>Source Files\populators</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flecs.h">
@@ -240,16 +255,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MetaSpriteComponent.h">
-      <Filter>Header Files\components</Filter>
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="Position.h">
-      <Filter>Header Files\components</Filter>
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="DrawMetaSpriteSystem.h">
-      <Filter>Header Files\systems</Filter>
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
     <ClInclude Include="Scale.h">
-      <Filter>Header Files\components</Filter>
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="TileInfoTool.h">
       <Filter>Header Files\editor tools</Filter>
@@ -270,10 +285,10 @@
       <Filter>Header Files\editor tools</Filter>
     </ClInclude>
     <ClInclude Include="TestMoveComponent.h">
-      <Filter>Header Files\components</Filter>
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="Rect.h">
-      <Filter>Header Files\components</Filter>
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="GameInput.h">
       <Filter>Header Files</Filter>
@@ -360,16 +375,16 @@
       <Filter>Header Files\graphics\atlas</Filter>
     </ClInclude>
     <ClInclude Include="ITiledWorldPopulater.h">
-      <Filter>Header Files\procedural populators</Filter>
+      <Filter>Header Files\populators</Filter>
     </ClInclude>
     <ClInclude Include="JanetScriptProceduralPopulater.h">
-      <Filter>Header Files\procedural populators</Filter>
+      <Filter>Header Files\populators</Filter>
     </ClInclude>
     <ClInclude Include="ProceduralCppTiledWorldPopulater.h">
-      <Filter>Header Files\procedural populators</Filter>
+      <Filter>Header Files\populators</Filter>
     </ClInclude>
     <ClInclude Include="ProceduralHelpers.h">
-      <Filter>Header Files\procedural populators</Filter>
+      <Filter>Header Files\populators</Filter>
     </ClInclude>
     <ClInclude Include="janet.h">
       <Filter>Header Files\scripting</Filter>
@@ -403,6 +418,18 @@
     </ClInclude>
     <ClInclude Include="WindowSizeChangedMessage.h">
       <Filter>Header Files\game framework\framework messages</Filter>
+    </ClInclude>
+    <ClInclude Include="jsonhelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JSONPopulator.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rotation.h">
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

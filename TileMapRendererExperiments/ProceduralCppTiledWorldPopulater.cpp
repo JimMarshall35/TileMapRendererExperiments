@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "ProceduralHelpers.h"
+#include <string>
 
 static const u16 MUD_CENTERS[] = { 893,894,974,1009, };
 static const u16 GRASS_CENTERS[] = { 964 ,889,890 ,1019 };
@@ -120,9 +121,10 @@ void AddRoof(u16* data, u32 w, u32 h, House& house) {
 	data[((topTile.y - (HouseDepth - 1)) * w) + topTile.x] = ROOF_BACK_RIGHT_CORNER;
 
 }
-void ProceduralCppTiledWorldPopulater::PopulateLayer(u32 layerNumber, u16* layer, u32 layerWidthTiles, u32 layerHeightTiles)
+void ProceduralCppTiledWorldPopulater::PopulateLayer(u32 layerNumber, u16* layer, u32 layerWidthTiles, u32 layerHeightTiles, std::string& outName)
 {
 	static std::vector<House> houses;
+	outName = "ProceduralCppTiledWorldPopulater";
 	switch (layerNumber) {
 	case 0: {
 		houses.clear();
@@ -146,4 +148,19 @@ void ProceduralCppTiledWorldPopulater::PopulateLayer(u32 layerNumber, u16* layer
 	}
 		  break;
 	}
+}
+
+u32 ProceduralCppTiledWorldPopulater::GetRequiredNumLayers()
+{
+	return 6;
+}
+
+u32 ProceduralCppTiledWorldPopulater::GetWidthTiles()
+{
+	return 2000;
+}
+
+u32 ProceduralCppTiledWorldPopulater::GetHeightTiles()
+{
+	return 2000;
 }

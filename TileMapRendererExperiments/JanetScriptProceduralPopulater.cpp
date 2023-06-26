@@ -111,8 +111,9 @@ JanetScriptProceduralPopulater::JanetScriptProceduralPopulater(JanetVmService* v
 	//vm->CallJanetFunction(NULL, 0, "test-func");
 }
 
-void JanetScriptProceduralPopulater::PopulateLayer(u32 layerNumber, u16* layer, u32 layerWidthTiles, u32 layerHeightTiles)
+void JanetScriptProceduralPopulater::PopulateLayer(u32 layerNumber, u16* layer, u32 layerWidthTiles, u32 layerHeightTiles, std::string& outName)
 {
+	outName = "JanetScriptProceduralPopulater";
 	s_dataBeingPopulated = layer;
 	s_dataBeingPopulatedHeightTiles = layerHeightTiles;
 	s_dataBeingPopulatedWidthTiles = layerWidthTiles;
@@ -123,4 +124,20 @@ void JanetScriptProceduralPopulater::PopulateLayer(u32 layerNumber, u16* layer, 
 	args[2].number = layerHeightTiles;
 
 	m_vm->CallJanetFunction(args, 3, "generate-map");
+}
+
+u32 JanetScriptProceduralPopulater::GetRequiredNumLayers()
+{
+	Janet returnVal = m_vm->CallJanetFunction(nullptr, 3, "get-required-layers");
+	return returnVal.u64;
+}
+
+u32 JanetScriptProceduralPopulater::GetWidthTiles()
+{
+	return 2000;
+}
+
+u32 JanetScriptProceduralPopulater::GetHeightTiles()
+{
+	return 2000;
 }

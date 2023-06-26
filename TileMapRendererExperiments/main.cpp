@@ -13,7 +13,6 @@
 
 #include "EditorCamera.h"
 #include "TileChunk.h"
-#include "flecs.h"
 #include "EditorUi.h"
 
 #include "imgui/imgui_impl_glfw.h"
@@ -40,6 +39,10 @@
 #include "GameCamera.h"
 #include "CameraManager.h"
 #include "Game.h"
+#include "JSONPopulator.h"
+#include "ECS.h"
+#include "flecs.h"
+
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -166,31 +169,25 @@ int main()
     auto vm = JanetVmService();
     auto janetPopulator = JanetScriptProceduralPopulater(&vm);
     auto populater = ProceduralCppTiledWorldPopulater();
-    auto tiledWorld = TiledWorld(2000, 2000, 6, &janetPopulator);
+    auto jsonPopulator = JSONTiledWorldPopulator("data\\json", "lvl1_test5.json");
+    auto tiledWorld = TiledWorld(&jsonPopulator);
     gTiledWorld = &tiledWorld;
-    auto metaspritesQuadTree = DynamicQuadTreeContainer<MetaSprite>({ {-0.5,-0.5}, {2000,2000} });
+    auto metaspritesQuadTree = DynamicQuadTreeContainer<flecs::entity>({ {-0.5,-0.5}, {2000,2000} });
     auto config = TileMapConfigOptions();
     config.AtlasWidthPx = 800;
     auto atlasLoader = AtlasLoader(config);
     auto metaAtlas = MetaAtlas(100, 100);
-    flecs::world ecs;
+    
+    ECS ecs;
     WindowsFilesystem fs;
 
     ///////////////////////////////////////////////////////////////////// load image files
     atlasLoader.StartLoadingTilesets();
     TileSetInfo info;
 
-    info.BottomMargin = 1;
-    info.RightMargin = 1;
-    info.PixelColStart = 0;
-    info.PixelRowStart = 0;
-    info.TileHeight = 16;
-    info.TileWidth = 16;
-    info.RowsOfTiles = 28;
-    info.ColsOfTiles = 37;
-    info.Path = "sprites\\roguelikeCity_magenta.png";
-    info.Name = "City tiles";
-    atlasLoader.TryLoadTileset(info);
+
+    atlasLoader.TryLoadTilesetFromJSONInfo("data\\json", "city.json");
+
 
     info.BottomMargin = 0;
     info.RightMargin = 0;
@@ -206,7 +203,11 @@ int main()
 
     atlasLoader.StopLoadingTilesets(AtlasLoaderAtlasType::ArrayTexture | AtlasLoaderAtlasType::SingleTextureAtlas);
 
-
+    std::string errorString;
+    if (!metaAtlas.LoadFromJSON("data\\json", "city.json", errorString))
+    {
+        std::cerr << errorString << "\n";
+    }
     ///////////////////////////////////////////////////////////////////// initialise cameras
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;
@@ -250,30 +251,28 @@ int main()
 
     gEditorUi = &editorUi;
 
-    ecs.system<>()
-        .iter([](flecs::iter& it) {
-        //std::cout << "delta_time: " << it.delta_time() << std::endl;
-            });
+    //ecs.system<>()
+    //    .iter([](flecs::iter& it) {
+    //    //std::cout << "delta_time: " << it.delta_time() << std::endl;
+    //        });
 
-    ///////////////////////////////////////////////////////////////////// initialise ecs world
-    ecs.system<Position, TestMoveComponent, MetaSpriteComponent, Scale, Rect>()
-        .each([&metaspritesQuadTree](Position& p, TestMoveComponent& t, MetaSpriteComponent& m, Scale& s, Rect& r) {
-        t.t += deltaTime / t.cycleTime;
-        p.val = glm::mix(t.startPos, t.endPos, t.t);
-        r.pos = p.val;
-        auto handle = m.metaSprite->item.handle;
-        auto& pos = m.metaSprite->item.pos;
-        pos = r.pos;
-        metaspritesQuadTree.remove(m.metaSprite);
+    /////////////////////////////////////////////////////////////////////// initialise ecs world
+    //ecs.system<Position, TestMoveComponent, MetaSpriteComponent, Scale, Rect>()
+    //    .each([&metaspritesQuadTree](Position& p, TestMoveComponent& t, MetaSpriteComponent& m, Scale& s, Rect& r) {
+    //    t.t += deltaTime / t.cycleTime;
+    //    p.val = glm::mix(t.startPos, t.endPos, t.t);
+    //    r.pos = p.val;
+    //    auto handle = m.metaSprite->item.handle;
+    //    auto& pos = m.metaSprite->item.pos;
+    //    pos = r.pos;
+    //    metaspritesQuadTree.remove(m.metaSprite);
 
-        metaspritesQuadTree.insert(MetaSprite{ handle,r.pos }, r);
-        m.metaSprite = std::prev(metaspritesQuadTree.end());
-            });
-    ecs.set_target_fps(60.0f);
+    //    metaspritesQuadTree.insert(MetaSprite{ handle,r.pos }, r);
+    //    m.metaSprite = std::prev(metaspritesQuadTree.end());
+    //        });
 
 
     bool show_demo_window = true;
-    u32 cityTilesArrayTexture = atlasLoader.GetArrayTextureByName("City tiles");
 
     // render loop
     // -----------
@@ -302,7 +301,7 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        ecs.progress();
+        ecs.Progress();
     }
 
     // Cleanup

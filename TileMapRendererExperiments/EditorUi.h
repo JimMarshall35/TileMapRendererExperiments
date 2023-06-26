@@ -1,6 +1,7 @@
 #pragma once
 #include "BasicTypedefs.h"
 #include "GameFramework.h"
+#include "ECS.h"
 #include <string>
 
 #define MAX_TILES_PER_LUT_CASE 20
@@ -16,9 +17,7 @@ class EditorCamera;
 struct ImGuiIO;
 struct GLFWwindow;
 
-namespace flecs {
-	class world;
-}
+
 
 class EditorUi
 	:public DrawableLayerBase,
@@ -29,7 +28,7 @@ public:
 	~EditorUi();
 	EditorUi(TiledWorld* tiledWorld,
 		AtlasLoader* atlasLoader, 
-		flecs::world* ecsWorld, 
+		ECS* ecsWorld, 
 		const IFileSystem* fileSystem, 
 		EditorToolBase** tools, 
 		u32 numTools, 
@@ -41,7 +40,7 @@ private:
 private:
 	TiledWorld* m_tiledWorld;
 	AtlasLoader* m_atlasLoader;
-	flecs::world* m_ecsWorld;
+	ECS* m_ecsWorld;
 	EditorCamera* m_cam;
 	Directions m_camMoveDirections;
 
