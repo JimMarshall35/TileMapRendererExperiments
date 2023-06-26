@@ -9,12 +9,14 @@
 #include "Scale.h"
 #include "TestMoveComponent.h"
 #include "ECS.h"
+#include "NewRenderer.h"
 
-MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree, ECS* ecs)
+MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree, ECS* ecs, NewRenderer* renderer)
     :m_metaAtlas(metaAtlas),
     m_atlasLoader(atlasLoader),
     m_metaspritesQuadTree(metaspritesQuadTree),
-    m_ecs(ecs)
+    m_ecs(ecs),
+    m_renderer(renderer)
 {
 }
 
@@ -53,9 +55,9 @@ void MetaspriteTool::DoUi()
         }
         ImGui::NewLine();
     }
-    ImGui::EndGroup();
+    //ImGui::EndGroup();
     ImGui::SameLine();
-    ImGui::BeginGroup();
+    //ImGui::BeginGroup();
     ImGui::BeginListBox("loaded meta sprites");
     
     const MetaSpriteDescription* d;
@@ -72,14 +74,12 @@ void MetaspriteTool::DoUi()
             m_currentMetaspriteHeight = d->spriteTilesHeight;
             m_currentMetaspriteWidth = d->spriteTilesWidth;
             m_currentMetasprite.clear();
-            for (int i = 0; i < d->numTiles; i++) {
-                m_currentMetasprite.push_back(d->tiles[i]);
+            for (int j = 0; j < d->numTiles; j++) {
+                m_currentMetasprite.push_back(d->tiles[j]);
             }
         }
     }
-
     ImGui::EndListBox();
-    ImGui::EndGroup();
     static char metaspriteNameBuffer[200];
     ImGui::InputText("metasprite name", metaspriteNameBuffer, 200);
     if(ImGui::Button("Save Ms")) {
@@ -89,6 +89,8 @@ void MetaspriteTool::DoUi()
     if (ImGui::Button("Save Ms file")) {
         m_metaAtlas->SaveToFile("data\\metasprites.atlas");
     }
+    ImGui::EndGroup();
+
 }
 
 void MetaspriteTool::RecieveTileClick(i32 x, i32 y, i32 z)
@@ -113,6 +115,26 @@ const std::string& MetaspriteTool::GetName()
 {
     static std::string name = "Meta sprite";
     return name;
+}
+
+bool MetaspriteTool::WantsToDrawOverlay() const
+{
+    return true;
+}
+
+void MetaspriteTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const
+{
+    if (m_currentMetaspriteHandle >= 0) {
+        m_renderer->DrawMetaSprite(
+            m_currentMetaspriteHandle, 
+            mouseWorldSpacePos, 
+            { 1,1 }, 
+            0, 
+            *m_metaAtlas,
+            m_metaAtlas->GetAtlasTextureHandle(),
+            camera, 
+            0.5);
+    }
 }
 
 void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)

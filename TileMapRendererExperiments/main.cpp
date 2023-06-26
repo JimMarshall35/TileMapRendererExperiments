@@ -203,11 +203,11 @@ int main()
 
     atlasLoader.StopLoadingTilesets(AtlasLoaderAtlasType::ArrayTexture | AtlasLoaderAtlasType::SingleTextureAtlas);
 
-    std::string errorString;
+    /*std::string errorString;
     if (!metaAtlas.LoadFromJSON("data\\json", "city.json", errorString))
     {
         std::cerr << errorString << "\n";
-    }
+    }*/
     ///////////////////////////////////////////////////////////////////// initialise cameras
     EditorCameraInitializationSettings settings;
     settings.moveSpeed = 60;
@@ -228,7 +228,7 @@ int main()
     SingleTileDrawTool singleTileDraw(&tiledWorld);
     TileInfoTool tileInfo(&atlasLoader);
     WaveFunctionCollapseTool waveFunctionCollapse;
-    MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree, &ecs);
+    MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree, &ecs, &newRenderer);
 
     const u32 NUM_TOOLS = 5;
     EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool };

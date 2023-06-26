@@ -143,7 +143,12 @@ void EditorUi::MouseButtonCallback()
 
 void EditorUi::Draw(const Camera2D& camera) const
 {
+    if (m_tools[m_selectedTool]->WantsToDrawOverlay()) {
+        glm::vec2 mouseWorld = camera.MouseScreenPosToWorld(m_lastMouseX, m_lastMouseY);
+        m_tools[m_selectedTool]->DrawOverlay(camera, mouseWorld);
+    }
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 bool EditorUi::MasksPreviousDrawableLayer() const

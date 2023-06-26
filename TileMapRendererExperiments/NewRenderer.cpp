@@ -25,7 +25,8 @@ void NewRenderer::DrawChunk(
 	const TiledWorld& world,
 	ArrayTexture2DHandle texArray,
 	const Camera2D& cam,
-	const glm::ivec2& chunkSize
+	const glm::ivec2& chunkSize,
+	float opacity
 ) const
 {
 	m_tileShader.use();
@@ -40,6 +41,7 @@ void NewRenderer::DrawChunk(
 	m_tileShader.SetIVec2("chunkSize", chunkSize);
 	m_tileShader.setInt("masterTileTexture", 0);
 	m_tileShader.setInt("atlasSampler", 1);
+	m_tileShader.setFloat("opacity", opacity);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
@@ -57,7 +59,7 @@ void NewRenderer::DrawChunk(
 
 }
 
-void NewRenderer::DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, const glm::vec2& scale, float rotation, const MetaAtlas& atlas, ArrayTexture2DHandle texArray, const Camera2D& cam) const
+void NewRenderer::DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, const glm::vec2& scale, float rotation, const MetaAtlas& atlas, ArrayTexture2DHandle texArray, const Camera2D& cam, float opacity) const
 {
 	m_tileShader.use();
 	glm::mat4 model = glm::mat4(1.0f);
@@ -72,6 +74,7 @@ void NewRenderer::DrawMetaSprite(u32 metaSpriteHandle, const glm::vec2& pos, con
 	m_tileShader.SetIVec2("chunkSize", glm::ivec2{description->spriteTilesWidth, description->spriteTilesHeight});
 	m_tileShader.setInt("masterTileTexture", 0);
 	m_tileShader.setInt("atlasSampler", 1);
+	m_tileShader.setFloat("opacity", opacity);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
