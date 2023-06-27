@@ -26,6 +26,7 @@
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorToolBase.cpp" />
     <ClCompile Include="EditorUi.cpp" />
+    <ClCompile Include="EntityInspectorTool.cpp" />
     <ClCompile Include="flecs.c" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
@@ -50,9 +51,11 @@
     <ClCompile Include="MetaspriteTool.cpp" />
     <ClCompile Include="NewRenderer.cpp" />
     <ClCompile Include="OpenGlRenderer.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp" />
     <ClCompile Include="ProceduralHelpers.cpp" />
     <ClCompile Include="SingleTileDrawTool.cpp" />
+    <ClCompile Include="StaticCollisionDrawerTool.cpp" />
     <ClCompile Include="stbi_image.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="AtlasLoader.cpp" />
@@ -74,6 +77,7 @@
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorToolBase.h" />
     <ClInclude Include="EditorUi.h" />
+    <ClInclude Include="EntityInspectorTool.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="GameFramework.h" />
@@ -90,6 +94,7 @@
     <ClInclude Include="MetaAtlas.h" />
     <ClInclude Include="MetaSpriteComponent.h" />
     <ClInclude Include="MetaspriteTool.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ProceduralCppTiledWorldPopulater.h" />
     <ClInclude Include="ProceduralHelpers.h" />
@@ -98,6 +103,8 @@
     <ClInclude Include="Rotation.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="SingleTileDrawTool.h" />
+    <ClInclude Include="StaticCollisionDrawerTool.h" />
+    <ClInclude Include="StaticPhysicsBody.h" />
     <ClInclude Include="TestMoveComponent.h" />
     <ClInclude Include="TileInfoTool.h" />
     <ClInclude Include="WaveFunctionCollapseTool.h" />
@@ -190,8 +197,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(SolutionDir)box2d-main\box2d-main\build\bin\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)box2d-main\box2d-main\include;$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -236,7 +243,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

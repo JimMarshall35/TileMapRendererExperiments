@@ -114,15 +114,18 @@ void Game::Draw(const Camera2D& camera) const
     for (const auto& qItem : vis) {
         
         auto entity = qItem->item;
+        
         const MetaSpriteComponent* metaSprite = entity.get<MetaSpriteComponent>();
-        m_renderer->DrawMetaSprite(
-            metaSprite->handle,
-            metaSprite->pos,
-            { 1,1 },
-            0,
-            *m_metaAtlas,
-            m_tilesArrayTexture,
-            *m_camManager->GetActiveCamera());
+        if (metaSprite) {
+            m_renderer->DrawMetaSprite(
+                metaSprite->handle,
+                metaSprite->pos,
+                { 1,1 },
+                0,
+                *m_metaAtlas,
+                m_tilesArrayTexture,
+                *m_camManager->GetActiveCamera());
+        }
     }
 }
 

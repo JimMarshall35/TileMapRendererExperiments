@@ -141,6 +141,15 @@ void EditorUi::MouseButtonCallback()
     m_tools[m_selectedTool]->RecieveTileClick(tileX + 1, tileY + 1, m_layerToSet);
 }
 
+void EditorUi::RightMouseButtonCallback()
+{
+    auto world = m_cam->MouseScreenPosToWorld(m_lastMouseX, m_lastMouseY);
+    int tileX = world.x - 0.5f;
+    int tileY = world.y - 0.5f;
+
+    m_tools[m_selectedTool]->RecieveWorldspaceRightClick(world);
+}
+
 void EditorUi::Draw(const Camera2D& camera) const
 {
     if (m_tools[m_selectedTool]->WantsToDrawOverlay()) {
@@ -201,6 +210,12 @@ void EditorUi::ReceiveInput(const GameInput& input)
             //cam->StopDrag();
             m_dragging = false;
         }
+        else if (input.data.mouseButton.button == MouseButton::Right && input.data.mouseButton.action == MouseButtonAction::Press) {
+
+            RightMouseButtonCallback();
+
+        }
+
         break;
     case GameInputType::MouseMove:
         m_lastMouseX = input.data.mouseMove.xposIn;

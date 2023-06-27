@@ -37,6 +37,7 @@ public:
 private:
 	void DoUiWindow();
 	void MouseButtonCallback();
+	void RightMouseButtonCallback();
 private:
 	TiledWorld* m_tiledWorld;
 	AtlasLoader* m_atlasLoader;

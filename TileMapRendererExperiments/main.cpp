@@ -42,6 +42,8 @@
 #include "JSONPopulator.h"
 #include "ECS.h"
 #include "flecs.h"
+#include "PhysicsWorld.h"
+#include "StaticCollisionDrawerTool.h"
 
 
 #define SCR_WIDTH 800
@@ -177,8 +179,10 @@ int main()
     config.AtlasWidthPx = 800;
     auto atlasLoader = AtlasLoader(config);
     auto metaAtlas = MetaAtlas(100, 100);
-    
+        
     ECS ecs;
+    auto physicsWorld = PhysicsWorld({ 0,0 }, &ecs, &metaspritesQuadTree);
+
     WindowsFilesystem fs;
 
     ///////////////////////////////////////////////////////////////////// load image files
@@ -229,9 +233,10 @@ int main()
     TileInfoTool tileInfo(&atlasLoader);
     WaveFunctionCollapseTool waveFunctionCollapse;
     MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree, &ecs, &newRenderer);
+    StaticCollisionDrawerTool staticCollisionTool(&newRenderer, &metaspritesQuadTree, &physicsWorld, &ecs);
 
-    const u32 NUM_TOOLS = 5;
-    EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool };
+    const u32 NUM_TOOLS = 6;
+    EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool, &staticCollisionTool };
 
 
     ///////////////////////////////////////////////////////////////////// game framework layers
@@ -301,6 +306,7 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
 
+        physicsWorld.Step();
         ecs.Progress();
     }
 

@@ -11,6 +11,7 @@ public:
 	virtual void TileSelectionChanged(u32 newTile) = 0;
 	virtual const std::string& GetName() = 0;
 	virtual void RecieveWorldspaceClick(const glm::vec2& worldspace);
+	virtual void RecieveWorldspaceRightClick(const glm::vec2& worldspace);
 	virtual bool WantsToDrawOverlay() const;
 	virtual void DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const;
 };
