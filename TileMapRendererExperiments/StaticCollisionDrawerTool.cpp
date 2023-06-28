@@ -9,6 +9,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
+#include "imgui/imgui.h"
 
 
 StaticCollisionDrawerTool::StaticCollisionDrawerTool(NewRenderer* newRenderer, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree, PhysicsWorld* physicsWorld, ECS* ecs) 
@@ -21,6 +22,8 @@ StaticCollisionDrawerTool::StaticCollisionDrawerTool(NewRenderer* newRenderer, D
 }
 void StaticCollisionDrawerTool::DoUi()
 {
+    if (ImGui::InputInt("snapping", (int*)&m_snappingIncrementTileDivider)) {
+    }
 }
 
 void StaticCollisionDrawerTool::RecieveTileClick(i32 x, i32 y, i32 z)
@@ -40,16 +43,21 @@ const std::string& StaticCollisionDrawerTool::GetName()
 
 void StaticCollisionDrawerTool::RecieveWorldspaceClick(const glm::vec2& worldspace)
 {
-    m_points.push_back(worldspace);
+    const auto snapped = GetSnappedPosition(worldspace);
+    m_points.push_back(snapped);
 }
 
 void StaticCollisionDrawerTool::RecieveWorldspaceRightClick(const glm::vec2& worldspace)
 {
-    m_points.push_back(worldspace);
+    const auto snapped = GetSnappedPosition(worldspace);
+    m_points.push_back(snapped);
 
     auto entity = m_ecs->GetWorld()->entity();
 
-    m_physicsWorld->AddStaticPolygon(m_points.data(), m_points.size(), entity);
+    if (m_points.size() > 2){
+        m_physicsWorld->AddStaticPolygon(m_points.data(), m_points.size(), entity);
+    }
+    
     m_points.clear();
 }
 
@@ -60,17 +68,29 @@ bool StaticCollisionDrawerTool::WantsToDrawOverlay() const
 
 void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const
 {
+    const auto snapped = GetSnappedPosition(mouseWorldSpacePos);
+
     u32 numPoints = m_points.size();
     if (numPoints > 0) {
         for (u32 i = 0; i < numPoints; i++) {
             glm::vec2 pt1;
             glm::vec2 pt2;
             pt1 = m_points[i];
-            pt2 = (i == (numPoints - 1)) ? mouseWorldSpacePos : m_points[i + 1];
+            pt2 = (i == (numPoints - 1)) ? snapped : m_points[i + 1];
 
             m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
         }
     }
+    glm::vec2 pt1 = snapped + glm::vec2{0.1, 0.1};
+    glm::vec2 pt2 = snapped + glm::vec2{ -0.1, -0.1 };
+
+    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
+
+    pt1 = snapped + glm::vec2{ -0.1, 0.1 };
+    pt2 = snapped + glm::vec2{ 0.1, -0.1 };
+
+    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
+    
     auto camTLBR = camera.GetTLBR();
     Rect r;
     r.pos.x = camTLBR.y;
@@ -93,9 +113,29 @@ void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::v
                         glm::vec2 pt2 = { polygonShape->m_vertices[i+1].x, polygonShape->m_vertices[i+1].y };
                         m_newRenderer->DrawLine(pt1, pt2, { 1.0,0.0,0.0,1.0 }, 3, camera);
                     }
+                    else {
+                        glm::vec2 pt1 = { polygonShape->m_vertices[i].x, polygonShape->m_vertices[i].y };
+                        glm::vec2 pt2 = { polygonShape->m_vertices[0].x, polygonShape->m_vertices[0].y };
+                        m_newRenderer->DrawLine(pt1, pt2, { 1.0,0.0,0.0,1.0 }, 3, camera);
+                    }
                 }
             }
         }
-       
     }
+}
+
+double round_to_multiple(double val, double step)
+{
+    return step * std::round(val / step);
+}
+
+glm::vec2 StaticCollisionDrawerTool::GetSnappedPosition(const glm::vec2& worldpsacePosition) const
+{
+    if (m_snappingIncrementTileDivider == 0.0f) {
+        return worldpsacePosition;
+    }
+    return glm::vec2(
+        round_to_multiple(worldpsacePosition.x, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f,
+        round_to_multiple(worldpsacePosition.y, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f
+    );
 }

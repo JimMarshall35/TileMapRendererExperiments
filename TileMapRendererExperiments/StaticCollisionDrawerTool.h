@@ -26,6 +26,9 @@ public:
 	virtual bool WantsToDrawOverlay() const override;
 	virtual void DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const;
 private:
+	glm::vec2 GetSnappedPosition(const glm::vec2& worldpsacePosition) const;
+private:
+	u32 m_snappingIncrementTileDivider = 0; // 0 = off
 	std::vector<glm::vec2> m_points;
 	DynamicQuadTreeContainer<flecs::entity>* m_entityQuadTree;
 	PhysicsWorld* m_physicsWorld;

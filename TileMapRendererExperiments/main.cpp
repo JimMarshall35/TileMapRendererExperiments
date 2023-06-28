@@ -44,6 +44,7 @@
 #include "flecs.h"
 #include "PhysicsWorld.h"
 #include "StaticCollisionDrawerTool.h"
+#include "EntityInspectorTool.h"
 
 
 #define SCR_WIDTH 800
@@ -234,9 +235,9 @@ int main()
     WaveFunctionCollapseTool waveFunctionCollapse;
     MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree, &ecs, &newRenderer);
     StaticCollisionDrawerTool staticCollisionTool(&newRenderer, &metaspritesQuadTree, &physicsWorld, &ecs);
-
-    const u32 NUM_TOOLS = 6;
-    EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool, &staticCollisionTool };
+    EntityInspectorTool entityInspectorTool(&ecs);
+    const u32 NUM_TOOLS = 7;
+    EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool, &staticCollisionTool, &entityInspectorTool };
 
 
     ///////////////////////////////////////////////////////////////////// game framework layers

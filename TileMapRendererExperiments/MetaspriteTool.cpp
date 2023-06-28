@@ -134,8 +134,6 @@ void MetaspriteTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseW
             m_metaAtlas->GetAtlasTextureHandle(),
             camera, 
             0.5);
-
-        m_renderer->DrawLine(mouseWorldSpacePos, { 0,0 }, { 0, 1.0, 0.0, 1.0 }, 4, camera);
     }
 }
 
