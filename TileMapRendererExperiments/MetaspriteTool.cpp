@@ -122,7 +122,7 @@ bool MetaspriteTool::WantsToDrawOverlay() const
     return true;
 }
 
-void MetaspriteTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const
+void MetaspriteTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos)
 {
     if (m_currentMetaspriteHandle >= 0) {
         m_renderer->DrawMetaSprite(
@@ -144,7 +144,7 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
     }
     const auto d = m_metaAtlas->getDescription(m_currentMetaspriteHandle);
     Rect r;
-    r.pos = click;
+    r.pos = click - glm::vec2(0.5f,0.5f); // why the glm::vec2(0.5f,0.5f) fudge factor? I don't know
     r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
     MetaSpriteComponent comp = { m_currentMetaspriteHandle, click };
 

@@ -26,7 +26,7 @@ public:
 	
 	virtual const std::string& GetName() override;
 	virtual bool WantsToDrawOverlay() const override;
-	virtual void DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const override;
+	virtual void DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) override;
 
 private:
 	void SaveMetaSprite(std::string name);

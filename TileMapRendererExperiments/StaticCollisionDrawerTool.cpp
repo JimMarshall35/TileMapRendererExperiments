@@ -66,7 +66,7 @@ bool StaticCollisionDrawerTool::WantsToDrawOverlay() const
     return true;
 }
 
-void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const
+void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos)
 {
     const auto snapped = GetSnappedPosition(mouseWorldSpacePos);
 
@@ -81,15 +81,7 @@ void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::v
             m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
         }
     }
-    glm::vec2 pt1 = snapped + glm::vec2{0.1, 0.1};
-    glm::vec2 pt2 = snapped + glm::vec2{ -0.1, -0.1 };
-
-    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
-
-    pt1 = snapped + glm::vec2{ -0.1, 0.1 };
-    pt2 = snapped + glm::vec2{ 0.1, -0.1 };
-
-    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
+    DrawVertexCursor(camera, snapped);
     
     auto camTLBR = camera.GetTLBR();
     Rect r;
@@ -138,4 +130,18 @@ glm::vec2 StaticCollisionDrawerTool::GetSnappedPosition(const glm::vec2& worldps
         round_to_multiple(worldpsacePosition.x, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f,
         round_to_multiple(worldpsacePosition.y, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f
     );
+}
+
+void StaticCollisionDrawerTool::DrawVertexCursor(const Camera2D& camera, const glm::vec2& pos) const
+{
+    // draw a green cross
+    glm::vec2 pt1 = pos + glm::vec2{ 0.1, 0.1 };
+    glm::vec2 pt2 = pos + glm::vec2{ -0.1, -0.1 };
+
+    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
+
+    pt1 = pos + glm::vec2{ -0.1, 0.1 };
+    pt2 = pos + glm::vec2{ 0.1, -0.1 };
+
+    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
 }

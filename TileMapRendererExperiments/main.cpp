@@ -68,6 +68,7 @@ static bool wantKeyboardInput = false;
 
 u32 WindowW = SCR_WIDTH;
 u32 WindowH = SCR_HEIGHT;
+GLenum minimumLogSeverityIncluding = GL_DEBUG_SEVERITY_LOW;
 
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -77,9 +78,11 @@ static void GLAPIENTRY MessageCallback(GLenum source,
     const GLchar* message,
     const void* userParam)
 {
-    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-        type, severity, message);
+    if (severity >= minimumLogSeverityIncluding) {
+        fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+            type, severity, message);
+    }
 }
 
 inline u32 GetRandomIntBetween(u32 min, u32 max) {
@@ -235,7 +238,7 @@ int main()
     WaveFunctionCollapseTool waveFunctionCollapse;
     MetaspriteTool metaspriteTool(&metaAtlas, &atlasLoader, &metaspritesQuadTree, &ecs, &newRenderer);
     StaticCollisionDrawerTool staticCollisionTool(&newRenderer, &metaspritesQuadTree, &physicsWorld, &ecs);
-    EntityInspectorTool entityInspectorTool(&ecs);
+    EntityInspectorTool entityInspectorTool(&ecs, &metaspritesQuadTree, &newRenderer);
     const u32 NUM_TOOLS = 7;
     EditorToolBase* toolBasePtrs[NUM_TOOLS] = { &lut, &singleTileDraw, &tileInfo, &waveFunctionCollapse, &metaspriteTool, &staticCollisionTool, &entityInspectorTool };
 

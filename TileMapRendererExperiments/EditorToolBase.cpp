@@ -13,6 +13,6 @@ bool EditorToolBase::WantsToDrawOverlay() const
 	return false;
 }
 
-void EditorToolBase::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) const
+void EditorToolBase::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos)
 {
 }

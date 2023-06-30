@@ -7,6 +7,7 @@
 #include "flecs.h"
 #include "StaticPhysicsBody.h"
 #include "QuadTree.h"
+#include <iostream>
 
 PhysicsWorld::PhysicsWorld(b2Vec2 gravity, ECS* ecs, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree)
 	:m_b2World(gravity),
@@ -38,6 +39,10 @@ bool PhysicsWorld::AddStaticPolygon(const glm::vec2* points, u32 numPoints, flec
 		converted[i].Set(points[i].x, points[i].y);
 	}
 	b2PolygonShape polyShape;
+	if(!(3 <= numPoints && numPoints <= b2_maxPolygonVertices)) {
+		std::cerr << "polyShape.Set assert would have failed, due to number of points, which is: " << numPoints << "\n";
+		return false;
+	}
 	polyShape.Set(converted.get(), numPoints);
 	//p
 	b2AABB aabb = { {9999.0f,9999.0f}, {-9999.0f, -9999.0f}, };

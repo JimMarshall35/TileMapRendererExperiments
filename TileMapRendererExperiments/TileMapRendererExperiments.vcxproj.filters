@@ -440,17 +440,17 @@
     <ClInclude Include="Rotation.h">
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="EntityInspectorTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticCollisionDrawerTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StaticPhysicsBody.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityInspectorTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticCollisionDrawerTool.h">
+      <Filter>Header Files\editor tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
