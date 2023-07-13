@@ -42,6 +42,10 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntityInspectorTool.cpp" />
     <ClCompile Include="flecs.c" />
+    <ClCompile Include="Forth2\Forth2.c" />
+    <ClCompile Include="Forth2\Forth2Gamelib.c" />
+    <ClCompile Include="Forth2\ForthStringHelpers.c" />
+    <ClCompile Include="ForthEngineSystem.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="GameFramework.cpp" />
@@ -54,9 +58,6 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="janet.c" />
-    <ClCompile Include="JanetScriptProceduralPopulater.cpp" />
-    <ClCompile Include="JanetVmService.cpp" />
     <ClCompile Include="jsonhelper.cpp" />
     <ClCompile Include="JSONPopulator.cpp" />
     <ClCompile Include="LutDrawTool.cpp" />
@@ -98,6 +99,12 @@
     <ClInclude Include="EditorUi.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EntityInspectorTool.h" />
+    <ClInclude Include="Forth2\Forth2.h" />
+    <ClInclude Include="Forth2\Forth2GameLib.h" />
+    <ClInclude Include="Forth2\ForthCommonTypedefs.h" />
+    <ClInclude Include="Forth2\ForthEnvironmentDefs.h" />
+    <ClInclude Include="Forth2\ForthStringHelpers.h" />
+    <ClInclude Include="ForthEngineSystem.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="GameFramework.h" />
@@ -105,9 +112,6 @@
     <ClInclude Include="GeneratedTileDefs.h" />
     <ClInclude Include="IFilesystem.h" />
     <ClInclude Include="ITiledWorldPopulater.h" />
-    <ClInclude Include="janet.h" />
-    <ClInclude Include="JanetScriptProceduralPopulater.h" />
-    <ClInclude Include="JanetVmService.h" />
     <ClInclude Include="jsonhelper.h" />
     <ClInclude Include="JSONPopulator.h" />
     <ClInclude Include="LutDrawTool.h" />

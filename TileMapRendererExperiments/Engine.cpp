@@ -22,8 +22,6 @@
 #include "LutDrawTool.h"
 #include "SingleTileDrawTool.h"
 #include "TileInfoTool.h"
-#include "JanetVmService.h"
-#include "JanetScriptProceduralPopulater.h"
 #include "WaveFunctionCollapseTool.h"
 #include "MetaspriteTool.h"
 #include "QuadTree.h"
