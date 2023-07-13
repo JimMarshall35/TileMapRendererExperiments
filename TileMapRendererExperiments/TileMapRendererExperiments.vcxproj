@@ -132,6 +132,7 @@
     <ClInclude Include="SingleTileDrawTool.h" />
     <ClInclude Include="StaticCollisionDrawerTool.h" />
     <ClInclude Include="StaticPhysicsBody.h" />
+    <ClInclude Include="Tags.h" />
     <ClInclude Include="TestMoveComponent.h" />
     <ClInclude Include="TileInfoTool.h" />
     <ClInclude Include="ToolHelpers.h" />

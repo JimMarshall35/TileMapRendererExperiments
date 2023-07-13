@@ -22,6 +22,7 @@ public:
 
 	void Step();
 	bool AddStaticPolygon(const glm::vec2* points, u32 numPoints, flecs::entity& entity);
+	bool AddDynamicCircle(const glm::vec2& center, f32 radius, flecs::entity& entity);
 
 private:
 	b2World m_b2World;

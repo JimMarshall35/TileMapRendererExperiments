@@ -1,5 +1,7 @@
 #pragma once
 #include "Forth2/Forth2.h"
+#include "ECS.h"
+#include "BasicTypedefs.h"
 #include <memory>
 
 /*
@@ -12,20 +14,29 @@
 
 struct ForthEngineSystemInitArgs
 {
-	
-	UCell memorySize;
-	UCell intStackSize;
-	UCell returnStackSize;
+	UCell memorySizeCells;
+	UCell intStackSizeCells;
+	UCell returnStackSizeCells;
 };
+class ECS;
 
 class ForthEngineSystem
 {
 public:
-	ForthEngineSystem(const ForthEngineSystemInitArgs& args);
+	ForthEngineSystem(ForthEngineSystemInitArgs* args, ECS* ecs);
 private:
-	
-	Cell* memoryForCompiledWordsAndVariables;
-	Cell* intStack;
-	Cell* returnStack;
+	void StartGlobalVm(const ForthEngineSystemInitArgs* args);
+private:
+	std::unique_ptr<Cell[]> m_globalVmMemory;
+	Cell* m_memoryForCompiledWordsAndVariables;
+	Cell* m_intStack;
+	Cell* m_returnStack;
+	ForthVm m_globalVm;
+	UCell m_memorySizeCells;
+	UCell m_intStackSizeCells;
+	UCell m_returnStackSizeCells;
+	static ECS* s_ecs;
+	static Bool ForthFun_CreateEntity(ForthVm* vm);
+	static Bool ForthFun_AddB2DDynamicCircleComponent(ForthVm* vm);
 };
 

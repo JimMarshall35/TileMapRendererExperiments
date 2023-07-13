@@ -11,6 +11,7 @@
 #include "ECS.h"
 #include "NewRenderer.h"
 #include "RekationshipTags.h"
+#include "Tags.h"
 
 MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree, ECS* ecs, NewRenderer* renderer)
     :m_metaAtlas(metaAtlas),
@@ -157,6 +158,7 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
             });
 
     m_metaspritesQuadTree->insert(entity, r);
+    entity.add<IsInQuadTree>();
     std::list<QuadTreeItem<flecs::entity>>::iterator iter = std::prev(m_metaspritesQuadTree->end());
     MetaSpriteComponent comp = { m_currentMetaspriteHandle, GetSnappedPosition(click)};
     comp.ready = true;

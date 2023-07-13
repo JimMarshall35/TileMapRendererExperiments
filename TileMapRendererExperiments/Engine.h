@@ -8,6 +8,7 @@
 #include "DIContainer.h"
 #include "QuadTree.h"
 #include "WindowsFilesystem.h"
+#include "ForthEngineSystem.h"
 
 #include <memory>
 #include <string>
@@ -29,7 +30,7 @@ enum class StartupFunctionType {
 class Engine
 {
 public:
-	Engine(const TileMapConfigOptions& config, const NewRendererInitialisationInfo& rendererInit);
+	Engine(const TileMapConfigOptions& config, const NewRendererInitialisationInfo& rendererInit, const ForthEngineSystemInitArgs& forthInitArgs);
 	int Run();
 	void LoadJsonTileMap(const std::string& jsonFolder, const std::string& jsonFile);
 	void StartLoadingTilesets();
@@ -58,19 +59,23 @@ private:
 	static std::unique_ptr<AtlasLoader> AtlasLoaderFactory();
 	static std::unique_ptr<DynamicQuadTreeContainer<flecs::entity>> EntityQuadTreeFactory();
 	static std::unique_ptr<WindowsFilesystem> IFileSystemFactory();
+	static std::unique_ptr<ForthEngineSystem> ForthEngineSystemFactory(ForthEngineSystemInitArgs* args, ECS* ecs);
+	static std::unique_ptr<ForthEngineSystemInitArgs> ForthEngineSystemInitArgsFactory();
 private:
 	ImGuiIO* m_io;
 	GLFWwindow* m_window;
-	static NewRendererInitialisationInfo s_rendererInitialisationInfo;
-	static NewRenderer* s_renderer;
 	JSONTiledWorldPopulator m_jsonTiledWorldPopulator;
-	static TileMapConfigOptions s_tileMapConfigOptions;
 	AtlasLoader* m_atlasLoader;
 	MetaAtlas* m_metaAtlas;
 	ECS* m_ecs;
+	std::vector<std::pair<StartupFunction, StartupFunctionType>> m_startupFunctions;
+
 	static u32 s_screenW;
 	static u32 s_screenH;
-	std::vector<std::pair<StartupFunction, StartupFunctionType>> m_startupFunctions;
+	static TileMapConfigOptions s_tileMapConfigOptions;
+	static NewRendererInitialisationInfo s_rendererInitialisationInfo;
+	static NewRenderer* s_renderer;
+	static ForthEngineSystemInitArgs s_forthSystemInitArgs;
 	//di_config m_diConfig;
 	//injector m_injector;
 };

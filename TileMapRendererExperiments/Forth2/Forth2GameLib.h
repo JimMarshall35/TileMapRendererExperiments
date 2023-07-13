@@ -6,8 +6,7 @@ extern "C" {
 #include "ForthCommonTypedefs.h"
 #include "Forth2.h"
 
-
-ExecutionToken RegisterCallableFunction(ForthVm* vm, ForthCFunc function, const char* name);
+	
 
 #ifdef __cplusplus
 } // closing brace for extern "C"

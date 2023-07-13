@@ -3,10 +3,15 @@
 #include "TileSetInfo.h"
 #include "DIContainer.h"
 #include "DIMacros.h"
+
 //#include "Netcode.h"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
+#define kb 1000
+#define mb (kb * kb)
+
+#define BytesToCells(bytes)(bytes/sizeof(Cell))
 
 
 int main()
@@ -21,7 +26,12 @@ int main()
     NewRendererInitialisationInfo rendererInit(SCR_WIDTH, SCR_HEIGHT);
     rendererInit.windowHeight = SCR_HEIGHT;
     rendererInit.windowWidth = SCR_WIDTH;
-    Engine e(config, rendererInit);
+
+    ForthEngineSystemInitArgs forthInit;
+    forthInit.intStackSizeCells = BytesToCells(1 * kb);
+    forthInit.returnStackSizeCells = BytesToCells(1 * kb);
+    forthInit.memorySizeCells = BytesToCells(2 * mb);
+    Engine e(config, rendererInit, forthInit);
 
     e.LoadJsonTileMap("data\\json", "lvl1_test5.json");
 

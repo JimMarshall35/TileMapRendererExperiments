@@ -527,5 +527,8 @@
     <ClInclude Include="Forth2\Forth2GameLib.h">
       <Filter>Header Files\Forth</Filter>
     </ClInclude>
+    <ClInclude Include="Tags.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

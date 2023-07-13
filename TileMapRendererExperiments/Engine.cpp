@@ -68,6 +68,7 @@ u32 Engine::s_screenW;
 u32 Engine::s_screenH;
 NewRendererInitialisationInfo Engine::s_rendererInitialisationInfo;
 TileMapConfigOptions Engine::s_tileMapConfigOptions;
+ForthEngineSystemInitArgs Engine::s_forthSystemInitArgs;
 
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -96,12 +97,13 @@ static std::vector<u32> GetRandomTileMap(int rows, int cols, int minTileValue, i
     return tileMap;
 }
 
-Engine::Engine(const TileMapConfigOptions& config, const NewRendererInitialisationInfo& rendererInit)
+Engine::Engine(const TileMapConfigOptions& config, const NewRendererInitialisationInfo& rendererInit, const ForthEngineSystemInitArgs& forthInitArgs)
 {
     s_rendererInitialisationInfo = rendererInit;
     s_screenW = s_rendererInitialisationInfo.windowWidth;
     s_screenH = s_rendererInitialisationInfo.windowHeight;
     s_tileMapConfigOptions = config;
+    s_forthSystemInitArgs = forthInitArgs;
 }
 
 std::unique_ptr<NewRenderer> Engine::RendererFactory()
@@ -127,6 +129,18 @@ std::unique_ptr<AtlasLoader> Engine::AtlasLoaderFactory()
 std::unique_ptr<DynamicQuadTreeContainer<flecs::entity>> Engine::EntityQuadTreeFactory()
 {
     return std::make_unique<DynamicQuadTreeContainer<flecs::entity>>(Rect{ {-0.5,-0.5}, {2000,2000} });
+}
+
+std::unique_ptr<ForthEngineSystem> Engine::ForthEngineSystemFactory(ForthEngineSystemInitArgs* args, ECS* ecs)
+{
+    return std::make_unique<ForthEngineSystem>(args, ecs);
+}
+
+std::unique_ptr<ForthEngineSystemInitArgs> Engine::ForthEngineSystemInitArgsFactory()
+{
+    auto ptr = std::make_unique<ForthEngineSystemInitArgs>();
+    *ptr = s_forthSystemInitArgs;
+    return ptr;
 }
 
 int Engine::StartupBoilerPlate(ImGuiIO*& io, GLFWwindow*& window) {

@@ -70,11 +70,6 @@ static ExecutionToken SearchForToken(ForthVm* vm);
 static Bool LoadNextToken(ForthVm* vm); // to be used at compile time only
 static int CompileCStringToForthString(ForthVm* vm, const char* string, char delim);
 
-#define PopIntStack(vm) *(--vm->intStackTop)
-#define PushIntStack(vm, val) *(vm->intStackTop++) = val;
-
-#define PopReturnStack(vm) *(--vm->returnStackTop)
-#define PushReturnStack(vm, val) *(vm->returnStackTop++) = val
 
 
 
@@ -776,11 +771,12 @@ exit:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// Public API
 
-void Forth_RegisterCFunc(ForthVm* vm, ForthCFunc function, const char* name, Bool isImmediate) {
+ExecutionToken Forth_RegisterCFunc(ForthVm* vm, ForthCFunc function, const char* name, Bool isImmediate) {
 	ForthDictHeader item;
 	StringCopy(item.name, name);
 	item.isImmediate = isImmediate;
 	ForthDictHeader* newItem = (ForthDictHeader*)vm->memoryTop;
+	ExecutionToken newToken = newItem;
 	*newItem = item;
 
 	// link in new word
@@ -793,6 +789,8 @@ void Forth_RegisterCFunc(ForthVm* vm, ForthCFunc function, const char* name, Boo
 	newItem->data[0] = CallC;
 	newItem->data[1] = function;
 	vm->memoryTop += 2;
+
+	return newToken;
 }
 
 
