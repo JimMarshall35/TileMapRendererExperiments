@@ -10,7 +10,7 @@ class EditorCamera :
     public Camera2D
 {
 public:
-    EditorCamera(const EditorCameraInitializationSettings& init);
+    EditorCamera(const EditorCameraInitializationSettings& Init);
     void UpdatePosition(Directions direction, float deltaT);
     void StartDrag(double x, double y);
     void StopDrag();

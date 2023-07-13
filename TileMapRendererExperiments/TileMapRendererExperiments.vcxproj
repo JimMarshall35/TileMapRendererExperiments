@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="hjkuik7y|Win32">
+      <Configuration>hjkuik7y</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="hjkuik7y|x64">
+      <Configuration>hjkuik7y</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -19,13 +27,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="asio.cpp" />
+    <ClCompile Include="asio_ssl.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="DIContainer.cpp" />
     <ClCompile Include="DrawMetaSpriteSystem.cpp" />
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorToolBase.cpp" />
+    <ClCompile Include="EditorToolWithSnappingBase.cpp" />
+    <ClCompile Include="EditorToolWithSnappingBase.h" />
     <ClCompile Include="EditorUi.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntityInspectorTool.cpp" />
     <ClCompile Include="flecs.c" />
     <ClCompile Include="Game.cpp" />
@@ -49,11 +63,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MetaAtlas.cpp" />
     <ClCompile Include="MetaspriteTool.cpp" />
+    <ClCompile Include="Netcode.cpp" />
     <ClCompile Include="NewRenderer.cpp" />
     <ClCompile Include="OpenGlRenderer.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp" />
     <ClCompile Include="ProceduralHelpers.cpp" />
+    <ClCompile Include="SaveLoadLevelTool.cpp" />
     <ClCompile Include="SingleTileDrawTool.cpp" />
     <ClCompile Include="StaticCollisionDrawerTool.cpp" />
     <ClCompile Include="stbi_image.cpp" />
@@ -62,6 +78,7 @@
     <ClCompile Include="TileChunk.cpp" />
     <ClCompile Include="TiledWorld.cpp" />
     <ClCompile Include="TileInfoTool.cpp" />
+    <ClCompile Include="ToolHelpers.cpp" />
     <ClCompile Include="TypeOfTile.cpp" />
     <ClCompile Include="Undo.cpp" />
     <ClCompile Include="WaveFunctionCollapseTool.cpp" />
@@ -72,11 +89,14 @@
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="DIContainer.h" />
+    <ClInclude Include="DIMacros.h" />
     <ClInclude Include="DrawMetaSpriteSystem.h" />
     <ClInclude Include="ECS.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorToolBase.h" />
     <ClInclude Include="EditorUi.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="EntityInspectorTool.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
@@ -94,19 +114,24 @@
     <ClInclude Include="MetaAtlas.h" />
     <ClInclude Include="MetaSpriteComponent.h" />
     <ClInclude Include="MetaspriteTool.h" />
+    <ClInclude Include="Netcode.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ProceduralCppTiledWorldPopulater.h" />
     <ClInclude Include="ProceduralHelpers.h" />
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="RekationshipTags.h" />
     <ClInclude Include="Rotation.h" />
+    <ClInclude Include="SaveLoadLevelTool.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="SingleTileDrawTool.h" />
     <ClInclude Include="StaticCollisionDrawerTool.h" />
     <ClInclude Include="StaticPhysicsBody.h" />
     <ClInclude Include="TestMoveComponent.h" />
     <ClInclude Include="TileInfoTool.h" />
+    <ClInclude Include="ToolHelpers.h" />
+    <ClInclude Include="TSQueue.h" />
     <ClInclude Include="WaveFunctionCollapseTool.h" />
     <ClInclude Include="WindowsFilesystem.h" />
     <ClInclude Include="flecs.h" />
@@ -143,9 +168,16 @@
     <ProjectGuid>{ea3a8673-c451-4d2b-9766-c314748be47d}</ProjectGuid>
     <RootNamespace>TileMapRendererExperiments</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -159,6 +191,12 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -179,10 +217,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -192,13 +236,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(SolutionDir)box2d-main\box2d-main\build\bin\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)box2d-main\box2d-main\include;$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)box2d-main\box2d-main\include;$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)asio-1.28.0\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(SolutionDir)box2d-main\box2d-main\build\bin\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)box2d-main\box2d-main\include;$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)asio-1.28.0\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -206,6 +258,18 @@
     <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
@@ -234,6 +298,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;box2d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>$(SolutionDir)TileMapRendererExperiments\x64\Debug\Engine.exe</Command>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='hjkuik7y|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>

@@ -1,8 +1,8 @@
 #include "EditorCamera.h"
 
-EditorCamera::EditorCamera(const EditorCameraInitializationSettings& init)
-	:Camera2D(init.screenWidth, init.screenHeight, "Editor"),
-	_moveSpeed(init.moveSpeed)
+EditorCamera::EditorCamera(const EditorCameraInitializationSettings& Init)
+	:Camera2D(Init.screenWidth, Init.screenHeight, "Editor"),
+	_moveSpeed(Init.moveSpeed)
 {
 }
 

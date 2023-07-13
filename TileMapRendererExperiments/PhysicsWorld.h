@@ -3,6 +3,8 @@
 #include <box2d/b2_world.h>
 #include <box2d/b2_api.h>
 #include "BasicTypedefs.h"
+#include "DIMacros.h"
+#include <memory>
 
 class ECS;
 namespace flecs {
@@ -16,6 +18,8 @@ class PhysicsWorld
 {
 public:
 	PhysicsWorld(b2Vec2 gravity, ECS* m_ecs, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree);
+	DI_Decl(PhysicsWorld, ECS*, DynamicQuadTreeContainer<flecs::entity>*)
+
 	void Step();
 	bool AddStaticPolygon(const glm::vec2* points, u32 numPoints, flecs::entity& entity);
 

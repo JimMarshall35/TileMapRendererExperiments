@@ -2,18 +2,18 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <fstream>      // std::ifstream
-#include "flecs.h"
 #include "MetaSpriteComponent.h"
 #include "jsonhelper.h"
 
-MetaAtlas::MetaAtlas(u32 width, u32 height)
+MetaAtlas::MetaAtlas(u32 width, u32 height, ECS* ecs)
 	:m_atlasData(std::make_unique<u16[]>(width * height)),
 	m_atlasHeight(height),
 	m_atlasWidth(width),
-	m_atlasSize(width * height)
+	m_atlasSize(width * height),
+	m_ecs(ecs)
 {
 	memset(m_atlasData.get(), 0, m_atlasSize * sizeof(u16));
-	//CreateGlTextureFromAtlas();
+	CreateGlTextureFromAtlas();
 	LoadFromFile("data\\metasprites.atlas");
 }
 
@@ -31,10 +31,11 @@ MetaSpriteHandle MetaAtlas::LoadMetaSprite(const MetaSpriteDescription& descript
 
 	auto& descriptionDest = m_loadedMetaspriteDescriptions[m_numLoadedMetasprites];
 	descriptionDest.name = description.name;
-	descriptionDest.numTiles = description.numTiles;
+	//descriptionDest.numTiles = description.numTiles;
+	descriptionDest.tiles.resize(description.tiles.size());
 	descriptionDest.spriteTilesHeight = description.spriteTilesHeight;
 	descriptionDest.spriteTilesWidth = description.spriteTilesWidth;
-	memcpy(descriptionDest.tiles, description.tiles, sizeof(u16) * description.numTiles);
+	memcpy(descriptionDest.tiles.data(), description.tiles.data(), sizeof(u16) * description.tiles.size());
 	// do the actual loading here, texturesubimage2d into the texture, saving offset to m_loadedMetaSpriteOffsets[m_numLoadedMetasprites]
 
 	if (m_currentY + description.spriteTilesHeight > m_nextY) {
@@ -72,15 +73,6 @@ MetaSpriteHandle MetaAtlas::LoadMetaSprite(const MetaSpriteDescription& descript
 	return rVal;
 }
 
-void MetaAtlas::AddMetaSpriteComponentToEntity(flecs::entity& entity, MetaSpriteHandle handle)
-{
-	assert(handle >= 0);
-	assert(handle < MAX_NUM_METASPRITES);
-	assert(handle < m_numLoadedMetasprites);
-	entity.add<MetaSprite>();
-	//entity.set<MetaSpriteComponent>({ handle, &m_loadedMetaspriteDescriptions[handle] });
-}
-
 void MetaAtlas::GetSprites(const MetaSpriteDescription** sprites, u32* numsprites)
 {
 	*sprites = m_loadedMetaspriteDescriptions;
@@ -101,6 +93,11 @@ const glm::ivec2* MetaAtlas::GetOffset(MetaSpriteHandle handle) const
 	return &m_loadedMetaSpriteOffsets[handle];
 }
 
+const flecs::entity MetaAtlas::GetECSEntity(MetaSpriteHandle handle) const
+{
+	return m_loadedMetaSpriteDescriptionEntities[handle];
+}
+
 const MetaSpriteDescription* MetaAtlas::getDescription(MetaSpriteHandle handle) const
 {
 	if (handle < 0 || handle >= m_numLoadedMetasprites) {
@@ -112,10 +109,11 @@ const MetaSpriteDescription* MetaAtlas::getDescription(MetaSpriteHandle handle) 
 
 u32 GetSizeNeededForDescription(const MetaSpriteDescription& m) {
 	u32 totalSize = 0;
-	totalSize += sizeof(m.numTiles);
+	size_t numTiles = m.tiles.size();
+	totalSize += sizeof(numTiles);
 	totalSize += sizeof(m.spriteTilesHeight);
 	totalSize += sizeof(m.spriteTilesWidth);
-	totalSize += sizeof(u16) * m.numTiles; // tiles
+	totalSize += sizeof(u16) * numTiles; // tiles
 	totalSize += m.name.length() + 1;// + 1 for null character
 	return totalSize;
 }
@@ -217,8 +215,8 @@ void MetaAtlas::SaveToFile(std::string path) const
 		WriteString(writePtr, d.name);
 		WriteU32(writePtr, d.spriteTilesWidth);
 		WriteU32(writePtr, d.spriteTilesHeight);
-		WriteU32(writePtr, d.numTiles);
-		WriteU16Array(writePtr, d.tiles, d.numTiles);
+		WriteU32(writePtr, d.tiles.size());
+		WriteU16Array(writePtr, d.tiles.data(), d.tiles.size());
 	}
 	WriteU32(writePtr, m_nextX);
 	WriteU32(writePtr, m_nextY);
@@ -248,13 +246,16 @@ void MetaAtlas::LoadFromFile(std::string path)
 		ReadString(d.name, fs);
 		ReadU32(d.spriteTilesWidth, fs);
 		ReadU32(d.spriteTilesHeight, fs);
-		ReadU32(d.numTiles, fs);
-		ReadU16Array(d.tiles, d.numTiles, fs);
+		u32 size = 0;
+		ReadU32(size, fs);
+		d.tiles.resize(size);
+		ReadU16Array(d.tiles.data(), d.tiles.size(), fs);
 	}
 	ReadU32(m_nextX, fs);
 	ReadU32(m_nextY, fs);
 	ReadU32(m_currentY, fs);
 	CreateGlTextureFromAtlas();
+	SaveAtlasAsECSEntities();
 }
 
 bool MetaAtlas::LoadFromJSON(const std::string& folder, const std::string& file, std::string& outErrorMsg)
@@ -281,11 +282,27 @@ bool MetaAtlas::LoadFromJSON(const std::string& folder, const std::string& file,
 		desc.name = name;
 		desc.spriteTilesWidth = width;
 		desc.spriteTilesHeight = numTiles / width;
-		desc.numTiles = numTiles;
+		desc.tiles.resize(numTiles);
 		for (int j = 0; j < numTiles; j++) {
 			desc.tiles[j] = (u16)data[j].GetUint();
 		}
 		MetaSpriteHandle hndl = LoadMetaSprite(desc);
+	}
+	SaveAtlasAsECSEntities();
+}
+
+void MetaAtlas::SaveAtlasAsECSEntities()
+{
+	flecs::world* world = m_ecs->GetWorld();
+
+	world->each([world, this](flecs::entity_t e, MetaSpriteDescription& desc) {
+		ecs_delete(world->c_ptr(), e);
+	});
+	for (u32 i = 0; i < m_numLoadedMetasprites; i++) {
+		m_loadedMetaSpriteDescriptionEntities[i] = world->entity()
+			.set([this, i](MetaSpriteDescription& desc) {
+				desc = m_loadedMetaspriteDescriptions[i];
+			});
 	}
 }
 

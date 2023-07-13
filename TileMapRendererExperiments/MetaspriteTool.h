@@ -1,5 +1,5 @@
 #pragma once
-#include "EditorToolBase.h"
+#include "EditorToolWithSnappingBase.h"
 #include <vector>
 #include "flecs.h"
 
@@ -14,7 +14,7 @@ class ECS;
 class NewRenderer;
 
 class MetaspriteTool
-	:public EditorToolBase
+	:public EditorToolWithSnappingBase
 {
 	// Inherited via EditorToolBase
 public:

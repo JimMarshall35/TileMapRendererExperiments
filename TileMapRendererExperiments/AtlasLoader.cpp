@@ -393,9 +393,9 @@ void AtlasLoader::MakeAtlasAsArrayTexture()
 			NUM_CHANNELS,
 			thisTypeBuffer.get(),
 			tileType.GetWidth() * NUM_CHANNELS);
-
-		glGenTextures(1, &_arrayTextureForType[tileType]);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, _arrayTextureForType[tileType]);
+		u32* textureHandlePtr = &_arrayTextureForType[tileType];
+		glGenTextures(1, textureHandlePtr);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, *textureHandlePtr);
 
 		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 3, GL_RGBA8, tileType.GetWidth(), tileType.GetHeight(), numberOfThisTileType);
 

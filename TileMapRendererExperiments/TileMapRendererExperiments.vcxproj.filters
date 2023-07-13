@@ -103,6 +103,9 @@
     <Filter Include="Source Files\ecs\systems">
       <UniqueIdentifier>{154552c6-7c32-459d-8b1d-3dea8d254515}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ecs\components\Relationship tags">
+      <UniqueIdentifier>{272f3a7f-60b8-4e04-aaef-3616182d4f16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -234,9 +237,6 @@
     <ClCompile Include="JSONPopulator.cpp">
       <Filter>Source Files\populators</Filter>
     </ClCompile>
-    <ClCompile Include="ECS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicsWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -245,6 +245,36 @@
     </ClCompile>
     <ClCompile Include="EntityInspectorTool.cpp">
       <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="asio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="asio_ssl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolHelpers.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorToolWithSnappingBase.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorToolWithSnappingBase.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveLoadLevelTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DIContainer.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Netcode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS.cpp">
+      <Filter>Source Files\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +481,30 @@
     </ClInclude>
     <ClInclude Include="StaticCollisionDrawerTool.h">
       <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="RekationshipTags.h">
+      <Filter>Header Files\ecs\components\Relationship tags</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolHelpers.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveLoadLevelTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DIMacros.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DIContainer.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Netcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TSQueue.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

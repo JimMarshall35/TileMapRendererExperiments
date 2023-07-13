@@ -1,11 +1,15 @@
 #include "JSONPopulator.h"
 #include "jsonhelper.h"
 
-JSONTiledWorldPopulator::JSONTiledWorldPopulator(const std::string& jsonFolder, const std::string& jsonFile)
+JSONTiledWorldPopulator::JSONTiledWorldPopulator()
+{
+	
+}
+
+void JSONTiledWorldPopulator::LoadJSON(const std::string& jsonFolder, const std::string& jsonFile)
 {
 	std::string error;
-	if (!TryLoadData(jsonFolder, jsonFile, error))
-	{
+	if (!TryLoadData(jsonFolder, jsonFile, error)) {
 		std::cerr << error << "\n";
 	}
 }

@@ -10,6 +10,7 @@
 #include "TestMoveComponent.h"
 #include "ECS.h"
 #include "NewRenderer.h"
+#include "RekationshipTags.h"
 
 MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, DynamicQuadTreeContainer<flecs::entity>* metaspritesQuadTree, ECS* ecs, NewRenderer* renderer)
     :m_metaAtlas(metaAtlas),
@@ -22,6 +23,7 @@ MetaspriteTool::MetaspriteTool(MetaAtlas* metaAtlas, AtlasLoader* atlasLoader, D
 
 void MetaspriteTool::DoUi()
 {
+    EditorToolWithSnappingBase::DoUi();
     if (ImGui::Checkbox("AutoAdvance", &m_autoAdvance));
     if(ImGui::InputInt("metasprite w", (int*)&m_currentMetaspriteWidth) 
         || ImGui::InputInt("metasprite h", (int*)&m_currentMetaspriteHeight)) {
@@ -70,11 +72,11 @@ void MetaspriteTool::DoUi()
         }
         if (ImGui::Selectable(d[i].name.c_str(), selected)) {
             m_currentMetaspriteHandle = i;
-            const auto d = m_metaAtlas->getDescription(i);
+            const MetaSpriteDescription* d = m_metaAtlas->getDescription(i);
             m_currentMetaspriteHeight = d->spriteTilesHeight;
             m_currentMetaspriteWidth = d->spriteTilesWidth;
             m_currentMetasprite.clear();
-            for (int j = 0; j < d->numTiles; j++) {
+            for (int j = 0; j < d->tiles.size(); j++) {
                 m_currentMetasprite.push_back(d->tiles[j]);
             }
         }
@@ -127,7 +129,7 @@ void MetaspriteTool::DrawOverlay(const Camera2D& camera, const glm::vec2& mouseW
     if (m_currentMetaspriteHandle >= 0) {
         m_renderer->DrawMetaSprite(
             m_currentMetaspriteHandle, 
-            mouseWorldSpacePos, 
+            GetSnappedPosition(mouseWorldSpacePos), 
             { 1,1 }, 
             0, 
             *m_metaAtlas,
@@ -144,30 +146,34 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
     }
     const auto d = m_metaAtlas->getDescription(m_currentMetaspriteHandle);
     Rect r;
-    r.pos = click - glm::vec2(0.5f,0.5f); // why the glm::vec2(0.5f,0.5f) fudge factor? I don't know
+    r.pos = GetSnappedPosition(click) - glm::vec2(0.5f,0.5f); // why the glm::vec2(0.5f,0.5f) fudge factor? I don't know
     r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
-    MetaSpriteComponent comp = { m_currentMetaspriteHandle, click };
 
     flecs::entity entity = m_ecs->GetWorld()->entity()
-        .set([click, comp, r](Position& p, MetaSpriteComponent& m, Scale& s, Rect& re) {
-                p.val = click;
+        .set([this, click, r](Position& p, Scale& s, Rect& re) {
+                p.val = GetSnappedPosition(click);
                 s.val = { 1,1 };
-                m = comp;
                 re = r;
             });
 
     m_metaspritesQuadTree->insert(entity, r);
     std::list<QuadTreeItem<flecs::entity>>::iterator iter = std::prev(m_metaspritesQuadTree->end());
-    const MetaSpriteComponent* ms = entity.get<MetaSpriteComponent>();
-    entity.set<MetaSpriteComponent>({ ms->handle, ms->pos, iter });
+    MetaSpriteComponent comp = { m_currentMetaspriteHandle, GetSnappedPosition(click)};
+    comp.ready = true;
+    entity.set([comp](MetaSpriteComponent& ms) { ms = comp; });
+    //entity.set<MetaSpriteIsDescribedBy, MetaSpriteDescription>(m_metaAtlas->GetECSEntity(m_currentMetaspriteHandle));
+    entity.add<MetaSpriteIsDescribedBy>(m_metaAtlas->GetECSEntity(m_currentMetaspriteHandle));
 }
 
 void MetaspriteTool::SaveMetaSprite(std::string name) {
     MetaSpriteDescription d;
     d.name = name;
-    d.numTiles = m_currentMetaspriteWidth * m_currentMetaspriteHeight;
+    d.tiles.resize(m_currentMetaspriteWidth * m_currentMetaspriteHeight);
     d.spriteTilesHeight = m_currentMetaspriteHeight;
     d.spriteTilesWidth = m_currentMetaspriteWidth;
-    memcpy(d.tiles, &m_currentMetasprite[0], sizeof(u16) * d.numTiles);
+    
+    memcpy(d.tiles.data(), &m_currentMetasprite[0], sizeof(u16) * d.tiles.size());
+
     m_currentMetaspriteHandle = m_metaAtlas->LoadMetaSprite(d);
+    m_metaAtlas->SaveAtlasAsECSEntities();
 }

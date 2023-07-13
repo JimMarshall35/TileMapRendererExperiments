@@ -27,7 +27,7 @@ EditorUi::~EditorUi()
     ImGui::DestroyContext();
 }
 
-EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, ECS* ecsWorld, const IFileSystem* fileSystem, EditorToolBase** tools, u32 numTools, GLFWwindow* window, CameraManager* camManager)
+EditorUi::EditorUi(TiledWorld* tiledWorld, AtlasLoader* atlasLoader, ECS* ecsWorld, const IFilesystem* fileSystem, EditorToolBase** tools, u32 numTools, GLFWwindow* window, CameraManager* camManager)
 	:m_atlasLoader(atlasLoader),
 	m_tiledWorld(tiledWorld),
     m_ecsWorld(ecsWorld),
@@ -106,7 +106,7 @@ void EditorUi::DoUiWindow()
 
     ImGui::BeginChild("tiles");
 
-    for (const auto& t : m_atlasLoader->GetIndividualTiles()) {
+    for (const Tile& t : m_atlasLoader->GetIndividualTiles()) {
         ImGui::PushID(onIndex);
         if (ImGui::ImageButton((void*)(intptr_t)m_atlasLoader->GetAtlasTextureHandle(),
             { (float)t.GetPixelsCols() * zoom, (float)t.GetPixelsRows() * zoom },

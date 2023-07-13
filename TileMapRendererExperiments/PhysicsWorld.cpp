@@ -20,6 +20,17 @@ PhysicsWorld::PhysicsWorld(b2Vec2 gravity, ECS* ecs, DynamicQuadTreeContainer<fl
 	
 }
 
+PhysicsWorld::PhysicsWorld(ECS* ecs, DynamicQuadTreeContainer<flecs::entity>* quadTree)
+	:PhysicsWorld(b2Vec2{0,0}, ecs, quadTree)
+{
+
+}
+
+
+DI_FactoryDecl(PhysicsWorld)(ECS* ecs, DynamicQuadTreeContainer<flecs::entity>* quadTree)
+{
+	DI_FactoryImpl(PhysicsWorld, ecs, quadTree);
+}
 
 void PhysicsWorld::Step()
 {

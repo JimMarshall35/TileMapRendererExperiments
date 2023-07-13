@@ -2,19 +2,25 @@
 #include "BasicTypedefs.h"
 #include <glm/glm.hpp>
 #include "QuadTree.h"
+#include <string>
+#include <vector>
 
-struct MetaSpriteDescription;
 namespace flecs {
 	struct entity;
-};
-
-struct MetaSprite {
-	i32 handle;
-	glm::vec2 pos;
 };
 
 struct MetaSpriteComponent {
 	i32 handle;
 	glm::vec2 pos;
-	std::list<QuadTreeItem<flecs::entity>>::iterator quadtreeIterator;
+	bool ready = false;
+};
+#define MAX_METASPRITE_SIZE 128
+
+
+struct MetaSpriteDescription {
+	std::string name;
+	u32 spriteTilesWidth;
+	u32 spriteTilesHeight;
+	//u32 numTiles = 0;
+	std::vector<u16> tiles;
 };

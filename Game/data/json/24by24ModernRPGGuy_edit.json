@@ -1,0 +1,15 @@
+{ "columns":4,
+ "image":"Spritesheet\/24by24ModernRPGGuy_edit.png",
+ "imageheight":144,
+ "imagewidth":96,
+ "margin":0,
+ "name":"24by24ModernRPGGuy_edit",
+ "spacing":0,
+ "tilecount":24,
+ "tiledversion":"1.5.0",
+ "tileheight":24,
+ "tilewidth":24,
+ "type":"tileset",
+ "version":1.5,
+ "gensprites" : true
+}

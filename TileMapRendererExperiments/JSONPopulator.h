@@ -7,7 +7,8 @@
 class JSONTiledWorldPopulator : public ITiledWorldPopulater
 {
 public:
-	JSONTiledWorldPopulator(const std::string& jsonFolder, const std::string& jsonFile);
+	JSONTiledWorldPopulator();
+	void LoadJSON(const std::string& jsonFolder, const std::string& jsonFile);
 	// Inherited via ITiledWorldPopulater
 	virtual void PopulateLayer(u32 layerNumber, u16* layer, u32 layerWidthTiles, u32 layerHeightTiles, std::string& outName) override;
 	virtual u32 GetRequiredNumLayers() override;

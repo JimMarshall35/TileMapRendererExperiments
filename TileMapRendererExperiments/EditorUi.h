@@ -9,7 +9,7 @@
 class TiledWorld;
 class AtlasLoader;
 class Camera2D;
-class IFileSystem;
+class IFilesystem;
 class EditorToolBase;
 class CameraManager;
 class EditorCamera;
@@ -29,7 +29,7 @@ public:
 	EditorUi(TiledWorld* tiledWorld,
 		AtlasLoader* atlasLoader, 
 		ECS* ecsWorld, 
-		const IFileSystem* fileSystem, 
+		const IFilesystem* fileSystem, 
 		EditorToolBase** tools, 
 		u32 numTools, 
 		GLFWwindow* window,

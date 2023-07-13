@@ -6,7 +6,8 @@
 #include "MetaSpriteComponent.h"
 #include "imgui/imgui.h"
 #include "NewRenderer.h"
-
+#include "BasicTypedefs.h"
+#include <string>
 
 
 EntityInspectorTool::EntityInspectorTool(ECS* ecs, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree, NewRenderer* renderer)
@@ -20,6 +21,12 @@ void EntityInspectorTool::DoUi()
 {
 	if (ImGui::Button("save entities as json")) {
 		SaveEntitiesTest();
+	}
+	if (m_selectedEntity != m_nullEntity) {
+		//m_selectedEntity.each([]())
+		u64 id = m_selectedEntity.raw_id();
+		char buf[128];
+		ImGui::Text(std::to_string(id).c_str());
 	}
 }
 

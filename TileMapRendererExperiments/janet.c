@@ -5462,15 +5462,15 @@ extern size_t janet_core_image_size;
 JanetModule janet_native(const char *name, const uint8_t **error) {
     char *processed_name = get_processed_name(name);
     Clib lib = load_clib(processed_name);
-    JanetModule init;
+    JanetModule Init;
     JanetModconf getter;
     if (name != processed_name) janet_free(processed_name);
     if (!lib) {
         *error = janet_cstring(error_clib());
         return NULL;
     }
-    init = (JanetModule) symbol_clib(lib, "_janet_init");
-    if (!init) {
+    Init = (JanetModule) symbol_clib(lib, "_janet_init");
+    if (!Init) {
         *error = janet_cstring("could not find the _janet_init symbol");
         return NULL;
     }
@@ -5497,7 +5497,7 @@ JanetModule janet_native(const char *name, const uint8_t **error) {
         *error = janet_cstring(errbuf);
         return NULL;
     }
-    return init;
+    return Init;
 }
 
 static const char *janet_dyncstring(const char *name, const char *dflt) {
@@ -5690,7 +5690,7 @@ JANET_CORE_FN(janet_core_native,
               "usually a .so file on Unix systems, and a .dll file on Windows. "
               "Returns an environment table that contains functions and other values "
               "from the native module.") {
-    JanetModule init;
+    JanetModule Init;
     janet_arity(argc, 1, 2);
     const uint8_t *path = janet_getstring(argv, 0);
     const uint8_t *error = NULL;
@@ -5700,11 +5700,11 @@ JANET_CORE_FN(janet_core_native,
     } else {
         env = janet_table(0);
     }
-    init = janet_native((const char *)path, &error);
-    if (!init) {
+    Init = janet_native((const char *)path, &error);
+    if (!Init) {
         janet_panicf("could not load native %S: %S", path, error);
     }
-    init(env);
+    Init(env);
     janet_table_put(env, janet_ckeywordv("native"), argv[0]);
     return janet_wrap_table(env);
 }
@@ -9368,18 +9368,18 @@ void janet_ev_post_event(JanetVM *vm, JanetCallback cb, JanetEVGenericMessage ms
 
 #ifdef JANET_WINDOWS
 static DWORD WINAPI janet_thread_body(LPVOID ptr) {
-    JanetEVThreadInit *init = (JanetEVThreadInit *)ptr;
-    JanetEVGenericMessage msg = init->msg;
-    JanetThreadedSubroutine subr = init->subr;
-    JanetThreadedCallback cb = init->cb;
-    JanetHandle iocp = init->write_pipe;
+    JanetEVThreadInit *Init = (JanetEVThreadInit *)ptr;
+    JanetEVGenericMessage msg = Init->msg;
+    JanetThreadedSubroutine subr = Init->subr;
+    JanetThreadedCallback cb = Init->cb;
+    JanetHandle iocp = Init->write_pipe;
     /* Reuse memory from thread init for returning data */
-    init->msg = subr(msg);
-    init->cb = cb;
+    Init->msg = subr(msg);
+    Init->cb = cb;
     janet_assert(PostQueuedCompletionStatus(iocp,
                                             sizeof(JanetSelfPipeEvent),
                                             0,
-                                            (LPOVERLAPPED) init),
+                                            (LPOVERLAPPED) Init),
                  "failed to post completion event");
     return 0;
 }
@@ -9411,19 +9411,19 @@ static void *janet_thread_body(void *ptr) {
 #endif
 
 void janet_ev_threaded_call(JanetThreadedSubroutine fp, JanetEVGenericMessage arguments, JanetThreadedCallback cb) {
-    JanetEVThreadInit *init = janet_malloc(sizeof(JanetEVThreadInit));
-    if (NULL == init) {
+    JanetEVThreadInit *Init = janet_malloc(sizeof(JanetEVThreadInit));
+    if (NULL == Init) {
         JANET_OUT_OF_MEMORY;
     }
-    init->msg = arguments;
-    init->subr = fp;
-    init->cb = cb;
+    Init->msg = arguments;
+    Init->subr = fp;
+    Init->cb = cb;
 
 #ifdef JANET_WINDOWS
-    init->write_pipe = janet_vm.iocp;
-    HANDLE thread_handle = CreateThread(NULL, 0, janet_thread_body, init, 0, NULL);
+    Init->write_pipe = janet_vm.iocp;
+    HANDLE thread_handle = CreateThread(NULL, 0, janet_thread_body, Init, 0, NULL);
     if (NULL == thread_handle) {
-        janet_free(init);
+        janet_free(Init);
         janet_panic("failed to create thread");
     }
     CloseHandle(thread_handle); /* detach from thread */

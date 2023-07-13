@@ -31,5 +31,6 @@ private:
     std::vector<std::pair<flecs::entity, Rect>> m_visibileItems;
     flecs::entity m_nullEntity;
     flecs::entity m_selectedEntity = m_nullEntity;
+
 };
 

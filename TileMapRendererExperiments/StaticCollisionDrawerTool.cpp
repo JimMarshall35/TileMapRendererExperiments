@@ -10,6 +10,7 @@
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
 #include "imgui/imgui.h"
+#include "ToolHelpers.h"
 
 
 StaticCollisionDrawerTool::StaticCollisionDrawerTool(NewRenderer* newRenderer, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree, PhysicsWorld* physicsWorld, ECS* ecs) 
@@ -22,8 +23,7 @@ StaticCollisionDrawerTool::StaticCollisionDrawerTool(NewRenderer* newRenderer, D
 }
 void StaticCollisionDrawerTool::DoUi()
 {
-    if (ImGui::InputInt("snapping", (int*)&m_snappingIncrementTileDivider)) {
-    }
+    EditorToolWithSnappingBase::DoUi();
 }
 
 void StaticCollisionDrawerTool::RecieveTileClick(i32 x, i32 y, i32 z)
@@ -43,7 +43,7 @@ const std::string& StaticCollisionDrawerTool::GetName()
 
 void StaticCollisionDrawerTool::RecieveWorldspaceClick(const glm::vec2& worldspace)
 {
-    const auto snapped = GetSnappedPosition(worldspace);
+    const auto snapped = EditorToolHelpers::GetSnappedPosition(worldspace, m_snappingIncrementTileDivider);
     m_points.push_back(snapped);
 }
 
@@ -81,7 +81,7 @@ void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::v
             m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
         }
     }
-    DrawVertexCursor(camera, snapped);
+    EditorToolHelpers::DrawCrossCursor(m_newRenderer, camera, snapped);
     
     auto camTLBR = camera.GetTLBR();
     Rect r;
@@ -116,32 +116,3 @@ void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::v
     }
 }
 
-double round_to_multiple(double val, double step)
-{
-    return step * std::round(val / step);
-}
-
-glm::vec2 StaticCollisionDrawerTool::GetSnappedPosition(const glm::vec2& worldpsacePosition) const
-{
-    if (m_snappingIncrementTileDivider == 0.0f) {
-        return worldpsacePosition;
-    }
-    return glm::vec2(
-        round_to_multiple(worldpsacePosition.x, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f,
-        round_to_multiple(worldpsacePosition.y, 1.0f / (float)m_snappingIncrementTileDivider) - 0.5f
-    );
-}
-
-void StaticCollisionDrawerTool::DrawVertexCursor(const Camera2D& camera, const glm::vec2& pos) const
-{
-    // draw a green cross
-    glm::vec2 pt1 = pos + glm::vec2{ 0.1, 0.1 };
-    glm::vec2 pt2 = pos + glm::vec2{ -0.1, -0.1 };
-
-    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
-
-    pt1 = pos + glm::vec2{ -0.1, 0.1 };
-    pt2 = pos + glm::vec2{ 0.1, -0.1 };
-
-    m_newRenderer->DrawLine(pt1, pt2, { 0,1,0,1.0 }, 3, camera);
-}

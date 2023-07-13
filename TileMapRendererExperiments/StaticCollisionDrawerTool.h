@@ -1,5 +1,5 @@
 #pragma once
-#include "EditorToolBase.h"
+#include "EditorToolWithSnappingBase.h"
 #include <vector>
 class NewRenderer;
 
@@ -12,7 +12,7 @@ class DynamicQuadTreeContainer;
 class PhysicsWorld;
 class ECS;
 
-class StaticCollisionDrawerTool : public EditorToolBase
+class StaticCollisionDrawerTool : public EditorToolWithSnappingBase
 {
 public:
 	StaticCollisionDrawerTool(NewRenderer* newRenderer, DynamicQuadTreeContainer<flecs::entity>* entityQuadTree, PhysicsWorld* physicsWorld, ECS* ecs);
@@ -26,10 +26,9 @@ public:
 	virtual bool WantsToDrawOverlay() const override;
 	virtual void DrawOverlay(const Camera2D& camera, const glm::vec2& mouseWorldSpacePos) override;
 private:
-	glm::vec2 GetSnappedPosition(const glm::vec2& worldpsacePosition) const;
-	void DrawVertexCursor(const Camera2D& camera, const glm::vec2& pos) const;
+	//glm::vec2 GetSnappedPosition(const glm::vec2& worldpsacePosition) const;
+	//void DrawVertexCursor(const Camera2D& camera, const glm::vec2& pos) const;
 private:
-	u32 m_snappingIncrementTileDivider = 0; // 0 = off
 	std::vector<glm::vec2> m_points;
 	DynamicQuadTreeContainer<flecs::entity>* m_entityQuadTree;
 	PhysicsWorld* m_physicsWorld;

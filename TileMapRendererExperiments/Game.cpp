@@ -116,7 +116,8 @@ void Game::Draw(const Camera2D& camera) const
         auto entity = qItem->item;
         
         const MetaSpriteComponent* metaSprite = entity.get<MetaSpriteComponent>();
-        if (metaSprite) {
+
+        if (metaSprite && metaSprite->ready) {
             m_renderer->DrawMetaSprite(
                 metaSprite->handle,
                 metaSprite->pos,

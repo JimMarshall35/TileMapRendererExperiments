@@ -7,7 +7,21 @@
 #include "MetaAtlas.h"
 
 #define TILE_NUM_INDICES 6
+#define SCR_WIDTH 800
+#define SCR_HEIGHT 1200
 
+NewRenderer* NewRenderer::s_instance;
+
+NewRendererInitialisationInfo::NewRendererInitialisationInfo(u32 width, u32 height)
+	:windowHeight(height), windowWidth(width)
+{
+
+}
+
+std::unique_ptr<NewRendererInitialisationInfo> NewRendererInitialisationInfo::NewRendererInitialisationInfoFactory()
+{
+	DI_FactoryImpl(NewRendererInitialisationInfo, SCR_WIDTH, SCR_HEIGHT)
+}
 
 NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 	:m_tileShader("shaders\\TilemapVert2.glsl", "shaders\\TilemapFrag2.glsl"),
@@ -17,7 +31,20 @@ NewRenderer::NewRenderer(const NewRendererInitialisationInfo& info)
 {
 	glGenVertexArrays(1, &m_vao);
 	InitSingleLineDrawing();
+	s_instance = this;
 }
+
+NewRenderer::NewRenderer(NewRendererInitialisationInfo* info)
+	:NewRenderer(*info)
+{
+	
+}
+
+DI_FactoryDecl(NewRenderer)(NewRendererInitialisationInfo* info)
+{
+	DI_FactoryImpl(NewRenderer, info)
+}
+
 
 void NewRenderer::DrawChunk(
 	const glm::ivec2& chunkWorldMapOffset,
