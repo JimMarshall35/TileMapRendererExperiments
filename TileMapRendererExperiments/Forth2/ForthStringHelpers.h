@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 #include "ForthCommonTypedefs.h"
-
+Bool StringContains(const char* string, char character);
 Cell StringLength(const char* string);
 Bool StringCompare(const char* string1, const char* string2);
 void StringCopy(char* destination, const char* source);
@@ -14,6 +14,7 @@ Cell ForthAtoi(const char* string);
 void ForthPrint(const ForthVm* vm, const char* string);
 void ForthPrintInt(const ForthVm* vm, Cell cell);
 void ForthPrintIntHex(const ForthVm* vm, Cell cell);
+FCell ForthStrtod(const char* string);
 
 #ifdef __cplusplus
 } // closing brace for extern "C"

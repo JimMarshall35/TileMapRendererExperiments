@@ -288,6 +288,9 @@
     <ClCompile Include="Forth2\Forth2Gamelib.c">
       <Filter>Source Files\Forth</Filter>
     </ClCompile>
+    <ClCompile Include="ForthTestReplMain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flecs.h">
@@ -529,6 +532,9 @@
     </ClInclude>
     <ClInclude Include="Tags.h">
       <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="CompileSwitchDefines.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -53,6 +53,10 @@ typedef struct {
 	Cell* returnStackTop;
 	UCell maxReturnStackSize;
 
+	FCell* floatStack;
+	FCell* floatStackTop;
+	FCell* maxFloatStackSize;
+
 	// for outer interpreter
 	char tokenBuffer[DictionaryItemNameMaxLength + 1]; // holds current token as a c string during text interpretation
 	const char* nextTokenStart;                        // points to the next token during text interpretation

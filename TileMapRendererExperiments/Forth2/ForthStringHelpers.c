@@ -1,4 +1,17 @@
 #include "ForthStringHelpers.h"
+#include <stdlib.h>     /* strtod */
+#include <stdio.h> /* printf */
+
+Bool StringContains(const char* string, char character)
+{
+	int i = 0;
+	while (string[i] != '\0'){
+		if (string[i++] == character) {
+			return True;
+		}
+	}
+	return False;
+}
 
 Cell StringLength(const char* string)
 {
@@ -154,5 +167,19 @@ void ForthPrintIntHex(const ForthVm* vm, Cell val)
 {
 	ForthPrint(vm, "0x");
 	ForthPrintIntInternal(vm, val, 16, True);
+}
+
+void ForthPrintFloat(const ForthVm* vm, FCell val)
+{
+	printf("%lf", val);
+	// need to replace with own implementation before merging back into main forth repo
+}
+
+FCell ForthStrtod(const char* string)
+{
+	char* ptr;
+	FCell cell = strtod(string, &ptr);
+	return cell;
+	// need to replace with own implementation before merging back into main forth repo
 }
 

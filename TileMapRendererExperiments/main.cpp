@@ -1,9 +1,13 @@
 
+#include "CompileSwitchDefines.h"
+
+#ifndef ForthTestRepl
+
 #include "Engine.h"
 #include "TileSetInfo.h"
 #include "DIContainer.h"
 #include "DIMacros.h"
-
+#include <string.h>
 //#include "Netcode.h"
 
 #define SCR_WIDTH 800
@@ -17,8 +21,6 @@
 int main()
 {
 
-    
-
 
     auto config = TileMapConfigOptions();
     config.AtlasWidthPx = 800;
@@ -30,6 +32,7 @@ int main()
     ForthEngineSystemInitArgs forthInit;
     forthInit.intStackSizeCells = BytesToCells(1 * kb);
     forthInit.returnStackSizeCells = BytesToCells(1 * kb);
+    forthInit.floatStackSize = BytesToCells(1 * kb);
     forthInit.memorySizeCells = BytesToCells(2 * mb);
     Engine e(config, rendererInit, forthInit);
 
@@ -66,3 +69,4 @@ int main()
     return e.Run();
 }
 
+#endif

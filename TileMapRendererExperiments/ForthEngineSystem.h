@@ -17,6 +17,7 @@ struct ForthEngineSystemInitArgs
 	UCell memorySizeCells;
 	UCell intStackSizeCells;
 	UCell returnStackSizeCells;
+	UCell floatStackSize;
 };
 class ECS;
 
@@ -35,6 +36,8 @@ private:
 	UCell m_memorySizeCells;
 	UCell m_intStackSizeCells;
 	UCell m_returnStackSizeCells;
+	Cell* m_floatStack;
+	UCell m_floatStackSize;
 	static ECS* s_ecs;
 	static Bool ForthFun_CreateEntity(ForthVm* vm);
 	static Bool ForthFun_AddB2DDynamicCircleComponent(ForthVm* vm);

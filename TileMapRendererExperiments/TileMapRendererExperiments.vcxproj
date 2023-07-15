@@ -46,6 +46,7 @@
     <ClCompile Include="Forth2\Forth2Gamelib.c" />
     <ClCompile Include="Forth2\ForthStringHelpers.c" />
     <ClCompile Include="ForthEngineSystem.cpp" />
+    <ClCompile Include="ForthTestReplMain.c" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="GameFramework.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="BasicTypedefs.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="CompileSwitchDefines.h" />
     <ClInclude Include="DIContainer.h" />
     <ClInclude Include="DIMacros.h" />
     <ClInclude Include="DrawMetaSpriteSystem.h" />

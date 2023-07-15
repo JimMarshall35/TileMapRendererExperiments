@@ -1,67 +1,4 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (TileMapRendererExperiments.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  asio.cpp
-  asio_ssl.cpp
-  Camera2D.cpp
-  CameraManager.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
-  DIContainer.cpp
-  DrawMetaSpriteSystem.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  ECS.cpp
-  EditorCamera.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorCamera.cpp(73,39): warning C4244: '+=': conversion from 'T' to 'T', possible loss of data
-          with
-          [
-              T=glm::f64
-          ]
-          and
-          [
-              T=float
-          ]
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorCamera.cpp(74,39): warning C4244: '+=': conversion from 'T' to 'T', possible loss of data
-          with
-          [
-              T=glm::f64
-          ]
-          and
-          [
-              T=float
-          ]
-  EditorToolBase.cpp
-  EditorToolWithSnappingBase.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorToolWithSnappingBase.cpp(13,59): warning C4244: 'argument': conversion from 'u32' to 'f32', possible loss of data
-  EditorToolWithSnappingBase.h
-  EditorUi.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(66,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(87,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(118,47): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(136,15): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(137,15): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(147,15): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(148,15): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EditorUi.cpp(230,63): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
   Engine.cpp
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
@@ -73,189 +10,56 @@ C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiment
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Engine.cpp(147,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Engine.cpp(499,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Engine.cpp(500,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  EntityInspectorTool.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\EntityInspectorTool.cpp(28,8): warning C4101: 'buf': unreferenced local variable
   ForthEngineSystem.cpp
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ForthEngineSystem.cpp(22,24): warning C4244: 'initializing': conversion from 'UCell' to 'u32', possible loss of data
-  Game.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Game.cpp(78,66): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-  GameCamera.cpp
-  GameFramework.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.h(111,2): warning C4091: 'static ': ignored on left of 'GameFramework' when no variable is declared
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,18): warning C4099: 'GameInput': type name first seen using 'class' now seen using 'struct'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameInput.h(48,8): message : see declaration of 'GameInput'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\GameFramework.cpp(31,33): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  GLTextureHelper.cpp
-  imgui.cpp
-  Generating Code...
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\CameraManager.cpp(28): warning C4715: 'CameraManager::GetCameraByName': not all control paths return a value
-  Compiling...
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  jsonhelper.cpp
-  JSONPopulator.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\JSONPopulator.cpp(35,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\JSONPopulator.cpp(69,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\JSONPopulator.cpp(84,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\JSONPopulator.cpp(96,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\JSONPopulator.cpp(111,20): warning C4018: '<': signed/unsigned mismatch
-  LutDrawTool.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\LutDrawTool.cpp(195,27): warning C4018: '<': signed/unsigned mismatch
   main.cpp
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-  MetaAtlas.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(60,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(61,26): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(89,27): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(103,27): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(116,27): warning C4267: '+=': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(117,31): warning C4267: '+=': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(127,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(211,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(218,36): warning C4267: 'argument': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(219,57): warning C4267: 'argument': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(243,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(252,50): warning C4267: 'argument': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(274,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(286,21): warning C4018: '<': signed/unsigned mismatch
-  MetaspriteTool.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaspriteTool.cpp(69,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaspriteTool.cpp(28,56): warning C4390: ';': empty controlled statement found; is this the intent?
-  Netcode.cpp
-  NewRenderer.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  OpenGlRenderer.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\OpenGlRenderer.cpp(40,31): warning C4267: 'initializing': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\OpenGlRenderer.cpp(44,63): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
-  PhysicsWorld.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\PhysicsWorld.cpp(53,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\PhysicsWorld.cpp(66,20): warning C4018: '<': signed/unsigned mismatch
-  ProceduralCppTiledWorldPopulater.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralHelpers.h(14,16): warning C4244: 'return': conversion from 'double' to 'f32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralCppTiledWorldPopulater.cpp(21,60): warning C4305: 'initializing': truncation from 'double' to 'const f32'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralCppTiledWorldPopulater.cpp(22,62): warning C4305: 'initializing': truncation from 'double' to 'const f32'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralCppTiledWorldPopulater.cpp(64,14): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralCppTiledWorldPopulater.cpp(74,15): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralCppTiledWorldPopulater.cpp(83,14): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
-  ProceduralHelpers.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralHelpers.h(14,16): warning C4244: 'return': conversion from 'double' to 'f32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralHelpers.cpp(6,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\ProceduralHelpers.cpp(15,20): warning C4018: '<': signed/unsigned mismatch
-  SaveLoadLevelTool.cpp
-  SingleTileDrawTool.cpp
   Generating Code...
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\MetaAtlas.cpp(292): warning C4715: 'MetaAtlas::LoadFromJSON': not all control paths return a value
-  Compiling...
-  StaticCollisionDrawerTool.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\StaticCollisionDrawerTool.cpp(46,76): warning C4244: 'argument': conversion from 'u32' to 'f32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\StaticCollisionDrawerTool.cpp(58,82): warning C4267: 'argument': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\StaticCollisionDrawerTool.cpp(73,36): warning C4267: 'initializing': conversion from 'size_t' to 'u32', possible loss of data
-  stbi_image.cpp
-  Tile.cpp
-  AtlasLoader.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(24,22): warning C4018: '>': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(28,21): warning C4018: '>': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(32,25): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(36,25): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(43,50): warning C4018: '>': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(50,51): warning C4018: '>': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(243,27): warning C4244: 'initializing': conversion from '__int64' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(328,24): warning C4018: '>=': signed/unsigned mismatch
-  TileChunk.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileChunk.cpp(24,10): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileChunk.cpp(25,10): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileChunk.cpp(30,10): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileChunk.cpp(31,10): warning C4018: '>=': signed/unsigned mismatch
-  TiledWorld.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TiledWorld.cpp(17,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TiledWorld.cpp(38,20): warning C4018: '<': signed/unsigned mismatch
-  TileInfoTool.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.h(61): warning C4267: 'return': conversion from 'size_t' to 'u32', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\TileInfoTool.cpp(49,23): warning C4018: '<': signed/unsigned mismatch
-  ToolHelpers.cpp
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(70,40): warning C4101: 'e': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(238,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Shader.h(240,1): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  TypeOfTile.cpp
-  Undo.cpp
-  WaveFunctionCollapseTool.cpp
-  WindowsFilesystem.cpp
-  Generating Code...
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\AtlasLoader.cpp(216): warning C4715: 'AtlasLoader::GetArrayTextureByName': not all control paths return a value
-  flecs.c
   Forth2.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(99,15): warning C4244: 'initializing': conversion from 'Cell' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(101,14): warning C4133: 'initializing': incompatible types - from 'Cell *' to 'const char *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(159,42): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(225,47): warning C4047: '<': 'ExecutionToken' differs in levels of indirection from 'int'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(229,58): warning C4133: ':': incompatible types - from 'ForthDictHeader *' to 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(229,2): warning C4133: 'return': incompatible types - from 'Cell *' to 'ForthDictHeader *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(276,36): warning C4047: '=': 'ExecutionToken' differs in levels of indirection from 'Cell'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(279,47): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(332,16): warning C4244: 'function': conversion from 'Cell' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(349,30): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(352,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(367,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(377,59): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(398,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(408,51): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(409,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(410,54): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(492,55): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(500,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(504,55): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(508,47): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(509,43): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(516,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(536,75): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(556,47): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(580,33): warning C4047: '!=': 'int' differs in levels of indirection from 'char [2]'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(582,39): warning C4047: '=': 'Cell *' differs in levels of indirection from 'ExecutionToken *'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(590,38): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(605,29): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(790,29): warning C4047: '=': 'Cell' differs in levels of indirection from 'ForthCFunc'
-  Forth2Gamelib.c
-  ForthStringHelpers.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\ForthStringHelpers.c(96,8): warning C4090: 'initializing': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\ForthStringHelpers.c(142,38): warning C4244: 'function': conversion from 'unsigned __int64' to 'int', possible loss of data
-  glad.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(132,15): warning C4244: 'initializing': conversion from 'Cell' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(134,14): warning C4133: 'initializing': incompatible types - from 'Cell *' to 'const char *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(192,42): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(252,4): warning C4013: 'ForthPrintFloat' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(274,47): warning C4047: '<': 'ExecutionToken' differs in levels of indirection from 'int'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(278,58): warning C4133: ':': incompatible types - from 'ForthDictHeader *' to 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(278,2): warning C4133: 'return': incompatible types - from 'Cell *' to 'ForthDictHeader *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(327,36): warning C4047: '=': 'ExecutionToken' differs in levels of indirection from 'Cell'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(330,47): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(383,16): warning C4244: 'function': conversion from 'Cell' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(400,30): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(403,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(418,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(428,59): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(450,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(460,51): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(461,34): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(462,54): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(544,55): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(552,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(556,55): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(560,47): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(561,43): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(568,4): warning C4047: '=': 'Cell' differs in levels of indirection from 'Cell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(588,75): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(608,47): warning C4047: '=': 'Cell *' differs in levels of indirection from 'Cell'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(691,4): warning C4244: '=': conversion from 'Cell' to 'FCell', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(694,13): warning C4244: '=': conversion from 'Cell' to 'FCell', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(726,28): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(727,25): warning C4244: '=': conversion from 'FCell' to 'Cell', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(739,28): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(755,33): warning C4047: '!=': 'int' differs in levels of indirection from 'char [2]'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(757,39): warning C4047: '=': 'Cell *' differs in levels of indirection from 'ExecutionToken *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(765,38): warning C4047: '=': 'Cell' differs in levels of indirection from 'ExecutionToken'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(957,29): warning C4047: '=': 'Cell' differs in levels of indirection from 'ForthCFunc'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(970,30): warning C4047: '=': 'Cell *' differs in levels of indirection from 'ExecutionToken *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(1005,16): warning C4133: '=': incompatible types - from 'Cell *' to 'FCell *'
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(1007,39): warning C4047: '=': 'FCell *' differs in levels of indirection from 'UCell'
+  ForthTestReplMain.c
   Generating Code...
-C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(94): warning C4716: 'ParseInlineForthStringToCStringInTokenBuffer': must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\TileMapRendererExperiments\Forth2\Forth2.c(127): warning C4716: 'ParseInlineForthStringToCStringInTokenBuffer': must return a value
 x64\Debug\EditorToolWithSnappingBase.obj : warning LNK4042: object specified more than once; extras ignored
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   TileMapRendererExperiments.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

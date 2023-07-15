@@ -1,5 +1,6 @@
 #include "Forth2.h"
 #include "ForthStringHelpers.h"
+#include <string.h>
 
 /************************************\
  *   Forth - Jim Marshall - 2022    *
@@ -62,6 +63,38 @@ typedef enum {
 	SwitchToInterpret,
 	Does,
 	Nop,
+
+	// float instruction set
+	// arithmetic
+	FAdd,
+	FSubtract,
+	FDivide,
+	FMultiply,
+	
+	// stack manipulation
+	FSwap,
+	FDup,
+	FRot,
+	F2Dup,
+	F2Swap,
+	F2Rot,
+
+	// comparison
+	FEquals,
+	FLessthan,
+	FGreaterthan,
+
+	// memory
+	FFetch,
+	FStore,
+
+	// misc
+	FLiteral,
+
+	FFullStop,
+	FtoI,
+	ItoF,
+
 	NumPrimitives // LEAVE AT END
 }PrimitiveWordTokenValues;
 
@@ -77,7 +110,7 @@ static int CompileCStringToForthString(ForthVm* vm, const char* string, char del
 //
 //	This Forth uses strings of this format:
 // 
-//	| Cell | Cell | Cell | .... | .... |
+//	| Cell | byte | byte | .... | .... |
 //	|length| char1| char2| char3| ect  |
 //
 
@@ -210,6 +243,22 @@ static void PrintStack(const ForthVm* vm, Cell* stack, Cell* stackTop, const cha
 	ForthPrint(vm, " ]\n");
 }
 
+static void PrintFloatStack(const ForthVm* vm) {
+	ForthPrint(vm, "float stack:  ");
+	FCell* readPtr = vm->floatStack;
+	ForthPrint(vm, "[ ");
+	while (readPtr != vm->floatStackTop) {
+		if (readPtr + 1 == vm->floatStackTop) {
+			ForthPrintFloat(vm, *(readPtr++));
+		}
+		else {
+			ForthPrintFloat(vm, *(readPtr++));
+			ForthPrint(vm, ", ");
+		}
+	}
+	ForthPrint(vm, " ]\n");
+}
+
 static void PrintIntStack(const ForthVm* vm) {
 	PrintStack(vm, vm->intStack, vm->intStackTop, "int stack:    ");
 }
@@ -270,6 +319,8 @@ static Bool InnerInterpreter(ForthVm* vm){
 	Cell* initialReturnStack = vm->returnStackTop;
 	ExecutionToken token, item;
 	Cell cell1, cell2, cell3, cell4, cell5, cell6; // top four of the stack commonly used, can't declare locals in case
+	FCell fcell1, fcell2, fcell3, fcell4, fcell5, fcell6; // top four of the float stack commonly used, can't declare locals in case
+
 	const char* nextTokenReadPtr = NULL;
 	char* dictionaryNameWritePtr = NULL;
 	do {
@@ -380,6 +431,7 @@ static Bool InnerInterpreter(ForthVm* vm){
 		BCase Show:
 			PrintIntStack(vm);
 			PrintReturnStack(vm);
+			PrintFloatStack(vm);
 		BCase ShowWords:
 			PrintDictionaryContents(vm);
 		BCase Immediate:
@@ -554,6 +606,97 @@ static Bool InnerInterpreter(ForthVm* vm){
 			// we want to link subsequent defined words to it by replacing their return (the whole point of this section of code). 
 			// And so we just return now.
 			vm->instructionPointer = PopReturnStack(vm);
+
+		BCase FAdd:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2 + fcell1);
+		BCase FSubtract:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2 - fcell1);
+		BCase FDivide:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2 / fcell1);
+		BCase FMultiply:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2 * fcell1);
+		BCase FSwap:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell2);
+		BCase FDup:
+			fcell1 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell1);
+		BCase FRot:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			fcell3 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell3);
+		BCase F2Dup:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell2);
+			PushFloatStack(vm, fcell1);
+		BCase F2Swap:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			fcell3 = PopFloatStack(vm);
+			fcell4 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell2);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell4);
+			PushFloatStack(vm, fcell3);
+		BCase F2Rot:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			fcell3 = PopFloatStack(vm);
+			fcell4 = PopFloatStack(vm);
+			fcell5 = PopFloatStack(vm);
+			fcell6 = PopFloatStack(vm);
+			PushFloatStack(vm, fcell4);
+			PushFloatStack(vm, fcell3);
+			PushFloatStack(vm, fcell2);
+			PushFloatStack(vm, fcell1);
+			PushFloatStack(vm, fcell6);
+			PushFloatStack(vm, fcell5);
+		BCase FEquals:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, (fcell1 == fcell2) ? -1 : 0);
+		BCase FLessthan:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, (fcell2 < fcell1) ? -1 : 0);
+		BCase FGreaterthan:
+			fcell1 = PopFloatStack(vm);
+			fcell2 = PopFloatStack(vm);
+			PushFloatStack(vm, (fcell2 > fcell1) ? -1 : 0);
+		BCase FFetch:
+			cell1 = PopIntStack(vm);
+			PushFloatStack(vm, *((FCell*)cell1));
+		BCase FStore :
+			cell1 = PopIntStack(vm);
+			fcell1 = PopFloatStack(vm);
+			*((FCell*)cell1) = fcell1;
+		BCase FLiteral:
+			PushFloatStack(vm, *vm->instructionPointer);
+			vm->instructionPointer++;
+		BCase FFullStop:
+			fcell1 = PopIntStack(vm);
+			ForthPrintFloat(vm, fcell1);
+		BCase FtoI:
+			PushIntStack(vm, (Cell)PopFloatStack(vm))
+		BCase ItoF:
+			PushFloatStack(vm, (FCell)PopIntStack(vm));
 		}
 	} while (vm->returnStackTop != initialReturnStack);
 	return False;
@@ -571,9 +714,41 @@ static Bool LoadNextToken(ForthVm* vm) {
 	}
 }
 
+static void HandlePossibleLiteral(ForthVm* vm)
+{
+	
+	if (StringContains(vm->tokenBuffer, '.') == True) {
+		FCell converted = ForthStrtod(vm->tokenBuffer);
+		if (vm->currentMode & Forth_CompileBit) {
+
+			// compile number literal
+			ExecutionToken lit = SearchForTokenString(vm, "flit");
+			*(vm->memoryTop++) = lit;
+			*(vm->memoryTop++) = converted;
+		}
+		else {
+			PushFloatStack(vm, converted);
+		}
+	}
+	else {
+		Cell converted = ForthAtoi(vm->tokenBuffer);
+		if (vm->currentMode & Forth_CompileBit) {
+
+			// compile number literal
+			ExecutionToken lit = SearchForTokenString(vm, "lit");
+			*(vm->memoryTop++) = lit;
+			*(vm->memoryTop++) = converted;
+		}
+		else {
+			PushIntStack(vm, converted);
+		}
+	}
+	
+}
+
 static void OuterInterpreter(ForthVm* vm, const char* input) {
 	vm->nextTokenStart = input;
-	ExecutionToken lit = SearchForTokenString(vm, "lit");
+	
 	if (!LoadNextToken(vm)) {
 		return;
 	}
@@ -599,15 +774,7 @@ static void OuterInterpreter(ForthVm* vm, const char* input) {
 			}
 		}
 		else if((vm->currentMode & Forth_CommentFlag) == 0){
-			Cell converted = ForthAtoi(vm->tokenBuffer);
-			if (vm->currentMode & Forth_CompileBit) {
-				// compile number literal
-				*(vm->memoryTop++) = lit;
-				*(vm->memoryTop++) = converted;
-			}
-			else {
-				PushIntStack(vm, converted);
-			}
+			HandlePossibleLiteral(vm);
 		}
 		if (!LoadNextToken(vm)) {
 			return;
@@ -793,6 +960,17 @@ ExecutionToken Forth_RegisterCFunc(ForthVm* vm, ForthCFunc function, const char*
 	return newToken;
 }
 
+ExecutionToken Forth_SearchForExecutionToken(ForthVm* vm, const char* tokenName)
+{
+	return SearchForTokenString(vm, tokenName);
+}
+
+Bool Forth_DoExecutionToken(ForthVm* vm, ExecutionToken xt)
+{
+	vm->instructionPointer = &xt;
+	return InnerInterpreter(vm);
+}
+
 
 ForthVm Forth_Initialise(
 	Cell* memoryForCompiledWordsAndVariables,
@@ -801,6 +979,8 @@ ForthVm Forth_Initialise(
 	UCell intStackSize,
 	Cell* returnStack,
 	UCell returnStackSize,
+	Cell* floatStack,
+	UCell floatStackSize,
 	ForthPutChar putc,
 	ForthGetChar getc) {
 
@@ -821,6 +1001,10 @@ ForthVm Forth_Initialise(
 	vm.returnStack = returnStack;
 	vm.returnStackTop = vm.returnStack;
 	vm.maxReturnStackSize = returnStackSize;
+
+	vm.floatStack = floatStack;
+	vm.floatStackTop = vm.floatStack;
+	vm.maxFloatStackSize = floatStackSize;
 
 	vm.putchar = putc;
 	vm.getchar = getc;
@@ -882,6 +1066,30 @@ ForthVm Forth_Initialise(
 	AddPrimitiveToDict(&vm, SwitchToInterpret,                         "[",         True);
 	AddPrimitiveToDict(&vm, Does,                                      "does>",     False);
 	AddPrimitiveToDict(&vm, Nop,                                       "nop",       False);
+	// floating point
+	AddPrimitiveToDict(&vm, FAdd,         "f+",False);
+	AddPrimitiveToDict(&vm, FSubtract,    "f-", False);
+	AddPrimitiveToDict(&vm, FDivide,      "f/", False);
+	AddPrimitiveToDict(&vm, FMultiply,    "f*", False);
+
+	AddPrimitiveToDict(&vm, FSwap,        "fswap", False);
+	AddPrimitiveToDict(&vm, FDup,         "fdup", False);
+	AddPrimitiveToDict(&vm, FRot,         "frot", False);
+	AddPrimitiveToDict(&vm, F2Dup,        "f2dup", False);
+	AddPrimitiveToDict(&vm, F2Swap,       "fswap", False);
+	AddPrimitiveToDict(&vm, F2Rot,        "f2rot", False);
+
+	AddPrimitiveToDict(&vm, FEquals,      "f=", False);
+	AddPrimitiveToDict(&vm, FLessthan,    "f<", False);
+	AddPrimitiveToDict(&vm, FGreaterthan, "f>", False);
+
+	AddPrimitiveToDict(&vm, FFetch,       "f@", False);
+	AddPrimitiveToDict(&vm, FStore,       "f!", False);
+	AddPrimitiveToDict(&vm, FLiteral,     "flit", False);
+	AddPrimitiveToDict(&vm, FFullStop,    "f.", False);
+	AddPrimitiveToDict(&vm, FtoI,         "f2i", False);
+	AddPrimitiveToDict(&vm, ItoF,         "i2f", False);
+
 
 	// load core vocabulary of words that are not primitive, ie are defined in forth
 	OuterInterpreter(&vm, coreWords);

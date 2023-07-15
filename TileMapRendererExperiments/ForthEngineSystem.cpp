@@ -19,12 +19,13 @@ ForthEngineSystem::ForthEngineSystem(ForthEngineSystemInitArgs* args, ECS* ecs)
 
 void ForthEngineSystem::StartGlobalVm(const ForthEngineSystemInitArgs* args)
 {
-	u32 globalVmSizeBytes = (args->intStackSizeCells + args->returnStackSizeCells + args->memorySizeCells) * sizeof(Cell);
+	u32 globalVmSizeBytes = (args->intStackSizeCells + args->returnStackSizeCells + args->memorySizeCells + args->floatStackSize) * sizeof(Cell);
 	m_globalVmMemory = std::make_unique<Cell[]>(globalVmSizeBytes);
 	Cell* memoryBase = m_globalVmMemory.get();
 	m_intStack = memoryBase;
 	m_returnStack = memoryBase + m_intStackSizeCells;
-	m_memoryForCompiledWordsAndVariables = memoryBase + m_intStackSizeCells + m_returnStackSizeCells;
+	m_floatStack = memoryBase + m_intStackSizeCells + m_returnStackSizeCells;
+	m_memoryForCompiledWordsAndVariables = memoryBase + m_intStackSizeCells + m_returnStackSizeCells + m_floatStackSize;
 	m_globalVm = Forth_Initialise(
 		m_memoryForCompiledWordsAndVariables,
 		m_memorySizeCells,
@@ -32,6 +33,8 @@ void ForthEngineSystem::StartGlobalVm(const ForthEngineSystemInitArgs* args)
 		m_intStackSizeCells,
 		m_returnStack,
 		m_returnStackSizeCells,
+		m_floatStack,
+		m_floatStackSize,
 		&putchar, _getch
 	);
 }
