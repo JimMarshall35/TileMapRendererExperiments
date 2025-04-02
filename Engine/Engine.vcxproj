@@ -137,12 +137,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawContext.c" />
     <ClCompile Include="DynArray.c" />
     <ClCompile Include="GameFramework.c" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="InputContext.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawContext.h" />
     <ClInclude Include="DynArray.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="InputContext.h" />

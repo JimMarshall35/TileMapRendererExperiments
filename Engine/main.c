@@ -2,28 +2,39 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include "DynArray.h"
+#include "GameFramework.h"
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
+#define TARGET_FPS 40
+
+InputContext gInputContext;
+DrawContext gDrawContext;
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-
+    Dr_OnScreenDimsChange(width, height);
+    In_FramebufferResize(&gInputContext, width, height);
 }
 
 void MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-
+    In_RecieveMouseMove(&gInputContext, xposIn, yposIn);
 }
 
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-
+    In_RecieveScroll(&gInputContext, xoffset, yoffset);
 }
 
 void MouseBtnCallback(GLFWwindow* window, int button, int action, int mods)
 {
+    In_RecieveMouseButton(&gInputContext, button, action, mods);
+}
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    In_RecieveKeyboardKey(&gInputContext, key, scancode, action, mods);
 }
 
 static void GLAPIENTRY MessageCallback(GLenum source,
@@ -42,6 +53,12 @@ static void GLAPIENTRY MessageCallback(GLenum source,
     }
 }
 
+void Update(double deltaT)
+{
+    glfwPollEvents();
+    InputGameFramework(&gInputContext);
+    UpdateGameFramework((float)deltaT);
+}
 
 int main(int argc, char** argv)
 {
@@ -73,6 +90,7 @@ int main(int argc, char** argv)
     glfwSetCursorPosCallback(window, MouseCallback);
     glfwSetScrollCallback(window, ScrollCallback);
     glfwSetMouseButtonCallback(window, MouseBtnCallback);
+    glfwSetKeyCallback(window, key_callback);
 
     // tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -92,10 +110,23 @@ int main(int argc, char** argv)
     // During init, enable debug output
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, 0);
-
+    double accumulator = 0;
+    double lastUpdate = 0;
+    double slice = 1.0 / TARGET_FPS;
+    gDrawContext = Dr_InitDrawContext();
+    InitGameFramework();
     while (!glfwWindowShouldClose(window))
     {
-        glfwPollEvents();
+        double delta = glfwGetTime();// () - lastUpdate
+        lastUpdate += delta;
+        accumulator += delta;
+        while (accumulator > slice)
+        {
+            Update(delta);
+            accumulator -= slice;
+        }
+        
+        DrawGameFramework(&gDrawContext);
         glfwSwapBuffers(window);
     }
     glfwTerminate();

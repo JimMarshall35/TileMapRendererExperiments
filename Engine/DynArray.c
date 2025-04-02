@@ -1,6 +1,7 @@
 #include "DynArray.h"
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h> 
 
 typedef struct
 {
@@ -11,9 +12,9 @@ typedef struct
 
 void* VectorInit(unsigned int itemSize)
 {
-	VectorData* data = malloc(sizeof(VectorData) + itemSize);
+	VectorData* data = (VectorData*)malloc(sizeof(VectorData) + itemSize);
 	data->itemSize = itemSize;
-	data->size = 1;
+	data->size = 0;
 	data->capacity = 1;
 	return data + 1;
 }

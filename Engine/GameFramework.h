@@ -1,10 +1,11 @@
 #ifndef GAMEFRAMEWORK_H
 #define GAMEFRAMEWORK_H
-
+#include "InputContext.h"
+#include "DrawContext.h"
 
 typedef void (*UpdateFn)(float deltaT);
-typedef void (*DrawFn)(struct DrawContext* context);
-typedef void (*InputFn)(struct InputContext* context);
+typedef void (*DrawFn)(DrawContext* context);
+typedef void (*InputFn)(InputContext* context);
 
 typedef enum
 {
@@ -31,7 +32,7 @@ void PushGameFrameworkLayer(const GameFrameworkLayer* layer);
 void PopGameFrameworkLayer();
 
 void UpdateGameFramework(float deltaT);
-void InputGameFramework(struct InputContext* context);
-void DrawGameFramework(struct DrawContext* context);
+void InputGameFramework(InputContext* context);
+void DrawGameFramework(DrawContext* context);
 
 #endif

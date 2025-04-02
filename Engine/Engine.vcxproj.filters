@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\lib">
+      <UniqueIdentifier>{563ffa96-0e15-44dc-b34e-661e7c063806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{9d93cfe9-5e0e-4651-946d-df9a1e794aea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{11ab8270-d5fe-4f94-bccc-da112256ab84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -22,20 +31,29 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DynArray.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\lib</Filter>
     </ClCompile>
     <ClCompile Include="GameFramework.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InputContext.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawContext.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DynArray.h">
+    <ClInclude Include="InputContext.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynArray.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="GameFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputContext.h">
+    <ClInclude Include="DrawContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

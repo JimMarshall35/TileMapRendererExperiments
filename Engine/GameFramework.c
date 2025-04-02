@@ -1,9 +1,12 @@
 #include "GameFramework.h"
 #include "InputContext.h"
 #include "DynArray.h"
+#include "DrawContext.h"
 #include <string.h>
+#include <stdint.h>
 #include <stdbool.h>
-static GameFrameworkLayer* gLayerStack;
+
+static GameFrameworkLayer* gLayerStack = NULL;
 
 void InitGameFramework()
 {
@@ -19,7 +22,7 @@ void PushGameFrameworkLayer(const GameFrameworkLayer* layer)
 {
 	gLayerStack = VectorPush(gLayerStack, layer);
 }
-
+ 
 void PopGameFrameworkLayer()
 {
 	VectorPop(gLayerStack);
@@ -27,15 +30,15 @@ void PopGameFrameworkLayer()
 
 void UpdateGameFramework(float deltaT)
 {
-	for (int i = VectorSize(gLayerStack) - 1; i >= 0 ; i++)
+	for (int i = VectorSize(gLayerStack) - 1; i >= 0; i++)
 	{
 		if (gLayerStack[i].flags & EnableUpdateFn)
 		{
 			gLayerStack[i].update(deltaT);
-			if (gLayerStack[i].flags & MasksUpdate)
-			{
-				break;
-			}
+		}
+		if (gLayerStack[i].flags & MasksUpdate)
+		{
+			break;
 		}
 	}
 }
@@ -47,18 +50,25 @@ void InputGameFramework(InputContext* context)
 		if (gLayerStack[i].flags & EnableInputFn)
 		{
 			gLayerStack[i].input(context);
-			if (gLayerStack[i].flags & MasksInput)
-			{
-				break;
-			}
+		}
+		if (gLayerStack[i].flags & MasksInput)
+		{
+			break;
 		}
 	}
 }
 
-void DrawGameFramework(struct DrawContext* context)
+void DrawGameFramework(DrawContext* context)
 {
-	for (int i = 0; i < VectorSize(gLayerStack); i++)
+	for (int i = VectorSize(gLayerStack) - 1; i >= 0; i++)
 	{
-
+		if (gLayerStack[i].flags & EnableDrawFn)
+		{
+			gLayerStack[i].draw(context);
+		}
+		if (gLayerStack[i].flags & MasksDraw)
+		{
+			break;
+		}
 	}
 }
