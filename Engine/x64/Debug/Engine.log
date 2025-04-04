@@ -1,2 +1,4 @@
-﻿  main.c
+﻿  InputContext.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\InputContext.c(12,11): warning C4033: 'LoadFile' must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\InputContext.c(21): warning C4715: 'LoadFile': not all control paths return a value
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

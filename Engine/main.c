@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "DynArray.h"
 #include "GameFramework.h"
+#include "TestGameLayer.h"
+#include <string.h>
 
 #define SCR_WIDTH 800
 #define SCR_HEIGHT 1200
@@ -37,6 +39,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     In_RecieveKeyboardKey(&gInputContext, key, scancode, action, mods);
 }
 
+void joystick_callback(int jid, int event)
+{
+    if (event == GLFW_CONNECTED)
+    {
+        In_SetControllerPresent(jid);
+    }
+    else if (event == GLFW_DISCONNECTED)
+    {
+        In_SetControllerPresent(-1);
+    }
+}
+
+
 static void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
     GLuint id,
@@ -56,6 +71,7 @@ static void GLAPIENTRY MessageCallback(GLenum source,
 void Update(double deltaT)
 {
     glfwPollEvents();
+    In_Poll();
     InputGameFramework(&gInputContext);
     UpdateGameFramework((float)deltaT);
 }
@@ -86,6 +102,8 @@ int main(int argc, char** argv)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
+    glfwJoystickPresent(GLFW_JOYSTICK_1);
+
     glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
     glfwSetCursorPosCallback(window, MouseCallback);
     glfwSetScrollCallback(window, ScrollCallback);
@@ -110,11 +128,25 @@ int main(int argc, char** argv)
     // During init, enable debug output
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, 0);
+
+
+
     double accumulator = 0;
     double lastUpdate = 0;
     double slice = 1.0 / TARGET_FPS;
+
+
     gDrawContext = Dr_InitDrawContext();
+    In_InitInputContext();
     InitGameFramework();
+
+
+    struct GameFrameworkLayer testLayer;
+    memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
+    TestLayer_Get(&testLayer);
+    PushGameFrameworkLayer(&testLayer);
+
+
     while (!glfwWindowShouldClose(window))
     {
         double delta = glfwGetTime();// () - lastUpdate
@@ -129,5 +161,8 @@ int main(int argc, char** argv)
         DrawGameFramework(&gDrawContext);
         glfwSwapBuffers(window);
     }
+
+    DestroyGameFramework();
+
     glfwTerminate();
 }

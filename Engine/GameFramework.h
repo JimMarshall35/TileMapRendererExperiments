@@ -6,29 +6,36 @@
 typedef void (*UpdateFn)(float deltaT);
 typedef void (*DrawFn)(DrawContext* context);
 typedef void (*InputFn)(InputContext* context);
+typedef void (*OnPushFn)(void);
+typedef void (*OnPopFn)(void);
 
 typedef enum
 {
 	EnableUpdateFn = 1,
 	EnableDrawFn = 2,
 	EnableInputFn = 8,
-	MasksDraw = 16,
-	MasksUpdate = 32,
-	MasksInput = 64
+	EnableOnPush = 16,
+	EnableOnPop = 32,
+	MasksDraw = 64,
+	MasksUpdate = 128,
+	MasksInput = 256
 }GameFrameworkLayerFlags;
+#define GF_ANYMASKMASK (MasksInput | MasksUpdate | MasksDraw)
 
-typedef struct
+struct GameFrameworkLayer
 {
 	UpdateFn update;
 	DrawFn draw;
 	InputFn input;
+	OnPushFn onPush;
+	OnPopFn onPop;
 	unsigned int flags;
-}GameFrameworkLayer;
+};
 
 void InitGameFramework();
 void DestroyGameFramework();
 
-void PushGameFrameworkLayer(const GameFrameworkLayer* layer);
+void PushGameFrameworkLayer(const struct GameFrameworkLayer* layer);
 void PopGameFrameworkLayer();
 
 void UpdateGameFramework(float deltaT);

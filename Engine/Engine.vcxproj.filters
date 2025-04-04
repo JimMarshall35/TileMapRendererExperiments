@@ -42,6 +42,12 @@
     <ClCompile Include="DrawContext.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestGameLayer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cJSON.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputContext.h">
@@ -54,6 +60,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGameLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntTypes.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="cJSON.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

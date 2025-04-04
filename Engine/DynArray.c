@@ -1,14 +1,8 @@
 #include "DynArray.h"
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h> 
 
-typedef struct
-{
-	uint64_t itemSize;
-	uint64_t capacity;
-	uint64_t size;
-} VectorData;
+
 
 void* VectorInit(unsigned int itemSize)
 {
@@ -46,15 +40,19 @@ void* VectorPush(void* vector, void* item)
 	{
 		pData->capacity *= 2;
 		vector = VectorResize(vector, pData->capacity);
+		pData = ((VectorData*)vector) - 1;
 	}
+	void* topSpot = VectorTop(vector);
+	memcpy(topSpot, item, pData->itemSize);
 	return vector;
 }
 
 void* VectorPop(void* vector)
 {
 	VectorData* pData = ((VectorData*)vector) - 1;
+	void* data = VectorTop(vector);
 	pData->size--;
-	return VectorTop(vector);
+	return data;
 }
 
 void* VectorTop(void* vector)
@@ -63,11 +61,11 @@ void* VectorTop(void* vector)
 	return (char*)vector + ((pData->size - 1) * pData->itemSize);
 }
 
-unsigned int VectorSize(void* vector)
-{
-	VectorData* pData = ((VectorData*)vector) - 1;
-	return pData->size;
-}
+//unsigned int VectorSize(void* vector)
+//{
+//	VectorData* pData = ((VectorData*)vector) - 1;
+//	return pData->size;
+//}
 
 void DestoryVector(void* vector)
 {

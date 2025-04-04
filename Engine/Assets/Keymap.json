@@ -1,0 +1,29 @@
+{
+	"Buttons" : {
+		"Mouse" : [
+		],
+		"Keyboard" : [
+			{ "moveUp" : 87 }, 
+			{ "moveLeft" : 65 }, 
+			{ "moveDown" : 83 }, 
+			{ "moveRight" : 68 },
+			{ "useTool" : 32 },
+			{ "nextTool" : 69 },
+			{ "prevTool" : 81 }
+		],
+		"GamePad" : [
+		],
+		"MouseScroll" : [
+			{ "nextTool" : 1.0 },
+			{ "prevTool" : -1.0 } 
+		]
+	},
+	"Axes" : {
+		"Mouse" : [
+			{"CursorPos" : {"type" : "absoluteXY"}}
+		],
+		"GamePad" : [
+			{"moveCharacter"    : {"type" : "lstick"}}
+		]
+	}
+}
