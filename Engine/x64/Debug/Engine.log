@@ -1,6 +1,10 @@
 ﻿  Atlas.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(59,44): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(85,20): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(101,37): warning C4244: 'return': conversion from 'u64' to 'hSprite', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(244,36): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,84): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [49]'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,31): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,87): warning C4047: 'function': 'const char *const ' differs in levels of indirection from 'int'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,86): warning C4024: 'sprintf_s': different types for formal and actual parameter 3
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(62,44): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(88,20): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(105,37): warning C4244: 'return': conversion from 'u64' to 'hSprite', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(272,36): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

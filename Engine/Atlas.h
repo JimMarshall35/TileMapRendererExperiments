@@ -10,6 +10,6 @@ typedef i32 hSprite;
 void At_BeginAtlas();
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topRightYPx, int widthPx, int heightPx, const char* name);
 hAtlas At_EndAtlas();
-
+void At_DestroyAtlas(hAtlas atlas);
 
 #endif

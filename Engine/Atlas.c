@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
 typedef struct 
 {
 	hAtlas atlas;
@@ -78,7 +81,7 @@ hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int wi
 	sprite.atlas = gCurrentAtlasIndex;
 	sprite.srcImage = img;
 	size_t sizeOfSpriteData = widthPx * heightPx * CHANNELS_PER_PIXEL;
-	sprite.individualTileBytes = malloc(sizeOfSpriteData);
+	//sprite.individualTileBytes = malloc(sizeOfSpriteData);
 	sprite.name = malloc(strlen(name) + 1);
 	sprite.id = id++;
 
@@ -86,6 +89,7 @@ hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int wi
 	
 	u8* pData = IR_GetImageData(img);
 	const struct ImageFile* pImg = IR_GetImageFile(img);
+	sprite.individualTileBytes = pData;
 
 	size_t rowWidth = pImg->width * CHANNELS_PER_PIXEL;
 	size_t startIndex = (topLeftYPx * rowWidth) + (topLeftXPx * CHANNELS_PER_PIXEL);
@@ -101,12 +105,16 @@ hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int wi
 	return VectorSize(pAtlas->sprites) - 1;
 }
 
-int Tallest(const void* a, const void* b) 
+int SortFunc(const void* a, const void* b) 
 {
 	AtlasSprite* pSprite1 = (AtlasSprite*)a;
 	AtlasSprite* pSprite2 = (AtlasSprite*)b;
+	/*return
+		pSprite1->heightPx > pSprite2->heightPx ? -1 : 0;*/
+	int area1 = pSprite1->heightPx * pSprite1->widthPx;
+	int area2 = pSprite2->heightPx * pSprite2->widthPx;
 	return
-		pSprite1->heightPx > pSprite2->heightPx ? -1 : 0;
+		area1 < area2;
 }
 
 struct AtlasRect
@@ -167,12 +175,21 @@ int FindFittingFreeSpace(const AtlasSprite* sprite, VECTOR(struct AtlasRect) fre
 	return -1;
 }
 
+static int Top(const struct AtlasRect* pRect)    { return pRect->y; }
+static int Bottom(const struct AtlasRect* pRect) { return pRect->y + pRect->h; }
+static int Left(const struct AtlasRect* pRect)   { return pRect->x; }
+static int Right(const struct AtlasRect* pRect)  { return pRect->x + pRect->w; }
+
+
 static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSprite* pSprite, VECTOR(struct AtlasRect) freeSpace)
 {
+	size_t sizeofFreespace = VectorSize(freeSpace);
 	int index = FindFittingFreeSpace(pSprite, freeSpace);
 	if (index >= 0)
 	{
 		struct AtlasRect* rct = &freeSpace[index];
+		rct->bTaken = true;
+
 		pSprite->atlasTopLeftXPx = rct->x;
 		pSprite->atlasTopLeftYPx = rct->y;
 		int newRightX = rct->x + pSprite->widthPx;
@@ -180,25 +197,27 @@ static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSpri
 		int newW = rct->w - pSprite->widthPx;
 		int newH = rct->h;
 		struct AtlasRect newRectTR = { newW, newH, newRightX, newRightY, false };
-		freeSpace = VectorPush(freeSpace, &newRectTR);
-
 		newRightX = rct->x;
 		newRightY = rct->y + pSprite->heightPx;
-		newW = rct->w - pSprite->widthPx;
+		newW = pSprite->widthPx;
 		newH = rct->h - pSprite->heightPx;
 		struct AtlasRect newRectTR2 = { newW, newH, newRightX, newRightY, false };
-		freeSpace = VectorPush(freeSpace, &newRectTR2);
 
-		rct->bTaken = true;
+		if (newRectTR.w > 0 && newRectTR.h > 0)
+		{
+			freeSpace = VectorPush(freeSpace, &newRectTR);
+		}
+		if (newRectTR2.w > 0 && newRectTR2.h > 0)
+		{
+			freeSpace = VectorPush(freeSpace, &newRectTR2);
+		}
 		return freeSpace;
-		
 	}
 	else
 	{
 		freeSpace = AddNewFreeSpace(freeSpace, outW, outH);
 		return NestSingleSprite(outW, outH, pSprite, freeSpace);
 	}
-
 }
 
 static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestToShortest, int numSprites)
@@ -222,9 +241,18 @@ static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestT
 	*outH = currentH;
 }
 
-static void BuildAtlas(Atlas* outAtlas, AtlasSprite* sortedSpritesTallestToShortest, int numSprites)
+void BlitAtlasSprite(u8* dst, size_t dstWidthPx, AtlasSprite* pSprite)
 {
-
+	size_t startPx = pSprite->atlasTopLeftYPx * (dstWidthPx * CHANNELS_PER_PIXEL) + pSprite->atlasTopLeftXPx * CHANNELS_PER_PIXEL;
+	const u8* readPtr = pSprite->individualTileBytes;
+	u8* writePtr = &dst[startPx];
+	size_t lineBytes = pSprite->widthPx * CHANNELS_PER_PIXEL;
+	for (int i = 0; i < pSprite->heightPx; i++)
+	{
+		memcpy(writePtr, readPtr, lineBytes);
+		writePtr += dstWidthPx * CHANNELS_PER_PIXEL;
+		readPtr += lineBytes;
+	}
 }
 
 hAtlas At_EndAtlas()
@@ -239,7 +267,7 @@ hAtlas At_EndAtlas()
 	if (spritesCopy)
 	{
 		memcpy(spritesCopy, pAtlas->sprites, numSprites * sizeof(AtlasSprite));
-		qsort(spritesCopy, numSprites, sizeof(AtlasSprite), &Tallest);
+		qsort(spritesCopy, numSprites, sizeof(AtlasSprite), &SortFunc);
 		int w, h;
 		NestSprites(&w, &h, spritesCopy, numSprites);
 
@@ -258,9 +286,23 @@ hAtlas At_EndAtlas()
 			pAtlas->sprites[id].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
 			pAtlas->sprites[id].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
 		}
-
-
 		free(spritesCopy);
+
+		size_t atlasSizePxls = w * h;
+		size_t atlasSizeBytes = atlasSizePxls * CHANNELS_PER_PIXEL;
+		u8* pAtlasBytes = malloc(atlasSizeBytes);
+		memset(pAtlasBytes, 0, atlasSizeBytes);
+		for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
+		{
+			AtlasSprite* pSprite = &pAtlas->sprites[i];
+			BlitAtlasSprite(pAtlasBytes, w, pSprite);
+		}
+		stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
+		pAtlas->atlasBytes = pAtlasBytes;
 	}
 	return gCurrentAtlasIndex;
+}
+
+void At_DestroyAtlas(hAtlas atlas)
+{
 }

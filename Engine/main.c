@@ -143,15 +143,17 @@ int main(int argc, char** argv)
     GF_PushGameFrameworkLayer(&testLayer);
 
     At_BeginAtlas();
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_n.png", 0, 0, 32, 32, "ArrowNorth");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_s.png", 0, 0, 32, 32, "ArrowSouth");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_e.png", 0, 0, 32, 32, "ArrowEast");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_w.png", 0, 0, 32, 32, "ArrowWest");
+
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_border.png", 0, 0, 64, 64, "BtnSquareDepthBorder");
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_border.png", 0, 0, 64, 64, "BtnSquareBorder");
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_border.png", 0, 0, 192, 64, "BtnRectangleDepthBorder");
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_border.png", 0, 0, 192, 64, "BtnRectangleBorder");
 
-    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_w.png", 0, 0, 32, 32, "ArrowWest");
-    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_e.png", 0, 0, 32, 32, "ArrowEast");
-    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_n.png", 0, 0, 32, 32, "ArrowNorth");
-    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_s.png", 0, 0, 32, 32, "ArrowSouth");
+    
 
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_gradient.png", 0, 0, 64, 64, "BtnSquareDepthGradient");
     At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_gradient.png", 0, 0, 192, 64, "BtnSquareDepthGradient");
