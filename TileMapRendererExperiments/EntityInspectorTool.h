@@ -28,7 +28,7 @@ private:
     ECS* m_ecs;
     DynamicQuadTreeContainer<flecs::entity>* m_entityQuadTree;
     NewRenderer* m_renderer;
-    std::vector<std::pair<flecs::entity, Rect>> m_visibileItems;
+    std::vector<std::pair<flecs::entity, AtlasRect>> m_visibileItems;
     flecs::entity m_nullEntity;
     flecs::entity m_selectedEntity = m_nullEntity;
 };

@@ -18,8 +18,8 @@
 
 template<typename T>
 struct QuadTreeItemLocation {
-	typename std::list<std::pair<Rect, T>>* container;
-	typename std::list<std::pair<Rect, T>>::iterator iterator;
+	typename std::list<std::pair<AtlasRect, T>>* container;
+	typename std::list<std::pair<AtlasRect, T>>::iterator iterator;
 };
 
 
@@ -27,9 +27,9 @@ template<typename T>
 class StaticQuadTree
 {
 	// same as dynamic but uses a vector as its container
-	using StaticQuadTreeContainerType = std::vector<std::pair<Rect, T>>;
+	using StaticQuadTreeContainerType = std::vector<std::pair<AtlasRect, T>>;
 public:
-	StaticQuadTree(const Rect& size, const u32 depth = 0)
+	StaticQuadTree(const AtlasRect& size, const u32 depth = 0)
 	{
 		m_depth = depth;
 		Resize(size);
@@ -39,16 +39,16 @@ public:
 		Clear();
 	}
 
-	void Resize(const Rect& tlbr) {
+	void Resize(const AtlasRect& tlbr) {
 		Clear();
 		m_rect = tlbr;
 		auto childSize = m_rect.dims * 0.5f;
 
 
-		m_childrenTLBRs[0] = Rect{ m_rect.pos, childSize };
-		m_childrenTLBRs[1] = Rect{ glm::vec2{m_rect.pos.x + childSize.x, m_rect.pos.y},childSize };
-		m_childrenTLBRs[2] = Rect{ glm::vec2{m_rect.pos.x, m_rect.pos.y + childSize.y},childSize };
-		m_childrenTLBRs[3] = Rect{ m_rect.pos + childSize, childSize };
+		m_childrenTLBRs[0] = AtlasRect{ m_rect.pos, childSize };
+		m_childrenTLBRs[1] = AtlasRect{ glm::vec2{m_rect.pos.x + childSize.x, m_rect.pos.y},childSize };
+		m_childrenTLBRs[2] = AtlasRect{ glm::vec2{m_rect.pos.x, m_rect.pos.y + childSize.y},childSize };
+		m_childrenTLBRs[3] = AtlasRect{ m_rect.pos + childSize, childSize };
 
 	}
 	void Clear() {
@@ -70,7 +70,7 @@ public:
 		return count;
 	}
 
-	void Insert(const T& item, const Rect& itemsize) {
+	void Insert(const T& item, const AtlasRect& itemsize) {
 		for (int i = 0; i < 4; i++) {
 			if (m_childrenTLBRs[i].Contains(itemsize)) {
 				if (m_depth + 1 < MAX_DEPTH) {
@@ -84,13 +84,13 @@ public:
 		m_items.push_back({ itemsize, item });
 	}
 
-	std::list<T> Search(const Rect& area) {
+	std::list<T> Search(const AtlasRect& area) {
 		std::list<T> listItems;
 		Search(area, listItems);
 		return listItems;
 	}
 
-	void Search(const Rect& area, std::list<T>& output) {
+	void Search(const AtlasRect& area, std::list<T>& output) {
 		for (const auto& p : m_items) {
 			if (area.Overlaps(p.first)) {
 				output.push_back(p.second);
@@ -125,8 +125,8 @@ private:
 
 private:
 	u32 m_depth = 0;
-	Rect m_rect;
-	Rect m_childrenTLBRs[4];
+	AtlasRect m_rect;
+	AtlasRect m_childrenTLBRs[4];
 	StaticQuadTree<T>* m_children[4]{ nullptr,nullptr,nullptr,nullptr };;
 
 	StaticQuadTreeContainerType m_items;
@@ -135,9 +135,9 @@ private:
 template<typename T>
 class DynamicQuadTree
 {
-	using DynamicQuadTreeContainerType = std::list<std::pair<Rect, T>>;
+	using DynamicQuadTreeContainerType = std::list<std::pair<AtlasRect, T>>;
 public:
-	DynamicQuadTree(const Rect& size, const u32 depth = 0)
+	DynamicQuadTree(const AtlasRect& size, const u32 depth = 0)
 	{
 		m_depth = depth;
 		Resize(size);
@@ -147,16 +147,16 @@ public:
 		//Clear();
 	}
 
-	void Resize(const Rect& tlbr) {
+	void Resize(const AtlasRect& tlbr) {
 		Clear();
 		m_rect = tlbr;
 		auto childSize = m_rect.dims * 0.5f;
 
 		 
-		m_childrenTLBRs[0] = Rect{ m_rect.pos, childSize };
-		m_childrenTLBRs[1] = Rect{ glm::vec2{m_rect.pos.x + childSize.x, m_rect.pos.y},childSize };
-		m_childrenTLBRs[2] = Rect{ glm::vec2{m_rect.pos.x, m_rect.pos.y + childSize.y},childSize };
-		m_childrenTLBRs[3] = Rect{ m_rect.pos + childSize, childSize };
+		m_childrenTLBRs[0] = AtlasRect{ m_rect.pos, childSize };
+		m_childrenTLBRs[1] = AtlasRect{ glm::vec2{m_rect.pos.x + childSize.x, m_rect.pos.y},childSize };
+		m_childrenTLBRs[2] = AtlasRect{ glm::vec2{m_rect.pos.x, m_rect.pos.y + childSize.y},childSize };
+		m_childrenTLBRs[3] = AtlasRect{ m_rect.pos + childSize, childSize };
 
 	}
 	void Clear() {
@@ -178,7 +178,7 @@ public:
 		return count;
 	}
 
-	QuadTreeItemLocation<T> Insert(const T& item, const Rect& itemsize) {
+	QuadTreeItemLocation<T> Insert(const T& item, const AtlasRect& itemsize) {
 		for (int i = 0; i < 4; i++) {
 			if (m_childrenTLBRs[i].Contains(itemsize)) {
 				if (m_depth + 1 < MAX_DEPTH) {
@@ -193,13 +193,13 @@ public:
 		return QuadTreeItemLocation<T>{ &m_items, std::prev(m_items.end()) };
 	}
 
-	std::list<T> Search(const Rect& area) {
+	std::list<T> Search(const AtlasRect& area) {
 		std::list<T> listItems;
 		Search(area, listItems);
 		return listItems;
 	}
 
-	void Search(const Rect& area, std::list<T>& output) {
+	void Search(const AtlasRect& area, std::list<T>& output) {
 		for (const auto& p : m_items) {
 			if (area.Overlaps(p.first)) {
 				output.push_back(p.second);
@@ -232,8 +232,8 @@ private:
 
 private:
 	u32 m_depth = 0;
-	Rect m_rect;
-	Rect m_childrenTLBRs[4];
+	AtlasRect m_rect;
+	AtlasRect m_childrenTLBRs[4];
 	DynamicQuadTree<T>* m_children[4]{nullptr,nullptr,nullptr,nullptr};
 
 	DynamicQuadTreeContainerType m_items;
@@ -261,11 +261,11 @@ public:
 	~DynamicQuadTreeContainer() {
 		m_root.Clear();
 	}
-	DynamicQuadTreeContainer(const Rect& size, const u32 depth = 0)
+	DynamicQuadTreeContainer(const AtlasRect& size, const u32 depth = 0)
 	:m_root(size,depth) {
 
 	}
-	void resize(const Rect& area) {
+	void resize(const AtlasRect& area) {
 		m_root.Resize(area);
 	}
 	size_t size() const {
@@ -287,7 +287,7 @@ public:
 	typename QuadTreeContainer::iterator end() {
 		return m_allItems.end();
 	}
-	void insert(const T& item, const Rect& itemSize) {
+	void insert(const T& item, const AtlasRect& itemSize) {
 		QuadTreeItem<T> newItem;
 		newItem.item = item;
 
@@ -300,7 +300,7 @@ public:
 		m_allItems.erase(item);
 	}
 
-	std::list<typename QuadTreeContainer::iterator> search(const Rect& rect) {
+	std::list<typename QuadTreeContainer::iterator> search(const AtlasRect& rect) {
 		std::list<typename QuadTreeContainer::iterator> listItemPointers;
 		m_root.Search(rect, listItemPointers);
 		return listItemPointers;
@@ -318,7 +318,7 @@ private:
 	QuadTreeContainer m_allItems;
 	StaticQuadTree<typename QuadTreeContainer::iterator> m_root;
 public:
-	StaticQuadTreeContainer(const Rect& size, const u32 depth = 0)
+	StaticQuadTreeContainer(const AtlasRect& size, const u32 depth = 0)
 		:m_root(size, depth) {
 
 	}
@@ -326,7 +326,7 @@ public:
 		m_root.Clear();
 	}
 
-	void resize(const Rect& area) {
+	void resize(const AtlasRect& area) {
 		m_root.Resize(area);
 	}
 	size_t size() const {
@@ -342,14 +342,14 @@ public:
 	typename QuadTreeContainer::const_iterator cend() {
 		return m_allItems.cend();
 	}
-	void insert(const T& item, const Rect& itemSize) {
+	void insert(const T& item, const AtlasRect& itemSize) {
 		QuadTreeItem<T> newItem;
 		newItem.item = item;
 
 		m_allItems.push_back(newItem);
 		m_allItems.back().pItem = m_root.Insert(std::prev(m_allItems.end()), itemSize);
 	}
-	std::list<typename QuadTreeContainer::iterator> search(const Rect& rect) {
+	std::list<typename QuadTreeContainer::iterator> search(const AtlasRect& rect) {
 		std::list<typename QuadTreeContainer::iterator> listItemPointers;
 		m_root.Search(rect, listItemPointers);
 		return listItemPointers;

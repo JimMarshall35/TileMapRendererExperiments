@@ -84,7 +84,7 @@ void StaticCollisionDrawerTool::DrawOverlay(const Camera2D& camera, const glm::v
     DrawVertexCursor(camera, snapped);
     
     auto camTLBR = camera.GetTLBR();
-    Rect r;
+    AtlasRect r;
     r.pos.x = camTLBR.y;
     r.pos.y = camTLBR.x;
 

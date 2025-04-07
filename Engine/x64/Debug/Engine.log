@@ -1,4 +1,6 @@
-﻿  InputContext.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\InputContext.c(12,11): warning C4033: 'LoadFile' must return a value
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\InputContext.c(21): warning C4715: 'LoadFile': not all control paths return a value
+﻿  Atlas.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(59,44): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(85,20): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(101,37): warning C4244: 'return': conversion from 'u64' to 'hSprite', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(244,36): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

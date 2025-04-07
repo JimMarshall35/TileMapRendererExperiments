@@ -104,7 +104,7 @@ void Game::Draw(const Camera2D& camera) const
     TileChunk::DrawVisibleChunks(m_tilesArrayTexture, *m_renderer, *m_camManager->GetActiveCamera(), *m_tiledWorld, m_windowWidth, m_windowHeight);
 
     auto camTLBR = camera.GetTLBR();
-    Rect r;
+    AtlasRect r;
     r.pos.x = camTLBR.y;
     r.pos.y = camTLBR.x;
 

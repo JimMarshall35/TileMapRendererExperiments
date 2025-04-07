@@ -2,6 +2,7 @@
 #define INPUTCONTEXT_H
 
 #include "DynArray.h"
+#include <stdbool.h>
 
 typedef enum
 {
@@ -19,7 +20,8 @@ typedef enum
 typedef enum
 {
 	MouseAxis,
-	GamePadAxis
+	GamePadAxis,
+	MouseScrollAxis
 }AxisSubType;
 
 typedef enum
@@ -30,6 +32,11 @@ typedef enum
 	gpAxis_RT
 }ControllerAxisType;
 
+typedef enum
+{
+	Axis_X,
+	Axis_Y
+} WhichAxis;
 typedef struct
 {
 	InputMappingType type;
@@ -39,6 +46,7 @@ typedef struct
 		struct
 		{
 			ButtonSubType type;
+			bool bCurrent;
 			union
 			{
 				struct
@@ -49,43 +57,68 @@ typedef struct
 				{
 					int button;
 				}mouseBtn;
+				struct
+				{
+					int button;
+				}gamepadBtn;
 			}data;
-			
 			// in future, game pad for example
 		}ButtonMapping;
 		struct
 		{
 
 			AxisSubType type;
+			double fCurrent;
 			union
 			{
 				struct
 				{
-					double x;
-					double y;
+					WhichAxis axis;
 				}mouse;
 				struct
 				{
 					ControllerAxisType type;
-					double x;
-					double y;
+					WhichAxis axis;
 				}controller;
+				struct
+				{
+					WhichAxis axis;
+				}mouseScroll;
 			}data;
 			
-		}AxisMapping;
-	}mapping;
+		}axisMapping;
+	}data;
 }InputMapping;
 
 #define MAX_MAPPINGS 64
 
 typedef struct
 {
-	InputMapping AxisMappings[MAX_MAPPINGS];
-	InputMapping ButtonMapping[MAX_MAPPINGS];
-	u64 ActiveButtons;
-	u64 ActiveAxes;
-	u32 NumButtonMappings;
-	u32 NumAxisMappings;
+	InputMapping arr[MAX_MAPPINGS];
+	int size;
+	u64 ActiveMask;
+}InputMappingArray;
+
+typedef struct
+{
+	/*InputMapping AxisMappings[MAX_MAPPINGS];
+	InputMapping ButtonMapping[MAX_MAPPINGS];*/
+	struct
+	{
+		InputMappingArray MouseButtonMappings;
+		InputMappingArray KeyboardButtonMappings;
+		InputMappingArray GamepadMappings;
+	}buttonMappings;
+
+	struct
+	{
+
+		InputMappingArray Mouse;
+		InputMappingArray Controller;
+		InputMappingArray MouseScroll;
+	}axisMappings;
+
+	int screenW, screenH;
 }InputContext;
 
 void In_RecieveKeyboardKey(InputContext* context, int key, int scancode, int action, int mods);

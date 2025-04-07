@@ -22,7 +22,7 @@ void ECS::Init()
 	auto p = m_ecs.component<Position>("Position")
 		.member<glm::vec2>("val");
 
-	auto rect = m_ecs.component<Rect>("Rect")
+	auto rect = m_ecs.component<AtlasRect>("Rect")
 		.member<glm::vec2>("pos")
 		.member<glm::vec2>("dims");
 

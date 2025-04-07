@@ -19,6 +19,8 @@ typedef struct
 } VectorData;
 
 #define VectorSize(vector) ((((VectorData*)vector) - 1)->size)
+#define VectorData_DEBUG(vector)(((VectorData*)vector) - 1)
+
 #define NEW_VECTOR(a) VectorInit(sizeof(a));
 #define VECTOR(a) a*
 

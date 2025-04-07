@@ -20,6 +20,7 @@ typedef enum
 	MasksUpdate = 128,
 	MasksInput = 256
 }GameFrameworkLayerFlags;
+
 #define GF_ANYMASKMASK (MasksInput | MasksUpdate | MasksDraw)
 
 struct GameFrameworkLayer
@@ -32,14 +33,16 @@ struct GameFrameworkLayer
 	unsigned int flags;
 };
 
-void InitGameFramework();
-void DestroyGameFramework();
+void GF_InitGameFramework();
+void GF_DestroyGameFramework();
 
-void PushGameFrameworkLayer(const struct GameFrameworkLayer* layer);
-void PopGameFrameworkLayer();
+void GF_PushGameFrameworkLayer(const struct GameFrameworkLayer* layer);
+void GF_PopGameFrameworkLayer();
 
-void UpdateGameFramework(float deltaT);
-void InputGameFramework(InputContext* context);
-void DrawGameFramework(DrawContext* context);
+void GF_EndFrame();
+
+void GF_UpdateGameFramework(float deltaT);
+void GF_InputGameFramework(InputContext* context);
+void GF_DrawGameFramework(DrawContext* context);
 
 #endif

@@ -1,0 +1,9 @@
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g>
+    <path stroke="none" fill="#029357" d="M16 14 L16 16 0 16 0 14 16 14 M16 2 L0 2 0 0 16 0 16 2"/>
+    <path stroke="none" fill="#2FD792" d="M16 2 L16 4 0 4 0 2 16 2 M16 12 L16 14 0 14 0 12 16 12"/>
+    <path stroke="none" fill="#16BB77" d="M16 12 L0 12 0 8 16 8 16 12"/>
+    <path stroke="none" fill="#23CD87" d="M16 4 L16 8 0 8 0 4 16 4"/>
+  </g>
+</svg>

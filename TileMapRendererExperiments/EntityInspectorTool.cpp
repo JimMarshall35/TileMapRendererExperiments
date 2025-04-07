@@ -46,7 +46,7 @@ void EntityInspectorTool::DrawOverlay(const Camera2D& camera, const glm::vec2& m
 {
 	using namespace glm;
 	auto camTLBR = camera.GetTLBR();
-	Rect r;
+	AtlasRect r;
 	r.pos.x = camTLBR.y;
 	r.pos.y = camTLBR.x;
 
@@ -67,13 +67,13 @@ void EntityInspectorTool::DrawOverlay(const Camera2D& camera, const glm::vec2& m
 		glm::vec4 colour = { 1.0, 1.0, 1.0, 1.0 };
 		glm::vec4 colour2 = { 1.0, 1.0, 0.0, 1.0 };
 
-		Rect entityRect = qItem->pItem.iterator->first;
+		AtlasRect entityRect = qItem->pItem.iterator->first;
 		
 		if (entityRect != m_visibileItems[i].second) {
 			newVisibleSet = true;
 		}
 		if (newVisibleSet) {
-			m_visibileItems[i] = std::pair<flecs::entity, Rect>(qItem->item, entityRect);
+			m_visibileItems[i] = std::pair<flecs::entity, AtlasRect>(qItem->item, entityRect);
 		}
 		colour = qItem->item == m_selectedEntity ? colour2 : colour;
 
@@ -99,7 +99,7 @@ void EntityInspectorTool::DrawOverlay(const Camera2D& camera, const glm::vec2& m
 
 void EntityInspectorTool::RecieveWorldspaceClick(const glm::vec2& worldspace)
 {
-	for (const std::pair<flecs::entity, Rect>& pair : m_visibileItems)
+	for (const std::pair<flecs::entity, AtlasRect>& pair : m_visibileItems)
 	{
 		if (pair.second.Contains(worldspace)) {
 			m_selectedEntity = pair.first;

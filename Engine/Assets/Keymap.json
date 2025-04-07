@@ -1,6 +1,8 @@
 {
 	"Buttons" : {
 		"Mouse" : [
+			{ "select" : 1 }, 
+			{ "altSelect" : 2 }
 		],
 		"Keyboard" : [
 			{ "moveUp" : 87 }, 
@@ -12,18 +14,21 @@
 			{ "prevTool" : 81 }
 		],
 		"GamePad" : [
-		],
-		"MouseScroll" : [
-			{ "nextTool" : 1.0 },
-			{ "prevTool" : -1.0 } 
+
 		]
+		
 	},
 	"Axes" : {
 		"Mouse" : [
-			{"CursorPos" : {"type" : "absoluteXY"}}
+			{"CursorPosX" : {"axis" : "x"}},
+			{"CursorPosY" : {"axis" : "y"}}
 		],
 		"GamePad" : [
-			{"moveCharacter"    : {"type" : "lstick"}}
+			{"moveCharacterX"    : {"stick" : "lstick", "axis" : "x"}},
+			{"moveCharacterY"    : {"stick" : "lstick", "axis" : "y"}}
+		],
+		"MouseScroll" : [
+			{ "changeTool" : {"axis" : "y"} } 
 		]
 	}
 }

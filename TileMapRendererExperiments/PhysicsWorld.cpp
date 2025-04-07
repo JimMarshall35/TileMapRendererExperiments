@@ -26,8 +26,8 @@ void PhysicsWorld::Step()
 	m_b2World.Step(m_timeStep, m_velocityIterations, m_positionIterations);
 }
 
-Rect b2AABBToRect(const b2AABB& aabb) {
-	Rect rect = { {aabb.lowerBound.x, aabb.lowerBound.y }, { aabb.upperBound.x - aabb.lowerBound.x, aabb.upperBound.y - aabb.lowerBound.y } };
+AtlasRect b2AABBToRect(const b2AABB& aabb) {
+	AtlasRect rect = { {aabb.lowerBound.x, aabb.lowerBound.y }, { aabb.upperBound.x - aabb.lowerBound.x, aabb.upperBound.y - aabb.lowerBound.y } };
 	return rect;
 }
 

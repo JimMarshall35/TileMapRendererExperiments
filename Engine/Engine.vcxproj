@@ -137,22 +137,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Atlas.c" />
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="DrawContext.c" />
     <ClCompile Include="DynArray.c" />
+    <ClCompile Include="FileHelpers.c" />
     <ClCompile Include="GameFramework.c" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="ImageFileRegstry.c" />
     <ClCompile Include="InputContext.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="TestGameLayer.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Atlas.h" />
     <ClInclude Include="cJSON.h" />
     <ClInclude Include="DrawContext.h" />
     <ClInclude Include="DynArray.h" />
+    <ClInclude Include="FileHelpers.h" />
     <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="ImageFileRegstry.h" />
     <ClInclude Include="InputContext.h" />
     <ClInclude Include="IntTypes.h" />
+    <ClInclude Include="stb\stb_image.h" />
+    <ClInclude Include="stb\stb_image_resize.h" />
+    <ClInclude Include="stb\stb_image_write.h" />
     <ClInclude Include="TestGameLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

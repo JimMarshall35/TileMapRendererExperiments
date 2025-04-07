@@ -6,25 +6,37 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+struct LayerChange
+{
+	bool bIsPush;
+	struct GameFrameworkLayer layer;
+};
+
 static VECTOR(struct GameFrameworkLayer) gLayerStack = NULL;
+
+static VECTOR(struct LayerChange) gLayerChangeQueue = NULL;
+static int gLayerPopCount = 0;
+
 static int gInputItrStart = 0;
 static int gUpdateItrStart = 0;
 static int gDrawItrStart = 0;
 
 
-void InitGameFramework()
+void GF_InitGameFramework()
 {
 	gLayerStack = NEW_VECTOR(struct GameFrameworkLayer);
+	gLayerChangeQueue = NEW_VECTOR(struct LayerChange);
+
 }
 
-void DestroyGameFramework()
+void GF_DestroyGameFramework()
 {
 	DestoryVector(gLayerStack);
 }
 
-void PushGameFrameworkLayer(const struct GameFrameworkLayer* layer)
+void GF_PushGameFrameworkLayer(const struct GameFrameworkLayer* layer)
 {
-	gLayerStack = VectorPush(gLayerStack, layer);
+	/*gLayerStack = VectorPush(gLayerStack, layer);
 	if (layer->flags & MasksInput)
 	{
 		gInputItrStart = VectorSize(gLayerStack) - 1;
@@ -40,7 +52,11 @@ void PushGameFrameworkLayer(const struct GameFrameworkLayer* layer)
 	if (layer->flags & EnableOnPush)
 	{
 		layer->onPush();
-	}
+	}*/
+	struct LayerChange lc;
+	lc.bIsPush = true;
+	memcpy(&lc.layer, layer, sizeof(struct GameFrameworkLayer));
+	gLayerChangeQueue = VectorPush(gLayerChangeQueue, &lc);
 }
 
 static int FindNewItrStart(GameFrameworkLayerFlags type)
@@ -57,9 +73,9 @@ static int FindNewItrStart(GameFrameworkLayerFlags type)
 	return rval;
 }
  
-void PopGameFrameworkLayer()
+void GF_PopGameFrameworkLayer()
 {
-	struct GameFrameworkLayer* pLayer = VectorTop(gLayerStack);
+	/*struct GameFrameworkLayer* pLayer = VectorTop(gLayerStack);
 	if (pLayer->flags & MasksDraw)
 	{
 		gDrawItrStart = FindNewItrStart(MasksDraw);
@@ -77,10 +93,65 @@ void PopGameFrameworkLayer()
 		pLayer->onPop();
 	}
 
-	VectorPop(gLayerStack);
+	VectorPop(gLayerStack);*/
+	struct LayerChange lc;
+	lc.bIsPush = false;
+	memset(&lc.layer, 0, sizeof(struct GameFrameworkLayer));
+	gLayerChangeQueue = VectorPush(gLayerChangeQueue, &lc);
+
 }
 
-void UpdateGameFramework(float deltaT)
+void GF_EndFrame()
+{
+	for (int i = 0; i < VectorSize(gLayerChangeQueue); i++)
+	{
+		if (gLayerChangeQueue[i].bIsPush)
+		{
+			gLayerStack = VectorPush(gLayerStack, &gLayerChangeQueue[i].layer);
+			if (gLayerChangeQueue[i].layer.flags & MasksInput)
+			{
+				gInputItrStart = VectorSize(gLayerStack) - 1;
+			}
+			if (gLayerChangeQueue[i].layer.flags & MasksUpdate)
+			{
+				gUpdateItrStart = VectorSize(gLayerStack) - 1;
+			}
+			if (gLayerChangeQueue[i].layer.flags & MasksDraw)
+			{
+				gDrawItrStart = VectorSize(gLayerStack) - 1;
+			}
+			if (gLayerChangeQueue[i].layer.flags & EnableOnPush)
+			{
+				gLayerChangeQueue[i].layer.onPush();
+			}
+		}
+		else
+		{
+			struct GameFrameworkLayer* pLayer = VectorTop(gLayerStack);
+			if (pLayer->flags & MasksDraw)
+			{
+				gDrawItrStart = FindNewItrStart(MasksDraw);
+			}
+			if (pLayer->flags & MasksInput)
+			{
+				gInputItrStart = FindNewItrStart(MasksInput);
+			}
+			if (pLayer->flags & MasksUpdate)
+			{
+				gUpdateItrStart = FindNewItrStart(MasksUpdate);
+			}
+			if (pLayer->flags & EnableOnPop)
+			{
+				pLayer->onPop();
+			}
+
+			VectorPop(gLayerStack);
+		}
+		gLayerChangeQueue = VectorPop(gLayerChangeQueue);
+	}
+}
+
+void GF_UpdateGameFramework(float deltaT)
 {
 	for (int i = gUpdateItrStart; i < VectorSize(gLayerStack); i++)
 	{
@@ -88,7 +159,7 @@ void UpdateGameFramework(float deltaT)
 	}
 }
 
-void InputGameFramework(InputContext* context)
+void GF_InputGameFramework(InputContext* context)
 {
 	for (int i = gInputItrStart; i < VectorSize(gLayerStack); i++)
 	{
@@ -96,7 +167,7 @@ void InputGameFramework(InputContext* context)
 	}
 }
 
-void DrawGameFramework(DrawContext* context)
+void GF_DrawGameFramework(DrawContext* context)
 {
 	for (int i = gDrawItrStart; i < VectorSize(gLayerStack); i++)
 	{

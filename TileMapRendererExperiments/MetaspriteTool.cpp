@@ -143,13 +143,13 @@ void MetaspriteTool::RecieveWorldspaceClick(const glm::vec2& click)
         return;
     }
     const auto d = m_metaAtlas->getDescription(m_currentMetaspriteHandle);
-    Rect r;
+    AtlasRect r;
     r.pos = click - glm::vec2(0.5f,0.5f); // why the glm::vec2(0.5f,0.5f) fudge factor? I don't know
     r.dims = { d->spriteTilesWidth, d->spriteTilesHeight };
     MetaSpriteComponent comp = { m_currentMetaspriteHandle, click };
 
     flecs::entity entity = m_ecs->GetWorld()->entity()
-        .set([click, comp, r](Position& p, MetaSpriteComponent& m, Scale& s, Rect& re) {
+        .set([click, comp, r](Position& p, MetaSpriteComponent& m, Scale& s, AtlasRect& re) {
                 p.val = click;
                 s.val = { 1,1 };
                 m = comp;

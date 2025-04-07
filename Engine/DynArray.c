@@ -18,16 +18,24 @@ void* VectorResize(void* vector, unsigned int size)
 	VectorData* pData = ((VectorData*)vector) - 1;
 	if (size <= pData->capacity)
 	{
-		pData->size = size;
 		return vector;
 	}
 	else if (size > pData->capacity)
 	{
 		VectorData* pNewAlloc = malloc(sizeof(VectorData) + pData->itemSize * size);
-		pData->size = size;
-		pData->capacity = size;
-		memcpy(pNewAlloc, pData, sizeof(VectorData) + pData->size * pData->itemSize);
-		free(pData);
+		if (pNewAlloc)
+		{
+			pData->size = pData->size;
+			pData->capacity = size;
+			memcpy(pNewAlloc, pData, sizeof(VectorData) + pData->size * pData->itemSize);
+
+			free(pData);
+		}
+		else
+		{
+			return NULL;
+		}
+		
 		return pNewAlloc + 1;
 	}
 	return vector;
@@ -38,8 +46,7 @@ void* VectorPush(void* vector, void* item)
 	VectorData* pData = ((VectorData*)vector) - 1;
 	if (++pData->size > pData->capacity)
 	{
-		pData->capacity *= 2;
-		vector = VectorResize(vector, pData->capacity);
+		vector = VectorResize(vector, pData->capacity * 2);
 		pData = ((VectorData*)vector) - 1;
 	}
 	void* topSpot = VectorTop(vector);

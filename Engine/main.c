@@ -4,6 +4,8 @@
 #include "DynArray.h"
 #include "GameFramework.h"
 #include "TestGameLayer.h"
+#include "ImageFileRegstry.h"
+#include "Atlas.h"
 #include <string.h>
 
 #define SCR_WIDTH 800
@@ -68,13 +70,7 @@ static void GLAPIENTRY MessageCallback(GLenum source,
     }
 }
 
-void Update(double deltaT)
-{
-    glfwPollEvents();
-    In_Poll();
-    InputGameFramework(&gInputContext);
-    UpdateGameFramework((float)deltaT);
-}
+
 
 int main(int argc, char** argv)
 {
@@ -138,14 +134,35 @@ int main(int argc, char** argv)
 
     gDrawContext = Dr_InitDrawContext();
     In_InitInputContext();
-    InitGameFramework();
-
+    GF_InitGameFramework();
+    IR_InitImageRegistry();
 
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     TestLayer_Get(&testLayer);
-    PushGameFrameworkLayer(&testLayer);
+    GF_PushGameFrameworkLayer(&testLayer);
 
+    At_BeginAtlas();
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_border.png", 0, 0, 64, 64, "BtnSquareDepthBorder");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_border.png", 0, 0, 64, 64, "BtnSquareBorder");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_border.png", 0, 0, 192, 64, "BtnRectangleDepthBorder");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_border.png", 0, 0, 192, 64, "BtnRectangleBorder");
+
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_w.png", 0, 0, 32, 32, "ArrowWest");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_e.png", 0, 0, 32, 32, "ArrowEast");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_n.png", 0, 0, 32, 32, "ArrowNorth");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_s.png", 0, 0, 32, 32, "ArrowSouth");
+
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_gradient.png", 0, 0, 64, 64, "BtnSquareDepthGradient");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_gradient.png", 0, 0, 192, 64, "BtnSquareDepthGradient");
+   
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\check_square_color.png", 0, 0, 32, 32, "BtnCheckbox");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\check_square_color_checkmark.png", 0, 0, 32, 32, "BtnCheckboxTicked");
+   
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\slide_horizontal_color.png", 0, 0, 96, 16, "SlideHorizontalColour");
+    At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\slide_hangle.png", 0, 0, 24, 32, "SlideHangle");
+
+    At_EndAtlas();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -154,15 +171,20 @@ int main(int argc, char** argv)
         accumulator += delta;
         while (accumulator > slice)
         {
-            Update(delta);
+            glfwPollEvents();
+            In_Poll();
+            GF_InputGameFramework(&gInputContext);
+            GF_UpdateGameFramework((float)delta);
             accumulator -= slice;
         }
         
-        DrawGameFramework(&gDrawContext);
+        GF_DrawGameFramework(&gDrawContext);
         glfwSwapBuffers(window);
+        GF_EndFrame();
     }
+    IR_DestroyImageRegistry();
 
-    DestroyGameFramework();
+    GF_DestroyGameFramework();
 
     glfwTerminate();
 }
