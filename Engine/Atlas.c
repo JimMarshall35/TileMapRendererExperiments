@@ -3,6 +3,7 @@
 #include "ImageFileRegstry.h"
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
@@ -32,8 +33,10 @@ typedef struct
 
 typedef struct
 {
+	bool bActive;
 	u8* atlasBytes;
-	size_t atlasBytesSize;
+	int atlasWidth;
+	int atlasHeight;
 	VECTOR(AtlasSprite) sprites;
 	VECTOR(HImage) images;
 }Atlas;
@@ -46,6 +49,20 @@ Atlas* GetCurrentAtlas()
 	return gCurrentAtlasIndex >= 0 && gCurrentAtlasIndex < VectorSize(gAtlases) ? &gAtlases[gCurrentAtlasIndex] : NULL;
 }
 
+Atlas* AqcuireAtlas()
+{
+	for (int i = 0; i < VectorSize(gAtlases); i++)
+	{
+		if (!gAtlases[i].bActive)
+		{
+			return &gAtlases[i];
+		}
+	}
+	Atlas atlas;
+	gAtlases = VectorPush(gAtlases, &atlas);
+	return VectorTop(gAtlases);
+}
+
 void At_BeginAtlas()
 {
 	if (gAtlases == NULL)
@@ -53,12 +70,13 @@ void At_BeginAtlas()
 		gAtlases = NEW_VECTOR(Atlas);
 	}
 	VectorData* pData = VectorData_DEBUG(gAtlases);
-	Atlas atlas;
-	atlas.atlasBytes = NULL;
-	atlas.atlasBytesSize = 0;
-	atlas.sprites = NEW_VECTOR(AtlasSprite);
-	atlas.images = NEW_VECTOR(HImage);
-	gAtlases = VectorPush(gAtlases, &atlas);
+	Atlas* atlas = AqcuireAtlas();
+	atlas->atlasBytes = NULL;
+	atlas->atlasHeight = 0;
+	atlas->atlasWidth = 0;
+	atlas->sprites = NEW_VECTOR(AtlasSprite);
+	atlas->images = NEW_VECTOR(HImage);
+	//gAtlases = VectorPush(gAtlases, &atlas);
 	gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
 }
 
@@ -255,6 +273,40 @@ void BlitAtlasSprite(u8* dst, size_t dstWidthPx, AtlasSprite* pSprite)
 	}
 }
 
+void CopyNestedPositions(Atlas* pAtlasDest, AtlasSprite* spritesCopySrc, int spritesCopySrcSize)
+{
+	// copy nested positions to actual atlas sprites
+	for (int i = 0; i < spritesCopySrcSize; i++)
+	{
+		int id = -1;
+		AtlasSprite* pSp = &spritesCopySrc[i];
+		for (int j = 0; j < spritesCopySrcSize; j++)
+		{
+			if (pAtlasDest->sprites[j].id == pSp->id)
+			{
+				id = j;
+			}
+		}
+		pAtlasDest->sprites[id].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
+		pAtlasDest->sprites[id].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
+	}
+}
+
+static void CalculateAtlasUVs(Atlas* pAtlas)
+{
+	int atlasW = pAtlas->atlasWidth;
+	int atlasH = pAtlas->atlasHeight;
+	for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
+	{
+		AtlasSprite* pSprt = &pAtlas->sprites[i];
+		pSprt->topLeftUV_U = (float)atlasW / (float)pSprt->atlasTopLeftXPx;
+		pSprt->topLeftUV_V = (float)atlasH / (float)pSprt->atlasTopLeftYPx;
+
+		pSprt->bottomRightUV_U = (float)atlasW / (float)(pSprt->atlasTopLeftXPx + pSprt->widthPx);
+		pSprt->bottomRightUV_V = (float)atlasH / (float)(pSprt->atlasTopLeftYPx + pSprt->heightPx);
+	}
+}
+
 hAtlas At_EndAtlas()
 {
 	Atlas* pAtlas = GetCurrentAtlas();
@@ -271,21 +323,7 @@ hAtlas At_EndAtlas()
 		int w, h;
 		NestSprites(&w, &h, spritesCopy, numSprites);
 
-		// copy nested positions to actual atlas sprites
-		for (int i = 0; i < numSprites; i++)
-		{
-			int id = -1;
-			AtlasSprite* pSp = &spritesCopy[i];
-			for (int j = 0; j < numSprites; j++)
-			{
-				if (pAtlas->sprites[j].id == pSp->id)
-				{
-					id = j;
-				}
-			}
-			pAtlas->sprites[id].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
-			pAtlas->sprites[id].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
-		}
+		CopyNestedPositions(pAtlas, spritesCopy, numSprites);
 		free(spritesCopy);
 
 		size_t atlasSizePxls = w * h;
@@ -297,12 +335,22 @@ hAtlas At_EndAtlas()
 			AtlasSprite* pSprite = &pAtlas->sprites[i];
 			BlitAtlasSprite(pAtlasBytes, w, pSprite);
 		}
-		stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
 		pAtlas->atlasBytes = pAtlasBytes;
+		pAtlas->atlasWidth = w;
+		pAtlas->atlasHeight = h;
+
+		CalculateAtlasUVs(pAtlas);
+
+		stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
+
 	}
 	return gCurrentAtlasIndex;
 }
 
 void At_DestroyAtlas(hAtlas atlas)
 {
+	gAtlases[atlas].bActive = false;
+	DestoryVector(gAtlases[atlas].sprites);
+	DestoryVector(gAtlases[atlas].images);
+	free(gAtlases[atlas].atlasBytes);
 }

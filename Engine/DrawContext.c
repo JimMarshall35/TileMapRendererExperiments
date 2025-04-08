@@ -1,5 +1,8 @@
 #include "DrawContext.h"
 #include <string.h>
+#include <glad/glad.h>
+
+
 DrawContext Dr_InitDrawContext()
 {
 	DrawContext d;
