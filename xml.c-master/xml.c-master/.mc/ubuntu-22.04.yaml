@@ -1,0 +1,8 @@
+---
+base: ubuntu:22.04
+install:
+ - cmake
+ - g++
+ - gcc
+ - valgrind
+---

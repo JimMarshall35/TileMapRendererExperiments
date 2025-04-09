@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2022;$(SolutionDir)ft2133\freetype-2.13.3\objs;$(SolutionDir)lua-5.4.2_Win64_dll17_lib;$(SolutionDir)cglm-0.9.6\cglm-0.9.6\win\x64\Release;$(SolutionDir)box2d-3.0.0\box2d-3.0.0\build\src\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)lua-5.4.2_Win64_dll17_lib\include;$(SolutionDir)cglm-0.9.6\cglm-0.9.6\include;$(SolutionDir)ft2133\freetype-2.13.3\include;$(SolutionDir)box2d-3.0.0\box2d-3.0.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2022;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2022;$(SolutionDir)ft2133\freetype-2.13.3\objs;$(SolutionDir)lua-5.4.2_Win64_dll17_lib;$(SolutionDir)cglm-0.9.6\cglm-0.9.6\win\x64\Release;$(SolutionDir)box2d-3.0.0\box2d-3.0.0\build\src\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)lua-5.4.2_Win64_dll17_lib\include;$(SolutionDir)cglm-0.9.6\cglm-0.9.6\include;$(SolutionDir)ft2133\freetype-2.13.3\include;$(SolutionDir)box2d-3.0.0\box2d-3.0.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,7 +116,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;lua54.lib;cglm.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;freetype.lib;lua54.lib;cglm.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -147,7 +147,9 @@
     <ClCompile Include="ImageFileRegstry.c" />
     <ClCompile Include="InputContext.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="TestGameLayer.c" />
+    <ClCompile Include="ObjectPool.c" />
+    <ClCompile Include="XMLUIGameLayer.c" />
+    <ClCompile Include="xml.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Atlas.h" />
@@ -159,10 +161,12 @@
     <ClInclude Include="ImageFileRegstry.h" />
     <ClInclude Include="InputContext.h" />
     <ClInclude Include="IntTypes.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize.h" />
     <ClInclude Include="stb\stb_image_write.h" />
-    <ClInclude Include="TestGameLayer.h" />
+    <ClInclude Include="XMLUIGameLayer.h" />
+    <ClInclude Include="xml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

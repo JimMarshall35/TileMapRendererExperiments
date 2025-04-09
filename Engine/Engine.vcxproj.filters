@@ -45,7 +45,7 @@
     <ClCompile Include="DrawContext.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestGameLayer.c">
+    <ClCompile Include="XMLUIGameLayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cJSON.c">
@@ -58,6 +58,12 @@
       <Filter>Source Files\lib</Filter>
     </ClCompile>
     <ClCompile Include="Atlas.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xml.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPool.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,7 +80,7 @@
     <ClInclude Include="DrawContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestGameLayer.h">
+    <ClInclude Include="XMLUIGameLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IntTypes.h">
@@ -100,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="Atlas.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

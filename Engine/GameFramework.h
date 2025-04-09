@@ -6,8 +6,8 @@
 typedef void (*UpdateFn)(float deltaT);
 typedef void (*DrawFn)(DrawContext* context);
 typedef void (*InputFn)(InputContext* context);
-typedef void (*OnPushFn)(void);
-typedef void (*OnPopFn)(void);
+typedef void (*OnPushFn)(DrawContext* drawContext, InputContext* inputContext);
+typedef void (*OnPopFn)(DrawContext* drawContext, InputContext* inputContext);
 
 typedef enum
 {
@@ -31,6 +31,7 @@ struct GameFrameworkLayer
 	OnPushFn onPush;
 	OnPopFn onPop;
 	unsigned int flags;
+	void* userData; // this is the game freamework users responsiblity to alloc and free
 };
 
 void GF_InitGameFramework();
@@ -39,7 +40,7 @@ void GF_DestroyGameFramework();
 void GF_PushGameFrameworkLayer(const struct GameFrameworkLayer* layer);
 void GF_PopGameFrameworkLayer();
 
-void GF_EndFrame();
+void GF_EndFrame(DrawContext* drawContext, InputContext* inputContext);
 
 void GF_UpdateGameFramework(float deltaT);
 void GF_InputGameFramework(InputContext* context);

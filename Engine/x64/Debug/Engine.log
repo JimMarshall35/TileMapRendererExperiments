@@ -1,10 +1,85 @@
-﻿  Atlas.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,84): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [49]'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,31): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,87): warning C4047: 'function': 'const char *const ' differs in levels of indirection from 'int'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,86): warning C4024: 'sprintf_s': different types for formal and actual parameter 3
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(62,44): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(88,20): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(105,37): warning C4244: 'return': conversion from 'u64' to 'hSprite', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(272,36): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
-  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe
+﻿  GameFramework.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\GameFramework.c(48,39): warning C4244: 'initializing': conversion from 'u64' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\GameFramework.c(78,46): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\GameFramework.c(82,47): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\GameFramework.c(86,45): warning C4244: '=': conversion from 'u64' to 'int', possible loss of data
+  main.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\main.c(142,5): error C2198: 'XMLUIGameLayer_Get': too few arguments for call
+  ObjectPool.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(13,2): error C2061: syntax error: identifier 'i64'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(14,6): error C2061: syntax error: identifier 'capacity'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(14,6): error C2059: syntax error: ';'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(15,6): error C2061: syntax error: identifier 'freeObjectsArraySize'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(15,6): error C2059: syntax error: ';'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(16,5): error C2143: syntax error: missing '{' before '*'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(17,1): error C2059: syntax error: '}'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(9,2): warning C4013: 'assert' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(10,34): warning C4013: 'malloc' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(10,133): error C2027: use of undefined type 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(11,8): message : see declaration of 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(11,32): warning C4033: 'InitObjectPool' must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(12,2): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(12,89): error C2027: use of undefined type 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(11,8): message : see declaration of 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(13,2): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(14,2): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(15,2): error C2037: left of 'objectSize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(18,3): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(18,35): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(20,19): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(10,25): warning C4047: 'initializing': 'ObjectPoolData *' differs in levels of indirection from 'int'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(27,74): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(28,9): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(29,20): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(30,2): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(31,43): error C2037: left of 'objectSize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(31,63): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(31,95): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(31,142): error C2027: use of undefined type 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(11,8): message : see declaration of 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(32,2): warning C4013: 'memcpy' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(32,26): error C2037: left of 'objectSize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(32,46): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(32,93): error C2027: use of undefined type 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(11,8): message : see declaration of 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(33,2): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(33,93): error C2027: use of undefined type 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(11,8): message : see declaration of 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(33,95): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(33,113): error C2037: left of 'objectSize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(34,32): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(36,3): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(36,37): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(38,21): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(31,25): warning C4047: 'initializing': 'ObjectPoolData *' differs in levels of indirection from 'int'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(48,6): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(48,6): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(52,74): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(53,15): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(53,48): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(59,74): error C2036: 'ObjectPoolData *': unknown size
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(60,40): error C2037: left of 'capacity' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(62,3): warning C4013: 'printf' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(65,22): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(67,7): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(73,2): error C2037: left of 'freeObjectIndicessArray' specifies undefined struct/union 'ObjectPoolData'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.c(73,33): error C2037: left of 'freeObjectsArraySize' specifies undefined struct/union 'ObjectPoolData'
+  XMLUIGameLayer.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(65,54): warning C4047: 'function': 'int *' differs in levels of indirection from 'HWidget'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(65,48): warning C4024: 'GetObjectPoolIndex': different types for formal and actual parameter 2
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(90,63): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(95,63): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(118,1): error C2059: syntax error: '}'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(124,16): error C2065: 'child': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(126,4): warning C4013: 'DestroyWidget' undefined; assuming extern returning int
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(126,23): error C2065: 'child': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(127,10): error C2065: 'child': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(127,29): error C2065: 'child': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(129,42): error C2065: 'widget': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(131,2): error C2059: syntax error: 'else'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(135,1): error C2059: syntax error: '}'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(186,29): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(187,98): error C2059: syntax error: ')'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(189,26): error C2065: 'Update': undeclared identifier
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(189,26): warning C4047: '=': 'UpdateFn' differs in levels of indirection from 'int *'
+  Generating Code...
