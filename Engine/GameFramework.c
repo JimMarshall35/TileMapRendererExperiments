@@ -87,8 +87,12 @@ void GF_EndFrame(DrawContext* drawContext, InputContext* inputContext)
 			}
 			if (gLayerChangeQueue[i].layer.flags & EnableOnPush)
 			{
-				gLayerChangeQueue[i].layer.onPush(drawContext, inputContext);
+				struct GameFrameworkLayer* pTop = VectorTop(gLayerStack);
+				pTop->onPush(pTop, drawContext, inputContext);
 			}
+			
+			
+			//((struct GameFrameworkLayer*)VectorTop(gLayerStack))->onPush(drawContext, inputContext)
 		}
 		else
 		{
@@ -107,12 +111,12 @@ void GF_EndFrame(DrawContext* drawContext, InputContext* inputContext)
 			}
 			if (pLayer->flags & EnableOnPop)
 			{
-				pLayer->onPop(drawContext, inputContext);
+				pLayer->onPop(pLayer, drawContext, inputContext);
 			}
 
 			VectorPop(gLayerStack);
 		}
-		gLayerChangeQueue = VectorPop(gLayerChangeQueue);
+		VectorPop(gLayerChangeQueue);
 	}
 }
 
@@ -120,7 +124,7 @@ void GF_UpdateGameFramework(float deltaT)
 {
 	for (int i = gUpdateItrStart; i < VectorSize(gLayerStack); i++)
 	{
-		gLayerStack[i].update(deltaT);
+		gLayerStack[i].update(&gLayerStack[i], deltaT);
 	}
 }
 
@@ -128,7 +132,7 @@ void GF_InputGameFramework(InputContext* context)
 {
 	for (int i = gInputItrStart; i < VectorSize(gLayerStack); i++)
 	{
-		gLayerStack[i].input(context);
+		gLayerStack[i].input(&gLayerStack[i], context);
 	}
 }
 
@@ -136,6 +140,6 @@ void GF_DrawGameFramework(DrawContext* context)
 {
 	for (int i = gDrawItrStart; i < VectorSize(gLayerStack); i++)
 	{
-		gLayerStack[i].draw(context);
+		gLayerStack[i].draw(&gLayerStack[i], context);
 	}
 }

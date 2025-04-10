@@ -148,6 +148,9 @@
     <ClCompile Include="InputContext.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="ObjectPool.c" />
+    <ClCompile Include="RootWidget.c" />
+    <ClCompile Include="StaticWidget.c" />
+    <ClCompile Include="Widget.c" />
     <ClCompile Include="XMLUIGameLayer.c" />
     <ClCompile Include="xml.c" />
   </ItemGroup>
@@ -162,9 +165,12 @@
     <ClInclude Include="InputContext.h" />
     <ClInclude Include="IntTypes.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="RootWidget.h" />
+    <ClInclude Include="StaticWidget.h" />
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize.h" />
     <ClInclude Include="stb\stb_image_write.h" />
+    <ClInclude Include="Widget.h" />
     <ClInclude Include="XMLUIGameLayer.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>

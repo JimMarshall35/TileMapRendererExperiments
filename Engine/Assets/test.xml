@@ -1,0 +1,10 @@
+<screen>
+	<stackpanel dockPoint="topLeft"
+		orientation="vertical">
+		<static sprite="button_round_border" width="auto" height="auto"></static>
+		<static sprite="button_round_depth_border" width="auto" height="auto"></static>
+	</stackpanel>
+	<stackpanel dockPoint="bottomMiddle" orientation="horizontal">
+		<static sprite="button_rectangle_line" width="auto" height="auto"></static>
+	</stackpanel>
+</screen>

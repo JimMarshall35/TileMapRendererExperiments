@@ -9,35 +9,13 @@
 #include "IntTypes.h"
 #include "DynArray.h"
 #include "ObjectPool.h"
+#include "Widget.h"
+#include "xml.h"
+
 #define XML_UI_MAX_PATH 256
 
 
-
-struct UIWidget;
-
-typedef float(*GetUIWidgetDimensionFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
-typedef void(*LayoutChildrenFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
-typedef void(*OnDestroyWidget)(struct UIWidget* pWidget);
-
-typedef int HWidget;
-#define NULL_HWIDGET -1
-
-struct UIWidget
-{
-	int hNext;
-	int hPrev;
-	int hParent;
-	int hFirstChild;
-	void* pImplementationData;
-	GetUIWidgetDimensionFn fnGetWidth;
-	GetUIWidgetDimensionFn fnGetHeight;
-	LayoutChildrenFn fnLayoutChildren;
-	OnDestroyWidget fnOnDestroy;
-	float top;
-	float left;
-};
-
-typedef struct 
+typedef struct
 {
 	int rootWidget;
 	const char xmlFilePath[XML_UI_MAX_PATH];
@@ -46,157 +24,66 @@ typedef struct
 }XMLUIData;
 
 
-OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 
-HWidget NewWidget(
-	HWidget firstChild,
-	HWidget paremt,
-	HWidget next,
-	HWidget prev,
-	void* pImplementationData,
-	GetUIWidgetDimensionFn fnGetWidth,
-	GetUIWidgetDimensionFn fnGetHeight,
-	LayoutChildrenFn fnLayoutChildren,
-	OnDestroyWidget fnOnDestroy,
-	float top,
-	float left)
+
+static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
-	HWidget widget = 0;
-	gWidgetPool = GetObjectPoolIndex(gWidgetPool, widget);
-	struct UIWidget* pWidget = &gWidgetPool[widget];
-	pWidget->hParent = paremt;
-	pWidget->hFirstChild = firstChild;
-	pWidget->hNext = next;
-	pWidget->hPrev = prev;
-	pWidget->pImplementationData = pImplementationData;
-	pWidget->fnGetHeight = fnGetHeight;
-	pWidget->fnGetWidth = fnGetWidth;
-	pWidget->fnLayoutChildren = fnLayoutChildren;
-	pWidget->top = top;
-	pWidget->left = left;
-	pWidget->fnOnDestroy = fnOnDestroy;
 
-	return widget;
 }
 
-struct RootWidgetData
+static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 {
-	int windowW;
-	int windowH;
-};
 
-float RootWidget_GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
-{
-	return ((struct RootWidgetData*)pWidget->pImplementationData)->windowW;
 }
 
-float RootWidget_GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
+static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 {
-	return ((struct RootWidgetData*)pWidget->pImplementationData)->windowH;
+
 }
 
-void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
+
+
+static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
-	if (pThis->hFirstChild != NULL_HWIDGET)
+	
+}
+
+
+
+static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
+{
+	
+}
+
+void LoadUIData(XMLUIData* pUIData)
+{
+	assert(!pUIData->bLoaded);
+	FILE* fp = fopen(pUIData->xmlFilePath, "r");
+	struct xml_document* pXMLDoc = xml_open_document(fp);
+	
+	if (pXMLDoc)
 	{
-		struct UIWidget* pWidget = &gWidgetPool[pThis->hFirstChild];
-		while (pWidget)
+		struct xml_node* root = xml_document_root(pXMLDoc);
+		size_t children = xml_node_children(root);
+		for (int i = 0; i < children; i++)
 		{
-			pWidget->fnLayoutChildren(pWidget, pThis);
-			if (pWidget->hNext != NULL_HWIDGET)
-			{
-				pWidget = &gWidgetPool[pWidget->hNext];
-			}
+			struct xml_node* child = xml_node_child(root, i);
 		}
+		printf("pXMLDoc\n");
 	}
-}
-
-void RootWidget_OnDestroy(struct UIWidget* pThis)
-{
-	free(pThis->pImplementationData);
-}
-
-HWidget NewRootWidget()
-{
-	struct RootWidsgetData* pRootWidgetData = malloc(sizeof(struct RootWidgetData));
-	return NewWidget(NULL_HWIDGET, NULL_HWIDGET, NULL_HWIDGET, NULL_HWIDGET,
-		pRootWidgetData,
-		&RootWidget_GetWidth,
-		&RootWidget_GetHeight,
-		&RootWidget_LayoutChildren,
-		&RootWidget_OnDestroy,
-		0, 0);
-}
-
-void DestroyWidget(HWidget widget)
-{
-	if (widget >= 0 && widget < ObjectPoolCapacity(gWidgetPool))
-	{
-		HWidget child = gWidgetPool[widget].hFirstChild;
-		while (child != NULL_HWIDGET)
-		{
-			DestroyWidget(child);
-			child = gWidgetPool[child].hNext;
-		}
-		FreeObjectPoolIndex(gWidgetPool, widget);
-	}
-	else
-	{
-		printf("DestroyWidget: widget %i out of range", widget);
-	}
-}
-
-static void Update(float deltaT)
-{
-
-}
-
-static void Draw(DrawContext* dc)
-{
-
-}
-
-static void Input(InputContext* ctx)
-{
-
-}
-
-static void OneTimeInit()
-{
-	gWidgetPool = NEW_OBJECT_POOL(struct UIWidget, 256);
-}
-
-static bool OneTimeInitNeeded()
-{
-	return gWidgetPool == NULL;
-
-}
-
-static void OnPush(DrawContext* drawContext, InputContext* inputContext)
-{
-	if (OneTimeInitNeeded())
-	{
-		OneTimeInit();
-	}
-	printf("on push");
-}
-
-static void OnPop(DrawContext* drawContext, InputContext* inputContext)
-{
-	printf("on pop");
 }
 
 
 void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, const struct XMLUIGameLayerOptions* pOptions)
 {
 	pLayer->userData = malloc(sizeof(XMLUIData));
-	if (!pLayer->userData) printf("XMLUIGameLayer_Get: no memory"); return;
+	if (!pLayer->userData) { printf("XMLUIGameLayer_Get: no memory"); return; }
 	XMLUIData* pUIData = (XMLUIData*)pLayer->userData;
 	
 	memset(pLayer->userData, 0, sizeof(XMLUIData));
 	
 	strcpy(pUIData->xmlFilePath, pOptions->xmlPath);
-	pUIData->rootWidget = NewWidget(NULL_HWIDGET, NULL_HWIDGET, NULL_HWIDGET, NULL_HWIDGET, pUIData,)
+	pUIData->rootWidget = NewRootWidget();
 	pLayer->draw = &Draw;
 	pLayer->update = &Update;
 	pLayer->input = &Input;
@@ -204,4 +91,18 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, const struct XMLUIGam
 	pLayer->onPush = &OnPush;
 	pLayer->flags = 0;
 	pLayer->flags |= EnableDrawFn | EnableInputFn | EnableUpdateFn | EnableOnPop | EnableOnPush;
+	if (pOptions->bLoadImmediately)
+	{
+		LoadUIData(pUIData);
+	}
 }
+
+
+
+
+
+
+
+
+
+

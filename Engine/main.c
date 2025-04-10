@@ -6,6 +6,7 @@
 #include "XMLUIGameLayer.h"
 #include "ImageFileRegstry.h"
 #include "Atlas.h"
+#include "Widget.h"
 #include <string.h>
 
 #define SCR_WIDTH 800
@@ -136,10 +137,14 @@ int main(int argc, char** argv)
     In_InitInputContext();
     GF_InitGameFramework();
     IR_InitImageRegistry();
+    UI_Init();
 
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
-    XMLUIGameLayer_Get(&testLayer);
+    struct XMLUIGameLayerOptions options;
+    options.bLoadImmediately = true;
+    options.xmlPath = "Assets/test.xml";
+    XMLUIGameLayer_Get(&testLayer, &options);
     GF_PushGameFrameworkLayer(&testLayer);
 
     //At_BeginAtlas();

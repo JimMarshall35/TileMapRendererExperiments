@@ -347,10 +347,57 @@ hAtlas At_EndAtlas()
 	return gCurrentAtlasIndex;
 }
 
+
+
+#define ATLAS_HANDLE_BOUNDS_CHECK(atlas)\
+bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
+assert(bAtlasHandleBoundsValid);\
+if(!bAtlasHandleBoundsValid){\
+	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
+	return;\
+}
+
+#define ATLAS_HANDLE_BOUNDS_CHECK(atlas, rVal)\
+bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
+assert(bAtlasHandleBoundsValid);\
+if(!bAtlasHandleBoundsValid){\
+	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
+	return rVal;\
+}
+
 void At_DestroyAtlas(hAtlas atlas)
 {
+	ATLAS_HANDLE_BOUNDS_CHECK(atlas)
+
 	gAtlases[atlas].bActive = false;
+	for (int i = 0; i < VectorSize(gAtlases[atlas].sprites); i++)
+	{
+		AtlasSprite* pSprite = &gAtlases[atlas].sprites[i];
+		
+		if (pSprite->name)
+		{
+			free(pSprite->name);
+		}
+		if (pSprite->individualTileBytes)
+		{
+			free(pSprite->individualTileBytes);
+		}
+	}
 	DestoryVector(gAtlases[atlas].sprites);
 	DestoryVector(gAtlases[atlas].images);
 	free(gAtlases[atlas].atlasBytes);
+}
+
+hSprite At_FindSprite(const char* name, hAtlas atlas)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(atlas)
+	Atlas* pAtlas = &gAtlases[atlas];
+	for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
+	{
+		if (strcmp(pAtlas->sprites[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HSPRITE;
 }

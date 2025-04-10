@@ -13,9 +13,11 @@ void DestoryVector(void* vector);
 
 typedef struct
 {
-	u64 itemSize;
-	u64 capacity;
-	u64 size;
+	u32 itemSize;
+	u32 capacity;
+	u32 size;
+	u32 _padding;
+	// 16 byte aligned
 } VectorData;
 
 #define VectorSize(vector) ((((VectorData*)vector) - 1)->size)

@@ -25,6 +25,12 @@
     <Filter Include="Header Files\stb">
       <UniqueIdentifier>{0a3253b2-733b-4507-87f1-f32fecf5a374}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{1330de74-5f75-4907-9218-2823f3774cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{1c40f12e-2a23-48d6-866e-1232aa9bf852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -45,9 +51,6 @@
     <ClCompile Include="DrawContext.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XMLUIGameLayer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cJSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,7 +67,19 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectPool.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLUIGameLayer.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RootWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticWidget.c">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -78,9 +93,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XMLUIGameLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IntTypes.h">
@@ -112,6 +124,18 @@
     </ClInclude>
     <ClInclude Include="ObjectPool.h">
       <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLUIGameLayer.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RootWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticWidget.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

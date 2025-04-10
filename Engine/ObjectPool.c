@@ -1,6 +1,8 @@
 #include "ObjectPool.h"
 #include <stdbool.h>
-
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 #include "IntTypes.h"
 
 
@@ -13,7 +15,7 @@ void* InitObjectPool(int objectSize, int poolInitialSize)
 	pAlloc->capacity = poolInitialSize;
 	pAlloc->freeObjectsArraySize = 0;
 	pAlloc->objectSize = objectSize;
-	for (int i = 0; i > poolInitialSize; i++)
+	for (int i = 0; i < poolInitialSize; i++)
 	{
 		pAlloc->freeObjectIndicessArray[pAlloc->freeObjectsArraySize++] = i;
 	}
