@@ -1,6 +1,7 @@
 #include "StackPanelWidget.h"
 #include "Widget.h"
 #include <stdlib.h>
+#include <assert.h>
 
 typedef enum
 {
@@ -128,15 +129,97 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
+	struct StackPanelWidgetData* pStackPanelData = pWidget->pImplementationData;
+
+	if (pWidget->hFirstChild == NULL_HWIDGET)
+	{
+		return;
+	}
+
+	float top = pWidget->top;
+	float left = pWidget->left;
+	float w = GetWidth(pWidget, pParent);
+	float h = GetHeight(pWidget, pParent);
+
+
+	switch (pStackPanelData->orientation)
+	{
+	case SPO_Horizontal:
+		{
+			struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
+			while (pChild)
+			{
+				float childHeight = pChild->fnGetHeight(pChild, pWidget);
+				if (childHeight == h)
+				{
+					pChild->left = left;
+					pChild->top = top;
+					left += GetWidth(pChild, pWidget);
+				}
+				else
+				{
+					assert(childHeight < h);
+					// TODO: move horizontal + vertical alignment directly into widget class, query here, centre alignment implemented currently
+					pChild->left = left;
+					pChild->top = top + (h - childHeight) * 0.5;
+					left += GetWidth(pChild, pWidget);
+				}
+
+				if (pChild->hNext == NULL_HWIDGET)
+				{
+					pChild = NULL;
+				}
+				else
+				{
+					pChild = UI_GetWidget(pChild->hNext);
+				}
+			}
+
+			break;
+		}
+	case SPO_Vertical:
+		{
+			struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
+			while (pChild)
+			{
+				float childWidth = pChild->fnGetWidth(pChild, pWidget);
+				if (childWidth == w)
+				{
+					pChild->left = left;
+					pChild->top = top;
+					top += GetHeight(pChild, pWidget);
+				}
+				else
+				{
+					assert(childWidth < w);
+					// TODO: move horizontal + vertical alignment directly into widget class, query here, centre alignment implemented currently
+					pChild->left = left + (w - childWidth) * 0.5f;
+					pChild->top = top;
+					top += GetHeight(pChild, pWidget);
+				}
+
+				if (pChild->hNext == NULL_HWIDGET)
+				{
+					pChild = NULL;
+				}
+				else
+				{
+					pChild = UI_GetWidget(pChild->hNext);
+				}
+			}
+			break;
+		}
+	}
 
 }
 
 static void OnDestroy(struct UIWidget* pWidget)
 {
-
+	assert(pWidget->pImplementationData);
+	free(pWidget->pImplementationData);
 }
 
-static void MakeWidgetIntotStackPanel(HWidget hWidget, struct xml_node* pXMLNode)
+static void MakeWidgetIntoStackPanel(HWidget hWidget, struct xml_node* pXMLNode)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -155,6 +238,6 @@ HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct X
 {
 	
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntotStackPanel(hWidget, pXMLNode);
+	MakeWidgetIntoStackPanel(hWidget, pXMLNode);
 	return hWidget;
 }

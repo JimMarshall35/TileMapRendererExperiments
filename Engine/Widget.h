@@ -101,4 +101,7 @@ void UI_ParseWidgetDimsAttribute(struct xml_string* contents, struct WidgetDim* 
 void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding);
 
 void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum WidgetHorizontalAlignment* outAlignment);
+
+float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim);
+
 #endif

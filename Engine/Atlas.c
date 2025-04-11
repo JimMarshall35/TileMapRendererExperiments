@@ -8,29 +8,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
-typedef struct 
-{
-	hAtlas atlas;
-	HImage srcImage;
-	const char* name;
-	int srcImageTopLeftXPx;
-	int srcImageTopLeftYPx;
-	int widthPx;
-	int heightPx;
-
-	int atlasTopLeftXPx;
-	int atlasTopLeftYPx;
-
-	float topLeftUV_U;
-	float topLeftUV_V;
-	float bottomRightUV_U;
-	float bottomRightUV_V;
-
-	u8* individualTileBytes;
-	
-	int id;
-}AtlasSprite;
-
 typedef struct
 {
 	bool bActive;
@@ -400,4 +377,16 @@ hSprite At_FindSprite(const char* name, hAtlas atlas)
 		}
 	}
 	return NULL_HSPRITE;
+}
+
+AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(atlas, NULL);
+	Atlas* pAtlas = &gAtlases[atlas];
+	if (sprite < 0 || sprite >= VectorSize(pAtlas->sprites))
+	{
+		printf("function '%s' invalid sprite bounds handle %i", __FUNCTION__, sprite);
+		return NULL;
+	}
+	return &pAtlas->sprites[sprite];
 }

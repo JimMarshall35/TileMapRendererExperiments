@@ -158,3 +158,10 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 		*outAlignment = WHA_Right;
 	}
 }
+
+float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim)
+{
+	// TODO: STUB!
+	// IMPLEMENT DIFFERENT TYPES OF DIMENSION
+	return dim->data;
+}

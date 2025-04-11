@@ -6,37 +6,54 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Atlas.h"
+#include <assert.h>
 
 struct StaticWidgetData
 {
 	char* imageName;
 	struct WidgetPadding padding;
 	struct WidgetScale scale;
-	struct WidgetDim width;
-	struct WidgetDim height;
+	/*struct WidgetDim width;
+	struct WidgetDim height;*/
 	hSprite sprite;
+	hAtlas atlas;
 };
 
-static void GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
+static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-
+	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
+	AtlasSprite* pAtlasSprite = At_GetSprite(pStaticData->sprite, pStaticData->atlas);
+	if (!pAtlasSprite)
+	{
+		return 0;
+	}
+	return pAtlasSprite->widthPx * pStaticData->scale.scaleX + pStaticData->padding.paddingLeft + pStaticData->padding.paddingRight;
 }
 
-static void GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
+static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-
+	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
+	AtlasSprite* pAtlasSprite = At_GetSprite(pStaticData->sprite, pStaticData->atlas);
+	if (!pAtlasSprite)
+	{
+		return 0;
+	}
+	return pAtlasSprite->heightPx * pStaticData->scale.scaleY + pStaticData->padding.paddingTop + pStaticData->padding.paddingBottom;
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-
+	// shouldnt really have children
+	assert(pWidget->hFirstChild == NULL_HWIDGET);
 }
 
 static void OnDestroy(struct UIWidget* pWidget)
 {
-
+	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
+	assert(pStaticData->imageName);
+	free(pStaticData->imageName);
+	free(pStaticData);
 }
-
 
 
 static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
@@ -75,21 +92,22 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, str
 			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
 			pWidgetData->imageName[xml_string_length(contents)] = '\0';
 		}
-		else if (strcmp(attributeBuffer, "width"))
-		{
-			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
-			UI_ParseWidgetDimsAttribute(contents, &pWidgetData->width);
+		//else if (strcmp(attributeBuffer, "width"))
+		//{
+		//	struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
+		//	UI_ParseWidgetDimsAttribute(contents, &pWidgetData->width);
 
-		}
-		else if (strcmp(attributeBuffer, "height"))
-		{
-			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
-			UI_ParseWidgetDimsAttribute(contents, &pWidgetData->height);
-		}
+		//}
+		//else if (strcmp(attributeBuffer, "height"))
+		//{
+		//	struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
+		//	UI_ParseWidgetDimsAttribute(contents, &pWidgetData->height);
+		//}
 	}
 	if (pWidgetData->imageName)
 	{
 		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pUILayerData->atlas);
+		pWidgetData->atlas = pUILayerData->atlas;
 	}
 }
 
