@@ -4,13 +4,19 @@ C:\Jim Dev\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 
   C:\Jim Dev\TileMapRendererExperiments\Engine\ObjectPool.h(34,1):
   see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
   
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(28,18): warning C4113: 'HWidget (__cdecl *)(HWidget,xml_node *)' differs in parameter lists from 'AddChildFn'
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(141,23): warning C4133: 'function': incompatible types - from 'xml_node *' to 'xml_string *'
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(154,23): warning C4133: 'function': incompatible types - from 'xml_node *' to 'xml_string *'
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(120,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(130,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(131,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(175,29): warning C4090: 'function': different 'const' qualifiers
-C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(176,24): warning C4013: 'NewRootWidget' undefined; assuming extern returning int
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(118,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(122,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(134,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(140,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(148,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(156,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(165,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(174,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(183,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(239,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(249,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(250,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(294,29): warning C4090: 'function': different 'const' qualifiers
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(295,24): warning C4013: 'NewRootWidget' undefined; assuming extern returning int
 C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(47): warning C4716: 'GetWidgetFromNode': must return a value
   Engine.vcxproj -> C:\Jim Dev\TileMapRendererExperiments\x64\Debug\Engine.exe

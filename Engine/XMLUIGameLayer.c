@@ -136,7 +136,7 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0)
 			attributeNameBuf[attrNameLen] = '\0';
 			if (strcmp(attributeNameBuf, "source") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, spritePath, len);
 				spritePath[len] = '\0';
@@ -144,42 +144,42 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0)
 			}
 			else if (strcmp(attributeNameBuf, "name") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, spriteName, len);
 				spriteName[len] = '\0';
 				bNameset = true;
 			}
-			else if (strcmp(attributeNameBuf, "top"))
+			else if (strcmp(attributeNameBuf, "top") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, numberBuf, len);
 				numberBuf[len] = '\0';
 				top = atoi(numberBuf);
 				bTopSet = true;
 			}
-			else if (strcmp(attributeNameBuf, "left"))
+			else if (strcmp(attributeNameBuf, "left") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, numberBuf, len);
 				numberBuf[len] = '\0';
 				left = atoi(numberBuf);
 				bLeftSet = true;
 			}
-			else if (strcmp(attributeNameBuf, "width"))
+			else if (strcmp(attributeNameBuf, "width") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, numberBuf, len);
 				numberBuf[len] = '\0';
 				width = atoi(numberBuf);
 				bWidthSet = true;
 			}
-			else if (strcmp(attributeNameBuf, "height"))
+			else if (strcmp(attributeNameBuf, "height") == 0)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pAttr, j);
+				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
 				int len = xml_string_length(pSrcVal);
 				xml_string_copy(pSrcVal, numberBuf, len);
 				numberBuf[len] = '\0';

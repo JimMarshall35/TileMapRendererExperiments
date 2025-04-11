@@ -1,7 +1,7 @@
 
 <UIroot>
 	<atlas>
-		<sprite source="Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_line.png" top="0" right="0" width="32" height="32" name="sprite="button_rectangle_line"/>
+		<sprite source="Assets/Image/kenney_ui-pack/PNG/Green/Default/button_rectangle_line.png" top="0" left="0" width="32" height="32" name="sprite="button_rectangle_line"/>
 	</atlas>
 	<screen>
 		<stackpanel dockPoint="topLeft"
