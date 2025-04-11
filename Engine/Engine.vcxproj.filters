@@ -81,6 +81,12 @@
     <ClCompile Include="StaticWidget.c">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="StackPanelWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CtorDtor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputContext.h">
@@ -136,6 +142,15 @@
     </ClInclude>
     <ClInclude Include="StaticWidget.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StackPanelWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleDefs.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="CtorDtor.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

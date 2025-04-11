@@ -3,6 +3,7 @@
 #include "IntTypes.h"
 #include <stdbool.h>
 #include "DynArray.h"
+#include "HandleDefs.h"
 
 #define CHANNELS_PER_PIXEL 4
 
@@ -19,8 +20,6 @@ struct ImageLoadError
 	const char* message;
 };
 
-typedef i32 HImage;
-#define NULL_HIMAGE -1
 
 HImage IR_RegisterImagePath(const char* path);
 

@@ -25,9 +25,22 @@ struct ObjectPoolData
 #define ObjectPoolCapacity(pObjectPool) ((((struct ObjectPoolData*)pObjectPool) - 1)->capacity)
 
 #define OBJ_POOL_BOUNDS_CHECK(handle, rVal, pool)\
-bool bBoundsValid = handle < ObjectPoolCapacity(pool) && handle >= 0;\
-if(!bBoundsValid){\
-	printf("function '%s' invalid bounds handle %i", __FUNCTION__, handle);\
-	return rVal;\
+{\
+	bool bBoundsValid = handle < ObjectPoolCapacity(pool) && handle >= 0;\
+	if(!bBoundsValid){\
+		printf("function '%s' invalid bounds handle %i", __FUNCTION__, handle);\
+		return rVal;\
+	}\
 }
+
+#define OBJ_POOL_BOUNDS_CHECK(handle, pool)\
+{\
+	bool bBoundsValid = handle < ObjectPoolCapacity(pool) && handle >= 0;\
+	if(!bBoundsValid){\
+		printf("function '%s' invalid bounds handle %i", __FUNCTION__, handle);\
+		return;\
+	}\
+}
+
+
 #endif // ! OBJECT_POOL_H

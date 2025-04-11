@@ -2,13 +2,14 @@
 #define ROOTWIDGET_H
 #include "Widget.h"
 
+
 struct RootWidgetData
 {
 	int windowW;
 	int windowH;
 };
 
-HWidget NewRootWidget();
 
+HWidget NewRootWidget();
 
 #endif

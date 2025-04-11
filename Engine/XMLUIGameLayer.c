@@ -11,6 +11,9 @@
 #include "ObjectPool.h"
 #include "Widget.h"
 #include "xml.h"
+#include "Widget.h"
+#include "StaticWidget.h"
+#include "StackPanelWidget.h"
 
 #define XML_UI_MAX_PATH 256
 
@@ -24,6 +27,34 @@ typedef struct
 }XMLUIData;
 
 
+struct NameConstructorPair
+{
+	const char* name;
+	AddChildFn pCtor;
+};
+
+struct NameConstructorPair gNodeNameTable[] =
+{
+	{"stackpanel", &StackPanelWidgetNew},
+	{"static",     &StaticWidgetNew}
+};
+
+AddChildFn LookupWidgetCtor(const char* widgetName)
+{
+	for (int i = 0; sizeof(gNodeNameTable) / sizeof(struct NameConstructorPair); i++)
+	{
+		if (strcmp(widgetName, gNodeNameTable[i].name) == 0)
+		{
+			return gNodeNameTable[i].pCtor;
+		}
+	}
+	return NULL;
+}
+
+HWidget GetWidgetFromNode(struct xml_node* pNode)
+{
+
+}
 
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
@@ -55,6 +86,33 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 	
 }
 
+void AddNodeChildren(HWidget widget, struct xml_node* pNode)
+{
+	size_t children = xml_node_children(pNode);
+	for (int i = 0; i < children; i++)
+	{
+		struct xml_node* pChild = xml_node_child(pNode, i);
+		struct xml_string* pString = xml_node_name(pChild);
+		char* pBuf =  malloc(xml_string_length(pString) + 1);
+		memset(pBuf, 0, xml_string_length(pString) + 1);
+		xml_string_copy(pString, pBuf, xml_string_length(pString));
+
+		AddChildFn pCtor = LookupWidgetCtor(pBuf);
+		if (!pCtor)
+		{
+			// log error
+			return;
+		}
+
+		HWidget childWidget = pCtor(widget, pChild);
+		UI_AddChild(widget, childWidget);
+		
+		AddNodeChildren(childWidget, pChild);
+	}
+
+}
+
+
 void LoadUIData(XMLUIData* pUIData)
 {
 	assert(!pUIData->bLoaded);
@@ -64,11 +122,7 @@ void LoadUIData(XMLUIData* pUIData)
 	if (pXMLDoc)
 	{
 		struct xml_node* root = xml_document_root(pXMLDoc);
-		size_t children = xml_node_children(root);
-		for (int i = 0; i < children; i++)
-		{
-			struct xml_node* child = xml_node_child(root, i);
-		}
+		AddNodeChildren(pUIData->rootWidget, root);
 		printf("pXMLDoc\n");
 	}
 }
