@@ -51,7 +51,7 @@ static void MakeWidgetIntotStackPanel(HWidget hWidget, struct xml_node* pXMLNode
 	
 }
 
-HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode)
+HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUIData)
 {
 	
 	HWidget hWidget = UI_NewBlankWidget();

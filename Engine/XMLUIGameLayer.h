@@ -11,7 +11,20 @@ struct XMLUIGameLayerOptions
 	bool bLoadImmediately; // eg, when XMLUIGameLayer_Get is called, do we load the xml file?
 };
 
-typedef HWidget(*AddChildFn)(HWidget hParent, struct xml_node* pXMLNode);
+typedef HWidget(*AddChildFn)(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+
+#define XML_UI_MAX_PATH 256
+
+typedef struct XMLUIData
+{
+	int rootWidget;
+	const char xmlFilePath[XML_UI_MAX_PATH];
+	const char* xmlData;
+	bool bLoaded;
+	hAtlas atlas;
+}XMLUIData;
+
+
 
 void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, const struct XMLUIGameLayerOptions* pOptions);
 

@@ -154,7 +154,7 @@ void IR_DestroyImageRegistry()
         {
             stbi_image_free(gImageFiles->pData);
         }
-        free(gImageFiles->path);
+        free(gImageFiles[i].path);
     }
     DestoryVector(gImageFiles);
 }

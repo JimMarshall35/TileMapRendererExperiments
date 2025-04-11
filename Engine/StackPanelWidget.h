@@ -4,7 +4,7 @@
 
 struct xml_node;
 
-HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode);
+HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUIData);
 
 #define STACKPANEL_XML_NAME "stackpanel"
 

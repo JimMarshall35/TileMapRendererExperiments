@@ -3,7 +3,7 @@
 
 #include "HandleDefs.h"
 
-HWidget StaticWidgetNew(HWidget hParent, struct xml_node* pXMLNode);
+HWidget StaticWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
 
 
 #endif // !STATIC_WIDGET_H

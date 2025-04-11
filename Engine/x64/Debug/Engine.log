@@ -1,39 +1,16 @@
-﻿  RootWidget.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RootWidget.c(7,63): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RootWidget.c(12,63): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RootWidget.c(33,2): warning C4013: 'free' undefined; assuming extern returning int
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RootWidget.c(38,43): warning C4013: 'malloc' undefined; assuming extern returning int
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RootWidget.c(38,25): warning C4047: 'initializing': 'RootWidgetData *' differs in levels of indirection from 'int'
-  StackPanelWidget.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\StackPanelWidget.c(46,23): warning C4133: '=': incompatible types - from 'void (__cdecl *)(UIWidget *,UIWidget *)' to 'GetUIWidgetDimensionFn'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\StackPanelWidget.c(47,22): warning C4133: '=': incompatible types - from 'void (__cdecl *)(UIWidget *,UIWidget *)' to 'GetUIWidgetDimensionFn'
-  StaticWidget.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\StaticWidget.c(48,23): warning C4133: '=': incompatible types - from 'void (__cdecl *)(UIWidget *,UIWidget *)' to 'GetUIWidgetDimensionFn'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\StaticWidget.c(49,22): warning C4133: '=': incompatible types - from 'void (__cdecl *)(UIWidget *,UIWidget *)' to 'GetUIWidgetDimensionFn'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\StaticWidget.c(60,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Widget.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(11,1): warning C4005: 'WIDGET_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(10,1): message : see previous definition of 'WIDGET_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(56,2): warning C4002: too many arguments for function-like macro invocation 'WIDGET_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(56,2): warning C4033: 'UI_GetWidget' must return a value
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(122,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(158,31): error C2065: 'WHA_Rightxsx': undeclared identifier
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(144,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  XMLUIGameLayer.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(139,29): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(140,24): warning C4013: 'NewRootWidget' undefined; assuming extern returning int
-  main.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-  Generating Code...
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(57): warning C4716: 'GetWidgetFromNode': must return a value
+﻿  XMLUIGameLayer.c
+C:\Jim Dev\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
+  (compiling source file 'XMLUIGameLayer.c')
+  C:\Jim Dev\TileMapRendererExperiments\Engine\ObjectPool.h(34,1):
+  see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
+  
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(28,18): warning C4113: 'HWidget (__cdecl *)(HWidget,xml_node *)' differs in parameter lists from 'AddChildFn'
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(141,23): warning C4133: 'function': incompatible types - from 'xml_node *' to 'xml_string *'
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(154,23): warning C4133: 'function': incompatible types - from 'xml_node *' to 'xml_string *'
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(120,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(130,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(131,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(175,29): warning C4090: 'function': different 'const' qualifiers
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(176,24): warning C4013: 'NewRootWidget' undefined; assuming extern returning int
+C:\Jim Dev\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(47): warning C4716: 'GetWidgetFromNode': must return a value
+  Engine.vcxproj -> C:\Jim Dev\TileMapRendererExperiments\x64\Debug\Engine.exe

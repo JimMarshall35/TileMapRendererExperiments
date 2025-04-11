@@ -155,6 +155,6 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 	}
 	if (strcmp(attributeBuffer, "right") == 0)
 	{
-		*outAlignment = WHA_Rightxsx;
+		*outAlignment = WHA_Right;
 	}
 }

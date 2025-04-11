@@ -1,10 +1,11 @@
 #include "StaticWidget.h"
 #include "Widget.h"
 #include "xml.h"
+#include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "Atlas.h"
 
 struct StaticWidgetData
 {
@@ -13,6 +14,7 @@ struct StaticWidgetData
 	struct WidgetScale scale;
 	struct WidgetDim width;
 	struct WidgetDim height;
+	hSprite sprite;
 };
 
 static void GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -37,7 +39,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 
 
 
-static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode)
+static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
@@ -52,6 +54,7 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode)
 	pWidget->pImplementationData = malloc(sizeof(struct StaticWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct StaticWidgetData));
 	struct StaticWidgetData* pWidgetData = pWidget->pImplementationData;
+	memset(pWidgetData, 0, sizeof(struct StaticWidgetData));
 	size_t numAttributes = xml_node_attributes(pXMLNode);
 	char attributeBuffer[256];
 	for (int i = 0; i < numAttributes; i++)
@@ -80,14 +83,19 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode)
 		}
 		else if (strcmp(attributeBuffer, "height"))
 		{
-
+			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
+			UI_ParseWidgetDimsAttribute(contents, &pWidgetData->height);
 		}
+	}
+	if (pWidgetData->imageName)
+	{
+		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pUILayerData->atlas);
 	}
 }
 
-HWidget StaticWidgetNew(HWidget hParent, struct xml_node* pXMLNode)
+HWidget StaticWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoStatic(hWidget, pXMLNode);
+	MakeWidgetIntoStatic(hWidget, pXMLNode, pUILayerData);
 	return hWidget;
 }
