@@ -2,6 +2,7 @@
 #include "Widget.h"
 #include <stdlib.h>
 #include <assert.h>
+#include "xml.h"
 
 typedef enum
 {
@@ -11,10 +12,12 @@ typedef enum
 
 
 
+
 struct StackPanelWidgetData
 {
 	StackPanelOrientation orientation;
 	struct WidgetPadding padding;
+	WidgetDockPoint dockPoint;
 };
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -231,6 +234,77 @@ static void MakeWidgetIntoStackPanel(HWidget hWidget, struct xml_node* pXMLNode)
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
 	pWidget->pImplementationData = malloc(sizeof(struct StackPanelWidgetData));
+	memset(pWidget->pImplementationData, 0, sizeof(struct StackPanelWidgetData));
+	struct StackPanelWidgetData* pData = pWidget->pImplementationData;
+	int numAttributes = xml_node_attributes(pXMLNode);
+	char attribNameBuf[256];
+	char attribValBuf[256];
+	for (int i = 0; i < numAttributes; i++)
+	{
+		struct xml_string* pAttribName = xml_node_attribute_name(pXMLNode, i);
+		int len = xml_string_length(pAttribName);
+		xml_string_copy(pAttribName, attribNameBuf, len);
+		attribNameBuf[len] = 0;
+		if (strcmp(attribNameBuf, "orientation") == 0)
+		{
+			struct xml_string* pAttribVal = xml_node_attribute_content(pXMLNode, i);
+			int attribValLen = xml_string_length(pAttribVal);
+			xml_string_copy(pAttribVal, attribValBuf, attribValLen);
+			attribValBuf[attribValLen] = 0;
+			if (strcmp(attribValBuf, "horizontal") == 0)
+			{
+				pData->orientation = SPO_Horizontal;
+			}
+			else if(strcmp(attribValBuf, "vertical") == 0)
+			{
+				pData->orientation = SPO_Vertical;
+			}
+			else
+			{
+				pData->orientation = SPO_Vertical;
+			}
+		}
+		else if (strcmp(attribNameBuf, "dockPoint"))
+		{
+			struct xml_string* pAttribVal = xml_node_attribute_content(pXMLNode, i);
+			int attribValLen = xml_string_length(pAttribVal);
+			xml_string_copy(pAttribVal, attribValBuf, attribValLen);
+			attribValBuf[attribValLen] = 0;
+			if (strcmp(attribValBuf, "topLeft") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "topMiddle") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "topRight") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "middleRight") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "bottomRight") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "bottomMiddle") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "bottomLeft") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "middleLeft") == 0)
+			{
+			}
+			else if (strcmp(attribValBuf, "centre") == 0)
+			{
+			}
+			else
+			{
+				pData->orientation = SPO_Vertical;
+			}
+
+		}
+	}
+	UI_ParseWidgetPaddingAttributes(pXMLNode, &pData->padding);
 	
 }
 

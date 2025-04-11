@@ -149,14 +149,45 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 	{
 		*outAlignment = WHA_Left;
 	}
-	if (strcmp(attributeBuffer, "middle") == 0)
+	else if (strcmp(attributeBuffer, "middle") == 0)
 	{
 		*outAlignment = WHA_Middle;
 	}
-	if (strcmp(attributeBuffer, "right") == 0)
+	else if (strcmp(attributeBuffer, "right") == 0)
 	{
 		*outAlignment = WHA_Right;
 	}
+	else
+	{
+		*outAlignment = WHA_Middle;
+	}
+}
+
+void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment)
+{
+	char attributeBuffer[256];
+
+	int len = xml_string_length(contents);
+
+	xml_string_copy(contents, attributeBuffer, len);
+	attributeBuffer[len] = '\0';
+	if (strcmp(attributeBuffer, "top") == 0)
+	{
+		*outAlignment = WVA_Top;
+	}
+	else if (strcmp(attributeBuffer, "middle") == 0)
+	{
+		*outAlignment = WVA_Middle;
+	}
+	else if (strcmp(attributeBuffer, "bottom") == 0)
+	{
+		*outAlignment = WVA_Bottom;
+	}
+	else
+	{
+		*outAlignment = WVA_Middle;
+	}
+	
 }
 
 float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim)
