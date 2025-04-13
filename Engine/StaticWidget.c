@@ -6,15 +6,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Atlas.h"
-#include <assert.h>
+#include "AssertLib.h"
 
 struct StaticWidgetData
 {
 	char* imageName;
-	struct WidgetPadding padding;
 	struct WidgetScale scale;
-	/*struct WidgetDim width;
-	struct WidgetDim height;*/
 	hSprite sprite;
 	hAtlas atlas;
 };
@@ -27,7 +24,7 @@ static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 	{
 		return 0;
 	}
-	return pAtlasSprite->widthPx * pStaticData->scale.scaleX + pStaticData->padding.paddingLeft + pStaticData->padding.paddingRight;
+	return pAtlasSprite->widthPx * pStaticData->scale.scaleX + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -38,7 +35,7 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 	{
 		return 0;
 	}
-	return pAtlasSprite->heightPx * pStaticData->scale.scaleY + pStaticData->padding.paddingTop + pStaticData->padding.paddingBottom;
+	return pAtlasSprite->heightPx * pStaticData->scale.scaleY + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -55,6 +52,81 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pStaticData);
 }
 
+static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
+{
+
+	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
+	for (int i = 0; i < indentLvl; i++)
+	{
+		printfFn("\t");
+	}
+	printfFn("Static. imageName = %s, scaleX = %.2f, scaleY = %.2f, sprite = %i, atlas = %i, ",
+		pStaticData->imageName,
+		pStaticData->scale.scaleX,
+		pStaticData->scale.scaleY,
+		pStaticData->sprite,
+		pStaticData->atlas);
+	UI_DebugPrintCommonWidgetInfo(pWidget, printfFn);
+	printfFn("\n");
+}
+
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+{
+	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
+	AtlasSprite* pSprite = At_GetSprite(pStaticData->sprite, pStaticData->atlas);
+	float width = GetWidth(pWidget, UI_GetWidget(pWidget->hParent));
+	float height = GetHeight(pWidget, UI_GetWidget(pWidget->hParent));
+
+	struct WidgetVertex v;
+	
+	// topleft
+	v.x = pWidget->left;
+	v.y = pWidget->top;
+	v.u = pSprite->topLeftUV_U;
+	v.v = pSprite->topLeftUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+	
+	// topRight
+	v.x = pWidget->left + width;
+	v.y = pWidget->top;
+	v.u = pSprite->bottomRightUV_U;
+	v.v = pSprite->topLeftUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+
+	// bottomLeft
+	v.x = pWidget->left;
+	v.y = pWidget->top + height;
+	v.u = pSprite->topLeftUV_U;
+	v.v = pSprite->bottomRightUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+
+	// TRIANGLE 2
+
+	// topRight
+	v.x = pWidget->left + width;
+	v.y = pWidget->top;
+	v.u = pSprite->bottomRightUV_U;
+	v.v = pSprite->topLeftUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+
+	// bottomRight
+	v.x = pWidget->left + width;
+	v.y = pWidget->top + height;
+	v.u = pSprite->bottomRightUV_U;
+	v.v = pSprite->bottomRightUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+
+	// bottomLeft
+	v.x = pWidget->left;
+	v.y = pWidget->top + height;
+	v.u = pSprite->topLeftUV_U;
+	v.v = pSprite->bottomRightUV_V;
+	pOutVerts = VectorPush(pOutVerts, &v);
+
+	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
+
+	return pOutVerts;
+}
 
 static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
@@ -68,10 +140,16 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, str
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
+	pWidget->fnOnDebugPrint = &OnDebugPrint;
+	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct StaticWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct StaticWidgetData));
 	struct StaticWidgetData* pWidgetData = pWidget->pImplementationData;
 	memset(pWidgetData, 0, sizeof(struct StaticWidgetData));
+	pWidgetData->scale.scaleX = 1.0f;
+	pWidgetData->scale.scaleY = 1.0f;
+
+	pWidgetData->atlas = pUILayerData->atlas;
 	size_t numAttributes = xml_node_attributes(pXMLNode);
 	char attributeBuffer[256];
 	for (int i = 0; i < numAttributes; i++)
@@ -91,18 +169,8 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, str
 			pWidgetData->imageName = malloc(xml_string_length(contents) + 1);
 			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
 			pWidgetData->imageName[xml_string_length(contents)] = '\0';
+			pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
 		}
-		//else if (strcmp(attributeBuffer, "width"))
-		//{
-		//	struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
-		//	UI_ParseWidgetDimsAttribute(contents, &pWidgetData->width);
-
-		//}
-		//else if (strcmp(attributeBuffer, "height"))
-		//{
-		//	struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
-		//	UI_ParseWidgetDimsAttribute(contents, &pWidgetData->height);
-		//}
 	}
 	if (pWidgetData->imageName)
 	{

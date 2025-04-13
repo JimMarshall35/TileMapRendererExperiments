@@ -143,3 +143,14 @@ void GF_DrawGameFramework(DrawContext* context)
 		gLayerStack[i].draw(&gLayerStack[i], context);
 	}
 }
+
+void GF_OnWindowDimsChanged(int newW, int newH)
+{
+	for (int i = 0; i < VectorSize(gLayerStack); i++)
+	{
+		if (gLayerStack[i].onWindowDimsChanged)
+		{
+			gLayerStack[i].onWindowDimsChanged(&gLayerStack[i], newW, newH);
+		}
+	}
+}

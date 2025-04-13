@@ -12,4 +12,6 @@ struct RootWidgetData
 
 HWidget NewRootWidget();
 
+void RootWidget_OnWindowSizeChanged(HWidget rootWidget, int newW, int newH);
+
 #endif

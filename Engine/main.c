@@ -9,17 +9,29 @@
 #include "Widget.h"
 #include <string.h>
 
-#define SCR_WIDTH 800
-#define SCR_HEIGHT 1200
+#define SCR_WIDTH 640
+#define SCR_HEIGHT 480
 #define TARGET_FPS 40
 
 InputContext gInputContext;
 DrawContext gDrawContext;
 
+int Mn_GetScreenWidth()
+{
+    return gDrawContext.screenWidth;
+}
+
+int Mn_GetScreenHeight()
+{
+    return gDrawContext.screenHeight;
+}
+
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    Dr_OnScreenDimsChange(width, height);
+    glViewport(0, 0, width, height);
+    Dr_OnScreenDimsChange(&gDrawContext, width, height);
     In_FramebufferResize(&gInputContext, width, height);
+    GF_OnWindowDimsChanged(width, height);
 }
 
 void MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
@@ -65,7 +77,7 @@ static void GLAPIENTRY MessageCallback(GLenum source,
 {
     //if (severity >= minimumLogSeverityIncluding) 
     {
-        fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+        fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n\n",
             (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
             type, severity, message);
     }
@@ -134,6 +146,7 @@ int main(int argc, char** argv)
 
 
     gDrawContext = Dr_InitDrawContext();
+    Dr_OnScreenDimsChange(&gDrawContext, SCR_WIDTH, SCR_HEIGHT);
     In_InitInputContext();
     GF_InitGameFramework();
     IR_InitImageRegistry();
@@ -144,32 +157,9 @@ int main(int argc, char** argv)
     struct XMLUIGameLayerOptions options;
     options.bLoadImmediately = true;
     options.xmlPath = "Assets/test.xml";
+    options.pDc = &gDrawContext;
     XMLUIGameLayer_Get(&testLayer, &options);
     GF_PushGameFrameworkLayer(&testLayer);
-
-    //At_BeginAtlas();
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_n.png", 0, 0, 32, 32, "ArrowNorth");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_s.png", 0, 0, 32, 32, "ArrowSouth");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_e.png", 0, 0, 32, 32, "ArrowEast");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\arrow_basic_w.png", 0, 0, 32, 32, "ArrowWest");
-
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_border.png", 0, 0, 64, 64, "BtnSquareDepthBorder");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_border.png", 0, 0, 64, 64, "BtnSquareBorder");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_border.png", 0, 0, 192, 64, "BtnRectangleDepthBorder");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_border.png", 0, 0, 192, 64, "BtnRectangleBorder");
-
-    //
-
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_square_depth_gradient.png", 0, 0, 64, 64, "BtnSquareDepthGradient");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\button_rectangle_depth_gradient.png", 0, 0, 192, 64, "BtnSquareDepthGradient");
-   
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\check_square_color.png", 0, 0, 32, 32, "BtnCheckbox");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\check_square_color_checkmark.png", 0, 0, 32, 32, "BtnCheckboxTicked");
-   
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\slide_horizontal_color.png", 0, 0, 96, 16, "SlideHorizontalColour");
-    //At_AddSprite("Assets\\Image\\kenney_ui-pack\\PNG\\Green\\Default\\slide_hangle.png", 0, 0, 24, 32, "SlideHangle");
-
-    //At_EndAtlas();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -184,7 +174,10 @@ int main(int argc, char** argv)
             GF_UpdateGameFramework((float)delta);
             accumulator -= slice;
         }
-        
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
         GF_DrawGameFramework(&gDrawContext);
         glfwSwapBuffers(window);
         GF_EndFrame(&gDrawContext, &gInputContext);

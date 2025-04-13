@@ -7,6 +7,7 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
+#include "DrawContext.h"
 
 typedef struct
 {
@@ -14,6 +15,7 @@ typedef struct
 	u8* atlasBytes;
 	int atlasWidth;
 	int atlasHeight;
+	hTexture texture;
 	VECTOR(AtlasSprite) sprites;
 	VECTOR(HImage) images;
 }Atlas;
@@ -53,6 +55,7 @@ void At_BeginAtlas()
 	atlas->atlasWidth = 0;
 	atlas->sprites = NEW_VECTOR(AtlasSprite);
 	atlas->images = NEW_VECTOR(HImage);
+	atlas->texture = NULL_HANDLE;
 	//gAtlases = VectorPush(gAtlases, &atlas);
 	gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
 }
@@ -276,15 +279,19 @@ static void CalculateAtlasUVs(Atlas* pAtlas)
 	for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
 	{
 		AtlasSprite* pSprt = &pAtlas->sprites[i];
-		pSprt->topLeftUV_U = (float)atlasW / (float)pSprt->atlasTopLeftXPx;
-		pSprt->topLeftUV_V = (float)atlasH / (float)pSprt->atlasTopLeftYPx;
+		pSprt->topLeftUV_U = (float)pSprt->atlasTopLeftXPx / (float)atlasW;
+		pSprt->topLeftUV_V = (float)pSprt->atlasTopLeftYPx / (float)atlasH;
 
-		pSprt->bottomRightUV_U = (float)atlasW / (float)(pSprt->atlasTopLeftXPx + pSprt->widthPx);
-		pSprt->bottomRightUV_V = (float)atlasH / (float)(pSprt->atlasTopLeftYPx + pSprt->heightPx);
+		pSprt->bottomRightUV_U = (float)(pSprt->atlasTopLeftXPx + pSprt->widthPx) / (float)atlasW;
+		pSprt->bottomRightUV_V = (float)(pSprt->atlasTopLeftYPx + pSprt->heightPx) / (float)atlasH;
+	
+		/*pSprt->topLeftUV_V     = 1.0f - pSprt->topLeftUV_V;
+		pSprt->bottomRightUV_V = 1.0f - pSprt->topLeftUV_V;*/
+
 	}
 }
 
-hAtlas At_EndAtlas()
+hAtlas At_EndAtlas(struct DrawContext* pDC)
 {
 	Atlas* pAtlas = GetCurrentAtlas();
 	if (!pAtlas)
@@ -319,7 +326,7 @@ hAtlas At_EndAtlas()
 		CalculateAtlasUVs(pAtlas);
 
 		stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
-
+		pAtlas->texture = pDC->UploadTexture(pAtlas->atlasBytes, CHANNELS_PER_PIXEL, w, h);
 	}
 	return gCurrentAtlasIndex;
 }
@@ -342,10 +349,10 @@ if(!bAtlasHandleBoundsValid){\
 	return rVal;\
 }
 
-void At_DestroyAtlas(hAtlas atlas)
+void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(atlas)
-
+	pDC->DestroyTexture(atlas);
 	gAtlases[atlas].bActive = false;
 	for (int i = 0; i < VectorSize(gAtlases[atlas].sprites); i++)
 	{
@@ -389,4 +396,11 @@ AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas)
 		return NULL;
 	}
 	return &pAtlas->sprites[sprite];
+}
+
+hTexture At_GetAtlasTexture(hAtlas atlas)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(atlas, NULL_HANDLE);
+	Atlas* pAtlas = &gAtlases[atlas];
+	return pAtlas->texture;
 }

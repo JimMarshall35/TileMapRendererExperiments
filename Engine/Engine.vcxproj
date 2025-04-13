@@ -157,6 +157,7 @@
     <ClCompile Include="xml.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssertLib.h" />
     <ClInclude Include="Atlas.h" />
     <ClInclude Include="cJSON.h" />
     <ClInclude Include="CtorDtor.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="ImageFileRegstry.h" />
     <ClInclude Include="InputContext.h" />
     <ClInclude Include="IntTypes.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="RootWidget.h" />
     <ClInclude Include="StackPanelWidget.h" />

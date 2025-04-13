@@ -7,6 +7,8 @@ void* VectorResize(void* vector, unsigned int size);
 void* VectorPush(void* vector, void* item);
 void* VectorPop(void* vector);
 void* VectorTop(void* vector);
+void* VectorClear(void* vector);
+
 
 //unsigned int VectorSize(void* vector);
 void DestoryVector(void* vector);

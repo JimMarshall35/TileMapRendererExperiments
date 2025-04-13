@@ -15,7 +15,8 @@
 #include "StaticWidget.h"
 #include "StackPanelWidget.h"
 #include "Atlas.h"
-
+#include "RootWidget.h"
+#include "main.h"
 
 struct NameConstructorPair
 {
@@ -49,12 +50,26 @@ HWidget GetWidgetFromNode(struct xml_node* pNode)
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
-
+	
 }
 
 static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 {
+	XMLUIData* pData = pLayer->userData;
+	struct UIWidget* pRootWidget = UI_GetWidget(pData->rootWidget);
+	if (!pRootWidget)
+	{
+		printf("something wrong\n");
+		return;
+	}
+	VectorClear(pData->pWidgetVertices);
+	pData->pWidgetVertices = pRootWidget->fnOutputVertices(pRootWidget, pData->pWidgetVertices);
 
+	dc->UIVertexBufferData(pData->hVertexBuffer, pData->pWidgetVertices, sizeof(struct WidgetVertex) * VectorSize(pData->pWidgetVertices));
+	int size = VectorSize(pData->pWidgetVertices);
+	//printf("%i\n", size);
+
+	dc->DrawUIVertexBuffer(pData->hVertexBuffer, size);
 }
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
@@ -62,18 +77,26 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 
 }
 
+static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC);
 
 
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
-	
+	XMLUIData* pData = pLayer->userData;
+	pData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
+	if (!pData->bLoaded)
+	{
+		LoadUIData(pData, drawContext);
+	}
+	hTexture hAtlasTex = At_GetAtlasTexture(pData->atlas);
+	drawContext->SetCurrentAtlas(hAtlasTex);
 }
-
-
 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
-	
+	XMLUIData* pData = pLayer->userData;
+	DestoryVector(pData->pWidgetVertices);
+	drawContext->DestroyVertexBuffer(pData->hVertexBuffer);
 }
 
 void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
@@ -95,14 +118,17 @@ void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
 		}
 
 		HWidget childWidget = pCtor(widget, pChild, pUIData);
+
+		struct UIWidget* pWiddget = UI_GetWidget(childWidget);
+		UI_WidgetCommonInit(pChild, pWiddget);
+
 		UI_AddChild(widget, childWidget);
 		
 		AddNodeChildren(childWidget, pChild, pUIData);
 	}
-
 }
 
-void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0)
+void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 {
 	At_BeginAtlas();
 
@@ -223,12 +249,14 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0)
 		}
 	}
 
-	pUIData->atlas = At_EndAtlas();
+	pUIData->atlas = At_EndAtlas(pDC);
 }
 
-void LoadUIData(XMLUIData* pUIData)
+static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 {
 	assert(!pUIData->bLoaded);
+	pUIData->bLoaded = true;
+
 	FILE* fp = fopen(pUIData->xmlFilePath, "r");
 	struct xml_document* pXMLDoc = xml_open_document(fp);
 	
@@ -240,6 +268,7 @@ void LoadUIData(XMLUIData* pUIData)
 		if (numchildren != 2)
 		{
 			printf("%s root should have 2 kids", __FUNCTION__);
+			xml_document_free(pXMLDoc, true);
 			return;
 		}
 		struct xml_node* child0 = xml_node_child(root, 0);
@@ -257,7 +286,7 @@ void LoadUIData(XMLUIData* pUIData)
 		if (strcmp(nodeNameArr, "atlas") == 0)
 		{
 			bDoneAtlas = true;
-			LoadAtlas(pUIData, child0);
+			LoadAtlas(pUIData, child0, pDC);
 		}
 		else if (strcmp(nodeNameArr, "screen") == 0)
 		{
@@ -270,20 +299,40 @@ void LoadUIData(XMLUIData* pUIData)
 		if (strcmp(nodeNameArr, "atlas") == 0 && !bDoneAtlas)
 		{
 			bDoneAtlas = true;
-			LoadAtlas(pUIData, child1);
+			LoadAtlas(pUIData, child1, pDC);
 		}
 		else if (strcmp(nodeNameArr, "screen") == 0 && !bDoneScreen)
 		{
 			bDoneScreen = true;
 			AddNodeChildren(pUIData->rootWidget, child1, pUIData);
 		}
+		if (!bDoneAtlas || !bDoneScreen)
+		{
+			printf("%s ui xml file doesn't have both screen and atlas components\n", __FUNCTION__);
+		}
+		xml_document_free(pXMLDoc, true);
+		//pUIData->rootWidget
+		struct UIWidget* pWidget = UI_GetWidget(pUIData->rootWidget);
+		pWidget->fnOnDebugPrint(0, pWidget, &printf);
 
-
+		pUIData->hVertexBuffer = pDC->NewUIVertexBuffer(2048);
+		pWidget->fnLayoutChildren(pWidget, NULL);
 	}
+	
+}
+
+static void OnWindowSizeChanged(struct GameFrameworkLayer* pLayer, int newW, int newH)
+{
+	XMLUIData* pData = pLayer->userData;
+	RootWidget_OnWindowSizeChanged(pData->rootWidget, newW, newH);
+
+	struct UIWidget* pWidget = UI_GetWidget(pData->rootWidget);
+	pWidget->fnLayoutChildren(pWidget, NULL);
+	pWidget->fnOnDebugPrint(0, pWidget,&printf);
 }
 
 
-void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, const struct XMLUIGameLayerOptions* pOptions)
+void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayerOptions* pOptions)
 {
 	pLayer->userData = malloc(sizeof(XMLUIData));
 	if (!pLayer->userData) { printf("XMLUIGameLayer_Get: no memory"); return; }
@@ -293,16 +342,18 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, const struct XMLUIGam
 	
 	strcpy(pUIData->xmlFilePath, pOptions->xmlPath);
 	pUIData->rootWidget = NewRootWidget();
+	RootWidget_OnWindowSizeChanged(pUIData->rootWidget, Mn_GetScreenWidth(), Mn_GetScreenHeight());
 	pLayer->draw = &Draw;
 	pLayer->update = &Update;
 	pLayer->input = &Input;
 	pLayer->onPop = &OnPop;
 	pLayer->onPush = &OnPush;
+	pLayer->onWindowDimsChanged = &OnWindowSizeChanged;
 	pLayer->flags = 0;
 	pLayer->flags |= EnableDrawFn | EnableInputFn | EnableUpdateFn | EnableOnPop | EnableOnPush;
 	if (pOptions->bLoadImmediately)
 	{
-		LoadUIData(pUIData);
+		LoadUIData(pUIData, pOptions->pDc);
 	}
 }
 

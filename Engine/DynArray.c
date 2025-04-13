@@ -25,7 +25,7 @@ void* VectorResize(void* vector, unsigned int size)
 		VectorData* pNewAlloc = malloc(sizeof(VectorData) + pData->itemSize * size);
 		if (pNewAlloc)
 		{
-			pData->size = pData->size;
+			pNewAlloc->size = pData->size;
 			pData->capacity = size;
 			memcpy(pNewAlloc, pData, sizeof(VectorData) + pData->size * pData->itemSize);
 
@@ -66,6 +66,13 @@ void* VectorTop(void* vector)
 {
 	VectorData* pData = ((VectorData*)vector) - 1;
 	return (char*)vector + ((pData->size - 1) * pData->itemSize);
+}
+
+void* VectorClear(void* vector)
+{
+	VectorData* pData = ((VectorData*)vector) - 1;
+	pData->size = 0;
+	return vector;
 }
 
 //unsigned int VectorSize(void* vector)

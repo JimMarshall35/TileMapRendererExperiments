@@ -3,6 +3,7 @@
 
 #include "IntTypes.h"
 #include "HandleDefs.h"
+struct DrawContext;
 
 typedef struct
 {
@@ -27,12 +28,14 @@ typedef struct
 	int id;
 }AtlasSprite;
 
+
 void At_BeginAtlas();
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topRightYPx, int widthPx, int heightPx, const char* name);
-hAtlas At_EndAtlas();
-void At_DestroyAtlas(hAtlas atlas);
+hAtlas At_EndAtlas(struct DrawContext* pDC);
+void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC);
 hSprite At_FindSprite(const char* name, hAtlas atlas);
 
 AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas);
 
+hTexture At_GetAtlasTexture(hAtlas atlas);
 #endif

@@ -15,4 +15,11 @@ typedef i32 hAtlas;
 typedef i32 hSprite;
 #define NULL_HSPRITE -1
 
+typedef i32 hTexture;
+
+typedef int HUIVertexBuffer;
+
+#define NULL_HANDLE -1
+
+
 #endif

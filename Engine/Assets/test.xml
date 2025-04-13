@@ -1,16 +1,19 @@
 
 <UIroot>
 	<atlas>
-		<sprite source="Assets/Image/kenney_ui-pack/PNG/Green/Default/button_rectangle_line.png" top="0" left="0" width="32" height="32" name="sprite="button_rectangle_line"/>
+		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Green\Default\bar_round_gloss_large.png" top="0" left="0" width="96" height="24" name="bar_round_gloss_large"/>
+
+		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Green\Default\bar_round_gloss_large_square.png" top="0" left="0" width="24" height="24" name="bar_round_gloss_large_square"/>
+
+		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Extra\Default\button_square.png" top="0" left="0" width="64" height="64" name="button_square"/>
 	</atlas>
 	<screen>
-		<stackpanel dockPoint="topLeft"
-			orientation="vertical">
-			<static sprite="button_round_border" width="auto" height="auto"></static>
-			<static sprite="button_round_depth_border" width="auto" height="auto"></static>
+		<stackpanel dockPoint="topLeft" orientation="vertical">
+			<static sprite="bar_round_gloss_large" width="auto" height="auto"></static>
+			<static sprite="bar_round_gloss_large_square" width="auto" height="auto"></static>
 		</stackpanel>
 		<stackpanel dockPoint="bottomMiddle" orientation="horizontal">
-			<static sprite="button_rectangle_line" width="auto" height="auto"></static>
+			<static sprite="button_square" width="auto" height="auto"></static>
 		</stackpanel>
 	</screen>
 </UIroot>

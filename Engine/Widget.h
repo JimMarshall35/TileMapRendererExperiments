@@ -3,15 +3,27 @@
 
 #include "ObjectPool.h"
 #include "HandleDefs.h"
+#include <stdbool.h>
+#include "DynArray.h"
 
 struct UIWidget;
 
 struct xml_string;
 struct xml_node;
 
+struct WidgetVertex
+{
+	float x, y;
+	float u, v;
+};
+
+typedef void(*PrintfFn)(const char* fmt, ...);
+
 typedef float(*GetUIWidgetDimensionFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*LayoutChildrenFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
-typedef void(*OnDestroyWidget)(struct UIWidget* pWidget);
+typedef void(*OnDestroyWidgetFn)(struct UIWidget* pWidget);
+typedef void(*OnDebugPrintFn)(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn);
+typedef void* (*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
 
 
 struct WidgetPadding
@@ -63,7 +75,6 @@ typedef enum WidgetDockPoint
 	WDP_Centre
 }WidgetDockPoint;
 
-
 struct WidgetDim
 {
 	enum WidgetDimType type;
@@ -73,19 +84,21 @@ struct WidgetDim
 
 struct UIWidget
 {
-	int hNext;
-	int hPrev;
-	int hParent;
-	int hFirstChild;
+	HWidget hNext;
+	HWidget hPrev;
+	HWidget hParent;
+	HWidget hFirstChild;
 	void* pImplementationData;
 	GetUIWidgetDimensionFn fnGetWidth;
 	GetUIWidgetDimensionFn fnGetHeight;
 	LayoutChildrenFn fnLayoutChildren;
-	OnDestroyWidget fnOnDestroy;
+	OnDestroyWidgetFn fnOnDestroy;
+	OnDebugPrintFn fnOnDebugPrint;
+	OutputWidgetVerticesFn fnOutputVertices;
 	float top;
 	float left;
-	WidgetHorizontalAlignment horizontalAlignment;
-	WidgetVerticalAlignment verticalAlignment;
+	WidgetDockPoint dockPoint;
+	struct WidgetPadding padding;
 };
 
 
@@ -94,18 +107,6 @@ void UI_Init();
 
 void UI_DestroyWidget(HWidget widget);
 
-HWidget UI_NewWidget(
-	HWidget firstChild,
-	HWidget paremt,
-	HWidget next,
-	HWidget prev,
-	void* pImplementationData,
-	GetUIWidgetDimensionFn fnGetWidth,
-	GetUIWidgetDimensionFn fnGetHeight,
-	LayoutChildrenFn fnLayoutChildren,
-	OnDestroyWidget fnOnDestroy,
-	float top,
-	float left);
 
 HWidget UI_NewBlankWidget();
 
@@ -122,5 +123,13 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment);
 
 float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim);
+
+bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidget);
+
+void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget);
+
+void UI_DebugPrintCommonWidgetInfo(const struct UIWidget* inWidget, PrintfFn pPrintfFn);
+
+void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts);
 
 #endif

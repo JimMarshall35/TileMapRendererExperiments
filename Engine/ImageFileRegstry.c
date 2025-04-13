@@ -100,6 +100,7 @@ bool IR_LoadImageSync(HImage hImage, VECTOR(struct ImageLoadError) outErrors)
         printf("Image %i already loaded!", hImage);
         return false;
     }
+    //stbi_set_flip_vertically_on_load(true);
     int x, y, n;
     u8* data = stbi_load(pIF->path, &x, &y, &n, 4);
     if (!data)

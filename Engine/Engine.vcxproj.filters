@@ -31,6 +31,9 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{1c40f12e-2a23-48d6-866e-1232aa9bf852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Render">
+      <UniqueIdentifier>{3511c215-2b72-4ea9-badd-309c65ec1add}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -98,9 +101,6 @@
     <ClInclude Include="GameFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IntTypes.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
@@ -151,6 +151,15 @@
     </ClInclude>
     <ClInclude Include="CtorDtor.h">
       <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertLib.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawContext.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
