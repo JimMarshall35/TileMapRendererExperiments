@@ -116,6 +116,7 @@ void MakeIntoRootWidget(HWidget widget)
 	memset(pRootWidgetData, 0, sizeof(struct RootWidgetData));
 	pRootWidgetData->windowW = Mn_GetScreenWidth();
 	pRootWidgetData->windowH = Mn_GetScreenHeight();
+	pRootWidgetData->bIsDirty = true;
 
 	pWidget->pImplementationData = pRootWidgetData;
 	pWidget->fnGetWidth = &RootWidget_GetWidth;
@@ -141,5 +142,19 @@ void RootWidget_OnWindowSizeChanged(HWidget rootWidget, int newW, int newH)
 	struct RootWidgetData* pRootData = pWidget->pImplementationData;
 	pRootData->windowH = newH;
 	pRootData->windowW = newW;
+}
+bool GetRootWidgetIsDirty(HWidget hRootWidget)
+{
+	struct UIWidget* pWidget = UI_GetWidget(hRootWidget);
+	struct RootWidgetData* pRootData = pWidget->pImplementationData;
+	return pRootData->bIsDirty;
+}
+
+// if dirty, a whole tree rebuild will be triggered
+void SetRootWidgetIsDirty(HWidget hRootWidget, bool bIsDirty)
+{
+	struct UIWidget* pWidget = UI_GetWidget(hRootWidget);
+	struct RootWidgetData* pRootData = pWidget->pImplementationData;
+	pRootData->bIsDirty = bIsDirty;
 }
 

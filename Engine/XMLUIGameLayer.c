@@ -53,6 +53,16 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 	
 }
 
+static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
+{
+	VectorClear(pData->pWidgetVertices);
+	struct UIWidget* pRootWidget = UI_GetWidget(pData->rootWidget);
+	pRootWidget->fnLayoutChildren(pRootWidget, NULL);
+	pData->pWidgetVertices = pRootWidget->fnOutputVertices(pRootWidget, pData->pWidgetVertices);
+	dc->UIVertexBufferData(pData->hVertexBuffer, pData->pWidgetVertices, sizeof(struct WidgetVertex) * VectorSize(pData->pWidgetVertices));
+	SetRootWidgetIsDirty(pData->rootWidget, false);
+}
+
 static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 {
 	XMLUIData* pData = pLayer->userData;
@@ -62,10 +72,11 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 		printf("something wrong\n");
 		return;
 	}
-	VectorClear(pData->pWidgetVertices);
-	pData->pWidgetVertices = pRootWidget->fnOutputVertices(pRootWidget, pData->pWidgetVertices);
 
-	dc->UIVertexBufferData(pData->hVertexBuffer, pData->pWidgetVertices, sizeof(struct WidgetVertex) * VectorSize(pData->pWidgetVertices));
+	if (GetRootWidgetIsDirty(pData->rootWidget))
+	{
+		UpdateRootWidget(pData, dc);
+	}
 	int size = VectorSize(pData->pWidgetVertices);
 	//printf("%i\n", size);
 
@@ -316,7 +327,6 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		pWidget->fnOnDebugPrint(0, pWidget, &printf);
 
 		pUIData->hVertexBuffer = pDC->NewUIVertexBuffer(2048);
-		pWidget->fnLayoutChildren(pWidget, NULL);
 	}
 	
 }
@@ -327,8 +337,10 @@ static void OnWindowSizeChanged(struct GameFrameworkLayer* pLayer, int newW, int
 	RootWidget_OnWindowSizeChanged(pData->rootWidget, newW, newH);
 
 	struct UIWidget* pWidget = UI_GetWidget(pData->rootWidget);
-	pWidget->fnLayoutChildren(pWidget, NULL);
+	SetRootWidgetIsDirty(pData->rootWidget, true);
+
 	pWidget->fnOnDebugPrint(0, pWidget,&printf);
+
 }
 
 

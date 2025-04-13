@@ -1,1 +1,18 @@
-﻿  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe
+﻿  XMLUIGameLayer.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(155,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(159,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(171,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(177,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(185,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(193,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(202,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(211,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(220,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(278,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(289,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(290,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(355,29): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(48): warning C4716: 'GetWidgetFromNode': must return a value
+  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe
