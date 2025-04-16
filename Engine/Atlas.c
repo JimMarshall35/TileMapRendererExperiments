@@ -4,10 +4,23 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #include "DrawContext.h"
+#include "SharedPtr.h"
+
+FT_Library  gFTLib;
+static int gSpriteId = 1;
+
+struct AtlasFont
+{
+	AtlasSprite sprites[256];
+	char name[MAX_FONT_NAME_SIZE];
+	SHARED_PTR(FT_Face) pFTFace;
+};
 
 typedef struct
 {
@@ -18,6 +31,7 @@ typedef struct
 	hTexture texture;
 	VECTOR(AtlasSprite) sprites;
 	VECTOR(HImage) images;
+	VECTOR(struct AtlasFont) fonts;
 }Atlas;
 
 static VECTOR(Atlas) gAtlases = NULL;
@@ -42,6 +56,18 @@ Atlas* AqcuireAtlas()
 	return VectorTop(gAtlases);
 }
 
+void At_Init()
+{
+	FT_Error error = FT_Init_FreeType(&gFTLib);
+	if (error)
+	{
+		//... an error occurred during library initialization ...
+		printf("Error initialising freetype!!!\n");
+		return;
+	}
+
+}
+
 void At_BeginAtlas()
 {
 	if (gAtlases == NULL)
@@ -55,6 +81,7 @@ void At_BeginAtlas()
 	atlas->atlasWidth = 0;
 	atlas->sprites = NEW_VECTOR(AtlasSprite);
 	atlas->images = NEW_VECTOR(HImage);
+	atlas->fonts = NEW_VECTOR(struct AtlasFont);
 	atlas->texture = NULL_HANDLE;
 	//gAtlases = VectorPush(gAtlases, &atlas);
 	gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
@@ -62,7 +89,6 @@ void At_BeginAtlas()
 
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int widthPx, int heightPx, const char* name)
 {
-	static int id = 1;
 
 	HImage img = IR_LookupHandleByPath(imgPath);
 	Atlas* pAtlas = GetCurrentAtlas();
@@ -81,7 +107,7 @@ hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int wi
 	size_t sizeOfSpriteData = widthPx * heightPx * CHANNELS_PER_PIXEL;
 	//sprite.individualTileBytes = malloc(sizeOfSpriteData);
 	sprite.name = malloc(strlen(name) + 1);
-	sprite.id = id++;
+	sprite.id = gSpriteId++;
 
 	strcpy(sprite.name, name);
 	
@@ -101,6 +127,130 @@ hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int wi
 
 	pAtlas->sprites = VectorPush(pAtlas->sprites, &sprite);
 	return VectorSize(pAtlas->sprites) - 1;
+}
+
+static void* FTBitmapToNestableBitmap(FT_Bitmap* pBmp)
+{
+	int numPxls = pBmp->width* pBmp->rows;
+	int allocSize = numPxls * 4;
+	u8* pAlloc = malloc(allocSize);
+	u8* readPtr = pBmp->buffer;
+	for (int i = 0; i < allocSize; i+=4)
+	{
+		pAlloc[i + 0] = *readPtr;
+			
+		pAlloc[i + 1] = *readPtr;
+			
+		pAlloc[i + 2] = *readPtr;
+
+		pAlloc[i + 3] = *readPtr;
+
+		readPtr++;
+	}
+	return pAlloc;
+}
+
+static size_t CountAvailableChars(struct AtlasFont* pFont)
+{
+	size_t count = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		if (pFont->sprites[i].individualTileBytes)
+		{
+			++count;
+		}
+	}
+	return count;
+}
+
+HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
+{
+	HFont hFont = NULL_HANDLE;
+	const int dpi = 92;
+	SHARED_PTR(FT_Face) face = SHARED_PTR_NEW(FT_Face);      /* handle to face object */
+	Atlas* pAtlas = GetCurrentAtlas();
+	FT_Error error =  FT_New_Face(gFTLib, pFontSpec->path, 0, face);
+	if (error == FT_Err_Unknown_File_Format)
+	{
+		/*... the font file could be opened and read, but it appears
+			... that its font format is unsupported*/
+		printf("the font file '%s' could be opened and read, but it appears... that its font format is unsupported", pFontSpec->path);
+	}
+	else if (error)
+	{
+		/*... another error code means that the font file could not
+			... be opened or read, or that it is broken...*/
+		printf("font file '%s' another error code means that the font file could not... be opened or read, or that it is broken", pFontSpec->path);
+	}
+	for (int i = 0; i < pFontSpec->numFontSizes; i++)
+	{
+		struct FontSize fs = pFontSpec->fontSizes[i];
+		switch (fs.type)
+		{
+		case FOS_Pixels:
+			{
+				int inches = fs.val / dpi;
+				fs.val = inches * 72.0f;
+				fs.type = FOS_Pts;
+				break;
+			}
+		}
+		error = FT_Set_Char_Size(
+			*face,    /* handle to face object         */
+			fs.val * 64,       /* char_width in 1/64 of points  */
+			fs.val * 64,   /* char_height in 1/64 of points */
+			dpi,     /* horizontal device resolution  */
+			dpi);   /* vertical device resolution    */
+		if (error)
+		{
+			printf("FT_Set_Char_Size error");
+			return NULL_HANDLE;
+		}
+		struct AtlasFont font;
+		memset(&font, 0, sizeof(struct AtlasFont));
+		font.pFTFace = face;
+		Sptr_AddRef(face);
+
+		for (int j = 0; j < 256; j++)
+		{
+			FT_UInt index = FT_Get_Char_Index(*face, j);
+			if (index == 0)
+			{
+				continue;
+			}
+			error = FT_Load_Glyph(
+				*face,          /* handle to face object */
+				index,   /* glyph index           */
+				FT_LOAD_DEFAULT);  /* load flags, see below */
+			if (error)
+			{
+				printf("FT_Load_Glyph error\n");
+				continue;
+			}
+			error = FT_Render_Glyph((*face)->glyph,   /* glyph slot  */
+				FT_RENDER_MODE_NORMAL); /* render mode */
+			if (error)
+			{
+				printf("FT_Render_Glyph error\n");
+				continue;
+			}
+			if ((*face)->glyph->bitmap.width == 0 || (*face)->glyph->bitmap.rows == 0)
+			{
+				continue;
+			}
+			AtlasSprite* pSprite = &font.sprites[j];
+			pSprite->widthPx = (*face)->glyph->bitmap.width;
+			pSprite->heightPx = (*face)->glyph->bitmap.rows;
+			
+			pSprite->individualTileBytes = FTBitmapToNestableBitmap(&(*face)->glyph->bitmap);
+			pSprite->id = gSpriteId++;
+		}
+
+		pAtlas->fonts = VectorPush(pAtlas->fonts, &font);
+		hFont = VectorSize(pAtlas->fonts) - 1;
+	}
+
+	return hFont;
 }
 
 int SortFunc(const void* a, const void* b) 
@@ -260,15 +410,41 @@ void CopyNestedPositions(Atlas* pAtlasDest, AtlasSprite* spritesCopySrc, int spr
 	{
 		int id = -1;
 		AtlasSprite* pSp = &spritesCopySrc[i];
-		for (int j = 0; j < spritesCopySrcSize; j++)
+		bool bFound = false;
+		for (int j = 0; j < VectorSize(pAtlasDest->sprites); j++)
 		{
 			if (pAtlasDest->sprites[j].id == pSp->id)
 			{
 				id = j;
+				bFound = true;
+				pAtlasDest->sprites[id].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
+				pAtlasDest->sprites[id].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
+				break;
 			}
 		}
-		pAtlasDest->sprites[id].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
-		pAtlasDest->sprites[id].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
+		if (!bFound)
+		{
+			for (int j = 0; j < VectorSize(pAtlasDest->fonts); j++)
+			{
+				bool bShouldBreak = false;
+				for (int k = 0; k < 256; k++)
+				{
+					if (pAtlasDest->fonts[j].sprites[k].id == pSp->id)
+					{
+						pAtlasDest->fonts[j].sprites[k].atlasTopLeftXPx = pSp->atlasTopLeftXPx;
+						pAtlasDest->fonts[j].sprites[k].atlasTopLeftYPx = pSp->atlasTopLeftYPx;
+						bShouldBreak = true;
+						bFound = true;
+						break;
+					}
+				}
+				if (bShouldBreak)
+				{
+					break;
+				}
+			}
+		}
+		assert(bFound);
 	}
 }
 
@@ -291,6 +467,32 @@ static void CalculateAtlasUVs(Atlas* pAtlas)
 	}
 }
 
+size_t CountTotalSpritesInFonts(Atlas* pAtlas)
+{
+	size_t total = 0;
+	for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+	{
+		total += CountAvailableChars(&pAtlas->fonts[i]);
+	}
+	return total;
+}
+
+static void WriteFontSprites(Atlas* pAtlas, AtlasSprite* outFontSprites)
+{
+	for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+	{
+		for (int j = 0; j < 256; j++)
+		{
+			AtlasSprite* pSrc = &pAtlas->fonts[i].sprites[j];
+			if (pSrc->individualTileBytes)
+			{
+				*outFontSprites = *pSrc;
+				++outFontSprites;
+			}
+		}
+	}
+}
+
 hAtlas At_EndAtlas(struct DrawContext* pDC)
 {
 	Atlas* pAtlas = GetCurrentAtlas();
@@ -299,15 +501,20 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		return NULL_ATLAS;
 	}
 	size_t numSprites = VectorSize(pAtlas->sprites);
-	AtlasSprite* spritesCopy = malloc(sizeof(AtlasSprite) * numSprites);
+	size_t numSpritesFromFonts = CountTotalSpritesInFonts(pAtlas);
+
+	AtlasSprite* spritesCopy = malloc(sizeof(AtlasSprite) * (numSprites + numSpritesFromFonts));
 	if (spritesCopy)
 	{
 		memcpy(spritesCopy, pAtlas->sprites, numSprites * sizeof(AtlasSprite));
-		qsort(spritesCopy, numSprites, sizeof(AtlasSprite), &SortFunc);
-		int w, h;
-		NestSprites(&w, &h, spritesCopy, numSprites);
+		AtlasSprite* pOutFontSprites = spritesCopy + numSprites;
+		WriteFontSprites(pAtlas, pOutFontSprites);
 
-		CopyNestedPositions(pAtlas, spritesCopy, numSprites);
+		qsort(spritesCopy, numSprites + numSpritesFromFonts, sizeof(AtlasSprite), &SortFunc);
+		int w, h;
+		NestSprites(&w, &h, spritesCopy, numSprites + numSpritesFromFonts);
+
+		CopyNestedPositions(pAtlas, spritesCopy, numSprites + numSpritesFromFonts);
 		free(spritesCopy);
 
 		size_t atlasSizePxls = w * h;
@@ -318,6 +525,15 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		{
 			AtlasSprite* pSprite = &pAtlas->sprites[i];
 			BlitAtlasSprite(pAtlasBytes, w, pSprite);
+		}
+
+		for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+		{
+			for (int j = 0; j < 256; j++)
+			{
+				AtlasSprite* pSprite = &pAtlas->fonts[i].sprites[j];
+				BlitAtlasSprite(pAtlasBytes, w, pSprite);
+			}
 		}
 		pAtlas->atlasBytes = pAtlasBytes;
 		pAtlas->atlasWidth = w;
@@ -367,8 +583,30 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 			free(pSprite->individualTileBytes);
 		}
 	}
+
+	for (int i = 0; i < VectorSize(gAtlases[atlas].fonts); i++)
+	{
+		struct AtlasFont* pFont = &gAtlases[atlas].fonts[i];
+		Sptr_RemoveRef(pFont->pFTFace);
+		for (int j = 0; j < 256; j++)
+		{
+			AtlasSprite* pSprite = &gAtlases[atlas].fonts[i].sprites[j];
+
+			if (pSprite->name)
+			{
+				free(pSprite->name);
+			}
+			if (pSprite->individualTileBytes)
+			{
+				free(pSprite->individualTileBytes);
+			}
+		}
+	}
+
+
 	DestoryVector(gAtlases[atlas].sprites);
 	DestoryVector(gAtlases[atlas].images);
+	DestoryVector(gAtlases[atlas].fonts);
 	free(gAtlases[atlas].atlasBytes);
 }
 
@@ -403,4 +641,21 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 	ATLAS_HANDLE_BOUNDS_CHECK(atlas, NULL_HANDLE);
 	Atlas* pAtlas = &gAtlases[atlas];
 	return pAtlas->texture;
+}
+
+HFont At_FindFont(hAtlas hAtlas, const char* fontName)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL);
+	Atlas* pAtlas = &gAtlases[hAtlas];
+	
+	for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+	{
+		struct AtlasFont* pFont = &pAtlas->fonts[i];
+		if (strcmp(pFont->name, fontName) == 0)
+		{
+			return i;
+		}
+	}
+
+	return NULL_HANDLE;
 }

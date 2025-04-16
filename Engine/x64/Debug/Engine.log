@@ -1,18 +1,38 @@
-﻿  XMLUIGameLayer.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(155,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(159,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(171,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(177,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(185,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(193,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(202,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(211,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(220,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(278,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(289,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(290,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(355,29): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(48): warning C4716: 'GetWidgetFromNode': must return a value
+﻿  Atlas.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,84): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [49]'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,31): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,87): warning C4047: 'function': 'const char *const ' differs in levels of indirection from 'int'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\stb\stb_image_write.h(741,86): warning C4024: 'sprintf_s': different types for formal and actual parameter 3
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(42,55): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(47,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(112,20): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(200,11): warning C4244: 'function': conversion from 'float' to 'FT_F26Dot6', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(201,11): warning C4244: 'function': conversion from 'float' to 'FT_F26Dot6', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(192,25): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(310,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(413,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(426,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(454,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(472,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(481,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(514,47): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(516,55): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(523,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(529,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(565,1): warning C4005: 'ATLAS_HANDLE_BOUNDS_CHECK': macro redefinition
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(557,1): message : see previous definition of 'ATLAS_HANDLE_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(569,2): warning C4003: not enough arguments for function-like macro invocation 'ATLAS_HANDLE_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(569,2): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(572,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(578,22): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(586,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(596,23): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(614,2): warning C4003: not enough arguments for function-like macro invocation 'ATLAS_HANDLE_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(614,2): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(614,2): warning C4033: 'At_FindSprite' must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(616,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(628,2): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(630,27): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(640,2): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Atlas.c(624): warning C4715: 'At_FindSprite': not all control paths return a value
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

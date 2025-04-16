@@ -150,6 +150,7 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="ObjectPool.c" />
     <ClCompile Include="RootWidget.c" />
+    <ClCompile Include="SharedPtr.c" />
     <ClCompile Include="StackPanelWidget.c" />
     <ClCompile Include="StaticWidget.c" />
     <ClCompile Include="Widget.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="RootWidget.h" />
+    <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="StackPanelWidget.h" />
     <ClInclude Include="StaticWidget.h" />
     <ClInclude Include="stb\stb_image.h" />

@@ -150,6 +150,7 @@ int main(int argc, char** argv)
     In_InitInputContext();
     GF_InitGameFramework();
     IR_InitImageRegistry();
+    At_Init();
     UI_Init();
 
     struct GameFrameworkLayer testLayer;

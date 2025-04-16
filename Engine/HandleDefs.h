@@ -3,7 +3,7 @@
 
 #include "IntTypes.h"
 
-typedef int HWidget;
+typedef i32 HWidget;
 #define NULL_HWIDGET -1
 
 typedef i32 HImage;
@@ -17,7 +17,9 @@ typedef i32 hSprite;
 
 typedef i32 hTexture;
 
-typedef int HUIVertexBuffer;
+typedef i32 HUIVertexBuffer;
+
+typedef i32 HFont;
 
 #define NULL_HANDLE -1
 

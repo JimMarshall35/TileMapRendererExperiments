@@ -153,6 +153,8 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 	int width = 0;
 	int height = 0;
 	int numChildren = xml_node_children(child0);
+
+
 	for (int i = 0; i < numChildren; i++)
 	{
 		struct xml_node* pChild = xml_node_child(child0, i);
@@ -164,99 +166,215 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 		bool bWidthSet = false;
 		bool bHeightSet = false;
 		bool bAllSet = true;
+		char childNameBuf[128];
+		struct xml_string* str = xml_node_name(pChild);
+		int nameLen = xml_string_length(str);
+		xml_string_copy(str, childNameBuf, nameLen);
+		childNameBuf[nameLen] = '\0';
+		if (strcmp(childNameBuf, "sprite") == 0)
+		{
+			for (int j = 0; j < numAttributes; j++)
+			{
+				struct xml_string* pAttr = xml_node_attribute_name(pChild, j);
+				int attrNameLen = xml_string_length(pAttr);
+				xml_string_copy(pAttr, attributeNameBuf, attrNameLen);
+				attributeNameBuf[attrNameLen] = '\0';
+				if (strcmp(attributeNameBuf, "source") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, spritePath, len);
+					spritePath[len] = '\0';
+					bPathSet = true;
+				}
+				else if (strcmp(attributeNameBuf, "name") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, spriteName, len);
+					spriteName[len] = '\0';
+					bNameset = true;
+				}
+				else if (strcmp(attributeNameBuf, "top") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, numberBuf, len);
+					numberBuf[len] = '\0';
+					top = atoi(numberBuf);
+					bTopSet = true;
+				}
+				else if (strcmp(attributeNameBuf, "left") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, numberBuf, len);
+					numberBuf[len] = '\0';
+					left = atoi(numberBuf);
+					bLeftSet = true;
+				}
+				else if (strcmp(attributeNameBuf, "width") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, numberBuf, len);
+					numberBuf[len] = '\0';
+					width = atoi(numberBuf);
+					bWidthSet = true;
+				}
+				else if (strcmp(attributeNameBuf, "height") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, numberBuf, len);
+					numberBuf[len] = '\0';
+					height = atoi(numberBuf);
+					bHeightSet = true;
+				}
+			}
+			if (!bPathSet)
+			{
+				printf("%s atlas child %i path not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (!bNameset)
+			{
+				printf("%s atlas child %i name not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (!bTopSet)
+			{
+				printf("%s atlas child %i top not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (!bLeftSet)
+			{
+				printf("%s atlas child %i left not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (!bWidthSet)
+			{
+				printf("%s atlas child %i top not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (!bHeightSet)
+			{
+				printf("%s atlas child %i left not set\n", __FUNCTION__, i);
+				bAllSet = false;
+			}
+			if (bAllSet)
+			{
+				At_AddSprite(spritePath, top, left, width, height, spriteName);
+			}
 
-		for (int j = 0; j < numAttributes; j++)
+		}
+		else if (strcmp(childNameBuf, "font") == 0)
 		{
-			struct xml_string* pAttr = xml_node_attribute_name(pChild, j);
-			int attrNameLen = xml_string_length(pAttr);
-			xml_string_copy(pAttr, attributeNameBuf, attrNameLen);
-			attributeNameBuf[attrNameLen] = '\0';
-			if (strcmp(attributeNameBuf, "source") == 0)
+			struct FontAtlasAdditionSpec faas;
+			memset(&faas, 0, sizeof(struct FontAtlasAdditionSpec));
+			
+			for (int j = 0; j < numAttributes; j++)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, spritePath, len);
-				spritePath[len] = '\0';
-				bPathSet = true;
+				struct xml_string* pAttr = xml_node_attribute_name(pChild, j);
+				int attrNameLen = xml_string_length(pAttr);
+				xml_string_copy(pAttr, attributeNameBuf, attrNameLen);
+				attributeNameBuf[attrNameLen] = '\0';
+				if (strcmp(attributeNameBuf, "source") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int dsdslen = xml_string_length(pSrcVal);
+					memset(faas.path, 0, MAX_FONT_PATH_SIZE);
+					xml_string_copy(pSrcVal, faas.path, dsdslen);
+					
+					faas.path[dsdslen] = '\0';
+				}
+				else if (strcmp(attributeNameBuf, "name") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, faas.name, len);
+					faas.name[len] = '\0';
+				}
+				else if (strcmp(attributeNameBuf, "options") == 0)
+				{
+					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
+					int len = xml_string_length(pSrcVal);
+					xml_string_copy(pSrcVal, spriteName, len);
+					spriteName[len] = '\0';
+					if (strcmp(spriteName, "normal") == 0)
+					{
+						faas.fontOptions = FS_Normal;
+					}
+					else if (strcmp(spriteName, "italic"))
+					{
+						faas.fontOptions = FS_Italic;
+					}
+					else if (strcmp(spriteName, "bold") == 0)
+					{
+						faas.fontOptions = FS_Bold;
+					}
+					else if (strcmp(spriteName, "underline") == 0)
+					{
+						faas.fontOptions = FS_Underline;
+					}
+					bNameset = true;
+				}
 			}
-			else if (strcmp(attributeNameBuf, "name") == 0)
+			int numChildren = xml_node_children(pChild);
+			for (int j = 0; j < numChildren; j++)
 			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, spriteName, len);
-				spriteName[len] = '\0';
-				bNameset = true;
+				struct xml_node* pChildChild = xml_node_child(pChild, j);
+				char name[128];
+				struct xml_string* pstr = xml_node_name(pChildChild);
+				int len = xml_string_length(pstr);
+				xml_string_copy(pstr, name, len);
+				name[len] = '\0';
+				if (strcmp(name, "size") == 0)
+				{
+					char attributeName[128];
+					int attributes = xml_node_attributes(pChildChild);
+					struct FontSize fs;
+					memset(&fs, 0, sizeof(struct FontSize));
+					bool bTypeSet = false;
+					bool bValSet = false;
+					for (int k = 0; k < attributes; k++)
+					{
+						struct xml_string* pString = xml_node_attribute_name(pChildChild, k);
+						int aNameLen = xml_string_length(pString);
+						char attrivValBuf[64];
+						xml_string_copy(pString, attributeName, aNameLen);
+						attributeName[aNameLen] = '\0';
+						struct xml_string* pstr = xml_node_attribute_content(pChildChild, k);
+						int len = xml_string_length(pstr);
+						xml_string_copy(pstr, attrivValBuf, len);
+						attrivValBuf[len] = '\0';
+
+						if (strcmp(attributeName, "type") == 0)
+						{
+							if (strcmp(attrivValBuf, "pts") == 0)
+							{
+								fs.type = FOS_Pts;
+								bTypeSet = true;
+							}
+							else if (strcmp(attrivValBuf, "pxls") == 0)
+							{
+								fs.type = FOS_Pixels;
+								bTypeSet = true;
+							}
+						}
+						else if (strcmp(attributeName, "val") == 0)
+						{
+							fs.val = atof(attrivValBuf);
+							bValSet = true;
+						}
+					}
+					if (bValSet && bTypeSet)
+					{
+						faas.fontSizes[faas.numFontSizes++] = fs;
+					}
+				}
 			}
-			else if (strcmp(attributeNameBuf, "top") == 0)
-			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, numberBuf, len);
-				numberBuf[len] = '\0';
-				top = atoi(numberBuf);
-				bTopSet = true;
-			}
-			else if (strcmp(attributeNameBuf, "left") == 0)
-			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, numberBuf, len);
-				numberBuf[len] = '\0';
-				left = atoi(numberBuf);
-				bLeftSet = true;
-			}
-			else if (strcmp(attributeNameBuf, "width") == 0)
-			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, numberBuf, len);
-				numberBuf[len] = '\0';
-				width = atoi(numberBuf);
-				bWidthSet = true;
-			}
-			else if (strcmp(attributeNameBuf, "height") == 0)
-			{
-				struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-				int len = xml_string_length(pSrcVal);
-				xml_string_copy(pSrcVal, numberBuf, len);
-				numberBuf[len] = '\0';
-				height = atoi(numberBuf);
-				bHeightSet = true;
-			}
-		}
-		if (!bPathSet)
-		{
-			printf("%s atlas child %i path not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (!bNameset)
-		{
-			printf("%s atlas child %i name not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (!bTopSet)
-		{
-			printf("%s atlas child %i top not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (!bLeftSet)
-		{
-			printf("%s atlas child %i left not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (!bWidthSet)
-		{
-			printf("%s atlas child %i top not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (!bHeightSet)
-		{
-			printf("%s atlas child %i left not set\n", __FUNCTION__, i);
-			bAllSet = false;
-		}
-		if (bAllSet)
-		{
-			At_AddSprite(spritePath, top, left, width, height, spriteName);
+			At_AddFont(&faas);
 		}
 	}
 

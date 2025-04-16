@@ -90,6 +90,9 @@
     <ClCompile Include="CtorDtor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SharedPtr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputContext.h">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedPtr.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
