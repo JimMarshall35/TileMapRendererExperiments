@@ -260,8 +260,8 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 			struct AtlasSpriteData* pSpriteData = &font.spriteData[j];
 			pSpriteData->bearing[0] = (*face)->glyph->bitmap_left;
 			pSpriteData->bearing[1] = (*face)->glyph->bitmap_top;
-			pSpriteData->advance[0] = (*face)->glyph->advance.x;
-			pSpriteData->advance[1] = (*face)->glyph->advance.y;
+			pSpriteData->advance[0] = (float)((*face)->glyph->advance.x >> 6);
+			pSpriteData->advance[1] = (float)((*face)->glyph->advance.y >> 6);
 		}
 
 		strcpy(font.name, pFontSpec->name);
@@ -467,6 +467,22 @@ void CopyNestedPositions(Atlas* pAtlasDest, AtlasSprite* spritesCopySrc, int spr
 	}
 }
 
+static bool IsCharLoaded(struct AtlasFont* pFont, char c)
+{
+	return pFont->sprites[c].individualTileBytes != NULL;
+}
+
+
+static void CalculateSpriteUVs(AtlasSprite* pSprt, int atlasW, int atlasH)
+{
+	pSprt->topLeftUV_U = (float)pSprt->atlasTopLeftXPx / (float)atlasW;
+	pSprt->topLeftUV_V = (float)pSprt->atlasTopLeftYPx / (float)atlasH;
+
+	pSprt->bottomRightUV_U = (float)(pSprt->atlasTopLeftXPx + pSprt->widthPx) / (float)atlasW;
+	pSprt->bottomRightUV_V = (float)(pSprt->atlasTopLeftYPx + pSprt->heightPx) / (float)atlasH;
+
+}
+
 static void CalculateAtlasUVs(Atlas* pAtlas)
 {
 	int atlasW = pAtlas->atlasWidth;
@@ -474,15 +490,19 @@ static void CalculateAtlasUVs(Atlas* pAtlas)
 	for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
 	{
 		AtlasSprite* pSprt = &pAtlas->sprites[i];
-		pSprt->topLeftUV_U = (float)pSprt->atlasTopLeftXPx / (float)atlasW;
-		pSprt->topLeftUV_V = (float)pSprt->atlasTopLeftYPx / (float)atlasH;
-
-		pSprt->bottomRightUV_U = (float)(pSprt->atlasTopLeftXPx + pSprt->widthPx) / (float)atlasW;
-		pSprt->bottomRightUV_V = (float)(pSprt->atlasTopLeftYPx + pSprt->heightPx) / (float)atlasH;
-	
-		/*pSprt->topLeftUV_V     = 1.0f - pSprt->topLeftUV_V;
-		pSprt->bottomRightUV_V = 1.0f - pSprt->topLeftUV_V;*/
-
+		CalculateSpriteUVs(pSprt, atlasW, atlasH);
+	}
+	for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+	{
+		struct AtlasFont* pFont = &pAtlas->fonts[i];
+		for(int j=0;j<256;j++)
+		{
+			if (IsCharLoaded(pFont, j))
+			{
+				AtlasSprite* pSprt = &pFont->sprites[j];
+				CalculateSpriteUVs(pSprt, atlasW, atlasH);
+			}
+		}
 	}
 }
 
@@ -705,10 +725,6 @@ float Fo_CharHeight(hAtlas hAtlas, HFont hFont, char c)
 	return gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].heightPx;
 }
 
-static bool IsCharLoaded(struct AtlasFont* pFont, char c)
-{
-	return pFont->sprites[c].individualTileBytes != NULL;
-}
 
 float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal)
 {
@@ -775,7 +791,7 @@ AtlasSprite* Fo_GetCharSprite(hAtlas hAtlas, HFont hFont, char c)
 	return &gAtlases[hAtlas].fonts[hFont].sprites[(u8)c];
 }
 
-bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2* outBearing)
+bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
 	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
@@ -784,7 +800,9 @@ bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2* outBearing)
 	{
 		return false;
 	}
-	return false;
+	outBearing[0] = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].bearing[0];
+	outBearing[1] = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].bearing[1];
+	return true;
 }
 
 bool At_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)

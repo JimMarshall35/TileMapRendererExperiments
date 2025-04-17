@@ -54,6 +54,8 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		vec2 bearing = { 0,0 };
 		float advance = 0.0f;
 		vec2 output = { 0,0 };
+		vec2 bearingApplied = { 0,0 };
+
 		if (!pAtlasSprite)
 		{
 			printf("can't get atlas sprite, file TextWidget.c");
@@ -61,11 +63,13 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 			return pOutVerts;
 		}
 
-		EVERIFY(At_TryGetCharBearing(pData->atlas, pData->font, c, &bearing));
-		EVERIFY(At_TryGetCharAdvance(pData->atlas, pData->font, c, &bearing, &advance));
+		EVERIFY(At_TryGetCharBearing(pData->atlas, pData->font, c, bearing));
+		EVERIFY(At_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
 		
 		// topleft
 		glm_vec2_add(bearing, pen, output);
+		bearingApplied[0] = output[0]; bearingApplied[1] = output[1];
+
 		v.u = pAtlasSprite->topLeftUV_U;
 		v.v = pAtlasSprite->topLeftUV_V;
 		v.x = output[0];
@@ -74,7 +78,7 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		
 		// top right
 		vec2 toAdd = { pAtlasSprite->widthPx, 0.0 };
-		glm_vec2_add(toAdd, pen, output);
+		glm_vec2_add(toAdd, bearingApplied, output);
 		v.u = pAtlasSprite->bottomRightUV_U;
 		v.v = pAtlasSprite->topLeftUV_V;
 		v.x = output[0];
@@ -84,7 +88,7 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		// bottomleft
 		toAdd[0] = 0.0f;
 		toAdd[1] = pAtlasSprite->heightPx;
-		glm_vec2_add(toAdd, pen, output);
+		glm_vec2_add(toAdd, bearingApplied, output);
 		v.u = pAtlasSprite->topLeftUV_U;
 		v.v = pAtlasSprite->bottomRightUV_V;
 		v.x = output[0];
@@ -94,8 +98,9 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		// TRIANGLE 2
 
 		// topRight
-		vec2 toAdd = { pAtlasSprite->widthPx, 0.0 };
-		glm_vec2_add(toAdd, pen, output);
+		toAdd[0] = pAtlasSprite->widthPx;
+		toAdd[1] = 0.0;
+		glm_vec2_add(toAdd, bearingApplied, output);
 		v.u = pAtlasSprite->bottomRightUV_U;
 		v.v = pAtlasSprite->topLeftUV_V;
 		v.x = output[0];
@@ -103,27 +108,29 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		pOutVerts = VectorPush(pOutVerts, &v);
 
 		//// bottomRight
-		//v.x = pWidget->left + width;
-		//v.y = pWidget->top + height;
-		//v.u = pSprite->bottomRightUV_U;
-		//v.v = pSprite->bottomRightUV_V;
-		//pOutVerts = VectorPush(pOutVerts, &v);
-
-		//// bottomLeft
 		toAdd[0] = pAtlasSprite->widthPx;
 		toAdd[1] = pAtlasSprite->heightPx;
-		glm_vec2_add(toAdd, pen, output);
+		glm_vec2_add(toAdd, bearingApplied, output);
+		v.u = pAtlasSprite->bottomRightUV_U;
+		v.v = pAtlasSprite->bottomRightUV_V;
+		v.x = output[0];
+		v.y = output[1];
+		pOutVerts = VectorPush(pOutVerts, &v);
+
+		//// bottomLeft
+		toAdd[0] = 0;
+		toAdd[1] = pAtlasSprite->heightPx;
+		glm_vec2_add(toAdd, bearingApplied, output);
 		v.u = pAtlasSprite->topLeftUV_U;
 		v.v = pAtlasSprite->bottomRightUV_V;
 		v.x = output[0];
 		v.y = output[1];
 		pOutVerts = VectorPush(pOutVerts, &v);
 
-		//v.x = pen[0] + bearing[0];
-		//v.x = pen[0] + 
-		
-		pOutVerts = VectorPush(pOutVerts, &v);
+
+		pen[0] += advance;
 	}
+	pOutVerts = UI_Helper_OnOutputVerts(pThisWidget, pOutVerts);
 
 	return pOutVerts;
 }

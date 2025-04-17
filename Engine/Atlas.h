@@ -76,7 +76,7 @@ float Fo_CharHeight(hAtlas hAtlas, HFont hFont, char c);
 float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal);
 float Fo_StringHeight(hAtlas hAtlas, HFont hFont, const char* stringVal);
 AtlasSprite* Fo_GetCharSprite(hAtlas hAtlas, HFont hFont, char c);
-bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2* outBearing);
+bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing);
 bool At_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance);
 
 #endif
