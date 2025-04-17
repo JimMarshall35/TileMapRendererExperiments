@@ -29,14 +29,6 @@ typedef struct
 	int id;
 }AtlasSprite;
 
-typedef struct 
-{
-	AtlasSprite sprite;
-	glm::ivec2   Size;       // Size of glyph
-	glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
-	unsigned int Advance;    // Offset to advance to next glyph
-
-}AtlasFontCharacterSprite;
 
 #define MAX_FONT_NAME_SIZE 128
 #define MAX_FONT_PATH_SIZE 256
@@ -77,8 +69,14 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC);
 hSprite At_FindSprite(const char* name, hAtlas atlas);
 AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas);
 hTexture At_GetAtlasTexture(hAtlas atlas);
-HFont At_FindFont(hAtlas hAtlas, const char* fontName);
-float At_StringLength(hAtlas hAtlas, HFont hFont, const char* stringVal);
-float At_StringHeight(hAtlas hAtlas, HFont hFont, const char* stringVal);
+
+HFont Fo_FindFont(hAtlas hAtlas, const char* fontName);
+float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);
+float Fo_CharHeight(hAtlas hAtlas, HFont hFont, char c);
+float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal);
+float Fo_StringHeight(hAtlas hAtlas, HFont hFont, const char* stringVal);
+AtlasSprite* Fo_GetCharSprite(hAtlas hAtlas, HFont hFont, char c);
+bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2* outBearing);
+bool At_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance);
 
 #endif

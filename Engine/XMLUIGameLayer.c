@@ -17,6 +17,7 @@
 #include "Atlas.h"
 #include "RootWidget.h"
 #include "main.h"
+#include "TextWidget.h"
 
 struct NameConstructorPair
 {
@@ -27,7 +28,8 @@ struct NameConstructorPair
 struct NameConstructorPair gNodeNameTable[] =
 {
 	{"stackpanel", &StackPanelWidgetNew},
-	{"static",     &StaticWidgetNew}
+	{"static",     &StaticWidgetNew},
+	{"text",       &TextWidgetNew}
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)

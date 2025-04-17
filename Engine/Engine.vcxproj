@@ -153,6 +153,7 @@
     <ClCompile Include="SharedPtr.c" />
     <ClCompile Include="StackPanelWidget.c" />
     <ClCompile Include="StaticWidget.c" />
+    <ClCompile Include="TextWidget.c" />
     <ClCompile Include="Widget.c" />
     <ClCompile Include="XMLUIGameLayer.c" />
     <ClCompile Include="xml.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="IntTypes.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="PlatformDefs.h" />
     <ClInclude Include="RootWidget.h" />
     <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="StackPanelWidget.h" />
@@ -179,6 +181,7 @@
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize.h" />
     <ClInclude Include="stb\stb_image_write.h" />
+    <ClInclude Include="TextWidget.h" />
     <ClInclude Include="Widget.h" />
     <ClInclude Include="XMLUIGameLayer.h" />
     <ClInclude Include="xml.h" />

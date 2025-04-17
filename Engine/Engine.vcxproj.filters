@@ -93,6 +93,9 @@
     <ClCompile Include="SharedPtr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextWidget.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputContext.h">
@@ -165,6 +168,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SharedPtr.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="TextWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformDefs.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
   </ItemGroup>

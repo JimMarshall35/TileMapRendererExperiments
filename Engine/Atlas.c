@@ -15,8 +15,15 @@
 FT_Library  gFTLib;
 static int gSpriteId = 1;
 
+struct AtlasSpriteData
+{
+	vec2 bearing;
+	vec2 advance;
+};
+
 struct AtlasFont
 {
+	struct AtlasSpriteData spriteData[256];
 	AtlasSprite sprites[256];
 	char name[MAX_FONT_NAME_SIZE];
 	SHARED_PTR(FT_Face) pFTFace;
@@ -163,11 +170,17 @@ static size_t CountAvailableChars(struct AtlasFont* pFont)
 	return count;
 }
 
+static void FaceDtor(void* pVal)
+{
+	FT_Face* pFace = pVal;
+	FT_Done_Face(*pFace);
+}
+
 HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 {
 	HFont hFont = NULL_HANDLE;
 	const int dpi = 92;
-	SHARED_PTR(FT_Face) face = SHARED_PTR_NEW(FT_Face);      /* handle to face object */
+	SHARED_PTR(FT_Face) face = SHARED_PTR_NEW(FT_Face, &FaceDtor);      /* handle to face object */
 	Atlas* pAtlas = GetCurrentAtlas();
 	FT_Error error =  FT_New_Face(gFTLib, pFontSpec->path, 0, face);
 	if (error == FT_Err_Unknown_File_Format)
@@ -241,11 +254,17 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 			AtlasSprite* pSprite = &font.sprites[j];
 			pSprite->widthPx = (*face)->glyph->bitmap.width;
 			pSprite->heightPx = (*face)->glyph->bitmap.rows;
-			
 			pSprite->individualTileBytes = FTBitmapToNestableBitmap(&(*face)->glyph->bitmap);
 			pSprite->id = gSpriteId++;
+			
+			struct AtlasSpriteData* pSpriteData = &font.spriteData[j];
+			pSpriteData->bearing[0] = (*face)->glyph->bitmap_left;
+			pSpriteData->bearing[1] = (*face)->glyph->bitmap_top;
+			pSpriteData->advance[0] = (*face)->glyph->advance.x;
+			pSpriteData->advance[1] = (*face)->glyph->advance.y;
 		}
 
+		strcpy(font.name, pFontSpec->name);
 		pAtlas->fonts = VectorPush(pAtlas->fonts, &font);
 		hFont = VectorSize(pAtlas->fonts) - 1;
 	}
@@ -550,20 +569,36 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 
 
 #define ATLAS_HANDLE_BOUNDS_CHECK(atlas)\
+{\
 bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
 assert(bAtlasHandleBoundsValid);\
 if(!bAtlasHandleBoundsValid){\
 	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
 	return;\
-}
+}\
+}\
 
 #define ATLAS_HANDLE_BOUNDS_CHECK(atlas, rVal)\
+{\
 bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
 assert(bAtlasHandleBoundsValid);\
 if(!bAtlasHandleBoundsValid){\
 	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
 	return rVal;\
+}\
 }
+
+#define FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, rVal)\
+{\
+Atlas* pAtlas = &gAtlases[hAtlas];\
+bool bAtlasHandleBoundsValid = hFont < VectorSize(pAtlas->fonts) && hFont >= 0;\
+assert(bAtlasHandleBoundsValid);\
+if(!bAtlasHandleBoundsValid){\
+	printf("function '%s' invalid bounds font handle %i", __FUNCTION__, hFont);\
+	return rVal;\
+}\
+}
+
 
 void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 {
@@ -643,7 +678,7 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 	return pAtlas->texture;
 }
 
-HFont At_FindFont(hAtlas hAtlas, const char* fontName)
+HFont Fo_FindFont(hAtlas hAtlas, const char* fontName)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL);
 	Atlas* pAtlas = &gAtlases[hAtlas];
@@ -658,4 +693,109 @@ HFont At_FindFont(hAtlas hAtlas, const char* fontName)
 	}
 
 	return NULL_HANDLE;
+}
+
+float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c)
+{
+	return gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].widthPx;
+}
+
+float Fo_CharHeight(hAtlas hAtlas, HFont hFont, char c)
+{
+	return gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].heightPx;
+}
+
+static bool IsCharLoaded(struct AtlasFont* pFont, char c)
+{
+	return pFont->sprites[c].individualTileBytes != NULL;
+}
+
+float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, 0.0f);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	float width = 0.0f;
+	size_t stringLen = strlen(stringVal);
+	struct AtlasFont* pFont = &gAtlases[hAtlas].fonts[hFont];
+	for (int i = 0; i < stringLen; i++)
+	{
+		u8 c = (u8)stringVal[i];
+		if (!IsCharLoaded(pFont, c))
+		{
+			continue;
+		}
+		width += pFont->spriteData[c].advance[0]; // x advance
+	}
+	return width;
+}
+
+float Fo_StringHeight(hAtlas hAtlas, HFont hFont, const char* stringVal)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, 0.0f);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	float minBelowBaseline = 0.0f;
+	float maxAboveBaseline = 0.0f;
+	size_t stringLen = strlen(stringVal);
+	struct AtlasFont* pFont = &gAtlases[hAtlas].fonts[hFont];
+	for (int i = 0; i < stringLen; i++)
+	{
+		u8 c = (u8)stringVal[i];
+		if (!IsCharLoaded(pFont, c))
+		{
+			continue;
+		}
+		struct AtlasSpriteData* pData = &pFont->spriteData[c];
+		AtlasSprite* pSprite = &pFont->sprites[c];
+
+		if (pData->bearing[1] > maxAboveBaseline)
+		{
+			maxAboveBaseline = pData->bearing[1];
+		}
+
+		
+		float height = (float)pSprite->heightPx;
+		float belowBaseline = pData->bearing[1] - height;
+		if (belowBaseline < minBelowBaseline)
+		{
+			minBelowBaseline = belowBaseline;
+		}
+	}
+
+	float r = maxAboveBaseline - minBelowBaseline;
+	return r;
+}
+
+AtlasSprite* Fo_GetCharSprite(hAtlas hAtlas, HFont hFont, char c)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	return &gAtlases[hAtlas].fonts[hFont].sprites[(u8)c];
+}
+
+bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2* outBearing)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].individualTileBytes)
+	{
+		return false;
+	}
+	return false;
+}
+
+bool At_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].individualTileBytes)
+	{
+		return false;
+	}
+	*outAdvance = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].advance[0];
+	return true;
 }
