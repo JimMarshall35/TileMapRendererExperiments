@@ -21,7 +21,7 @@ static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
 	struct TextWidgetData* pData = pWidget->pImplementationData;
-	return Fo_StringWidth(pData->atlas, pData->font, pData->content);
+	return Fo_StringHeight(pData->atlas, pData->font, pData->content);
 }
 
 static float LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -43,8 +43,8 @@ static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn print
 static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	struct TextWidgetData* pData = pThisWidget->pImplementationData;
-
-	vec2 pen = { pThisWidget->left, pThisWidget->top + GetHeight(pThisWidget, NULL) / 2};
+	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
+	vec2 pen = { pThisWidget->left, pThisWidget->top + maxYBearing };
 	size_t len = strlen(pData->content);
 	for (int i = 0; i < len; i++)
 	{
@@ -63,8 +63,9 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 			return pOutVerts;
 		}
 
-		EVERIFY(At_TryGetCharBearing(pData->atlas, pData->font, c, bearing));
-		EVERIFY(At_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
+		EVERIFY(Fo_TryGetCharBearing(pData->atlas, pData->font, c, bearing));
+		bearing[1] *= -1.0f; // FT coordinate system for bearing has increasing Y as up, in our game coordinate system that is decreasing y 
+		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
 		
 		// topleft
 		glm_vec2_add(bearing, pen, output);

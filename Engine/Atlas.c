@@ -741,6 +741,7 @@ float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal)
 		{
 			continue;
 		}
+		width += pFont->spriteData[c].bearing[0];
 		width += pFont->spriteData[c].advance[0]; // x advance
 	}
 	return width;
@@ -791,7 +792,30 @@ AtlasSprite* Fo_GetCharSprite(hAtlas hAtlas, HFont hFont, char c)
 	return &gAtlases[hAtlas].fonts[hFont].sprites[(u8)c];
 }
 
-bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing)
+float Fo_GetMaxYBearing(hAtlas hAtlas, HFont hFont, const char* str)
+{
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
+	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
+
+	float maxBearing = 0.0f;
+	struct AtlasFont* pFont = &gAtlases[hAtlas].fonts[hFont];
+	
+	size_t len = strlen(str);
+	for (int i = 0; i < len; i++)
+	{
+		char c = str[i];
+		if (IsCharLoaded(pFont, c))
+		{
+			if (pFont->spriteData[c].bearing[1] > maxBearing)
+			{
+				maxBearing = pFont->spriteData[c].bearing[1];
+			}
+		}
+	}
+	return maxBearing;
+}
+
+bool Fo_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
 	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
@@ -801,11 +825,11 @@ bool At_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing)
 		return false;
 	}
 	outBearing[0] = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].bearing[0];
-	outBearing[1] = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].bearing[1];
+	outBearing[1] = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].bearing[1]; 
 	return true;
 }
 
-bool At_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
+bool Fo_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
 	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
