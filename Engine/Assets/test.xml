@@ -7,18 +7,21 @@
 
 		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Extra\Default\button_square.png" top="0" left="0" width="64" height="64" name="button_square"/>
 
+		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Extra\Default\button_square_depth.png" top="0" left="0" width="64" height="64" name="button_square_depth"/>
+
+		<sprite source="Assets\Image\example.png" top="0" left="0" width="32" height="32" name="fantasy_9Panel"/>
+
 		<font source="Assets\Image\kenney_ui-pack\Font\Kenney_Future.ttf" name="32Kenney" options="normal">
 			<size type="pts" val="32"/>
 		</font>
 
 	</atlas>
 	<screen>
-
 		<stackpanel dockPoint="centre" orientation="vertical">
-			<backgroundbox sprite="button_square" width="auto" height="auto">
+			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
 				<stackpanel dockPoint="centre" orientation="vertical">
 					<text content="JimMarshall" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
-					<static sprite="bar_round_gloss_large_square" paddingBottom="20"/>
+					<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
 				</stackpanel>
 			</backgroundbox>
 		</stackpanel>

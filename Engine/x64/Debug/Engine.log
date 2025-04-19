@@ -1,1 +1,9 @@
-﻿  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe
+﻿  BackgroundBoxWidget.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\BackgroundBoxWidget.c(142,53): warning C4090: 'function': different 'const' qualifiers
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\BackgroundBoxWidget.c(350,32): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\BackgroundBoxWidget.c(354,32): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\BackgroundBoxWidget.c(324,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\BackgroundBoxWidget.c(325,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

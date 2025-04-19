@@ -88,7 +88,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	pOutVerts = VectorPush(pOutVerts, &v);
 	
 	// topRight
-	v.x = pWidget->left + width;
+	v.x = pWidget->left + width * pStaticData->scale.scaleX;
 	v.y = pWidget->top;
 	v.u = pSprite->bottomRightUV_U;
 	v.v = pSprite->topLeftUV_V;
@@ -96,7 +96,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 
 	// bottomLeft
 	v.x = pWidget->left;
-	v.y = pWidget->top + height;
+	v.y = pWidget->top + height * pStaticData->scale.scaleY;
 	v.u = pSprite->topLeftUV_U;
 	v.v = pSprite->bottomRightUV_V;
 	pOutVerts = VectorPush(pOutVerts, &v);
@@ -104,22 +104,22 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	// TRIANGLE 2
 
 	// topRight
-	v.x = pWidget->left + width;
+	v.x = pWidget->left + width * pStaticData->scale.scaleX;
 	v.y = pWidget->top;
 	v.u = pSprite->bottomRightUV_U;
 	v.v = pSprite->topLeftUV_V;
 	pOutVerts = VectorPush(pOutVerts, &v);
 
 	// bottomRight
-	v.x = pWidget->left + width;
-	v.y = pWidget->top + height;
+	v.x = pWidget->left + width * pStaticData->scale.scaleX;
+	v.y = pWidget->top + height * pStaticData->scale.scaleY;
 	v.u = pSprite->bottomRightUV_U;
 	v.v = pSprite->bottomRightUV_V;
 	pOutVerts = VectorPush(pOutVerts, &v);
 
 	// bottomLeft
 	v.x = pWidget->left;
-	v.y = pWidget->top + height;
+	v.y = pWidget->top + height * pStaticData->scale.scaleY;
 	v.u = pSprite->topLeftUV_U;
 	v.v = pSprite->bottomRightUV_V;
 	pOutVerts = VectorPush(pOutVerts, &v);
@@ -152,25 +152,43 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, str
 
 	pWidgetData->atlas = pUILayerData->atlas;
 	size_t numAttributes = xml_node_attributes(pXMLNode);
-	char attributeBuffer[256];
+	char attributeNameBuffer[128];
+	char attributeContentBuffer[128];
 	for (int i = 0; i < numAttributes; i++)
 	{
 		struct xml_string* name = xml_node_attribute_name(pXMLNode, i);
+		struct xml_string* content = xml_node_attribute_content(pXMLNode, i);
 		int nameLen = xml_string_length(name);
-		if (nameLen >= 256)
+		int contentLen = xml_string_length(content);
+		if (nameLen >= 128)
 		{
-			printf("function %s, namelen > 256. namelen is %i", __FUNCTION__, nameLen);
+			printf("function %s, namelen > 128. namelen is %i", __FUNCTION__, nameLen);
 			continue;
 		}
-		memset(attributeBuffer, 0, 256);
-		xml_string_copy(name, attributeBuffer, nameLen);
-		if (strcmp(attributeBuffer, "sprite") == 0)
+		if (contentLen >= 128)
+		{
+			printf("function %s, content > 128. contentlen is %i", __FUNCTION__, nameLen);
+			continue;
+		}
+		xml_string_copy(name, attributeNameBuffer, nameLen);
+		attributeNameBuffer[nameLen] = '\0';
+		xml_string_copy(content, attributeContentBuffer, contentLen);
+		attributeContentBuffer[contentLen] = '\0';
+		if (strcmp(attributeNameBuffer, "sprite") == 0)
 		{
 			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
 			pWidgetData->imageName = malloc(xml_string_length(contents) + 1);
 			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
 			pWidgetData->imageName[xml_string_length(contents)] = '\0';
 			pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
+		}
+		else if (strcmp(attributeNameBuffer, "scaleX") == 0)
+		{
+			pWidgetData->scale.scaleX = atof(attributeContentBuffer);
+		}
+		else if (strcmp(attributeNameBuffer, "scaleY") == 0)
+		{
+			pWidgetData->scale.scaleY = atof(attributeContentBuffer);
 		}
 	}
 	if (pWidgetData->imageName)

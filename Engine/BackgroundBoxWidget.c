@@ -172,15 +172,15 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 {
 	struct BackgroundBoxWidgetData* pBBoxData = pWidget->pImplementationData;
 	AtlasSprite* pAtlasSprite = At_GetSprite(pBBoxData->sprite, pBBoxData->atlas);
-
+	const struct WidgetScale* pScale = &pBBoxData->scale;
 	float widgetWidth = GetWidth(pWidget, NULL);
 	float widgetHeight = GetHeight(pWidget, NULL);
 
-	if (widgetWidth <= pAtlasSprite->widthPx && widgetHeight > pAtlasSprite->heightPx)
+	if (widgetWidth <= pAtlasSprite->widthPx * pBBoxData->scale.scaleX && widgetHeight > pAtlasSprite->heightPx * pBBoxData->scale.scaleY)
 	{
 		return OnOutputVerts_3StripsHorizontal(pWidget, pOutVerts);
 	}
-	else if (widgetWidth > pAtlasSprite->widthPx && widgetHeight <= pAtlasSprite->heightPx)
+	else if (widgetWidth > pAtlasSprite->widthPx * pBBoxData->scale.scaleX && widgetHeight <= pAtlasSprite->heightPx * pBBoxData->scale.scaleY)
 	{
 		return OnOutputVerts_3StripsVertical(pWidget, pOutVerts);
 	}
@@ -227,51 +227,61 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	{
 		TranslateWidgetQuad(translation, &quads[i]);
 	}
+
+	vec2 size = {
+		widthOver3  * pScale->scaleX,
+		heightOver3 * pScale->scaleY,
+
+	};
+	SizeWidgetQuad(size, &quads[0]);
 	
 	// top row
-	translation[0] = widthOver3;
+	translation[0] = size[0];
 	translation[1] = 0.0f;
 	TranslateWidgetQuad(translation, &quads[1]);
-	float borderPieceNewWidth = widgetWidth - widthOver3 * 2;
-	vec2 horizontalBorderSize = { borderPieceNewWidth, heightOver3 };
+	float borderPieceNewWidth = widgetWidth - size[0] * 2;
+	vec2 horizontalBorderSize = { borderPieceNewWidth, size[1]};
 	SizeWidgetQuad(horizontalBorderSize, &quads[1]);
 
-	translation[0] = widthOver3 + borderPieceNewWidth;
+	translation[0] = size[0] + borderPieceNewWidth;
 	translation[1] = 0.0f;
 	TranslateWidgetQuad(translation, &quads[2]);
+	SizeWidgetQuad(size, &quads[2]);
 
 	// middle row
 	translation[0] = 0.0f;
-	translation[1] = heightOver3;
+	translation[1] = size[1];
 	TranslateWidgetQuad(translation, &quads[3]);
-	float borderPieceNewHeight = widgetHeight - heightOver3 * 2;
-	vec2 verticalBorderSize = { widthOver3, borderPieceNewHeight };
+	float borderPieceNewHeight = widgetHeight - size[1] * 2;
+	vec2 verticalBorderSize = { size[0], borderPieceNewHeight};
 	SizeWidgetQuad(verticalBorderSize, &quads[3]);
 
-	translation[0] = widthOver3;
-	translation[1] = heightOver3;
+	translation[0] = size[0];
+	translation[1] = size[1];
 	TranslateWidgetQuad(translation, &quads[4]);
 	vec2 middlePieceSize = { borderPieceNewWidth, borderPieceNewHeight };
 	SizeWidgetQuad(middlePieceSize, &quads[4]);
 
-	translation[0] = widthOver3 + borderPieceNewWidth;
-	translation[1] = heightOver3;
+	translation[0] = size[0] + borderPieceNewWidth;
+	translation[1] = size[1];
 	TranslateWidgetQuad(translation, &quads[5]);
 	SizeWidgetQuad(verticalBorderSize, &quads[5]);
 
 	// bottom row
 	translation[0] = 0.0f;
-	translation[1] = heightOver3 + borderPieceNewHeight;
+	translation[1] = size[1] + borderPieceNewHeight;
 	TranslateWidgetQuad(translation, &quads[6]);
+	SizeWidgetQuad(size, &quads[6]);
 
-	translation[0] = widthOver3;
-	translation[1] = heightOver3 + borderPieceNewHeight;
+	translation[0] = size[0];
+	translation[1] = size[1] + borderPieceNewHeight;
 	TranslateWidgetQuad(translation, &quads[7]);
 	SizeWidgetQuad(horizontalBorderSize, &quads[7]);
 
-	translation[0] = widthOver3 + borderPieceNewWidth;
-	translation[1] = heightOver3 + borderPieceNewHeight;
+	translation[0] = size[0] + borderPieceNewWidth;
+	translation[1] = size[1] + borderPieceNewHeight;
 	TranslateWidgetQuad(translation, &quads[8]);
+	SizeWidgetQuad(size, &quads[8]);
 
 	for (int i = 0; i < 9; i++)
 	{
@@ -305,25 +315,43 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* 
 
 	pWidgetData->atlas = pUILayerData->atlas;
 	size_t numAttributes = xml_node_attributes(pXMLNode);
-	char attributeBuffer[256];
+	char attributeNameBuffer[128];
+	char attributeContentBuffer[128];
 	for (int i = 0; i < numAttributes; i++)
 	{
 		struct xml_string* name = xml_node_attribute_name(pXMLNode, i);
+		struct xml_string* content = xml_node_attribute_content(pXMLNode, i);
 		int nameLen = xml_string_length(name);
-		if (nameLen >= 256)
+		int contentLen = xml_string_length(content);
+		if (nameLen >= 128)
 		{
-			printf("function %s, namelen > 256. namelen is %i", __FUNCTION__, nameLen);
+			printf("function %s, namelen > 128. namelen is %i", __FUNCTION__, nameLen);
 			continue;
 		}
-		memset(attributeBuffer, 0, 256);
-		xml_string_copy(name, attributeBuffer, nameLen);
-		if (strcmp(attributeBuffer, "sprite") == 0)
+		if (contentLen >= 128)
+		{
+			printf("function %s, content > 128. contentlen is %i", __FUNCTION__, nameLen);
+			continue;
+		}
+		xml_string_copy(name, attributeNameBuffer, nameLen);
+		attributeNameBuffer[nameLen] = '\0';
+		xml_string_copy(content, attributeContentBuffer, contentLen);
+		attributeContentBuffer[contentLen] = '\0';
+		if (strcmp(attributeNameBuffer, "sprite") == 0)
 		{
 			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
 			pWidgetData->imageName = malloc(xml_string_length(contents) + 1);
 			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
 			pWidgetData->imageName[xml_string_length(contents)] = '\0';
 			pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
+		}
+		else if (strcmp(attributeNameBuffer, "scaleX") == 0)
+		{
+			pWidgetData->scale.scaleX = atof(attributeContentBuffer);
+		}
+		else if (strcmp(attributeNameBuffer, "scaleY") == 0)
+		{
+			pWidgetData->scale.scaleY = atof(attributeContentBuffer);
 		}
 	}
 	if (pWidgetData->imageName)
