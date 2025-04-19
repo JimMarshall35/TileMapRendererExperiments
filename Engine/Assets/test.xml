@@ -16,7 +16,10 @@
 
 		<stackpanel dockPoint="centre" orientation="vertical">
 			<backgroundbox sprite="button_square" width="auto" height="auto">
-				<text content="JimMarshall" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20"></text>
+				<stackpanel dockPoint="centre" orientation="vertical">
+					<text content="JimMarshall" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
+					<static sprite="bar_round_gloss_large_square" paddingBottom="20"/>
+				</stackpanel>
 			</backgroundbox>
 		</stackpanel>
 	</screen>

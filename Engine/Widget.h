@@ -15,6 +15,7 @@ struct WidgetVertex
 {
 	float x, y;
 	float u, v;
+	float r, g, b, a;
 };
 
 typedef void(*PrintfFn)(const char* fmt, ...);

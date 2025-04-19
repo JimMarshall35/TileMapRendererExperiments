@@ -74,10 +74,11 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 {
 	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
 	AtlasSprite* pSprite = At_GetSprite(pStaticData->sprite, pStaticData->atlas);
-	float width = GetWidth(pWidget, UI_GetWidget(pWidget->hParent));
-	float height = GetHeight(pWidget, UI_GetWidget(pWidget->hParent));
+	float width = pSprite->widthPx;//GetWidth(pWidget, UI_GetWidget(pWidget->hParent));
+	float height = pSprite->heightPx;//GetHeight(pWidget, UI_GetWidget(pWidget->hParent));
 
 	struct WidgetVertex v;
+	v.r = 1.0f; v.g = 1.0f; v.b = 1.0f; v.a = 1.0f;
 	
 	// topleft
 	v.x = pWidget->left;

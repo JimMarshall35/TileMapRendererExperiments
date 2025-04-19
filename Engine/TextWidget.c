@@ -4,12 +4,15 @@
 #include "Widget.h"
 #include "Atlas.h"
 #include "AssertLib.h"
+#include <stdio.h>
+#include <string.h>
 
 struct TextWidgetData
 {
 	char* content;
 	HFont font;
 	hAtlas atlas;
+	float r, g, b, a;
 };
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -66,6 +69,11 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		float advance = 0.0f;
 		vec2 output = { 0,0 };
 		vec2 bearingApplied = { 0,0 };
+
+		v.r = pData->r;
+		v.g = pData->g;
+		v.b = pData->b;
+		v.a = pData->a;
 
 		if (!pAtlasSprite)
 		{
@@ -147,6 +155,35 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 	return pOutVerts;
 }
 
+static void ParseColourAttribute(char* inText, struct TextWidgetData* pOutWidgetData)
+{
+	char* tok = strtok(inText, ",");
+	int onToken = 0;
+	while (tok)
+	{
+		int i = atoi(tok);
+		EASSERT(i < 256);
+		switch (onToken++)
+		{
+		case 0:
+			pOutWidgetData->r = (float)i / 255.0f;
+			break;
+		case 1:
+			pOutWidgetData->g = (float)i / 255.0f;
+			break;
+		case 2:
+			pOutWidgetData->b = (float)i / 255.0f;
+			break;
+		case 3:
+			pOutWidgetData->a = (float)i / 255.0f;
+			break;
+		default:
+			printf("ParseColourAttribute: invalid number of tokens: %i", onToken);
+		}
+		tok = strtok(NULL, ",");
+	}
+}
+
 static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -199,6 +236,10 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode,
 			}
 			pData->font = font;
 			bFontSet = true;
+		}
+		else if (strcmp(attribName, "colour") == 0)
+		{
+			ParseColourAttribute(attribContent, pData);
 		}
 	}
 	if (!bFontSet || !bContentSet)

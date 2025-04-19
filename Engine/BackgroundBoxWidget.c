@@ -47,6 +47,7 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 		pChild->top = pWidget->top;
 		pChild->left = pWidget->left;
 	}
+	pChild->fnLayoutChildren(pChild, pWidget);
 }
 
 static void OnDestroy(struct UIWidget* pWidget)
@@ -88,21 +89,26 @@ static void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec
 	pQuad->v[VL_TL].y = 0.0f;
 	pQuad->v[VL_TL].u = subSpriteTopLefUV[0];
 	pQuad->v[VL_TL].v = subSpriteTopLefUV[1];
+	pQuad->v[VL_TL].r = 1.0f; pQuad->v[VL_TL].g = 1.0f; pQuad->v[VL_TL].b = 1.0f; pQuad->v[VL_TL].a = 1.0f;
 	
 	pQuad->v[VL_TR].x = subSpriteWidth;
 	pQuad->v[VL_TR].y = 0.0f;
 	pQuad->v[VL_TR].u = subSpriteBottomRightUV[0];
 	pQuad->v[VL_TR].v = subSpriteTopLefUV[1];
+	pQuad->v[VL_TR].r = 1.0f; pQuad->v[VL_TR].g = 1.0f; pQuad->v[VL_TR].b = 1.0f; pQuad->v[VL_TR].a = 1.0f;
 
 	pQuad->v[VL_BR].x = subSpriteWidth;
 	pQuad->v[VL_BR].y = subSpriteHeight;
 	pQuad->v[VL_BR].u = subSpriteBottomRightUV[0];
 	pQuad->v[VL_BR].v = subSpriteBottomRightUV[1];
+	pQuad->v[VL_BR].r = 1.0f; pQuad->v[VL_BR].g = 1.0f; pQuad->v[VL_BR].b = 1.0f; pQuad->v[VL_BR].a = 1.0f;
 
 	pQuad->v[VL_BL].x = 0.0f;
 	pQuad->v[VL_BL].y = subSpriteHeight;
 	pQuad->v[VL_BL].u = subSpriteTopLefUV[0];
 	pQuad->v[VL_BL].v = subSpriteBottomRightUV[1];
+	pQuad->v[VL_BL].r = 1.0f; pQuad->v[VL_BL].g = 1.0f; pQuad->v[VL_BL].b = 1.0f; pQuad->v[VL_BL].a = 1.0f;
+
 }
 
 static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)

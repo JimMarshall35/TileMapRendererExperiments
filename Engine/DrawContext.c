@@ -11,12 +11,15 @@ const char* uiVert =
 "#version 330 core\n"
 "layout (location = 0) in vec2 aPos;\n"
 "layout (location = 1) in vec2 aUv;\n"
+"layout (location = 2) in vec4 aColour;\n"
 "out vec2 UV;\n"
+"out vec4 Colour;\n"
 "uniform mat4 screenToClipMatrix;\n"
 "void main()\n"
 "{\n"
 	"gl_Position = screenToClipMatrix * vec4(aPos, 0.0, 1.0);\n"
 	"UV = aUv;\n"
+	"Colour = aColour;"
 "}\n"
 ;
 
@@ -24,15 +27,14 @@ const char* uiFrag =
 ""
 "#version 330 core\n"
 "out vec4 FragColor;\n"
-
-"in vec3 ourColor;\n"
+"in vec4 Colour;\n"
 "in vec2 UV;\n"
 
 "uniform sampler2D ourTexture;\n"
 
 "void main()\n"
 "{\n"
-	"FragColor = texture(ourTexture, UV);\n"
+	"FragColor = texture(ourTexture, UV) * Colour;\n"
 "}\n"
 ;
 
@@ -178,6 +180,8 @@ static HUIVertexBuffer NewUIVertexBuffer(int size)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), sizeof(float) * 2);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), sizeof(float) * 4);
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
