@@ -1,0 +1,11 @@
+#ifndef <<IncludeGuardDef>>
+#define <<IncludeGuardDef>>
+
+#include "HandleDefs.h"
+
+
+HWidget <<WidgetName>>New(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+
+
+#endif // !<<IncludeGuardDef>>
+

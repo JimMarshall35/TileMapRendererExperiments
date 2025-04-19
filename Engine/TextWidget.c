@@ -15,13 +15,13 @@ struct TextWidgetData
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
 	struct TextWidgetData* pData = pWidget->pImplementationData;
-	return Fo_StringWidth(pData->atlas, pData->font, pData->content);
+	return Fo_StringWidth(pData->atlas, pData->font, pData->content) + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
 	struct TextWidgetData* pData = pWidget->pImplementationData;
-	return Fo_StringHeight(pData->atlas, pData->font, pData->content);
+	return Fo_StringHeight(pData->atlas, pData->font, pData->content) + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 }
 
 static float LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -37,6 +37,17 @@ static void OnDestroy(struct UIWidget* pWidget)
 
 static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
 {
+	struct TextWidgetData* pTextWidgetData = pWidget->pImplementationData;
+	for (int i = 0; i < indentLvl; i++)
+	{
+		printfFn("\t");
+	}
+	printfFn("Text. imageName = %s, font = %i, atlas = %i, ",
+		pTextWidgetData->content,
+		pTextWidgetData->font,
+		pTextWidgetData->atlas);
+	UI_DebugPrintCommonWidgetInfo(pWidget, printfFn);
+	printfFn("\n");
 
 }
 
@@ -44,7 +55,7 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 {
 	struct TextWidgetData* pData = pThisWidget->pImplementationData;
 	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
-	vec2 pen = { pThisWidget->left, pThisWidget->top + maxYBearing };
+	vec2 pen = { pThisWidget->left + pThisWidget->padding.paddingLeft, pThisWidget->top + maxYBearing + pThisWidget->padding.paddingTop };
 	size_t len = strlen(pData->content);
 	for (int i = 0; i < len; i++)
 	{

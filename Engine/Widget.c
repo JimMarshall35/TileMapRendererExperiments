@@ -24,6 +24,26 @@ HWidget UI_NewBlankWidget()
 	return widget;
 }
 
+size_t UI_CountWidgetChildrenPtr(struct UIWidget* pWidget)
+{
+	size_t count = 0;
+	HWidget h = pWidget->hFirstChild;
+	while (h != NULL_HWIDGET)
+	{
+		struct UIWidget* pChild = UI_GetWidget(h);
+		count++;
+		h = pChild->hNext;
+	}
+	return count;
+}
+
+size_t UI_CountWidgetChildren(HWidget hWidget)
+{
+	WIDGET_POOL_BOUNDS_CHECK(0, hWidget);
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	return UI_CountWidgetChildrenPtr(pWidget);
+}
+
 struct UIWidget* UI_GetWidget(HWidget hWidget)
 {
 	WIDGET_POOL_BOUNDS_CHECK(hWidget, NULL)
@@ -262,7 +282,7 @@ bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidge
 				outWidget->dockPoint = WDP_MiddleLeft;
 				return true;
 			}
-			else if (strcmp(attribValBuf, "centrw") == 0)
+			else if (strcmp(attribValBuf, "centre") == 0)
 			{
 				outWidget->dockPoint = WDP_Centre;
 				return true;
@@ -319,4 +339,22 @@ void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVert
 		child = pChildWidget->hNext;
 	}
 	return pOutVerts;
+}
+
+void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
+{
+	if (pWidget->hFirstChild == NULL_HWIDGET)
+	{
+		return;
+	}
+	struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
+	while (pChild)
+	{
+		pChild->fnLayoutChildren(pChild, pWidget);
+		pChild = UI_GetWidget(pWidget->hNext);
+		if (pWidget->hNext == NULL_HWIDGET)
+		{
+			break;
+		}
+	}
 }

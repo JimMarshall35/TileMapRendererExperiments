@@ -94,7 +94,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextWidget.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundBoxWidget.c">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="PlatformDefs.h">
       <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundBoxWidget.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

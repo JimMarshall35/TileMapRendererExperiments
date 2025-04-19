@@ -70,7 +70,7 @@ static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 			break;
 		}
 	}
-	return width;
+	return width + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -125,7 +125,7 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 		break;
 	}
 	}
-	return height;
+	return height + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -137,8 +137,8 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 		return;
 	}
 
-	float top = pWidget->top;
-	float left = pWidget->left;
+	float top = pWidget->top + pWidget->padding.paddingTop;
+	float left = pWidget->left + pWidget->padding.paddingLeft;
 	float w = GetWidth(pWidget, pParent);
 	float h = GetHeight(pWidget, pParent);
 
@@ -211,7 +211,7 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 			break;
 		}
 	}
-
+	UI_Helper_OnLayoutChildren(pWidget, pParent);
 }
 
 static void OnDestroy(struct UIWidget* pWidget)

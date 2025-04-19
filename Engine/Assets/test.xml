@@ -13,13 +13,11 @@
 
 	</atlas>
 	<screen>
-		<stackpanel dockPoint="topLeft" orientation="vertical">
-			<static sprite="bar_round_gloss_large" width="auto" height="auto"></static>
-			<static sprite="bar_round_gloss_large_square" width="auto" height="auto"></static>
-			<text content="helloworld" font="32Kenney"></text>
-		</stackpanel>
-		<stackpanel dockPoint="bottomMiddle" orientation="horizontal">
-			<static sprite="button_square" width="auto" height="auto"></static>
+
+		<stackpanel dockPoint="centre" orientation="vertical">
+			<backgroundbox sprite="button_square" width="auto" height="auto">
+				<text content="JimMarshall" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20"></text>
+			</backgroundbox>
 		</stackpanel>
 	</screen>
 </UIroot>

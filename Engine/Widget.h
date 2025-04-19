@@ -110,6 +110,10 @@ void UI_DestroyWidget(HWidget widget);
 
 HWidget UI_NewBlankWidget();
 
+size_t UI_CountWidgetChildrenPtr(struct UIWidget* pWidget);
+
+size_t UI_CountWidgetChildren(HWidget pWidget);
+
 struct UIWidget* UI_GetWidget(HWidget hWidget);
 
 void UI_AddChild(HWidget hParent, HWidget hChild);
@@ -131,5 +135,7 @@ void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget);
 void UI_DebugPrintCommonWidgetInfo(const struct UIWidget* inWidget, PrintfFn pPrintfFn);
 
 void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts);
+
+void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent);
 
 #endif
