@@ -6,6 +6,7 @@
 #include "AssertLib.h"
 #include <stdio.h>
 #include <string.h>
+#include "WidgetVertexOutputHelpers.h"
 
 struct TextWidgetData
 {
@@ -85,68 +86,14 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		EVERIFY(Fo_TryGetCharBearing(pData->atlas, pData->font, c, bearing));
 		bearing[1] *= -1.0f; // FT coordinate system for bearing has increasing Y as up, in our game coordinate system that is decreasing y 
 		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
-		
+		struct WidgetQuad quad;
+		PopulateWidgetQuadWholeSprite(&quad, pAtlasSprite);
+
+
 		// topleft
 		glm_vec2_add(bearing, pen, output);
-		bearingApplied[0] = output[0]; bearingApplied[1] = output[1];
-
-		v.u = pAtlasSprite->topLeftUV_U;
-		v.v = pAtlasSprite->topLeftUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-		
-		// top right
-		vec2 toAdd = { pAtlasSprite->widthPx, 0.0 };
-		glm_vec2_add(toAdd, bearingApplied, output);
-		v.u = pAtlasSprite->bottomRightUV_U;
-		v.v = pAtlasSprite->topLeftUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-		
-		// bottomleft
-		toAdd[0] = 0.0f;
-		toAdd[1] = pAtlasSprite->heightPx;
-		glm_vec2_add(toAdd, bearingApplied, output);
-		v.u = pAtlasSprite->topLeftUV_U;
-		v.v = pAtlasSprite->bottomRightUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-		
-		// TRIANGLE 2
-
-		// topRight
-		toAdd[0] = pAtlasSprite->widthPx;
-		toAdd[1] = 0.0;
-		glm_vec2_add(toAdd, bearingApplied, output);
-		v.u = pAtlasSprite->bottomRightUV_U;
-		v.v = pAtlasSprite->topLeftUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-
-		//// bottomRight
-		toAdd[0] = pAtlasSprite->widthPx;
-		toAdd[1] = pAtlasSprite->heightPx;
-		glm_vec2_add(toAdd, bearingApplied, output);
-		v.u = pAtlasSprite->bottomRightUV_U;
-		v.v = pAtlasSprite->bottomRightUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-
-		//// bottomLeft
-		toAdd[0] = 0;
-		toAdd[1] = pAtlasSprite->heightPx;
-		glm_vec2_add(toAdd, bearingApplied, output);
-		v.u = pAtlasSprite->topLeftUV_U;
-		v.v = pAtlasSprite->bottomRightUV_V;
-		v.x = output[0];
-		v.y = output[1];
-		pOutVerts = VectorPush(pOutVerts, &v);
-
+		TranslateWidgetQuad(output, &quad);
+		pOutVerts = OutputWidgetQuad(pOutVerts, &quad);
 
 		pen[0] += advance;
 	}

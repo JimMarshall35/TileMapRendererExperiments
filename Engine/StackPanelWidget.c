@@ -10,9 +10,6 @@ typedef enum
 	SPO_Vertical
 }StackPanelOrientation;
 
-
-
-
 struct StackPanelWidgetData
 {
 	StackPanelOrientation orientation;
