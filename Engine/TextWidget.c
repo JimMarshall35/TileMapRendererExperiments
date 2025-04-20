@@ -65,16 +65,10 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 	{
 		char c = pData->content[i];
 		AtlasSprite* pAtlasSprite = Fo_GetCharSprite(pData->atlas, pData->font, c);
-		struct WidgetVertex v;
 		vec2 bearing = { 0,0 };
 		float advance = 0.0f;
 		vec2 output = { 0,0 };
 		vec2 bearingApplied = { 0,0 };
-
-		v.r = pData->r;
-		v.g = pData->g;
-		v.b = pData->b;
-		v.a = pData->a;
 
 		if (!pAtlasSprite)
 		{
@@ -88,7 +82,7 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
 		struct WidgetQuad quad;
 		PopulateWidgetQuadWholeSprite(&quad, pAtlasSprite);
-
+		SetWidgetQuadColour(&quad, pData->r, pData->g, pData->b, pData->a);
 
 		// topleft
 		glm_vec2_add(bearing, pen, output);

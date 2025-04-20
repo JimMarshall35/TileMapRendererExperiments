@@ -21,7 +21,7 @@ static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 	if (pWidget->hFirstChild != NULL_HWIDGET)
 	{
 		struct UIWidget* pFirstChild = UI_GetWidget(pWidget->hFirstChild);
-		return pFirstChild->fnGetWidth(pFirstChild, pWidget);
+		return pFirstChild->fnGetWidth(pFirstChild, pWidget) + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
 	}
 	return 0.0f;
 }
@@ -32,7 +32,7 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 	if (pWidget->hFirstChild != NULL_HWIDGET)
 	{
 		struct UIWidget* pFirstChild = UI_GetWidget(pWidget->hFirstChild);
-		return pFirstChild->fnGetHeight(pFirstChild, pWidget);
+		return pFirstChild->fnGetHeight(pFirstChild, pWidget) + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 	}
 	return 0.0f;
 }
@@ -42,10 +42,10 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 	struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
 	if (pChild)
 	{
-		pChild->top = pWidget->top;
-		pChild->left = pWidget->left;
+		pChild->top = pWidget->top + pWidget->padding.paddingTop;
+		pChild->left = pWidget->left + pWidget->padding.paddingLeft;
+		pChild->fnLayoutChildren(pChild, pWidget);
 	}
-	pChild->fnLayoutChildren(pChild, pWidget);
 }
 
 static void OnDestroy(struct UIWidget* pWidget)
@@ -76,8 +76,8 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	struct BackgroundBoxWidgetData* pBBoxData = pWidget->pImplementationData;
 	AtlasSprite* pAtlasSprite = At_GetSprite(pBBoxData->sprite, pBBoxData->atlas);
 	const struct WidgetScale* pScale = &pBBoxData->scale;
-	float widgetWidth = GetWidth(pWidget, NULL);
-	float widgetHeight = GetHeight(pWidget, NULL);
+	float widgetWidth = GetWidth(pWidget, NULL) - pWidget->padding.paddingLeft - pWidget->padding.paddingRight;
+	float widgetHeight = GetHeight(pWidget, NULL) - pWidget->padding.paddingTop - pWidget->padding.paddingBottom;
 
 	if (widgetWidth <= pAtlasSprite->widthPx * pBBoxData->scale.scaleX && widgetHeight > pAtlasSprite->heightPx * pBBoxData->scale.scaleY)
 	{
@@ -125,7 +125,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 		br[1] += heightOver3;
 	}
 
-	vec2 translation = { pWidget->left, pWidget->top};
+	vec2 translation = { pWidget->left + pWidget->padding.paddingLeft, pWidget->top + pWidget->padding.paddingTop};
 	for (int i = 0; i < 9; i++)
 	{
 		TranslateWidgetQuad(translation, &quads[i]);

@@ -295,7 +295,6 @@ static void MakeWidgetIntoStackPanel(HWidget hWidget, struct xml_node* pXMLNode)
 
 HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUIData)
 {
-	
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoStackPanel(hWidget, pXMLNode);
 	return hWidget;

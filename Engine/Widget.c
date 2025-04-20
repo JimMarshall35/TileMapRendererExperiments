@@ -46,7 +46,10 @@ size_t UI_CountWidgetChildren(HWidget hWidget)
 
 struct UIWidget* UI_GetWidget(HWidget hWidget)
 {
-	WIDGET_POOL_BOUNDS_CHECK(hWidget, NULL)
+	if (hWidget < 0)
+	{
+		return NULL;
+	}
 	return &gWidgetPool[hWidget];
 }
 
@@ -351,10 +354,6 @@ void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pPare
 	while (pChild)
 	{
 		pChild->fnLayoutChildren(pChild, pWidget);
-		pChild = UI_GetWidget(pWidget->hNext);
-		if (pWidget->hNext == NULL_HWIDGET)
-		{
-			break;
-		}
+		pChild = UI_GetWidget(pChild->hNext);
 	}
 }

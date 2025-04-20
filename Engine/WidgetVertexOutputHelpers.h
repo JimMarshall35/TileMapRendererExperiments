@@ -26,5 +26,6 @@ void SizeWidgetQuad(vec2 size, struct WidgetQuad* pOutQuad);
 float WidgetQuadWidth(const struct WidgetQuad* pInQuad);
 float WidgetQuadHeight(const struct WidgetQuad* pInQuad);
 void ScaleWidgetQuad(float scaleX, float scaleY, struct WidgetQuad* pOutQuad);
+void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a);
 
 #endif

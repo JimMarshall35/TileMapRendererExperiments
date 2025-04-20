@@ -1,5 +1,15 @@
 #include "WidgetVertexOutputHelpers.h"
 
+void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		pQuad->v[i].r = r;
+		pQuad->v[i].g = g;
+		pQuad->v[i].b = b;
+		pQuad->v[i].a = a;
+	}
+}
 
 void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt)
 {
