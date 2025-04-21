@@ -1,7 +1,10 @@
 
 function GetTestViewModel()
 	return {
+		-- random data members
 		newButtonPressed = false,
+		
+		-- a one way binding property called NewButtonBackgroundSprite
 		Get_NewButtonBackgroundSprite = function(self)
 			print("Get_NewButtonBackgroundSprite")
 			if self.newButtonPressed then 
@@ -10,6 +13,8 @@ function GetTestViewModel()
 				return "button_square_depth"
 			end
 		end,
+
+		-- event handlers that can be bound to individual widgets
 		OnNewGameMouseDown = function(self, x, y, button)
 			if not self.newButtonPressed then
 				self.newButtonPressed = true			
