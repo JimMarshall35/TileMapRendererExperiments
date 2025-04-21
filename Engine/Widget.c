@@ -27,6 +27,7 @@ HWidget UI_NewBlankWidget()
 	pWidget->hNext = NULL_HWIDGET;
 	pWidget->hPrev = NULL_HWIDGET;
 	pWidget->hParent = NULL_HWIDGET;
+	pWidget->numBindings = 0;
 	MakeBlankScriptingCallbacks(&pWidget->scriptCallbacks);
 	return widget;
 }
@@ -478,11 +479,12 @@ void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTyp
 		break;
 	}
 
-	Sc_CallVoidFuncInRegTableEntryTable(
+	Sc_CallFuncInRegTableEntryTable(
 		pWidget->scriptCallbacks.viewmodelTable,
 		pWidget->scriptCallbacks.Callbacks[type].name,
 		&arguments[0], 
-		numArguments
+		numArguments,
+		0
 	);
 }
 

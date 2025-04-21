@@ -4,15 +4,61 @@
 #include <lauxlib.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "AssertLib.h"
+#include "XMLUIGameLayer.h"
+#include "RootWidget.h"
 
 static lua_State* gL = NULL;
+
+static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const char* pChangedPropName)
+{
+	while (hWidget != NULL_HWIDGET)
+	{
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		for (int i = 0; i < pWidget->numBindings; i++)
+		{
+			struct WidgetPropertyBinding* pBinding = &pWidget->bindings[i];
+			if (strcmp(pBinding->name, pChangedPropName) == 0)
+			{
+				if (pWidget->fnOnBoundPropertyChanged)
+				{
+					pWidget->fnOnBoundPropertyChanged(pWidget, pBinding);
+				}
+			}
+		}
+		OnPropertyChangedInternal(pUIData, pWidget->hFirstChild, pChangedPropName);
+
+		hWidget = pWidget->hNext;
+	}
+}
+
+static int L_OnPropertyChanged(lua_State* L)
+{
+	// args: (table) viewmodel, (string) propertyName
+	int top = lua_gettop(L);
+	EASSERT(top == 2);
+	bool bIsTable = lua_istable(L, 1);
+	EASSERT(bIsTable);
+	const char* pStr = luaL_checkstring(L, 2);
+	const char* pNameCpy = malloc(strlen(pStr) + 1);
+	strcpy(pNameCpy, pStr);
+	lua_pop(L, 1);
+	lua_getfield(L, -1, "XMLUIDataPtr");
+	XMLUIData* pUIData = lua_touserdata(L, -1);
+	HWidget hWidget = pUIData->rootWidget;
+	OnPropertyChangedInternal(pUIData, hWidget, pNameCpy);
+	free(pNameCpy);
+	SetRootWidgetIsDirty(pUIData->rootWidget, true);
+}
 
 
 void Sc_InitScripting()
 {
 	gL = luaL_newstate();
 	luaL_openlibs(gL); /* Load Lua libraries */
+	lua_pushcfunction(gL, &L_OnPropertyChanged);
+	lua_setglobal(gL, "OnPropertyChanged");
 
 }
 
@@ -115,7 +161,7 @@ int Sc_CallGlobalFuncReturningTableAndStoreResultInReg(const char* funcName, str
 	return rVal;
 }
 
-void Sc_CallVoidFuncInRegTableEntryTable(int regIndex, const char* funcName, struct ScriptCallArgument* pArgs, int numArgs)
+void Sc_CallFuncInRegTableEntryTable(int regIndex, const char* funcName, struct ScriptCallArgument* pArgs, int numArgs, int numReturnVals)
 {
 	lua_rawgeti(gL, LUA_REGISTRYINDEX, regIndex);
 	bool bIstable = lua_istable(gL, -1);
@@ -129,13 +175,48 @@ void Sc_CallVoidFuncInRegTableEntryTable(int regIndex, const char* funcName, str
 	lua_gettable(gL, -2);
 	if (lua_isfunction(gL, -1))
 	{
+		lua_rawgeti(gL, LUA_REGISTRYINDEX, regIndex);
 		PushFunctionCallArgsOntoStack(pArgs, numArgs);
-		lua_pcall(gL, numArgs, 0, 0);
+		lua_pcall(gL, numArgs + 1, numReturnVals, 0);
 	}
 	else
 	{
 		printf("object at key '%s' not a function but type %s \n", funcName, GetTypeOnTopOfStack());
 	}
+	//lua_settop(gL, 0);
+}
+
+void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void* userDataValue)
+{
+	lua_rawgeti(gL, LUA_REGISTRYINDEX, regIndex);
+	bool bIstable = lua_istable(gL, -1);
+	if (!bIstable)
+	{
+		printf("Sc_CallFuncInRegTableEntryTable. Reg table entry %i is not a table, but %s\n", regIndex, GetTypeOnTopOfStack());
+		lua_settop(gL, 0);
+		return;
+	}
+	lua_pushlightuserdata(gL, userDataValue);
+	lua_setfield(gL, -2, userDataKey);
+	lua_settop(gL, 0);
+}
+
+size_t Sc_StackTopStringLen()
+{
+	EASSERT(lua_isstring(gL, -1));
+	const char* str = lua_tostring(gL, -1);
+	return strlen(str);
+}
+
+void Sc_StackTopStrCopy(char* pOutString)
+{
+	EASSERT(lua_isstring(gL, -1));
+	const char* str = lua_tostring(gL, -1);
+	strcpy(pOutString, str);
+}
+
+void Sc_ResetStack()
+{
 	lua_settop(gL, 0);
 }
 

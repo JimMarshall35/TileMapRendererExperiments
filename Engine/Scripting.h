@@ -44,8 +44,13 @@ bool Sc_OpenFile(const char* path);
 /// <returns> key to the table returned, stored in the registry table. 0 if failed </returns>
 int Sc_CallGlobalFuncReturningTableAndStoreResultInReg(const char* funcName, struct ScriptCallArgument* pArgs, int numArgs);
 
-void Sc_CallVoidFuncInRegTableEntryTable(int regIndex, const char* funcName, struct ScriptCallArgument* pArgs, int numArgs);
+void Sc_CallFuncInRegTableEntryTable(int regIndex, const char* funcName, struct ScriptCallArgument* pArgs, int numArgs, int numReturnVals);
 
+void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void* userDataValue);
+
+size_t Sc_StackTopStringLen();
+void Sc_StackTopStrCopy(char* pOutString);
+void Sc_ResetStack();
 
 /// <summary>
 /// 

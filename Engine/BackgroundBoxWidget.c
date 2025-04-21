@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "WidgetVertexOutputHelpers.h"
 #include "AssertLib.h"
+#include "Scripting.h"
 
 struct BackgroundBoxWidgetData
 {
@@ -195,6 +196,62 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return pOutVerts;
 }
 
+static char* MakeBindingGetterFunctionName(const char* inBindingName)
+{
+	char* fnName = malloc(strlen(inBindingName) + 1 + 4);
+	char* writePtr = fnName;
+	*writePtr++ = 'G';
+	*writePtr++ = 'e';
+	*writePtr++ = 't';
+	*writePtr++ = '_';
+	strcpy(writePtr, inBindingName);
+	return fnName;
+
+}
+
+static void AddAndSetStringPropertyFromBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, char* pOutData, int viewmodelTableIndex)
+{
+	if (pWidget->numBindings >= MAX_NUM_BINDINGS)
+	{
+		printf("MAX_NUM_BINDINGS exceeded\n");
+		EASSERT(false);
+		return;
+	}
+	struct WidgetPropertyBinding* pBinding = &pWidget->bindings[pWidget->numBindings++];
+
+	// skip '{' and '}'
+	inBindingExpression[strlen(inBindingExpression) - 1] = '\0';
+	inBindingExpression++;
+	strcpy(pBinding->name, inBindingExpression);
+	strcpy(pBinding->boundPropertyName, inBoundPropertyName);
+
+	pBinding->type = WBT_String;
+	pBinding->data.str = NULL;
+	char* fnName = MakeBindingGetterFunctionName(inBindingExpression);
+
+	Sc_CallFuncInRegTableEntryTable(viewmodelTableIndex, fnName, NULL, 0, 1);
+	Sc_StackTopStrCopy(pOutData);
+	Sc_ResetStack();
+	free(fnName);
+}
+
+static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
+{
+	struct BackgroundBoxWidgetData* pData = pThisWidget->pImplementationData;
+	if (strcmp(pBinding->boundPropertyName, "sprite") == 0)
+	{
+		char* fnName = MakeBindingGetterFunctionName(pBinding->name);
+		Sc_CallFuncInRegTableEntryTable(pThisWidget->scriptCallbacks.viewmodelTable, fnName, NULL, 0, 1);
+		free(pData->imageName);
+		size_t len = Sc_StackTopStringLen();
+		pData->imageName = malloc(len + 1);
+		Sc_StackTopStrCopy(pData->imageName);
+		pData->sprite = At_FindSprite(pData->imageName, pData->atlas);
+
+	}
+	//pData->imageName
+}
+
 static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -208,6 +265,7 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* 
 	pWidget->fnOnDestroy = &OnDestroy;
 	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
+	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct BackgroundBoxWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct BackgroundBoxWidgetData));
 
@@ -246,6 +304,11 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* 
 			pWidgetData->imageName = malloc(xml_string_length(contents) + 1);
 			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
 			pWidgetData->imageName[xml_string_length(contents)] = '\0';
+			if (pWidgetData->imageName[0] == '{' && pWidgetData->imageName[xml_string_length(contents) - 1] == '}')
+			{
+				AddAndSetStringPropertyFromBinding(pWidget, attributeNameBuffer, pWidgetData->imageName, pWidgetData->imageName, pUILayerData->hViewModel);
+			}
+
 			pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
 		}
 		else if (strcmp(attributeNameBuffer, "scaleX") == 0)

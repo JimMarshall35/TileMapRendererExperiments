@@ -607,8 +607,11 @@ static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
 	}
 	if (bVMFileSet && bVMFunctionSet)
 	{
+		// instantiate viewmodel lua object and store in registry
 		Sc_OpenFile(pFilePath);
 		pUIData->hViewModel = Sc_CallGlobalFuncReturningTableAndStoreResultInReg(pFnName, NULL, 0);
+		// tag the viewmodel table with a ptr to the XMLUIDataPtr so it can set the widget tree flag to dirty
+		Sc_AddLightUserDataValueToTable(pUIData->hViewModel, "XMLUIDataPtr", pUIData);
 	}
 	else
 	{

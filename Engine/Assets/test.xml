@@ -2,15 +2,10 @@
 <UIroot>
 	<atlas>
 		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Green\Default\bar_round_gloss_large.png" top="0" left="0" width="96" height="24" name="bar_round_gloss_large"/>
-
 		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Green\Default\bar_round_gloss_large_square.png" top="0" left="0" width="24" height="24" name="bar_round_gloss_large_square"/>
-
 		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Extra\Default\button_square.png" top="0" left="0" width="64" height="64" name="button_square"/>
-
 		<sprite source="Assets\Image\kenney_ui-pack-scifi\PNG\Extra\Default\button_square_depth.png" top="0" left="0" width="64" height="64" name="button_square_depth"/>
-
 		<sprite source="Assets\Image\example.png" top="0" left="0" width="32" height="32" name="fantasy_9Panel"/>
-
 		<font source="Assets\Image\American_Captain.ttf" name="32Kenney" options="normal">
 			<size type="pts" val="32"/>
 		</font>
@@ -21,7 +16,7 @@
 				<stackpanel dockPoint="centre" orientation="vertical">
 					<text content="WARFARMER" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
 					<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
-					<backgroundbox sprite="button_square_depth" paddingBottom="20" onMouseDown="OnNewGameMouseDown">
+					<backgroundbox sprite="{NewButtonBackgroundSprite}" paddingBottom="20" onMouseDown="OnNewGameMouseDown" onMouseLeave="OnNewGameMouseLeave" onMouseUp="OnNewGameMouseUp">
 						<text content="New" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
 					</backgroundbox>
 					<backgroundbox sprite="button_square_depth" paddingTop="0" paddingBottom="20">

@@ -27,6 +27,7 @@ typedef void(*OnDestroyWidgetFn)(struct UIWidget* pWidget);
 typedef void(*OnDebugPrintFn)(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn);
 typedef void* (*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
 
+typedef void(*OnBoundPropertyChangedFn)(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding);
 
 struct WidgetPadding
 {
@@ -111,6 +112,29 @@ struct LuaWidgetCallbacks
 
 // todo: make somehow glue this to the input system or change the input system to fit this 
 #define NUM_BUTTONS 3
+#define MAX_PROPERTY_NAME_LEN 32
+#define MAX_NUM_BINDINGS 16
+
+enum WidgetPropertyBindingType
+{
+	WBT_Float,
+	WBT_String,
+	WBT_Bool,
+};
+
+struct WidgetPropertyBinding
+{
+	enum WidgetPropertyBindingType type;
+	union
+	{
+		float flt;
+		char* str;
+		bool bl;
+	}data;
+	char name[MAX_PROPERTY_NAME_LEN + 1];
+	char boundPropertyName[MAX_PROPERTY_NAME_LEN + 1];
+};
+
 struct WidgetMouseInfo
 {
 	float x;
@@ -134,11 +158,14 @@ struct UIWidget
 	OnDestroyWidgetFn fnOnDestroy;
 	OnDebugPrintFn fnOnDebugPrint;
 	OutputWidgetVerticesFn fnOutputVertices;
+	OnBoundPropertyChangedFn fnOnBoundPropertyChanged;
 	float top;
 	float left;
 	WidgetDockPoint dockPoint;
 	struct WidgetPadding padding;
 	struct LuaWidgetCallbacks scriptCallbacks;
+	struct WidgetPropertyBinding bindings[MAX_NUM_BINDINGS];
+	size_t numBindings;
 };
 
 
