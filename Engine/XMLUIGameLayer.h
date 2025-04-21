@@ -28,6 +28,7 @@ typedef struct XMLUIData
 	hAtlas atlas;
 	VECTOR(struct WidgetVertex) pWidgetVertices;
 	HUIVertexBuffer hVertexBuffer;
+	int hViewModel; // reference to lua table
 }XMLUIData;
 
 

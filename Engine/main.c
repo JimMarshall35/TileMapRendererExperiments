@@ -7,6 +7,7 @@
 #include "ImageFileRegstry.h"
 #include "Atlas.h"
 #include "Widget.h"
+#include "Scripting.h"
 #include <string.h>
 
 #define SCR_WIDTH 640
@@ -147,11 +148,12 @@ int main(int argc, char** argv)
 
     gDrawContext = Dr_InitDrawContext();
     Dr_OnScreenDimsChange(&gDrawContext, SCR_WIDTH, SCR_HEIGHT);
-    In_InitInputContext();
+    gInputContext = In_InitInputContext();
     GF_InitGameFramework();
     IR_InitImageRegistry();
     At_Init();
     UI_Init();
+    Sc_InitScripting();
 
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
@@ -183,8 +185,9 @@ int main(int argc, char** argv)
         glfwSwapBuffers(window);
         GF_EndFrame(&gDrawContext, &gInputContext);
     }
-    IR_DestroyImageRegistry();
 
+    Sc_DeInitScripting();
+    IR_DestroyImageRegistry();
     GF_DestroyGameFramework();
 
     glfwTerminate();

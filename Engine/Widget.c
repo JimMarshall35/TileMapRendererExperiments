@@ -3,6 +3,7 @@
 #include <string.h>
 #include "xml.h"
 #include <stdlib.h>
+#include "Scripting.h"
 
 OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 
@@ -10,6 +11,11 @@ OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 
 #define WIDGET_POOL_BOUNDS_CHECK(handle, rVal) OBJ_POOL_BOUNDS_CHECK(handle, rVal, gWidgetPool)
 #define WIDGET_POOL_BOUNDS_CHECK(handle) OBJ_POOL_BOUNDS_CHECK(handle, gWidgetPool)
+
+static void MakeBlankScriptingCallbacks(struct LuaWidgetCallbacks* pCallbacks)
+{
+	memset(pCallbacks, 0, sizeof(struct LuaWidgetCallbacks));
+}
 
 HWidget UI_NewBlankWidget()
 {
@@ -21,6 +27,7 @@ HWidget UI_NewBlankWidget()
 	pWidget->hNext = NULL_HWIDGET;
 	pWidget->hPrev = NULL_HWIDGET;
 	pWidget->hParent = NULL_HWIDGET;
+	MakeBlankScriptingCallbacks(&pWidget->scriptCallbacks);
 	return widget;
 }
 
@@ -295,10 +302,70 @@ bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidge
 	return false;
 }
 
+static void ParseLuaCallbacks(struct xml_node* pInNode, struct UIWidget* outWidget)
+{
+	char attribNameBuf[256];
+	char attribValBuf[256];
+	int numAttribs = xml_node_attributes(pInNode);
+	for (int i = 0; i < numAttribs; i++)
+	{
+		struct xml_string* pName = xml_node_attribute_name(pInNode, i);
+		struct xml_string* pVal = xml_node_attribute_content(pInNode, i);
+		int namelen = xml_string_length(pName);
+		int vallen = xml_string_length(pVal);
+		xml_string_copy(pName, attribNameBuf, namelen);
+		xml_string_copy(pVal, attribValBuf, vallen);
+		attribNameBuf[namelen] = '\0';
+		attribValBuf[vallen] = '\0';
+
+		if (strcmp(attribNameBuf, "onMouseEnter") == 0)
+		{
+			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseEnter].bActive = true;
+			strcpy(
+				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseEnter].name,
+				attribValBuf
+			);
+		}
+		else if (strcmp(attribNameBuf, "onMouseLeave") == 0)
+		{
+			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseLeave].bActive = true;
+			strcpy(
+				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseLeave].name,
+				attribValBuf
+			);
+		}
+		else if (strcmp(attribNameBuf, "onMouseMove") == 0)
+		{
+			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseMove].bActive = true;
+			strcpy(
+				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseMove].name,
+				attribValBuf
+			);
+		}
+		else if (strcmp(attribNameBuf, "onMouseDown") == 0)
+		{
+			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseDown].bActive = true;
+			strcpy(
+				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseDown].name,
+				attribValBuf
+			);
+		}
+		else if (strcmp(attribNameBuf, "onMouseUp") == 0)
+		{
+			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseUp].bActive = true;
+			strcpy(
+				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseUp].name,
+				attribValBuf
+			);
+		}
+	}
+}
+
 void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget)
 {
 	UI_ParseWidgetPaddingAttributes(pInNode, &outWidget->padding);
 	UI_ParseWidgetDockPoint(pInNode, outWidget);
+	ParseLuaCallbacks(pInNode, outWidget);
 }
 
 static const char* GetDockingPointName(WidgetDockPoint dockingPoint)
@@ -357,3 +424,109 @@ void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pPare
 		pChild = UI_GetWidget(pChild->hNext);
 	}
 }
+
+void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTypes type, struct WidgetMouseInfo* pMouseInfo)
+{
+	if (!pWidget->scriptCallbacks.Callbacks[type].bActive)
+	{
+		return;
+	}
+	int numArguments = 0;
+	struct ScriptCallArgument arguments[8];
+
+	switch (type)
+	{
+	case LWC_OnMouseLeave:
+	case LWC_OnMouseEnter:
+	case LWC_OnMouseMove:
+	{
+		struct ScriptCallArgument* pX = &arguments[numArguments++];
+		struct ScriptCallArgument* pY = &arguments[numArguments++];
+		pX->type = SCA_number;
+		pX->val.number = pMouseInfo->x;
+		pY->type = SCA_number;
+		pY->val.number = pMouseInfo->y;
+	}
+		break;
+	case LWC_OnMouseDown:
+	{
+		struct ScriptCallArgument* pX = &arguments[numArguments++];
+		struct ScriptCallArgument* pY = &arguments[numArguments++];
+		struct ScriptCallArgument* pMouseButton = &arguments[numArguments++];
+
+		pX->type = SCA_number;
+		pX->val.number = pMouseInfo->x;
+		pY->type = SCA_number;
+		pY->val.number = pMouseInfo->y;
+		pMouseButton->type = SCA_number;
+		pMouseButton->val.number = pMouseInfo->buttonsDown[pMouseInfo->numButtonsDown - 1];
+	}
+		break;
+	case LWC_OnMouseUp:
+	{
+		struct ScriptCallArgument* pX = &arguments[numArguments++];
+		struct ScriptCallArgument* pY = &arguments[numArguments++];
+		struct ScriptCallArgument* pMouseButton = &arguments[numArguments++];
+
+		pX->type = SCA_number;
+		pX->val.number = pMouseInfo->x;
+		pY->type = SCA_number;
+		pY->val.number = pMouseInfo->y;
+		pMouseButton->type = SCA_number;
+		pMouseButton->val.number = pMouseInfo->buttonsUp[pMouseInfo->numButtonsUp - 1];
+	}
+		break;
+	}
+
+	Sc_CallVoidFuncInRegTableEntryTable(
+		pWidget->scriptCallbacks.viewmodelTable,
+		pWidget->scriptCallbacks.Callbacks[type].name,
+		&arguments[0], 
+		numArguments
+	);
+}
+
+void UI_GetWidgetSize(HWidget hWidget, float* pOutW, float* pOutH)
+{
+	WIDGET_POOL_BOUNDS_CHECK(hWidget);
+
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	*pOutW = pWidget->fnGetWidth(pWidget, NULL);
+	*pOutH = pWidget->fnGetHeight(pWidget, NULL);
+}
+
+void UI_GetWidgetPadding(HWidget hWidget, float* pOutPaddingTop, float* pOutPaddingBottom, float* pOutPaddingLeft, float* pOutPaddingRight)
+{
+	WIDGET_POOL_BOUNDS_CHECK(hWidget);
+
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	*pOutPaddingTop = pWidget->padding.paddingTop;
+	*pOutPaddingBottom = pWidget->padding.paddingBottom;
+	*pOutPaddingLeft = pWidget->padding.paddingLeft;
+	*pOutPaddingRight = pWidget->padding.paddingRight;
+}
+
+void UI_GetWidgetTopLeft(HWidget hWidget, float* pOutLeft, float* pOutTop)
+{
+	WIDGET_POOL_BOUNDS_CHECK(hWidget);
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	*pOutLeft = pWidget->left;
+	*pOutTop = pWidget->top;
+}	
+
+void UI_GetHitBox(GeomRect outRect, HWidget hWidget)
+{
+	float padTop, padBot, padLeft, padRight;
+	float top, left;
+	float widgth, height;
+	UI_GetWidgetPadding(hWidget, &padTop, &padBot, &padLeft, &padRight);
+	UI_GetWidgetTopLeft(hWidget, &left, &top);
+	UI_GetWidgetSize(hWidget, &widgth, &height);
+	widgth -= padLeft + padRight;
+	height -= padTop + padBot;
+	outRect[GR_TLX] = left + padLeft;
+	outRect[GR_TLY] = top + padTop;
+	outRect[GR_BRX] = outRect[GR_TLX] + widgth;
+	outRect[GR_BRY] = outRect[GR_TLY] + height;
+}
+

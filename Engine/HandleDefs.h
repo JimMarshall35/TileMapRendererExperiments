@@ -21,6 +21,12 @@ typedef i32 HUIVertexBuffer;
 
 typedef i32 HFont;
 
+typedef i32 HMouseAxisBinding;
+
+typedef i32 HMouseButtonBinding;
+
+typedef i32 HKeyboardButtonBinding;
+
 #define NULL_HANDLE -1
 
 

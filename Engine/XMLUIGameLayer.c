@@ -19,6 +19,9 @@
 #include "main.h"
 #include "TextWidget.h"
 #include "BackgroundBoxWidget.h"
+#include "Scripting.h"
+#include "Geometry.h"
+#include "AssertLib.h"
 
 struct NameConstructorPair
 {
@@ -87,9 +90,188 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 	dc->DrawUIVertexBuffer(pData->hVertexBuffer, size);
 }
 
+static HMouseAxisBinding gMouseX = NULL_HANDLE;
+static HMouseAxisBinding gMouseY = NULL_HANDLE;
+static HMouseButtonBinding gMouseBtnLeft = NULL_HANDLE;
+
+static void* BuildWidgetsHoverred(VECTOR(HWidget) outWidgets, HWidget hWidget, float mouseX, float mouseY)
+{
+	GeomRect hitbox;
+	UI_GetHitBox(hitbox, hWidget);
+	if (Ge_PointInAABB(mouseX, mouseY, hitbox))
+	{
+		outWidgets = VectorPush(outWidgets, &hWidget);
+		
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		HWidget hChild = pWidget->hFirstChild;
+		while (hChild != NULL_HWIDGET)
+		{
+			outWidgets = BuildWidgetsHoverred(outWidgets, hChild, mouseX, mouseY);
+			struct UIWidget* pChild = UI_GetWidget(hChild);
+			hChild = pChild->hNext;
+		}
+	}
+	return outWidgets;
+
+}
+
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 {
+	static VECTOR(HWidget) pWidgetsHovverred = NULL;
+	static VECTOR(HWidget) pWidgetsHovverredLastFrame = NULL;
+	static VECTOR(HWidget) pWidgetsEntered = NULL;
+	static VECTOR(HWidget) pWidgetsLeft = NULL;
+	static VECTOR(HWidget) pWidgetsRemained = NULL;
 
+	static bool bLastLeftClick = false;
+	static bool bThisLeftClick = false;
+
+	if (!pWidgetsHovverred)
+	{
+		pWidgetsHovverred = NEW_VECTOR(HWidget);
+	}
+	if (!pWidgetsHovverredLastFrame)
+	{
+		pWidgetsHovverredLastFrame = NEW_VECTOR(HWidget);
+	}
+	if (!pWidgetsEntered)
+	{
+		pWidgetsEntered = NEW_VECTOR(HWidget);
+	}
+	if (!pWidgetsLeft)
+	{
+		pWidgetsLeft = NEW_VECTOR(HWidget);
+	}
+	if (!pWidgetsRemained)
+	{
+		pWidgetsRemained = NEW_VECTOR(HWidget);
+	}
+
+	pWidgetsHovverredLastFrame = VectorClear(pWidgetsHovverredLastFrame);
+	for (int i = 0; i < VectorSize(pWidgetsHovverred); i++)
+	{
+		pWidgetsHovverredLastFrame = VectorPush(pWidgetsHovverredLastFrame, &pWidgetsHovverred[i]);
+	}
+	bLastLeftClick = bThisLeftClick;
+
+	pWidgetsHovverred = VectorClear(pWidgetsHovverred);
+	pWidgetsEntered = VectorClear(pWidgetsEntered);
+	pWidgetsLeft = VectorClear(pWidgetsLeft);
+	pWidgetsRemained = VectorClear(pWidgetsRemained);
+
+	XMLUIData* pUIData = pLayer->userData;
+	float w, h;
+
+	if (gMouseX == NULL_HANDLE)
+	{
+		gMouseX = In_FindMouseAxisMapping(ctx, "CursorPosX");
+	}
+	if (gMouseY == NULL_HANDLE)
+	{
+		gMouseY = In_FindMouseAxisMapping(ctx, "CursorPosY");
+	}
+	if (gMouseBtnLeft == NULL_HANDLE)
+	{
+		gMouseBtnLeft = In_FindMouseBtnMapping(ctx, "select");
+	}
+
+	bThisLeftClick = In_GetMouseButtonValue(ctx, gMouseBtnLeft);
+
+	vec2 mousePos = { In_GetMouseAxisValue(ctx, gMouseX), In_GetMouseAxisValue(ctx, gMouseY) };
+
+
+	pWidgetsHovverred = BuildWidgetsHoverred(pWidgetsHovverred, pUIData->rootWidget, mousePos[0], mousePos[1]);
+
+	// any widgets started to be hoverred?
+	for (int i = 0; i < VectorSize(pWidgetsHovverred); i++)
+	{
+		HWidget hHovvered = pWidgetsHovverred[i];
+		bool bWasHoverredLastFrame = false;
+		for (int j = 0; j < VectorSize(pWidgetsHovverredLastFrame); j++)
+		{
+			if (hHovvered == pWidgetsHovverredLastFrame[j])
+			{
+				bWasHoverredLastFrame = true;
+				break;
+			}
+		}
+		if (!bWasHoverredLastFrame)
+		{
+			pWidgetsEntered = VectorPush(pWidgetsEntered, &hHovvered);
+		}
+		else
+		{
+			pWidgetsRemained = VectorPush(pWidgetsRemained, &hHovvered);
+		}
+	}
+
+	// any widgets stopped being hovvered?
+	for (int i = 0; i < VectorSize(pWidgetsHovverredLastFrame); i++)
+	{
+		HWidget hHovvered = pWidgetsHovverredLastFrame[i];
+		bool bHoverredThisFrame = false;
+		for (int j = 0; j < VectorSize(pWidgetsHovverred); j++)
+		{
+			if (hHovvered == pWidgetsHovverred[j])
+			{
+				bHoverredThisFrame = true;
+				break;;
+			}
+		}
+		if (!bHoverredThisFrame)
+		{
+			pWidgetsLeft = VectorPush(pWidgetsLeft, &hHovvered);
+		}
+	}
+
+	struct WidgetMouseInfo info =
+	{
+		.x = mousePos[0],
+		.y = mousePos[1],
+		.numButtonsDown = 0,
+		.numButtonsUp = 0
+	};
+	
+	bool bSendLMouseDown = false;
+	bool bSendLMouseUp = false;
+	if (bThisLeftClick && !bLastLeftClick)
+	{
+		info.buttonsDown[info.numButtonsDown++] = 0;
+		bSendLMouseDown = true;
+	}
+	else if (!bThisLeftClick && bLastLeftClick)
+	{
+		info.buttonsUp[info.numButtonsUp++] = 0;
+		bSendLMouseUp = true;
+	}
+
+	for (int i = 0; i < VectorSize(pWidgetsEntered); i++)
+	{
+		HWidget hWidget = pWidgetsEntered[i];
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseEnter, &info);
+	}
+	for (int i = 0; i < VectorSize(pWidgetsLeft); i++)
+	{
+		HWidget hWidget = pWidgetsLeft[i];
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseLeave, &info);
+	}
+	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
+	{
+		HWidget hWidget = pWidgetsRemained[i];
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		if (bSendLMouseDown)
+		{
+			EASSERT(!bSendLMouseUp);
+			UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseDown, &info);
+		}
+		if (bSendLMouseUp)
+		{
+			EASSERT(!bSendLMouseDown);
+			UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseUp, &info);
+		}
+	}
 }
 
 static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC);
@@ -112,6 +294,10 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 	XMLUIData* pData = pLayer->userData;
 	DestoryVector(pData->pWidgetVertices);
 	drawContext->DestroyVertexBuffer(pData->hVertexBuffer);
+	if (pData->hViewModel)
+	{
+		Sc_DeleteTableInReg(pData->hViewModel);
+	}
 }
 
 void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
@@ -135,6 +321,7 @@ void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
 		HWidget childWidget = pCtor(widget, pChild, pUIData);
 
 		struct UIWidget* pWiddget = UI_GetWidget(childWidget);
+		pWiddget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;
 		UI_WidgetCommonInit(pChild, pWiddget);
 
 		UI_AddChild(widget, childWidget);
@@ -385,6 +572,60 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 	pUIData->atlas = At_EndAtlas(pDC);
 }
 
+static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
+{
+	bool rVal = false;
+	char attribNameArr[128];
+	char attribContentArr[128];
+	bool bVMFileSet = false;
+	bool bVMFunctionSet = false;
+	const char* pFilePath = NULL;
+	const char* pFnName = NULL;
+	for (int i = 0; i < xml_node_attributes(pScreenNode); i++)
+	{
+		struct xml_string* pName    = xml_node_attribute_name(pScreenNode, i);
+		struct xml_string* pContent = xml_node_attribute_content(pScreenNode, i);
+		int nameLen = xml_string_length(pName);
+		int contentLen = xml_string_length(pContent);
+		xml_string_copy(pName, attribNameArr, nameLen);
+		xml_string_copy(pContent, attribContentArr, contentLen);
+		attribNameArr[nameLen] = '\0';
+		attribContentArr[contentLen] = '\0';
+		if (strcmp(attribNameArr, "viewmodelFile") == 0)
+		{
+			bVMFileSet = true;
+			pFilePath = malloc(strlen(attribContentArr) + 1);
+			strcpy(pFilePath, attribContentArr);
+
+		}
+		else if (strcmp(attribNameArr, "viewmodelFunction") == 0)
+		{
+			bVMFunctionSet = true;
+			pFnName = malloc(strlen(attribContentArr) + 1);
+			strcpy(pFnName, attribContentArr);
+		}
+	}
+	if (bVMFileSet && bVMFunctionSet)
+	{
+		Sc_OpenFile(pFilePath);
+		pUIData->hViewModel = Sc_CallGlobalFuncReturningTableAndStoreResultInReg(pFnName, NULL, 0);
+	}
+	else
+	{
+		printf("TryLoadViewModel, either file or function (or both) not set. file: %i function name: %i\n", bVMFileSet, bVMFunctionSet);
+	}
+	if (pFilePath)
+	{
+		free(pFilePath);
+	}
+	if (pFnName)
+	{
+		free(pFnName);
+	}
+
+	return rVal;
+}
+
 static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 {
 	assert(!pUIData->bLoaded);
@@ -393,7 +634,8 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 	FILE* fp = fopen(pUIData->xmlFilePath, "r");
 	struct xml_document* pXMLDoc = xml_open_document(fp);
 	
-	char nodeNameArr[256];
+	char nodeNameArr[128];
+
 	if (pXMLDoc)
 	{
 		struct xml_node* root = xml_document_root(pXMLDoc);
@@ -424,6 +666,7 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		else if (strcmp(nodeNameArr, "screen") == 0)
 		{
 			bDoneScreen = true;
+			TryLoadViewModel(pUIData, child0);
 			AddNodeChildren(pUIData->rootWidget, child0, pUIData);
 		}
 
@@ -437,6 +680,7 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		else if (strcmp(nodeNameArr, "screen") == 0 && !bDoneScreen)
 		{
 			bDoneScreen = true;
+			TryLoadViewModel(pUIData, child1);
 			AddNodeChildren(pUIData->rootWidget, child1, pUIData);
 		}
 		if (!bDoneAtlas || !bDoneScreen)
@@ -446,6 +690,8 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		xml_document_free(pXMLDoc, true);
 		//pUIData->rootWidget
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->rootWidget);
+		pWidget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;
+
 		pWidget->fnOnDebugPrint(0, pWidget, &printf);
 
 		pUIData->hVertexBuffer = pDC->NewUIVertexBuffer(2048);

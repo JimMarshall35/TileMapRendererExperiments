@@ -9,7 +9,39 @@
 
 static int gJoystick = -1;
 
+HMouseButtonBinding In_FindMouseBtnMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->buttonMappings.MouseButtonMappings.size; i++)
+	{
+		if (strcmp(context->buttonMappings.MouseButtonMappings.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
 
+HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->axisMappings.Mouse.size; i++)
+	{
+		if (strcmp(context->axisMappings.Mouse.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+float In_GetMouseAxisValue(InputContext* context, HMouseAxisBinding hBinding)
+{
+	return (float)context->axisMappings.Mouse.arr[hBinding].data.axisMapping.fCurrent;
+}
+
+bool In_GetMouseButtonValue(InputContext* context, HMouseButtonBinding hBinding)
+{
+	return context->buttonMappings.MouseButtonMappings.arr[hBinding].data.ButtonMapping.bCurrent;
+}
 
 void In_RecieveKeyboardKey(InputContext* context, int key, int scancode, int action, int mods)
 {
@@ -124,6 +156,7 @@ static void AddChildButtonStructs(cJSON* parent, InputMappingArray* outMappings,
 		strcpy(mapping.name, name);
 		mapping.type = Button;
 		mapping.data.ButtonMapping.type = btnSubType;
+		mapping.data.ButtonMapping.bCurrent = false;
 		callback(&mapping, val);
 		outMappings->arr[outMappings->size++] = mapping;
 		parent = parent->next;
@@ -306,6 +339,12 @@ InputContext In_InitInputContext()
 	ERROR(mouseScroll, "json child 'Axes.MouseScroll' not found.");
 	parent = mouseScroll->child;
 	AddScrollAxisMappingsStructs(parent, &ctx);
+
+	// HACK BEGIN - to be done some other better way in future
+	ctx.axisMappings.Mouse.ActiveMask |= 1;
+	ctx.axisMappings.Mouse.ActiveMask |= 2;
+	ctx.buttonMappings.MouseButtonMappings.ActiveMask |= 3;
+	// HACK END
 
 	cJSON_Delete(json);
 	free(data);

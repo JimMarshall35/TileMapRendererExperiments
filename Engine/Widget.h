@@ -5,6 +5,7 @@
 #include "HandleDefs.h"
 #include <stdbool.h>
 #include "DynArray.h"
+#include "Geometry.h"
 
 struct UIWidget;
 
@@ -83,6 +84,43 @@ struct WidgetDim
 };
 
 
+
+#define LUA_CALLBACK_MAX_NAME_LEN 64
+struct LuaWidgetCallback
+{
+	char name[LUA_CALLBACK_MAX_NAME_LEN + 1];
+	size_t nameLen;
+	bool bActive;
+};
+
+enum LuaWidgetCallbackTypes
+{
+	LWC_OnMouseEnter,
+	LWC_OnMouseLeave,
+	LWC_OnMouseMove,
+	LWC_OnMouseDown,
+	LWC_OnMouseUp,
+	LWC_NUM
+};
+
+struct LuaWidgetCallbacks
+{
+	int viewmodelTable;
+	struct LuaWidgetCallback Callbacks[LWC_NUM];
+};
+
+// todo: make somehow glue this to the input system or change the input system to fit this 
+#define NUM_BUTTONS 3
+struct WidgetMouseInfo
+{
+	float x;
+	float y;
+	int buttonsDown[NUM_BUTTONS];
+	int numButtonsDown;
+	int buttonsUp[NUM_BUTTONS];
+	int numButtonsUp;
+};
+
 struct UIWidget
 {
 	HWidget hNext;
@@ -100,6 +138,7 @@ struct UIWidget
 	float left;
 	WidgetDockPoint dockPoint;
 	struct WidgetPadding padding;
+	struct LuaWidgetCallbacks scriptCallbacks;
 };
 
 
@@ -138,5 +177,15 @@ void UI_DebugPrintCommonWidgetInfo(const struct UIWidget* inWidget, PrintfFn pPr
 void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts);
 
 void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent);
+
+void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTypes type, struct WidgetMouseInfo* pMouseInfo);
+
+void UI_GetWidgetSize(HWidget hWidget, float* pOutW, float* pOutH);
+
+void UI_GetWidgetTopLeft(HWidget hWidget, float* pOutLeft, float* pOutTop);
+
+void UI_GetWidgetPadding(HWidget hWidget, float* pOutPaddingTop, float* pOutPaddingBottom, float* pOutPaddingLeft, float* pOutPaddingRight);
+
+void UI_GetHitBox(GeomRect outRect, HWidget hWidget);
 
 #endif

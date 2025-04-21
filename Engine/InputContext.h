@@ -3,6 +3,7 @@
 
 #include "DynArray.h"
 #include <stdbool.h>
+#include "HandleDefs.h"
 
 typedef enum
 {
@@ -129,5 +130,10 @@ void In_RecieveScroll(InputContext* context, double xoffset, double yoffset);
 void In_SetControllerPresent(int controllerNo);
 void In_Poll();
 InputContext In_InitInputContext();
+
+HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* name);
+HMouseButtonBinding In_FindMouseBtnMapping(InputContext* context, const char* name);
+float In_GetMouseAxisValue(InputContext* context, HMouseAxisBinding hBinding);
+bool In_GetMouseButtonValue(InputContext* context, HMouseButtonBinding hBinding);
 
 #endif // !INPUTCONTEXT_H

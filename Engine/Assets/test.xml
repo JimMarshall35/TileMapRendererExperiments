@@ -15,13 +15,13 @@
 			<size type="pts" val="32"/>
 		</font>
 	</atlas>
-	<screen>
+	<screen viewmodelFile="Assets\test.lua" viewmodelFunction="GetTestViewModel">
 		<stackpanel dockPoint="centre" orientation="vertical">
 			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
 				<stackpanel dockPoint="centre" orientation="vertical">
 					<text content="WARFARMER" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
 					<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
-					<backgroundbox sprite="button_square_depth" paddingBottom="20">
+					<backgroundbox sprite="button_square_depth" paddingBottom="20" onMouseDown="OnNewGameMouseDown">
 						<text content="New" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
 					</backgroundbox>
 					<backgroundbox sprite="button_square_depth" paddingTop="0" paddingBottom="20">

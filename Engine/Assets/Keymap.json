@@ -1,8 +1,8 @@
 {
 	"Buttons" : {
 		"Mouse" : [
-			{ "select" : 1 }, 
-			{ "altSelect" : 2 }
+			{ "select" : 0 }, 
+			{ "altSelect" : 1 }
 		],
 		"Keyboard" : [
 			{ "moveUp" : 87 }, 

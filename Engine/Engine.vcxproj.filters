@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Render">
       <UniqueIdentifier>{3511c215-2b72-4ea9-badd-309c65ec1add}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scripting">
+      <UniqueIdentifier>{7b730810-a300-459a-a97b-5ec073a1df3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scripting">
+      <UniqueIdentifier>{89e06005-f161-4313-bd4d-7acbc08aac10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -101,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="WidgetVertexOutputHelpers.c">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +199,12 @@
     </ClInclude>
     <ClInclude Include="WidgetVertexOutputHelpers.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Header Files\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
