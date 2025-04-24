@@ -41,6 +41,11 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return NULL;
 }
 
+static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
+{
+
+}
+
 static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -54,7 +59,9 @@ static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, struct xml_node* pXMLN
 	pWidget->fnOnDestroy = &OnDestroy;
 	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
+	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct <<WidgetDataStructName>>));
+	
 	memset(pWidget->pImplementationData, 0, sizeof(struct <<WidgetDataStructName>>));
 }
 

@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Scripting">
       <UniqueIdentifier>{89e06005-f161-4313-bd4d-7acbc08aac10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Render">
+      <UniqueIdentifier>{ed6e0b13-7018-4362-b35e-91531a60fa87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameLayer">
+      <UniqueIdentifier>{fca3f96b-9c01-4047-99d2-44c708af5a02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -57,9 +63,6 @@
     <ClCompile Include="InputContext.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DrawContext.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cJSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,9 +73,6 @@
       <Filter>Source Files\lib</Filter>
     </ClCompile>
     <ClCompile Include="Atlas.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xml.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectPool.c">
@@ -96,9 +96,6 @@
     <ClCompile Include="CtorDtor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedPtr.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TextWidget.c">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -108,11 +105,23 @@
     <ClCompile Include="WidgetVertexOutputHelpers.c">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Scripting.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Geometry.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawContext.c">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.c">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedPtr.c">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="xml.c">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="TextButtonWidget.c">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,9 +156,6 @@
       <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="Atlas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectPool.h">
@@ -205,6 +211,15 @@
     </ClInclude>
     <ClInclude Include="Geometry.h">
       <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="xml.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLayer.h">
+      <Filter>Header Files\GameLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="TextButtonWidget.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

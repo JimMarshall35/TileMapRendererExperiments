@@ -201,6 +201,12 @@ void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void
 	lua_settop(gL, 0);
 }
 
+int Sc_Int()
+{
+	EASSERT(lua_isinteger(gL, -1), -1);
+	return lua_tointeger(gL, -1);
+}
+
 size_t Sc_StackTopStringLen()
 {
 	EASSERT(lua_isstring(gL, -1));

@@ -6,7 +6,6 @@ function GetTestViewModel()
 		
 		-- a one way binding property called NewButtonBackgroundSprite
 		Get_NewButtonBackgroundSprite = function(self)
-			print("Get_NewButtonBackgroundSprite")
 			if self.newButtonPressed then 
 				return "button_square" 
 			else 

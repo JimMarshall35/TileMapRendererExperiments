@@ -156,6 +156,7 @@
     <ClCompile Include="SharedPtr.c" />
     <ClCompile Include="StackPanelWidget.c" />
     <ClCompile Include="StaticWidget.c" />
+    <ClCompile Include="TextButtonWidget.c" />
     <ClCompile Include="TextWidget.c" />
     <ClCompile Include="Widget.c" />
     <ClCompile Include="WidgetVertexOutputHelpers.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="DynArray.h" />
     <ClInclude Include="FileHelpers.h" />
     <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="GameLayer.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="HandleDefs.h" />
     <ClInclude Include="ImageFileRegstry.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize.h" />
     <ClInclude Include="stb\stb_image_write.h" />
+    <ClInclude Include="TextButtonWidget.h" />
     <ClInclude Include="TextWidget.h" />
     <ClInclude Include="Widget.h" />
     <ClInclude Include="WidgetVertexOutputHelpers.h" />

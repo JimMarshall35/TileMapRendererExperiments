@@ -4,6 +4,7 @@
 #include "xml.h"
 #include <stdlib.h>
 #include "Scripting.h"
+#include "AssertLib.h"
 
 OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 
@@ -47,7 +48,7 @@ size_t UI_CountWidgetChildrenPtr(struct UIWidget* pWidget)
 
 size_t UI_CountWidgetChildren(HWidget hWidget)
 {
-	WIDGET_POOL_BOUNDS_CHECK(0, hWidget);
+	WIDGET_POOL_BOUNDS_CHECK(hWidget, 0);
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	return UI_CountWidgetChildrenPtr(pWidget);
 }
@@ -321,41 +322,41 @@ static void ParseLuaCallbacks(struct xml_node* pInNode, struct UIWidget* outWidg
 
 		if (strcmp(attribNameBuf, "onMouseEnter") == 0)
 		{
-			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseEnter].bActive = true;
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].bActive = true;
 			strcpy(
-				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseEnter].name,
+				outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].name,
 				attribValBuf
 			);
 		}
 		else if (strcmp(attribNameBuf, "onMouseLeave") == 0)
 		{
-			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseLeave].bActive = true;
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].bActive = true;
 			strcpy(
-				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseLeave].name,
+				outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].name,
 				attribValBuf
 			);
 		}
 		else if (strcmp(attribNameBuf, "onMouseMove") == 0)
 		{
-			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseMove].bActive = true;
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].bActive = true;
 			strcpy(
-				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseMove].name,
+				outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].name,
 				attribValBuf
 			);
 		}
 		else if (strcmp(attribNameBuf, "onMouseDown") == 0)
 		{
-			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseDown].bActive = true;
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].bActive = true;
 			strcpy(
-				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseDown].name,
+				outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].name,
 				attribValBuf
 			);
 		}
 		else if (strcmp(attribNameBuf, "onMouseUp") == 0)
 		{
-			outWidget->scriptCallbacks.Callbacks[LWC_OnMouseUp].bActive = true;
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].bActive = true;
 			strcpy(
-				outWidget->scriptCallbacks.Callbacks[LWC_OnMouseUp].name,
+				outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].name,
 				attribValBuf
 			);
 		}
@@ -426,8 +427,24 @@ void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pPare
 	}
 }
 
-void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTypes type, struct WidgetMouseInfo* pMouseInfo)
+void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum WidgetCallbackTypes type, struct WidgetMouseInfo* pMouseInfo)
 {
+	if (pWidget->cCallbacks.Callbacks[type].callback.bActive)
+	{
+		switch (type)
+		{
+		case WC_OnMouseLeave:
+		case WC_OnMouseEnter:
+		case WC_OnMouseMove:
+			pWidget->cCallbacks.Callbacks[type].callback.mousePosFn(pWidget, pMouseInfo->x, pMouseInfo->y);
+			break;
+		case WC_OnMouseDown:
+		case WC_OnMouseUp:
+			pWidget->cCallbacks.Callbacks[type].callback.mouseBtnFn(pWidget, pMouseInfo->x, pMouseInfo->y, pMouseInfo->button);
+			break;
+		
+		}
+	}
 	if (!pWidget->scriptCallbacks.Callbacks[type].bActive)
 	{
 		return;
@@ -437,9 +454,9 @@ void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTyp
 
 	switch (type)
 	{
-	case LWC_OnMouseLeave:
-	case LWC_OnMouseEnter:
-	case LWC_OnMouseMove:
+	case WC_OnMouseLeave:
+	case WC_OnMouseEnter:
+	case WC_OnMouseMove:
 	{
 		struct ScriptCallArgument* pX = &arguments[numArguments++];
 		struct ScriptCallArgument* pY = &arguments[numArguments++];
@@ -449,7 +466,8 @@ void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTyp
 		pY->val.number = pMouseInfo->y;
 	}
 		break;
-	case LWC_OnMouseDown:
+	case WC_OnMouseDown:
+	case WC_OnMouseUp:
 	{
 		struct ScriptCallArgument* pX = &arguments[numArguments++];
 		struct ScriptCallArgument* pY = &arguments[numArguments++];
@@ -460,21 +478,7 @@ void UI_SendWidgetMouseEvent(struct UIWidget* pWidget, enum LuaWidgetCallbackTyp
 		pY->type = SCA_number;
 		pY->val.number = pMouseInfo->y;
 		pMouseButton->type = SCA_number;
-		pMouseButton->val.number = pMouseInfo->buttonsDown[pMouseInfo->numButtonsDown - 1];
-	}
-		break;
-	case LWC_OnMouseUp:
-	{
-		struct ScriptCallArgument* pX = &arguments[numArguments++];
-		struct ScriptCallArgument* pY = &arguments[numArguments++];
-		struct ScriptCallArgument* pMouseButton = &arguments[numArguments++];
-
-		pX->type = SCA_number;
-		pX->val.number = pMouseInfo->x;
-		pY->type = SCA_number;
-		pY->val.number = pMouseInfo->y;
-		pMouseButton->type = SCA_number;
-		pMouseButton->val.number = pMouseInfo->buttonsUp[pMouseInfo->numButtonsUp - 1];
+		pMouseButton->val.number = pMouseInfo->button;
 	}
 		break;
 	}
@@ -532,3 +536,77 @@ void UI_GetHitBox(GeomRect outRect, HWidget hWidget)
 	outRect[GR_BRY] = outRect[GR_TLY] + height;
 }
 
+bool UI_IsAttributeStringABindingExpression(const char* attributeValue)
+{
+	return attributeValue[0] == '{' && attributeValue[strlen(attributeValue) - 1] == '}';
+}
+
+
+char* UI_MakeBindingGetterFunctionName(const char* inBindingName)
+{
+	char* fnName = malloc(strlen(inBindingName) + 1 + 4);
+	char* writePtr = fnName;
+	*writePtr++ = 'G';
+	*writePtr++ = 'e';
+	*writePtr++ = 't';
+	*writePtr++ = '_';
+	strcpy(writePtr, inBindingName);
+	return fnName;
+}
+
+static char* PopulateBinding(struct WidgetPropertyBinding* pBinding, char* inBindingExpression, char* inBoundPropertyName)
+{
+	inBindingExpression[strlen(inBindingExpression) - 1] = '\0';
+	inBindingExpression++;
+	strcpy(pBinding->name, inBindingExpression);
+	strcpy(pBinding->boundPropertyName, inBoundPropertyName);
+	return inBindingExpression;
+}
+
+void UI_AddStringPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, char** pOutData, int viewmodelTableIndex)
+{
+	if (pWidget->numBindings >= MAX_NUM_BINDINGS)
+	{
+		printf("MAX_NUM_BINDINGS exceeded\n");
+		EASSERT(false);
+		return;
+	}
+	struct WidgetPropertyBinding* pBinding = &pWidget->bindings[pWidget->numBindings++];
+	inBindingExpression = PopulateBinding(pBinding, inBindingExpression, inBoundPropertyName);
+
+	pBinding->type = WBT_String;
+	pBinding->data.str = NULL;
+	char* fnName = UI_MakeBindingGetterFunctionName(inBindingExpression);
+
+	Sc_CallFuncInRegTableEntryTable(viewmodelTableIndex, fnName, NULL, 0, 1);
+	size_t strLen =  Sc_StackTopStringLen();
+	*pOutData = malloc(strLen + 1);
+	Sc_StackTopStrCopy(*pOutData);
+	Sc_ResetStack();
+	free(fnName);
+}
+
+void UI_AddIntPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, int* pOutData, int viewmodelTableIndex)
+{
+	if (pWidget->numBindings >= MAX_NUM_BINDINGS)
+	{
+		printf("MAX_NUM_BINDINGS exceeded\n");
+		EASSERT(false);
+		return;
+	}
+	struct WidgetPropertyBinding* pBinding = &pWidget->bindings[pWidget->numBindings++];
+	inBindingExpression = PopulateBinding(pBinding, inBindingExpression, inBoundPropertyName);
+
+	pBinding->type = WBT_Int;
+	pBinding->data.str = NULL;
+	char* fnName = UI_MakeBindingGetterFunctionName(inBindingExpression);
+
+	Sc_CallFuncInRegTableEntryTable(viewmodelTableIndex, fnName, NULL, 0, 1);
+	int i = Sc_Int();
+	Sc_ResetStack();
+	*pOutData = i;
+}
+
+void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, int* pOutData, int viewmodelTableIndex)
+{
+}

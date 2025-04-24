@@ -35,8 +35,11 @@ const char* uiFrag =
 "void main()\n"
 "{\n"
 	"FragColor = texture(ourTexture, UV) * Colour;\n"
-"}\n"
-;
+"}\n";
+//
+//const char* tilemapVert = 
+//"#version 330 core\n"
+
 
 struct UIVertexBuffer
 {

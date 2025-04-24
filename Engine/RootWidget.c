@@ -106,6 +106,7 @@ static void DebugPrintWidget(int indentLvl, struct UIWidget* pWidget, PrintfFn p
 
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
+	//printf("pOutVerts: SIZE: %i CAPACITY: %i\n\n", VectorData_DEBUG(pOutVerts)->size, VectorData_DEBUG(pOutVerts)->capacity);
 	return UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 }
 

@@ -228,20 +228,19 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	{
 		.x = mousePos[0],
 		.y = mousePos[1],
-		.numButtonsDown = 0,
-		.numButtonsUp = 0
+		.button = 0
 	};
 	
 	bool bSendLMouseDown = false;
 	bool bSendLMouseUp = false;
 	if (bThisLeftClick && !bLastLeftClick)
 	{
-		info.buttonsDown[info.numButtonsDown++] = 0;
+		info.button = 0;
 		bSendLMouseDown = true;
 	}
 	else if (!bThisLeftClick && bLastLeftClick)
 	{
-		info.buttonsUp[info.numButtonsUp++] = 0;
+		info.button = 0;
 		bSendLMouseUp = true;
 	}
 
@@ -249,13 +248,13 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	{
 		HWidget hWidget = pWidgetsEntered[i];
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
-		UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseEnter, &info);
+		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseEnter, &info);
 	}
 	for (int i = 0; i < VectorSize(pWidgetsLeft); i++)
 	{
 		HWidget hWidget = pWidgetsLeft[i];
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
-		UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseLeave, &info);
+		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseLeave, &info);
 	}
 	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
 	{
@@ -264,12 +263,12 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		if (bSendLMouseDown)
 		{
 			EASSERT(!bSendLMouseUp);
-			UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseDown, &info);
+			UI_SendWidgetMouseEvent(pWidget, WC_OnMouseDown, &info);
 		}
 		if (bSendLMouseUp)
 		{
 			EASSERT(!bSendLMouseDown);
-			UI_SendWidgetMouseEvent(pWidget, LWC_OnMouseUp, &info);
+			UI_SendWidgetMouseEvent(pWidget, WC_OnMouseUp, &info);
 		}
 	}
 }

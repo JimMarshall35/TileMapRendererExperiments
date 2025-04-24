@@ -8,13 +8,6 @@
 #include <string.h>
 #include "WidgetVertexOutputHelpers.h"
 
-struct TextWidgetData
-{
-	char* content;
-	HFont font;
-	hAtlas atlas;
-	float r, g, b, a;
-};
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
@@ -125,8 +118,57 @@ static void ParseColourAttribute(char* inText, struct TextWidgetData* pOutWidget
 	}
 }
 
+void CreateTextWidgetData(struct TextWidgetData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+{
+	pData->atlas = pUILayerData->atlas;
+	char attribName[128];
+	char attribContent[256];
+	memset(attribName, 0, 128);
+
+	struct xml_string* pString = xml_node_content(pXMLNode);
+	int l = xml_string_length(pString);
+	pData->content = malloc(l + 1);
+	xml_string_copy(pString, pData->content, l);
+	pData->content[l] = '\0';
+
+	bool bFontSet = false;
+	for (int i = 0; i < xml_node_attributes(pXMLNode); i++)
+	{
+		struct xml_string* pName = xml_node_attribute_name(pXMLNode, i);
+		int nameLen = xml_string_length(pName);
+		xml_string_copy(pName, attribName, nameLen);
+		attribName[nameLen] = '\0';
+
+		struct xml_string* pContent = xml_node_attribute_content(pXMLNode, i);
+		int contentLen = xml_string_length(pContent);
+		xml_string_copy(pContent, attribContent, contentLen);
+		attribContent[contentLen] = '\0';
+
+		if (strcmp(attribName, "font") == 0)
+		{
+			HFont font = Fo_FindFont(pUILayerData->atlas, attribContent);
+			if (font == NULL_HANDLE)
+			{
+				printf("font '%s' could not be found\n", attribContent);
+			}
+			pData->font = font;
+			bFontSet = true;
+		}
+		else if (strcmp(attribName, "colour") == 0)
+		{
+			ParseColourAttribute(attribContent, pData);
+		}
+	}
+	if (!bFontSet)
+	{
+		printf("invalid text widget node!\n");
+	}
+}
+
 static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
+	
+
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
 	pWidget->hNext = -1;
@@ -143,50 +185,8 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode,
 	memset(pWidget->pImplementationData, 9, sizeof(struct TextWidgetData));
 
 	struct TextWidgetData* pData = pWidget->pImplementationData;
-	pData->atlas = pUILayerData->atlas;
-	char attribName[128];
-	char attribContent[256];
-	memset(attribName, 0, 128);
 
-	bool bContentSet = false;
-	bool bFontSet = false;
-	for (int i = 0; i < xml_node_attributes(pXMLNode); i++)
-	{
-		struct xml_string* pName = xml_node_attribute_name(pXMLNode, i);
-		int nameLen = xml_string_length(pName);
-		xml_string_copy(pName, attribName, nameLen);
-		attribName[nameLen] = '\0';
-		
-		struct xml_string* pContent = xml_node_attribute_content(pXMLNode, i);
-		int contentLen = xml_string_length(pContent);
-		xml_string_copy(pContent, attribContent, contentLen);
-		attribContent[contentLen] = '\0';
-		
-		if (strcmp(attribName, "content") == 0)
-		{
-			pData->content = malloc(strlen(attribName + 1));
-			strcpy(pData->content, attribContent);
-			bContentSet = true;
-		}
-		else if (strcmp(attribName, "font") == 0)
-		{
-			HFont font = Fo_FindFont(pUILayerData->atlas, attribContent);
-			if (font == NULL_HANDLE)
-			{
-				printf("font '%s' could not be found\n", attribContent);
-			}
-			pData->font = font;
-			bFontSet = true;
-		}
-		else if (strcmp(attribName, "colour") == 0)
-		{
-			ParseColourAttribute(attribContent, pData);
-		}
-	}
-	if (!bFontSet || !bContentSet)
-	{
-		printf("invalid text widget node!\n");
-	}
+	CreateTextWidgetData(pData, pXMLNode, pUILayerData);
 
 }
 

@@ -58,4 +58,6 @@ void Sc_ResetStack();
 /// <param name="index"> delete a table stored in the lua registry </param>
 void Sc_DeleteTableInReg(int index);
 
+int Sc_Int();
+
 #endif

@@ -14,13 +14,19 @@
 		<stackpanel dockPoint="centre" orientation="vertical">
 			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
 				<stackpanel dockPoint="centre" orientation="vertical">
-					<text content="WARFARMER" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
+					<text font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
+						WARFARMER
+					</text>
 					<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
 					<backgroundbox sprite="{NewButtonBackgroundSprite}" paddingBottom="20" onMouseDown="OnNewGameMouseDown" onMouseLeave="OnNewGameMouseLeave" onMouseUp="OnNewGameMouseUp">
-						<text content="New" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
+						<text font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
+							New
+						</text>
 					</backgroundbox>
 					<backgroundbox sprite="button_square_depth" paddingTop="0" paddingBottom="20">
-						<text content="Load" font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255"></text>
+						<text font="32Kenney" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
+							Load
+						</text>
 					</backgroundbox>
 				</stackpanel>
 			</backgroundbox>
