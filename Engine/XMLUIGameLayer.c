@@ -22,6 +22,7 @@
 #include "Scripting.h"
 #include "Geometry.h"
 #include "AssertLib.h"
+#include "TextButtonWidget.h"
 
 struct NameConstructorPair
 {
@@ -34,7 +35,8 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"stackpanel",    &StackPanelWidgetNew},
 	{"static",        &StaticWidgetNew},
 	{"text",          &TextWidgetNew},
-	{"backgroundbox", &BackgroundBoxWidgetNew}
+	{"backgroundbox", &BackgroundBoxWidgetNew},
+	{"textButton",    &TextButtonWidgetNew}
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)

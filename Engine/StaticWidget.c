@@ -80,8 +80,8 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 
 	struct WidgetQuad quad;
 	vec2 translate = {
-		pWidget->left,
-		pWidget->top
+		pWidget->left + pWidget->padding.paddingLeft,
+		pWidget->top + pWidget->padding.paddingTop
 	};
 	PopulateWidgetQuadWholeSprite(&quad, pSprite);
 	TranslateWidgetQuad(translate, &quad);

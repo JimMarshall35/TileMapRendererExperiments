@@ -54,46 +54,111 @@ static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn print
 {
 }
 
-static void* OnOutputVerts_3StripsHorizontal(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* OnOutputVerts_3StripsHorizontal(
+	struct BackgroundBoxWidgetData* pBBoxData,
+	VECTOR(struct WidgetVertex) pOutVerts,
+	float totalWidth,
+	float totalHeight,
+	const struct WidgetPadding* padding,
+	float left, float top
+)
 {
-	return pOutVerts;
-}
-
-static void* OnOutputVerts_3StripsVertical(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
-{
-	return pOutVerts;
-}
-
-
-
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
-{
-	struct BackgroundBoxWidgetData* pBBoxData = pWidget->pImplementationData;
 	AtlasSprite* pAtlasSprite = At_GetSprite(pBBoxData->sprite, pBBoxData->atlas);
 	const struct WidgetScale* pScale = &pBBoxData->scale;
-	float widgetWidth = GetWidth(pWidget, NULL) - pWidget->padding.paddingLeft - pWidget->padding.paddingRight;
-	float widgetHeight = GetHeight(pWidget, NULL) - pWidget->padding.paddingTop - pWidget->padding.paddingBottom;
+	struct WidgetQuad quads[3]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
+	float height = (float)pAtlasSprite->heightPx;
+	float widthOver3 = (float)pAtlasSprite->widthPx / 3.0f;
+	float widgetWidth = totalWidth - padding->paddingLeft - padding->paddingRight;//GetWidth(pWidget, NULL) - pWidget->padding.paddingLeft - pWidget->padding.paddingRight;
+	float widgetHeight = totalHeight - padding->paddingTop - padding->paddingBottom;
+
+	vec2 tl, br;
+	tl[0] = 0.0f;
+	tl[1] = 0.0f;
+	br[0] = widthOver3;
+	br[1] = height;
+	for (int row = 0; row < 3; row++)
+	{
+		PopulateWidgetQuad(&quads[row], pAtlasSprite, tl, br);
+		tl[0] += widthOver3;
+		br[0] += widthOver3;
+	}
+
+	vec2 translation = { left + padding->paddingLeft, top + padding->paddingTop };
+	for (int i = 0; i < 3; i++)
+	{
+		TranslateWidgetQuad(translation, &quads[i]);
+	}
+
+	vec2 size = {
+		widthOver3 * pScale->scaleX,
+		height * pScale->scaleY,
+
+	};
+	SizeWidgetQuad(size, &quads[0]);
+	SizeWidgetQuad(size, &quads[1]);
+	SizeWidgetQuad(size, &quads[2]);
+
+	quads[1].v[VL_TR].x += widgetWidth - size[0];
+	quads[1].v[VL_BR].x += widgetWidth - size[0];
+	quads[1].v[VL_TL].x += size[0];
+	quads[1].v[VL_BL].x += size[0];
+
+	translation[1] = 0.0f;
+	translation[0] = widgetWidth - size[0];
+	TranslateWidgetQuad(translation, &quads[2]);
+	for (int i = 0; i < 3; i++)
+	{
+		pOutVerts = OutputWidgetQuad(pOutVerts, &quads[i]);
+	}
+	return pOutVerts;
+}
+
+void* OnOutputVerts_3StripsVertical(
+	struct BackgroundBoxWidgetData* pBBoxData,
+	VECTOR(struct WidgetVertex) pOutVerts,
+	float totalWidth,
+	float totalHeight,
+	const struct WidgetPadding* padding,
+	float left, float top
+)
+{
+	return pOutVerts;
+}
+
+void* OutputBackgroundBoxVerts(
+	struct BackgroundBoxWidgetData* pBBoxData,
+	VECTOR(struct WidgetVertex) pOutVerts,
+	float totalWidth,
+	float totalHeight,
+	const struct WidgetPadding* padding,
+	float left, float top
+)
+{
+	AtlasSprite* pAtlasSprite = At_GetSprite(pBBoxData->sprite, pBBoxData->atlas);
+	const struct WidgetScale* pScale = &pBBoxData->scale;
+	float widgetWidth = totalWidth - padding->paddingLeft - padding->paddingRight;//GetWidth(pWidget, NULL) - pWidget->padding.paddingLeft - pWidget->padding.paddingRight;
+	float widgetHeight = totalHeight - padding->paddingTop - padding->paddingBottom;
 
 	if (widgetWidth <= pAtlasSprite->widthPx * pBBoxData->scale.scaleX && widgetHeight > pAtlasSprite->heightPx * pBBoxData->scale.scaleY)
 	{
-		return OnOutputVerts_3StripsHorizontal(pWidget, pOutVerts);
+		return OnOutputVerts_3StripsVertical(pBBoxData, pOutVerts, totalWidth, totalHeight, padding, left, top);
 	}
 	else if (widgetWidth > pAtlasSprite->widthPx * pBBoxData->scale.scaleX && widgetHeight <= pAtlasSprite->heightPx * pBBoxData->scale.scaleY)
 	{
-		return OnOutputVerts_3StripsVertical(pWidget, pOutVerts);
+		return OnOutputVerts_3StripsHorizontal(pBBoxData, pOutVerts, totalWidth, totalHeight, padding, left, top);
 	}
 
 	// widget is bigger in both dimensions than the sprite - do 9 panel scaling.
-	/*  
+	/*
 	 https://en.wikipedia.org/wiki/9-slice_scaling#:~:text=9%2Dslice%20scaling%20(also%20known,a%20grid%20of%20nine%20parts.
-	                        ________
-         _ _ _             |_|____|_|
+							________
+		 _ _ _             |_|____|_|
 		|_|_|_|   ->       | |    | |
-	    |_|_|_|            | |    | |
+		|_|_|_|            | |    | |
 		|_|_|_|            |_|____|_|
-	                       |_|____|_|
-	
-	
+						   |_|____|_|
+
+
 	*/
 	struct WidgetQuad quads[9]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
 	float widthOver3 = (float)pAtlasSprite->widthPx / 3.0f;
@@ -120,25 +185,25 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 		br[1] += heightOver3;
 	}
 
-	vec2 translation = { pWidget->left + pWidget->padding.paddingLeft, pWidget->top + pWidget->padding.paddingTop};
+	vec2 translation = { left + padding->paddingLeft, top + padding->paddingTop };
 	for (int i = 0; i < 9; i++)
 	{
 		TranslateWidgetQuad(translation, &quads[i]);
 	}
 
 	vec2 size = {
-		widthOver3  * pScale->scaleX,
+		widthOver3 * pScale->scaleX,
 		heightOver3 * pScale->scaleY,
 
 	};
 	SizeWidgetQuad(size, &quads[0]);
-	
+
 	// top row
 	translation[0] = size[0];
 	translation[1] = 0.0f;
 	TranslateWidgetQuad(translation, &quads[1]);
 	float borderPieceNewWidth = widgetWidth - size[0] * 2;
-	vec2 horizontalBorderSize = { borderPieceNewWidth, size[1]};
+	vec2 horizontalBorderSize = { borderPieceNewWidth, size[1] };
 	SizeWidgetQuad(horizontalBorderSize, &quads[1]);
 
 	translation[0] = size[0] + borderPieceNewWidth;
@@ -151,7 +216,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	translation[1] = size[1];
 	TranslateWidgetQuad(translation, &quads[3]);
 	float borderPieceNewHeight = widgetHeight - size[1] * 2;
-	vec2 verticalBorderSize = { size[0], borderPieceNewHeight};
+	vec2 verticalBorderSize = { size[0], borderPieceNewHeight };
 	SizeWidgetQuad(verticalBorderSize, &quads[3]);
 
 	translation[0] = size[0];
@@ -186,8 +251,23 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 		pOutVerts = OutputWidgetQuad(pOutVerts, &quads[i]);
 	}
 
-	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 	return pOutVerts;
+}
+
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+{
+	float totalW = GetWidth(pWidget, NULL);
+	float totalH = GetHeight(pWidget, NULL);
+	pOutVerts = OutputBackgroundBoxVerts(
+		pWidget->pImplementationData,
+		pOutVerts,
+		totalW,
+		totalH,
+		&pWidget->padding,
+		pWidget->left,
+		pWidget->top
+	);
+	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 }
 
 
@@ -214,10 +294,14 @@ void ParseBindingEspressionAttribute(const char* pAttributeName, const char* pAt
 
 	if (strcmp(pAttributeName, "sprite") == 0)
 	{
-
+		if (pWidgetData->imageName)
+		{
+			free(pWidgetData->imageName);
+			pWidgetData->imageName = NULL;
+		}
+		EASSERT(pWidgetData->imageName == NULL);
 		UI_AddStringPropertyBinding(pWidget, pAttributeName, pAttributeContent, &pWidgetData->imageName, pUILayerData->hViewModel);
 		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
-
 	}
 	else
 	{
@@ -229,6 +313,12 @@ static void ParseLiteralBackgroundBoxData(struct BackgroundBoxWidgetData* pWidge
 {
 	if (strcmp(attributeNameBuffer, "sprite") == 0)
 	{
+		if (pWidgetData->imageName)
+		{
+			free(pWidgetData->imageName);
+			pWidgetData->imageName = NULL;
+		}
+		EASSERT(pWidgetData->imageName == NULL);
 		pWidgetData->imageName = malloc(strlen(attributeContentBuffer) + 1);
 		strcpy(pWidgetData->imageName, attributeContentBuffer);
 		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);

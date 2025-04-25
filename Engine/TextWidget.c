@@ -48,11 +48,11 @@ static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn print
 
 }
 
-static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* OutputTextWidgetVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts)
 {
-	struct TextWidgetData* pData = pThisWidget->pImplementationData;
+	//struct TextWidgetData* pData = pThisWidget->pImplementationData;
 	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
-	vec2 pen = { pThisWidget->left + pThisWidget->padding.paddingLeft, pThisWidget->top + maxYBearing + pThisWidget->padding.paddingTop };
+	vec2 pen = { left + padding->paddingLeft, top + maxYBearing + padding->paddingTop };
 	size_t len = strlen(pData->content);
 	for (int i = 0; i < len; i++)
 	{
@@ -84,8 +84,14 @@ static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVer
 
 		pen[0] += advance;
 	}
-	pOutVerts = UI_Helper_OnOutputVerts(pThisWidget, pOutVerts);
 
+	return pOutVerts;
+}
+
+static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts)
+{
+	pOutVerts = OutputTextWidgetVerts(pThisWidget->left, pThisWidget->top, &pThisWidget->padding, pThisWidget->pImplementationData, pOutVerts);
+	pOutVerts = UI_Helper_OnOutputVerts(pThisWidget, pOutVerts);
 	return pOutVerts;
 }
 
@@ -127,6 +133,12 @@ void CreateTextWidgetData(struct TextWidgetData* pData, struct xml_node* pXMLNod
 
 	struct xml_string* pString = xml_node_content(pXMLNode);
 	int l = xml_string_length(pString);
+	if (pData->content)
+	{
+		free(pData->content);
+		pData->content = NULL;
+	}
+	EASSERT(pData->content == NULL);
 	pData->content = malloc(l + 1);
 	xml_string_copy(pString, pData->content, l);
 	pData->content[l] = '\0';
@@ -159,16 +171,14 @@ void CreateTextWidgetData(struct TextWidgetData* pData, struct xml_node* pXMLNod
 			ParseColourAttribute(attribContent, pData);
 		}
 	}
-	if (!bFontSet)
+	/*if (!bFontSet)
 	{
 		printf("invalid text widget node!\n");
-	}
+	}*/
 }
 
 static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
-	
-
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
 	pWidget->hNext = -1;
@@ -182,7 +192,7 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode,
 	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct TextWidgetData));
-	memset(pWidget->pImplementationData, 9, sizeof(struct TextWidgetData));
+	memset(pWidget->pImplementationData, 0, sizeof(struct TextWidgetData));
 
 	struct TextWidgetData* pData = pWidget->pImplementationData;
 
