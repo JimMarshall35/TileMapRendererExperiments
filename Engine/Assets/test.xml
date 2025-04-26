@@ -25,7 +25,7 @@
 							New
 						</text>
 					</backgroundbox>
-					<textButton>
+					<textButton btnType="OnDown" onPress="OnLoadPress" paddingBottom="20">
 						Load
 					</textButton>
 				</stackpanel>

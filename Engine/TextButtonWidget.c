@@ -10,6 +10,14 @@
 #include "TextWidget.h"
 #include "BackgroundBoxWidget.h"
 #include "RootWidget.h"
+#include "Scripting.h"
+#include "XMLHelpers.h"
+
+enum ButtonType
+{
+	BT_FireOnRelease,
+	BT_FireOnDown
+};
 
 struct TextButtonWidgetData
 {
@@ -19,6 +27,10 @@ struct TextButtonWidgetData
 	struct WidgetPadding textPadding;
 	bool bPressed;
 	HWidget RootWidget;
+	enum ButtonType type;
+	int viewmodelRegIndex;
+	char onPressFunctionName[MAX_SCRIPT_FUNCTION_NAME_SIZE];
+	bool bLuaCallbackSet;
 };
 
 static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData)
@@ -123,6 +135,10 @@ static void MouseButtonDownCallback(struct UIWidget* pWidget, float x, float y, 
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
 	pWD->bPressed = true;
 	SetRootWidgetIsDirty(pWD->RootWidget, true);
+	if (pWD->bLuaCallbackSet && pWD->type == BT_FireOnDown)
+	{
+		Sc_CallFuncInRegTableEntryTable(pWD->viewmodelRegIndex, pWD->onPressFunctionName, NULL, 0, 0);
+	}
 }
 
 static void MouseButtonUpCallback(struct UIWidget* pWidget, float x, float y, int btn)
@@ -130,15 +146,20 @@ static void MouseButtonUpCallback(struct UIWidget* pWidget, float x, float y, in
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
 	pWD->bPressed = false;
 	SetRootWidgetIsDirty(pWD->RootWidget, true);
-
+	if (pWD->bLuaCallbackSet && pWD->type == BT_FireOnRelease)
+	{
+		Sc_CallFuncInRegTableEntryTable(pWD->viewmodelRegIndex, pWD->onPressFunctionName, NULL, 0, 0);
+	}
 }
 
 static void MouseLeaveCallback(struct UIWidget* pWidget, float x, float y)
 {
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
-	pWD->bPressed = false;
-	SetRootWidgetIsDirty(pWD->RootWidget, true);
-
+	if (pWD->bPressed)
+	{
+		pWD->bPressed = false;
+		SetRootWidgetIsDirty(pWD->RootWidget, true);
+	}
 }
 
 static void SetCMouseCallbacks(struct UIWidget* pWidget)
@@ -151,10 +172,7 @@ static void SetCMouseCallbacks(struct UIWidget* pWidget)
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].type = WC_OnMouseLeave;
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mouseBtnFn = &MouseLeaveCallback;
-
-
 }
-
 
 static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
@@ -173,10 +191,37 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct xml_node* pXM
 	memset(pWidget->pImplementationData, 0, sizeof(struct TextButtonWidgetData));
 	struct TextButtonWidgetData* pData = pWidget->pImplementationData;
 	pData->RootWidget = pUILayerData->rootWidget;
+	pData->viewmodelRegIndex = pUILayerData->hViewModel;
 	MakeDefaultTextButtonWidgetData(pData);
 	CreateTextWidgetData(&pData->textWidgetData, pXMLNode, pUILayerData);
 	CreateBackgroundBoxWidgetData(pWidget, &pData->backgroundBoxWidgetData, pXMLNode, pUILayerData);
 	SetCMouseCallbacks(pWidget);
+
+	int numAttributes = xml_node_attributes(pXMLNode);
+	char attributeNameBuf[128];
+	char attributeContentBuf[128];
+	for (int i = 0; i < numAttributes; i++)
+	{
+		XML_AttributeContentToBuffer(pXMLNode, attributeContentBuf, i, 128);
+		XML_AttributeNameToBuffer(pXMLNode, attributeNameBuf, i, 128);
+		if (strcmp(attributeNameBuf, "onPress") == 0)
+		{
+			EASSERT(strlen(attributeContentBuf) < MAX_SCRIPT_FUNCTION_NAME_SIZE);
+			strcpy(pData->onPressFunctionName, attributeContentBuf);
+			pData->bLuaCallbackSet = true;
+		}
+		else if (strcmp(attributeNameBuf, "btnType") == 0)
+		{
+			if (strcmp(attributeContentBuf, "OnRelease") == 0)
+			{
+				pData->type = BT_FireOnRelease;
+			}
+			else if (strcmp(attributeContentBuf, "OnDown") == 0)
+			{
+				pData->type = BT_FireOnDown;
+			}
+		}
+	}
 }
 
 HWidget TextButtonWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)

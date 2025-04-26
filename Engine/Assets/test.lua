@@ -31,6 +31,10 @@ function GetTestViewModel()
 				self.newButtonPressed = false			
 				OnPropertyChanged(self, "NewButtonBackgroundSprite")
 			end
+		end,
+
+		OnLoadPress = function(self)
+			print("LOAD PRESSED")
 		end
 	}
 end

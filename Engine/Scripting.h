@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include "IntTypes.h"
 
+#define MAX_SCRIPT_FUNCTION_NAME_SIZE 32
+
 enum ScriptCallArgumentDataType
 {
 	SCA_nil, SCA_boolean, SCA_number, SCA_string, SCA_userdata, SCA_table

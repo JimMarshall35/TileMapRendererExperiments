@@ -10,6 +10,7 @@
 #include "DynArray.h"
 #include "ObjectPool.h"
 #include "Widget.h"
+#include "XMLHelpers.h"
 #include "xml.h"
 #include "Widget.h"
 #include "StaticWidget.h"
@@ -335,10 +336,10 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 {
 	At_BeginAtlas();
 
-	char attributeNameBuf[256];
-	char spriteName[256];
+	char attributeNameBuf[64];
+	char spriteName[64];
 	char spritePath[256];
-	char numberBuf[256];
+	char numberBuf[64];
 
 	int top = 0;
 	int left = 0;
@@ -359,67 +360,43 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 		bool bHeightSet = false;
 		bool bAllSet = true;
 		char childNameBuf[128];
-		struct xml_string* str = xml_node_name(pChild);
-		int nameLen = xml_string_length(str);
-		xml_string_copy(str, childNameBuf, nameLen);
-		childNameBuf[nameLen] = '\0';
+		XML_NodeName(pChild, childNameBuf, 128);
 		if (strcmp(childNameBuf, "sprite") == 0)
 		{
 			for (int j = 0; j < numAttributes; j++)
 			{
-				struct xml_string* pAttr = xml_node_attribute_name(pChild, j);
-				int attrNameLen = xml_string_length(pAttr);
-				xml_string_copy(pAttr, attributeNameBuf, attrNameLen);
-				attributeNameBuf[attrNameLen] = '\0';
+				XML_AttributeNameToBuffer(pChild, attributeNameBuf, j, 64);
 				if (strcmp(attributeNameBuf, "source") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, spritePath, len);
-					spritePath[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, spritePath, j, 256);
 					bPathSet = true;
 				}
 				else if (strcmp(attributeNameBuf, "name") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, spriteName, len);
-					spriteName[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, spriteName, j, 64);
 					bNameset = true;
 				}
 				else if (strcmp(attributeNameBuf, "top") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, numberBuf, len);
-					numberBuf[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
 					top = atoi(numberBuf);
 					bTopSet = true;
 				}
 				else if (strcmp(attributeNameBuf, "left") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, numberBuf, len);
-					numberBuf[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
 					left = atoi(numberBuf);
 					bLeftSet = true;
 				}
 				else if (strcmp(attributeNameBuf, "width") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, numberBuf, len);
-					numberBuf[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
 					width = atoi(numberBuf);
 					bWidthSet = true;
 				}
 				else if (strcmp(attributeNameBuf, "height") == 0)
 				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, numberBuf, len);
-					numberBuf[len] = '\0';
+					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
 					height = atoi(numberBuf);
 					bHeightSet = true;
 				}
@@ -517,13 +494,11 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 			{
 				struct xml_node* pChildChild = xml_node_child(pChild, j);
 				char name[128];
-				struct xml_string* pstr = xml_node_name(pChildChild);
-				int len = xml_string_length(pstr);
-				xml_string_copy(pstr, name, len);
-				name[len] = '\0';
+				XML_NodeName(pChildChild, name, 128);
 				if (strcmp(name, "size") == 0)
 				{
 					char attributeName[128];
+					char attrivValBuf[64];
 					int attributes = xml_node_attributes(pChildChild);
 					struct FontSize fs;
 					memset(&fs, 0, sizeof(struct FontSize));
@@ -531,16 +506,8 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 					bool bValSet = false;
 					for (int k = 0; k < attributes; k++)
 					{
-						struct xml_string* pString = xml_node_attribute_name(pChildChild, k);
-						int aNameLen = xml_string_length(pString);
-						char attrivValBuf[64];
-						xml_string_copy(pString, attributeName, aNameLen);
-						attributeName[aNameLen] = '\0';
-						struct xml_string* pstr = xml_node_attribute_content(pChildChild, k);
-						int len = xml_string_length(pstr);
-						xml_string_copy(pstr, attrivValBuf, len);
-						attrivValBuf[len] = '\0';
-
+						XML_AttributeNameToBuffer(pChildChild, attributeName, k, 128);
+						XML_AttributeContentToBuffer(pChildChild, attrivValBuf, k, 64);
 						if (strcmp(attributeName, "type") == 0)
 						{
 							if (strcmp(attrivValBuf, "pts") == 0)
@@ -569,7 +536,6 @@ void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
 			At_AddFont(&faas);
 		}
 	}
-
 	pUIData->atlas = At_EndAtlas(pDC);
 }
 
@@ -584,14 +550,8 @@ static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
 	const char* pFnName = NULL;
 	for (int i = 0; i < xml_node_attributes(pScreenNode); i++)
 	{
-		struct xml_string* pName    = xml_node_attribute_name(pScreenNode, i);
-		struct xml_string* pContent = xml_node_attribute_content(pScreenNode, i);
-		int nameLen = xml_string_length(pName);
-		int contentLen = xml_string_length(pContent);
-		xml_string_copy(pName, attribNameArr, nameLen);
-		xml_string_copy(pContent, attribContentArr, contentLen);
-		attribNameArr[nameLen] = '\0';
-		attribContentArr[contentLen] = '\0';
+		XML_AttributeNameToBuffer(pScreenNode, attribNameArr, i, 128);
+		XML_AttributeContentToBuffer(pScreenNode, attribContentArr, i, 128);
 		if (strcmp(attribNameArr, "viewmodelFile") == 0)
 		{
 			bVMFileSet = true;

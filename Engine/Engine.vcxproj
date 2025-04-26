@@ -160,6 +160,7 @@
     <ClCompile Include="TextWidget.c" />
     <ClCompile Include="Widget.c" />
     <ClCompile Include="WidgetVertexOutputHelpers.c" />
+    <ClCompile Include="XMLHelpers.c" />
     <ClCompile Include="XMLUIGameLayer.c" />
     <ClCompile Include="xml.c" />
   </ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="TextWidget.h" />
     <ClInclude Include="Widget.h" />
     <ClInclude Include="WidgetVertexOutputHelpers.h" />
+    <ClInclude Include="XMLHelpers.h" />
     <ClInclude Include="XMLUIGameLayer.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>

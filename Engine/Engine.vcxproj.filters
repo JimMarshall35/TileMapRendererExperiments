@@ -123,11 +123,11 @@
     <ClCompile Include="TextButtonWidget.c">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="XMLHelpers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DynArray.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
@@ -220,6 +220,12 @@
     </ClInclude>
     <ClInclude Include="TextButtonWidget.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLHelpers.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="InputContext.h">
+      <Filter>Source Files\lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
