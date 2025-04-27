@@ -26,6 +26,7 @@
 #include "TextButtonWidget.h"
 #include "RadioButtonWidget.h"
 #include "RadioGroupWidget.h"
+#include "SliderWidget.h"
 
 struct NameConstructorPair
 {
@@ -41,7 +42,8 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"backgroundbox", &BackgroundBoxWidgetNew},
 	{"textButton",    &TextButtonWidgetNew},
 	{"radioGroup",    &RadioGroupWidgetNew},
-	{"radioButton",   &RadioButtonWidgetNew}
+	{"radioButton",   &RadioButtonWidgetNew},
+	{"slider",        &SliderWidgetNew}
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
@@ -277,6 +279,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 			EASSERT(!bSendLMouseDown);
 			UI_SendWidgetMouseEvent(pWidget, WC_OnMouseUp, &info);
 		}
+		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseMove, &info);
 	}
 }
 

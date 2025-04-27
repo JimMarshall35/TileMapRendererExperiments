@@ -21,6 +21,7 @@ struct WidgetQuad
 void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt);
 void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR);
 void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad);
+void* OutputWidgetQuads(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad, int num);
 void TranslateWidgetQuad(vec2 vector, struct WidgetQuad* pOutQuad);
 void SizeWidgetQuad(vec2 size, struct WidgetQuad* pOutQuad);
 float WidgetQuadWidth(const struct WidgetQuad* pInQuad);

@@ -80,6 +80,15 @@ void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct Widge
 	return pOutVerts;
 }
 
+void* OutputWidgetQuads(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuads, int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+		pOutVerts = OutputWidgetQuad(pOutVerts, &pQuads[i]);
+	}
+	return pOutVerts;
+}
+
 
 void TranslateWidgetQuad(vec2 vector, struct WidgetQuad* pOutQuad)
 {

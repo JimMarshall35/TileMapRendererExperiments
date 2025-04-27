@@ -15,7 +15,7 @@
 
 		<sprite source="Assets\Image\kenney_ui-pack\PNG\Grey\Default\slide_vertical_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderVertical"/>
 
-		<sprite source="Assets\Image\kenney_ui-pack\PNG\Grey\Default\slide_horizontal_color.png" top="0" left="0" width="96" height="16" name="defaultHorizontalRail"/>
+		<sprite source="Assets\Image\kenney_ui-pack\PNG\Grey\Default\slide_horizontal_color.png" top="0" left="0" width="96" height="16" name="defaultRailHorizontal"/>
 
 		<sprite source="Assets\Image\kenney_ui-pack\PNG\Grey\Default\slide_horizontal_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderHorizontal"/>
 	
@@ -55,6 +55,7 @@
 							</radioButton>
 						</radioGroup>
 					</stackpanel>
+					<slider paddingBottom="20"/>
 				</stackpanel>
 			</backgroundbox>
 		</stackpanel>
