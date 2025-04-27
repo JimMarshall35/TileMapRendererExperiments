@@ -126,6 +126,18 @@
     <ClCompile Include="XMLHelpers.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RadioButtonWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioGroupWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatingPointLib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SliderWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DynArray.h">
@@ -224,8 +236,20 @@
     <ClInclude Include="XMLHelpers.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
+    <ClInclude Include="RadioGroupWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioButtonWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="InputContext.h">
-      <Filter>Source Files\lib</Filter>
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatingPointLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderWidget.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

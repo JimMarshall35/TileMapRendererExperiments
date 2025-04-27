@@ -3,7 +3,8 @@ function GetTestViewModel()
 	return {
 		-- random data members
 		newButtonPressed = false,
-		
+		difficulty = 1,
+
 		-- a one way binding property called NewButtonBackgroundSprite
 		Get_NewButtonBackgroundSprite = function(self)
 			if self.newButtonPressed then 
@@ -11,6 +12,15 @@ function GetTestViewModel()
 			else 
 				return "defaultButton"
 			end
+		end,
+
+		-- a two way binding
+		Get_Difficulty = function(self)
+			return self.difficulty
+		end,
+		Set_Difficulty = function(self, difficulty)
+			print("difficulty changed", difficulty)
+			self.difficulty = difficulty
 		end,
 
 		-- event handlers that can be bound to individual widgets

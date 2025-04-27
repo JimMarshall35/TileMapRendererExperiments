@@ -9,7 +9,7 @@
 
 enum ScriptCallArgumentDataType
 {
-	SCA_nil, SCA_boolean, SCA_number, SCA_string, SCA_userdata, SCA_table
+	SCA_nil, SCA_boolean, SCA_number, SCA_string, SCA_userdata, SCA_table, SCA_int
 
 };
 
@@ -23,6 +23,7 @@ struct ScriptCallArgument
 		char* string;
 		void* userData;
 		int table; // in our case it will be a table stored int he regsitry with this value as a key
+		int i;
 	}val;
 };
 

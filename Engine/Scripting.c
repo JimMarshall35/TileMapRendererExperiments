@@ -136,6 +136,9 @@ static void PushFunctionCallArgsOntoStack(struct ScriptCallArgument* pArgs, int 
 		case SCA_userdata:
 			lua_pushlightuserdata(gL, pArg->val.userData);
 			break;
+		case SCA_int:
+			lua_pushinteger(gL, pArg->val.i);
+			break;
 		}
 	}
 }

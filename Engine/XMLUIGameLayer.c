@@ -24,6 +24,8 @@
 #include "Geometry.h"
 #include "AssertLib.h"
 #include "TextButtonWidget.h"
+#include "RadioButtonWidget.h"
+#include "RadioGroupWidget.h"
 
 struct NameConstructorPair
 {
@@ -37,7 +39,9 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"static",        &StaticWidgetNew},
 	{"text",          &TextWidgetNew},
 	{"backgroundbox", &BackgroundBoxWidgetNew},
-	{"textButton",    &TextButtonWidgetNew}
+	{"textButton",    &TextButtonWidgetNew},
+	{"radioGroup",    &RadioGroupWidgetNew},
+	{"radioButton",   &RadioButtonWidgetNew}
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
@@ -590,6 +594,22 @@ static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
 	return rVal;
 }
 
+static void InitializeWidgets(HWidget root)
+{
+	struct UIWidget* pWidget = UI_GetWidget(root);
+	if (pWidget->fnOnWidgetInit)
+	{
+		pWidget->fnOnWidgetInit(pWidget);
+	}
+	HWidget child = pWidget->hFirstChild;
+	while (child != NULL_HWIDGET)
+	{
+		InitializeWidgets(child);
+		struct UIWidget* pWidget = UI_GetWidget(child);
+		child = pWidget->hNext;
+	}
+}
+
 static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 {
 	assert(!pUIData->bLoaded);
@@ -652,11 +672,11 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 			printf("%s ui xml file doesn't have both screen and atlas components\n", __FUNCTION__);
 		}
 		xml_document_free(pXMLDoc, true);
-		//pUIData->rootWidget
+
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->rootWidget);
 		pWidget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;
 
-		pWidget->fnOnDebugPrint(0, pWidget, &printf);
+		InitializeWidgets(pUIData->rootWidget);
 
 		pUIData->hVertexBuffer = pDC->NewUIVertexBuffer(2048);
 	}

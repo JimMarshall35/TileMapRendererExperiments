@@ -43,8 +43,19 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 	}
 }
 
+void BackgroundBoxWidget_Destroy(struct BackgroundBoxWidgetData* pBBoxData)
+{
+	if (pBBoxData->imageName)
+	{
+		free(pBBoxData->imageName);
+	}
+}
+
+
 static void OnDestroy(struct UIWidget* pWidget)
 {
+	struct BackgroundBoxWidgetData* pBBoxData = pWidget->pImplementationData;
+
 	free(pWidget->pImplementationData);
 }
 
@@ -125,7 +136,7 @@ void* OnOutputVerts_3StripsVertical(
 	return pOutVerts;
 }
 
-void* OutputBackgroundBoxVerts(
+void* BackgroundBoxWidget_OutputVerts(
 	struct BackgroundBoxWidgetData* pBBoxData,
 	VECTOR(struct WidgetVertex) pOutVerts,
 	float totalWidth,
@@ -258,7 +269,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 {
 	float totalW = GetWidth(pWidget, NULL);
 	float totalH = GetHeight(pWidget, NULL);
-	pOutVerts = OutputBackgroundBoxVerts(
+	pOutVerts = BackgroundBoxWidget_OutputVerts(
 		pWidget->pImplementationData,
 		pOutVerts,
 		totalW,
@@ -284,9 +295,7 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 		pData->imageName = malloc(len + 1);
 		Sc_StackTopStrCopy(pData->imageName);
 		pData->sprite = At_FindSprite(pData->imageName, pData->atlas);
-
 	}
-	//pData->imageName
 }
 
 void ParseBindingEspressionAttribute(const char* pAttributeName, const char* pAttributeContent, struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct XMLUIData* pUILayerData)
@@ -333,7 +342,7 @@ static void ParseLiteralBackgroundBoxData(struct BackgroundBoxWidgetData* pWidge
 	}
 }
 
-void CreateBackgroundBoxWidgetData(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pWidgetData->scale.scaleX = 1.0f;
 	pWidgetData->scale.scaleY = 1.0f;
@@ -397,7 +406,7 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* 
 
 	struct BackgroundBoxWidgetData* pWidgetData = pWidget->pImplementationData;
 
-	CreateBackgroundBoxWidgetData(pWidget, pWidgetData, pXMLNode, pUILayerData);
+	BackgroundBoxWidget_fromXML(pWidget, pWidgetData, pXMLNode, pUILayerData);
 }
 
 HWidget BackgroundBoxWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)

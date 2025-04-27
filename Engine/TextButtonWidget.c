@@ -33,7 +33,7 @@ struct TextButtonWidgetData
 	bool bLuaCallbackSet;
 };
 
-static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData)
+static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData, struct XMLUIData* pUILayerData)
 {
 	pData->textPadding.paddingBottom = 20;
 	pData->textPadding.paddingTop = 20;
@@ -43,6 +43,9 @@ static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData)
 	const char* defaultPressedBackgroundWidget = "defaultPressedButton";
 
 	// background widget
+
+	pData->backgroundBoxWidgetData.atlas = pUILayerData->atlas;
+	pData->pressedBackgroundBoxWidgetData.atlas = pUILayerData->atlas;
 
 	pData->backgroundBoxWidgetData.scale.scaleX = 1.0f;
 	pData->backgroundBoxWidgetData.scale.scaleY = 1.0f;
@@ -60,7 +63,8 @@ static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData)
 
 
 	// text widget
-	
+	pData->textWidgetData.atlas = pUILayerData->atlas;
+
 	pData->textWidgetData.content = malloc(strlen("Button") + 1);
 	strcpy(pData->textWidgetData.content, "Button");
 	
@@ -68,7 +72,9 @@ static void MakeDefaultTextButtonWidgetData(struct TextButtonWidgetData* pData)
 	pData->textWidgetData.g = 0.0f;
 	pData->textWidgetData.b = 0.0f;
 	pData->textWidgetData.a = 1.0f;
-
+	
+	pData->textWidgetData.fSizePts = 32.0f;
+	pData->textWidgetData.font = Fo_FindFont(pData->textWidgetData.atlas, "default", 32.0f);
 
 	pData->bPressed = false;
 }
@@ -102,6 +108,10 @@ static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 
 static void OnDestroy(struct UIWidget* pWidget)
 {
+	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
+	TextWidget_Destroy(&pWD->textWidgetData);
+	BackgroundBoxWidget_Destroy(&pWD->pressedBackgroundBoxWidgetData);
+	BackgroundBoxWidget_Destroy(&pWD->backgroundBoxWidgetData);
 	free(pWidget->pImplementationData);
 }
 
@@ -114,7 +124,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
 	struct TextWidgetData* pTextWidgetData = &pWD->textWidgetData;
 	struct BackgroundBoxWidgetData* pBBWD = pWD->bPressed ? &pWD->pressedBackgroundBoxWidgetData : &pWD->backgroundBoxWidgetData;
-	pOutVerts = OutputBackgroundBoxVerts(
+	pOutVerts = BackgroundBoxWidget_OutputVerts(
 		pBBWD,
 		pOutVerts,
 		GetWidth(pWidget, NULL),
@@ -123,7 +133,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 		pWidget->left,
 		pWidget->top
 	);
-	pOutVerts = OutputTextWidgetVerts(pWidget->left, pWidget->top, &pWD->textPadding, pTextWidgetData, pOutVerts);
+	pOutVerts = TextWidget_OutputVerts(pWidget->left, pWidget->top, &pWD->textPadding, pTextWidgetData, pOutVerts);
 	
 	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 	return pOutVerts;
@@ -192,9 +202,9 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct xml_node* pXM
 	struct TextButtonWidgetData* pData = pWidget->pImplementationData;
 	pData->RootWidget = pUILayerData->rootWidget;
 	pData->viewmodelRegIndex = pUILayerData->hViewModel;
-	MakeDefaultTextButtonWidgetData(pData);
-	CreateTextWidgetData(&pData->textWidgetData, pXMLNode, pUILayerData);
-	CreateBackgroundBoxWidgetData(pWidget, &pData->backgroundBoxWidgetData, pXMLNode, pUILayerData);
+	MakeDefaultTextButtonWidgetData(pData, pUILayerData);
+	TextWidget_FromXML(&pData->textWidgetData, pXMLNode, pUILayerData);
+	BackgroundBoxWidget_fromXML(pWidget, &pData->backgroundBoxWidgetData, pXMLNode, pUILayerData);
 	SetCMouseCallbacks(pWidget);
 
 	int numAttributes = xml_node_attributes(pXMLNode);

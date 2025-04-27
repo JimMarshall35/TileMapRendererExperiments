@@ -69,8 +69,9 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC);
 hSprite At_FindSprite(const char* name, hAtlas atlas);
 AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas);
 hTexture At_GetAtlasTexture(hAtlas atlas);
+float At_PixelsToPts(float val);
 
-HFont Fo_FindFont(hAtlas hAtlas, const char* fontName);
+HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);
 float Fo_CharHeight(hAtlas hAtlas, HFont hFont, char c);
 float Fo_StringWidth(hAtlas hAtlas, HFont hFont, const char* stringVal);

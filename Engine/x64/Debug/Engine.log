@@ -1,32 +1,9 @@
-﻿  XMLUIGameLayer.c
+﻿  SliderWidget.c
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(154,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(189,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(193,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(212,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(216,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(250,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(256,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(262,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(166,11): warning C4101: 'h': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(166,8): warning C4101: 'w': unreferenced local variable
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(526,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(348,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(354,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(448,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(454,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(463,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(470,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(492,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(502,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(559,20): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(566,18): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(583,17): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(587,15): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(606,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(617,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(618,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(687,29): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\XMLUIGameLayer.c(58): warning C4716: 'GetWidgetFromNode': must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\SliderWidget.c(174,32): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\SliderWidget.c(178,32): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\SliderWidget.c(199,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\SliderWidget.c(276,69): warning C4113: 'void (__cdecl *)(UIWidget *,float,float)' differs in parameter lists from 'WidgetMouseBtnCallbackFn'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\SliderWidget.c(279,68): warning C4113: 'void (__cdecl *)(UIWidget *,float,float)' differs in parameter lists from 'WidgetMouseBtnCallbackFn'
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

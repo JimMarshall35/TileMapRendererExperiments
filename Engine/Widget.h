@@ -25,8 +25,8 @@ typedef float(*GetUIWidgetDimensionFn)(struct UIWidget* pWidget, struct UIWidget
 typedef void(*LayoutChildrenFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*OnDestroyWidgetFn)(struct UIWidget* pWidget);
 typedef void(*OnDebugPrintFn)(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn);
-typedef void* (*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
-
+typedef void*(*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
+typedef void(*OnWidgetInitFn)(struct UIWidget* pWidget);
 typedef void(*OnBoundPropertyChangedFn)(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding);
 
 struct WidgetPadding
@@ -163,8 +163,8 @@ struct WidgetPropertyBinding
 		char* str;
 		bool bl;
 	}data;
-	char name[MAX_PROPERTY_NAME_LEN + 1];
-	char boundPropertyName[MAX_PROPERTY_NAME_LEN + 1];
+	char name[MAX_PROPERTY_NAME_LEN + 1];             // attribute content
+	char boundPropertyName[MAX_PROPERTY_NAME_LEN + 1];// attribute name
 };
 
 struct WidgetMouseInfo
@@ -188,6 +188,7 @@ struct UIWidget
 	OnDebugPrintFn fnOnDebugPrint;
 	OutputWidgetVerticesFn fnOutputVertices;
 	OnBoundPropertyChangedFn fnOnBoundPropertyChanged;
+	OnWidgetInitFn fnOnWidgetInit; // called once whole widget tree is constructed
 	float top;
 	float left;
 	WidgetDockPoint dockPoint;
@@ -323,6 +324,7 @@ void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyN
 /// <returns></returns>
 char* UI_MakeBindingGetterFunctionName(const char* inBindingName);
 
+char* UI_MakeBindingSetterFunctionName(const char* inBindingName);
 
 
 #endif

@@ -554,6 +554,19 @@ char* UI_MakeBindingGetterFunctionName(const char* inBindingName)
 	return fnName;
 }
 
+char* UI_MakeBindingSetterFunctionName(const char* inBindingName)
+{
+	char* fnName = malloc(strlen(inBindingName) + 1 + 4);
+	char* writePtr = fnName;
+	*writePtr++ = 'S';
+	*writePtr++ = 'e';
+	*writePtr++ = 't';
+	*writePtr++ = '_';
+	strcpy(writePtr, inBindingName);
+	return fnName;
+}
+
+
 static char* PopulateBinding(struct WidgetPropertyBinding* pBinding, char* inBindingExpression, char* inBoundPropertyName)
 {
 	inBindingExpression[strlen(inBindingExpression) - 1] = '\0';

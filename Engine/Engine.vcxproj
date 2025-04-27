@@ -144,6 +144,7 @@
     <ClCompile Include="DrawContext.c" />
     <ClCompile Include="DynArray.c" />
     <ClCompile Include="FileHelpers.c" />
+    <ClCompile Include="FloatingPointLib.c" />
     <ClCompile Include="GameFramework.c" />
     <ClCompile Include="Geometry.c" />
     <ClCompile Include="glad.c" />
@@ -151,9 +152,12 @@
     <ClCompile Include="InputContext.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="ObjectPool.c" />
+    <ClCompile Include="RadioButtonWidget.c" />
+    <ClCompile Include="RadioGroupWidget.c" />
     <ClCompile Include="RootWidget.c" />
     <ClCompile Include="Scripting.c" />
     <ClCompile Include="SharedPtr.c" />
+    <ClCompile Include="SliderWidget.c" />
     <ClCompile Include="StackPanelWidget.c" />
     <ClCompile Include="StaticWidget.c" />
     <ClCompile Include="TextButtonWidget.c" />
@@ -173,6 +177,7 @@
     <ClInclude Include="DrawContext.h" />
     <ClInclude Include="DynArray.h" />
     <ClInclude Include="FileHelpers.h" />
+    <ClInclude Include="FloatingPointLib.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameLayer.h" />
     <ClInclude Include="Geometry.h" />
@@ -183,9 +188,12 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PlatformDefs.h" />
+    <ClInclude Include="RadioButtonWidget.h" />
+    <ClInclude Include="RadioGroupWidget.h" />
     <ClInclude Include="RootWidget.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="SharedPtr.h" />
+    <ClInclude Include="SliderWidget.h" />
     <ClInclude Include="StackPanelWidget.h" />
     <ClInclude Include="StaticWidget.h" />
     <ClInclude Include="stb\stb_image.h" />

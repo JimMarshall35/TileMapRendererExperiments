@@ -12,9 +12,9 @@ struct BackgroundBoxWidgetData
 	hAtlas atlas;
 };
 
-void CreateBackgroundBoxWidgetData(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
 HWidget BackgroundBoxWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
-void* OutputBackgroundBoxVerts(
+void* BackgroundBoxWidget_OutputVerts(
 	struct BackgroundBoxWidgetData* pBBoxData,
 	VECTOR(struct WidgetVertex) pOutVerts,
 	float totalWidth,
@@ -22,6 +22,9 @@ void* OutputBackgroundBoxVerts(
 	const struct WidgetPadding* padding,
 	float left, float top
 );
+
+void BackgroundBoxWidget_Destroy(struct BackgroundBoxWidgetData* pBBoxData);
+
 
 #endif // !BACKGROUNDBOXWIDGET_H
 

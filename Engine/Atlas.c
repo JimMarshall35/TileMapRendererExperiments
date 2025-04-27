@@ -11,6 +11,7 @@
 #include "stb/stb_image_write.h"
 #include "DrawContext.h"
 #include "SharedPtr.h"
+#include "FloatingPointLib.h"
 
 FT_Library  gFTLib;
 static int gSpriteId = 1;
@@ -27,6 +28,7 @@ struct AtlasFont
 	AtlasSprite sprites[256];
 	char name[MAX_FONT_NAME_SIZE];
 	SHARED_PTR(FT_Face) pFTFace;
+	float fSizePts;
 };
 
 typedef struct
@@ -176,6 +178,14 @@ static void FaceDtor(void* pVal)
 	FT_Done_Face(*pFace);
 }
 
+float At_PixelsToPts(float val)
+{
+	const float dpi = 92;
+	int inches = val / dpi;
+	val = inches * 72.0f;
+	return val;
+}
+
 HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 {
 	HFont hFont = NULL_HANDLE;
@@ -202,8 +212,7 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 		{
 		case FOS_Pixels:
 			{
-				int inches = fs.val / dpi;
-				fs.val = inches * 72.0f;
+				fs.val = At_PixelsToPts(fs.val);
 				fs.type = FOS_Pts;
 				break;
 			}
@@ -221,6 +230,7 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 		}
 		struct AtlasFont font;
 		memset(&font, 0, sizeof(struct AtlasFont));
+		font.fSizePts = fs.val;
 		font.pFTFace = face;
 		Sptr_AddRef(face);
 
@@ -698,21 +708,26 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 	return pAtlas->texture;
 }
 
-HFont Fo_FindFont(hAtlas hAtlas, const char* fontName)
+HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts)
 {
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL);
 	Atlas* pAtlas = &gAtlases[hAtlas];
+	HFont matchingName = NULL_HANDLE; // if one with a matching name but not matching size is found then return that
 	
 	for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
 	{
 		struct AtlasFont* pFont = &pAtlas->fonts[i];
 		if (strcmp(pFont->name, fontName) == 0)
 		{
-			return i;
+			matchingName = i;
+			if (CompareFloat(pFont->fSizePts, sizePts))
+			{
+				return i;
+			}
 		}
 	}
 
-	return NULL_HANDLE;
+	return matchingName;
 }
 
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c)
