@@ -63,7 +63,6 @@ HWidget GetWidgetFromNode(struct xml_node* pNode)
 
 }
 
-
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
 	

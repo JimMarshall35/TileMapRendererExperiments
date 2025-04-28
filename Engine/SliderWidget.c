@@ -12,6 +12,7 @@
 #include "Atlas.h"
 #include "WidgetVertexOutputHelpers.h"
 #include "RootWidget.h"
+#include "Scripting.h"
 
 enum SliderOrientation
 {
@@ -211,7 +212,16 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 
 static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
 {
-
+	struct SliderData* pData = pThisWidget->pImplementationData;
+	if (strcmp(pBinding->boundPropertyName, "val") == 0)
+	{
+		char* fnName = UI_MakeBindingGetterFunctionName(pBinding->name);
+		Sc_CallFuncInRegTableEntryTable(pThisWidget->scriptCallbacks.viewmodelTable, fnName, NULL, 0, 1);
+		free(fnName);
+		pData->fVal = Sc_Float();
+		Sc_ResetStack();
+		SetRootWidgetIsDirty(pData->rootWidget, true);
+	}
 }
 
 static void SetSliderPosition(struct UIWidget* pWidget, struct SliderData* pData, float x, float y)
@@ -236,6 +246,17 @@ static void SetSliderPosition(struct UIWidget* pWidget, struct SliderData* pData
 	}
 	default:
 		break;
+	}
+	struct WidgetPropertyBinding* pBinding = UI_FindBinding(pWidget, "val");
+	if (pBinding)
+	{
+		char* setterName = UI_MakeBindingSetterFunctionName(pBinding->name);
+		struct ScriptCallArgument arg;
+		arg.type = SCA_number;
+		arg.val.number = pData->fVal;
+		Sc_CallFuncInRegTableEntryTable(pWidget->scriptCallbacks.viewmodelTable, setterName, &arg, 1, 0);
+		free(setterName);
+
 	}
 	SetRootWidgetIsDirty(pData->rootWidget, true);
 }
@@ -311,8 +332,20 @@ static void PopulateStaticInternal(
 	}
 }
 
+static void ParseBindingEspressionAttribute(const char* attribName, const char* attribContent, struct UIWidget* pWidget, struct SliderData* pData, struct XMLUIData* pUILayerData)
+{
+	if (strcmp(attribName, "val") == 0)
+	{
+		UI_AddFloatPropertyBinding(pWidget, attribName, attribContent, &pData->fVal, pUILayerData->hViewModel);
+	}
+	else
+	{
+		printf("invalid property binding: %s\n", attribContent);
+	}
 
-static void MakeSliderFromXML(struct SliderData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+}
+
+static void MakeSliderFromXML(struct UIWidget* pWidget, struct SliderData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	PopulateStaticInternal(pXMLNode, &pData->railStaticData, pUILayerData,
 		"railSprite",
@@ -332,6 +365,7 @@ static void MakeSliderFromXML(struct SliderData* pData, struct xml_node* pXMLNod
 		XML_AttributeContentToBuffer(pXMLNode, attribContent, i, 64);
 		if (UI_IsAttributeStringABindingExpression(attribContent))
 		{
+			ParseBindingEspressionAttribute(attribName, attribContent, pWidget, pData, pUILayerData);
 			continue;
 		}
 		if (strcmp(attribName, "orientation") == 0)
@@ -412,6 +446,8 @@ static void MakeWidgetIntoSliderWidget(HWidget hWidget, struct xml_node* pXMLNod
 
 	memset(pWidget->pImplementationData, 0, sizeof(struct SliderData));
 	MakeDefaultSliderWidget(pWidget->pImplementationData, pUILayerData);
+	struct SliderData* pData = pWidget->pImplementationData;
+	MakeSliderFromXML(pWidget, pData, pXMLNode, pUILayerData);
 }
 
 HWidget SliderWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)

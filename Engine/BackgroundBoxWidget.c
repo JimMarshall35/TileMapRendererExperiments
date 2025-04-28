@@ -289,6 +289,7 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 	{
 		char* fnName = UI_MakeBindingGetterFunctionName(pBinding->name);
 		Sc_CallFuncInRegTableEntryTable(pThisWidget->scriptCallbacks.viewmodelTable, fnName, NULL, 0, 1);
+		free(fnName);
 		EASSERT(pData->imageName);
 		free(pData->imageName);
 		size_t len = Sc_StackTopStringLen();

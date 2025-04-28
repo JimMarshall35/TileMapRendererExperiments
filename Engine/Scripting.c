@@ -210,6 +210,12 @@ int Sc_Int()
 	return lua_tointeger(gL, -1);
 }
 
+float Sc_Float()
+{
+	EASSERT(lua_isnumber(gL, -1), -1);
+	return lua_tonumber(gL, -1);
+}
+
 size_t Sc_StackTopStringLen()
 {
 	EASSERT(lua_isstring(gL, -1));

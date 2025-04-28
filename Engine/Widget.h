@@ -313,7 +313,7 @@ void UI_AddStringPropertyBinding(struct UIWidget* pWidget, char* inBoundProperty
 
 void UI_AddIntPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, int* pOutData, int viewmodelTableIndex);
 
-void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, int* pOutData, int viewmodelTableIndex);
+void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, float* pOutData, int viewmodelTableIndex);
 
 /// <summary>
 /// USER MUST FREE RETURNED PTR
@@ -325,6 +325,8 @@ void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyN
 char* UI_MakeBindingGetterFunctionName(const char* inBindingName);
 
 char* UI_MakeBindingSetterFunctionName(const char* inBindingName);
+
+struct WidgetPropertyBinding* UI_FindBinding(struct UIWidget* pWidget, const char* bindingName);
 
 
 #endif

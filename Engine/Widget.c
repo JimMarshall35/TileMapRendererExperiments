@@ -566,6 +566,18 @@ char* UI_MakeBindingSetterFunctionName(const char* inBindingName)
 	return fnName;
 }
 
+struct WidgetPropertyBinding* UI_FindBinding(struct UIWidget* pWidget, const char* bindingName)
+{
+	for (int i = 0; i < pWidget->numBindings; i++)
+	{
+		if (strcmp(pWidget->bindings[i].boundPropertyName, bindingName) == 0)
+		{
+			return &pWidget->bindings[i];
+		}
+	}
+	return NULL;
+}
+
 
 static char* PopulateBinding(struct WidgetPropertyBinding* pBinding, char* inBindingExpression, char* inBoundPropertyName)
 {
@@ -620,6 +632,24 @@ void UI_AddIntPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyNam
 	*pOutData = i;
 }
 
-void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, int* pOutData, int viewmodelTableIndex)
+void UI_AddFloatPropertyBinding(struct UIWidget* pWidget, char* inBoundPropertyName, char* inBindingExpression, float* pOutData, int viewmodelTableIndex)
 {
+	if (pWidget->numBindings >= MAX_NUM_BINDINGS)
+	{
+		printf("MAX_NUM_BINDINGS exceeded\n");
+		EASSERT(false);
+		return;
+	}
+	struct WidgetPropertyBinding* pBinding = &pWidget->bindings[pWidget->numBindings++];
+	inBindingExpression = PopulateBinding(pBinding, inBindingExpression, inBoundPropertyName);
+
+	pBinding->type = WBT_Float;
+	pBinding->data.str = NULL;
+	char* fnName = UI_MakeBindingGetterFunctionName(inBindingExpression);
+
+	Sc_CallFuncInRegTableEntryTable(viewmodelTableIndex, fnName, NULL, 0, 1);
+	float i = Sc_Float();
+	Sc_ResetStack();
+	*pOutData = i;
+
 }

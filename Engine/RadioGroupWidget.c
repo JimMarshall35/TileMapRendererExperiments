@@ -55,8 +55,22 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return pOutVerts;
 }
 
+static void OnWidgetInit(struct UIWidget* pWidget);
+
 static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
 {
+	//selectedChild
+	struct RadioGroupData* pData = pThisWidget->pImplementationData;
+	if (strcmp(pBinding->boundPropertyName, "selectedChild") == 0)
+	{
+		char* fnName = UI_MakeBindingGetterFunctionName(pBinding->name);
+		Sc_CallFuncInRegTableEntryTable(pThisWidget->scriptCallbacks.viewmodelTable, fnName, NULL, 0, 1);
+		free(fnName);
+		//pData->fVal = Sc_Float();
+		pData->nSelectecedChild = Sc_Int();
+		Sc_ResetStack();
+		OnWidgetInit(pThisWidget);
+	}
 
 }
 
@@ -173,18 +187,6 @@ HWidget RadioGroupWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct X
 	return hWidget;
 }
 
-struct WidgetPropertyBinding* TryGetSelectedChildBinding(struct UIWidget* pRadioGroup)
-{
-	for (int i = 0; i < pRadioGroup->numBindings; i++)
-	{
-		if (strcmp(pRadioGroup->bindings[i].boundPropertyName, "selectedChild") == 0)
-		{
-			return &pRadioGroup->bindings[i];
-		}
-	}
-	return NULL;
-}
-
 void RadioGroup_ChildSelected(HWidget hRadioGroup, struct UIWidget* pRadioButtonChild)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hRadioGroup);
@@ -199,7 +201,7 @@ void RadioGroup_ChildSelected(HWidget hRadioGroup, struct UIWidget* pRadioButton
 		{
 			bSelected = true;
 			pData->nSelectecedChild = i;
-			struct WidgetPropertyBinding* pBinding = TryGetSelectedChildBinding(pWidget);
+			struct WidgetPropertyBinding* pBinding = UI_FindBinding(pWidget, "selectedChild");
 			if (pBinding)
 			{
 				char* setterName = UI_MakeBindingSetterFunctionName(pBinding->name);

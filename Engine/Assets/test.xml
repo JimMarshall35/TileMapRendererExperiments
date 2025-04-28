@@ -55,7 +55,7 @@
 							</radioButton>
 						</radioGroup>
 					</stackpanel>
-					<slider paddingBottom="20"/>
+					<slider paddingBottom="20" val="{SliderVal}"/>
 				</stackpanel>
 			</backgroundbox>
 		</stackpanel>

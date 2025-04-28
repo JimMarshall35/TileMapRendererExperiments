@@ -62,5 +62,6 @@ void Sc_ResetStack();
 void Sc_DeleteTableInReg(int index);
 
 int Sc_Int();
+float Sc_Float();
 
 #endif
