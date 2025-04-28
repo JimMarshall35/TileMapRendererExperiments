@@ -6,9 +6,11 @@ C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(144,
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(145,8): warning C4090: 'initializing': different 'const' qualifiers
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(184,93): warning C4022: 'glad_glVertexAttribPointer': pointer mismatch for actual parameter 6
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(186,93): warning C4022: 'glad_glVertexAttribPointer': pointer mismatch for actual parameter 6
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(197,9): warning C4477: 'printf' : format string '%i' requires an argument of type 'int', but variadic argument 2 has type 'size_t'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(197,9): message : consider using '%zi' in the format string
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(208,32): warning C4267: 'function': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(257,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(257,24): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(207,32): warning C4267: 'function': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(256,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(256,24): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  main.c
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
+  Generating Code...
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe

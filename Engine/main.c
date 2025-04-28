@@ -12,7 +12,7 @@
 
 #define SCR_WIDTH 640
 #define SCR_HEIGHT 480
-#define TARGET_FPS 40
+#define TARGET_FPS 60
 
 InputContext gInputContext;
 DrawContext gDrawContext;
