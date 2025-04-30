@@ -222,7 +222,7 @@ struct UIWidget
 	struct WidgetDim height;
 	size_t numBindings;
 	float offsetX;
-	float offsetY
+	float offsetY;
 };
 
 

@@ -151,6 +151,8 @@ void RootWidget_OnWindowSizeChanged(HWidget rootWidget, int newW, int newH)
 	struct RootWidgetData* pRootData = pWidget->pImplementationData;
 	pRootData->windowH = newH;
 	pRootData->windowW = newW;
+	pWidget->width.data = newW;
+	pWidget->height.data = newH;
 }
 bool GetRootWidgetIsDirty(HWidget hRootWidget)
 {
