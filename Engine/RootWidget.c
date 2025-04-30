@@ -20,8 +20,8 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
 	if (pThis->hFirstChild != NULL_HWIDGET)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(pThis->hFirstChild);
-		float windowW = UI_ResolveWidgetDimPxls(pThis, pParent, &GetWidgetWidthDim, NULL);
-		float windowH = UI_ResolveWidgetDimPxls(pThis, pParent, &GetWidgetHeightDim, NULL);
+		float windowW = UI_ResolveWidgetDimPxls(pThis, &GetWidgetWidthDim, NULL);
+		float windowH = UI_ResolveWidgetDimPxls(pThis, &GetWidgetHeightDim, NULL);
 		while (pWidget)
 		{
 			float width = pWidget->fnGetWidth(pWidget, pThis);
@@ -58,16 +58,17 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
 				pWidget->left = pThis->left;
 				break;
 			case WDP_MiddleLeft:
-				pWidget->top = (windowH / 2.0f) - (height / 2.0f);
-				pWidget->left = 0;
+				pWidget->top = pThis->top + (windowH / 2.0f) - (height / 2.0f);
+				pWidget->left = pThis->left;
 				break;
 			case WDP_Centre:
-				pWidget->top = (windowH / 2.0f) - (height / 2.0f);
-				pWidget->left = (windowW / 2.0f) - (width / 2.0f);
+				pWidget->top = pThis->top + (windowH / 2.0f) - (height / 2.0f);
+				pWidget->left = pThis->left + (windowW / 2.0f) - (width / 2.0f);
 				break;
 			}
 
-
+			pWidget->left += pWidget->offsetX;
+			pWidget->top += pWidget->offsetY;
 
 			pWidget->fnLayoutChildren(pWidget, pThis);
 			if (pWidget->hNext != NULL_HWIDGET)

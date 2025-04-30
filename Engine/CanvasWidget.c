@@ -7,24 +7,21 @@
 #include <stdio.h>
 #include "Atlas.h"
 #include "AssertLib.h"
-
-struct CanvasData
-{
-	int justnothingfornow;
-};
+#include "RootWidget.h"
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return UI_ResolveWidgetDimPxls(pWidget, pParent, &GetWidgetWidthDim, pWidget->fnGetWidth);
+	return UI_ResolveWidgetDimPxls(pWidget, &GetWidgetWidthDim, pWidget->fnGetWidth);
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return UI_ResolveWidgetDimPxls(pWidget, pParent, &GetWidgetHeightDim, pWidget->fnGetHeight);
+	return UI_ResolveWidgetDimPxls(pWidget, &GetWidgetHeightDim, pWidget->fnGetHeight);
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
+	RootWidget_LayoutChildren(pWidget, pParent);
 }
 
 static void OnDestroy(struct UIWidget* pWidget)
@@ -61,9 +58,7 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct xml_node* pXMLNod
 	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
-	pWidget->pImplementationData = malloc(sizeof(struct CanvasData));
-
-	memset(pWidget->pImplementationData, 0, sizeof(struct CanvasData));
+	pWidget->pImplementationData = NULL;
 }
 
 HWidget CanvasWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)

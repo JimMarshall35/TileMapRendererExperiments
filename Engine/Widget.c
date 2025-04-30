@@ -129,16 +129,17 @@ void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim*
 	if (strcmp(attributeContent, "auto") == 0)
 	{
 		outWidgetDims->type = WD_Auto;
+		return;
 	}
 	if (strcmp(attributeContent, "*") == 0)
 	{
 		outWidgetDims->type = WD_Stretch;
+		return;
 	}
 
 	char dimType[16];
 	float dimVal = 0.0f;
 	int numMatched = sscanf(attributeContent, "%f%s", &dimVal, dimType);
-	float val = 0.0f;
 	switch (numMatched)
 	{
 	case 1:
@@ -153,13 +154,17 @@ void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim*
 		{
 			outWidgetDims->type = WD_StretchFraction;
 		}
+		else if (strcmp(dimType, "%") == 0)
+		{
+			outWidgetDims->type = WD_Percentage;
+		}
 		break;
 	default:
 		printf("invalid widget dim value %s\n", attributeContent);
 		EASSERT(false);
 		break;
 	}
-	outWidgetDims->data = val;
+	outWidgetDims->data = dimVal;
 }
 
 void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding)
@@ -275,29 +280,48 @@ static void GetTotalFractionAmongChildren(struct UIWidget* pWidgetParent, float*
 	}
 }
 
+struct UIWidget* FindResolveableDimensionAncestor(struct UIWidget* pWidgetParent, WidgetDimGetterFn getter)
+{
+	HWidget hParent = pWidgetParent->hParent;
+	while (hParent != NULL_HWIDGET)
+	{
+		struct UIWidget* pParent = UI_GetWidget(hParent);
+		EASSERT(pParent);
+		const struct WidgetDim* pDim = getter(pParent);
+		if (pDim->type == WD_Percentage || pDim->type == WD_StretchFraction || pDim->type == WD_Pixels)
+		{
+			return pParent;
+		}
+		hParent = pParent->hParent;
+	}
+	EASSERT(false); // root widget must be of of fixed size
+	return NULL;
+}
 
-
-float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, struct UIWidget* pWidgetParent, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn)
+float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn)
 {
 	const struct WidgetDim* dim = getter(pWidget);
 	switch (dim->type)
 	{
-	case WD_Auto:            return autoFn(pWidget, pWidgetParent);
+	case WD_Auto:            
+	{
+		printf("fjdifjdifd");
+		return autoFn(pWidget, UI_GetWidget(pWidget->hParent));
+	}
 	case WD_Pixels:          return dim->data;
 	case WD_StretchFraction:
 	{
 		float wFraction;
-		EASSERT(pWidgetParent->width.type != WD_Auto);
+		//EASSERT(pWidgetParent->width.type != WD_Auto);
+		struct UIWidget*  pWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
 		GetTotalFractionAmongChildren(pWidgetParent, &wFraction, getter);
-		struct UIWidget* pWidgetGrandParent = UI_GetWidget(pWidgetParent->hParent);
-		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, pWidgetGrandParent, getter, autoFn);
+		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, getter, autoFn);
 		return (dim->data / wFraction) * parentW;
 	}
 	case WD_Percentage:
 	{
-		EASSERT(pWidgetParent->width.type != WD_Auto);
-		struct UIWidget* pWidgetGrandParent = UI_GetWidget(pWidgetParent->hParent);
-		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, pWidgetGrandParent, getter, autoFn);
+		struct UIWidget* pWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
+		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, getter, autoFn);
 		return dim->data * parentW;
 	}
 	default:
@@ -441,7 +465,7 @@ static void ParseWidgetDims(struct xml_node* pInNode, struct UIWidget* outWidget
 	for (int i = 0; i < numAttribs; i++)
 	{
 		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pInNode, attribName, i, 64);
+		XML_AttributeContentToBuffer(pInNode, attribContent, i, 64);
 		if (strcmp(attribName, "width") == 0)
 		{
 			UI_ParseWidgetDimsAttribute(attribContent, &outWidget->width);
@@ -461,7 +485,7 @@ static void ParseWidgetOffsets(struct xml_node* pInNode, struct UIWidget* outWid
 	for (int i = 0; i < numAttribs; i++)
 	{
 		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pInNode, attribName, i, 64);
+		XML_AttributeContentToBuffer(pInNode, attribContent, i, 64);
 		if (strcmp(attribName, "x") == 0)
 		{
 			outWidget->offsetX = atof(attribContent);

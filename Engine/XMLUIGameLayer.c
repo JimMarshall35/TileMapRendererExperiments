@@ -27,6 +27,7 @@
 #include "RadioButtonWidget.h"
 #include "RadioGroupWidget.h"
 #include "SliderWidget.h"
+#include "CanvasWidget.h"
 
 struct NameConstructorPair
 {
@@ -43,7 +44,8 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"textButton",    &TextButtonWidgetNew},
 	{"radioGroup",    &RadioGroupWidgetNew},
 	{"radioButton",   &RadioButtonWidgetNew},
-	{"slider",        &SliderWidgetNew}
+	{"slider",        &SliderWidgetNew},
+	{"canvas",        &CanvasWidgetNew}
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)

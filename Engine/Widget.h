@@ -250,7 +250,7 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 
 void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment);
 
-float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, struct UIWidget* pWidgetParent, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn);
+float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn);
 
 bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidget);
 

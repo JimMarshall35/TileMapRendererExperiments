@@ -25,39 +25,44 @@
 		</font>
 	</atlas>
 	<screen viewmodelFile="Assets\test.lua" viewmodelFunction="GetTestViewModel">
-		<stackpanel dockPoint="centre" orientation="vertical">
-			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
-				<stackpanel orientation="vertical">
-					<text font="default" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
-						WARFARMER
-					</text>
-					<stackpanel dockPoint="centre" orientation="horizontal">
-						<stackpanel dockPoint="centre" orientation="vertical">
-							<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
-							<backgroundbox sprite="{NewButtonBackgroundSprite}" paddingBottom="20" onMouseDown="OnNewGameMouseDown" onMouseLeave="OnNewGameMouseLeave" onMouseUp="OnNewGameMouseUp">
-								<text font="default" fontSize="32pts" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
-									New
+		<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0" dockPoint="centre">
+				<canvas width="0.5%" height="1.0%">
+					<stackpanel dockPoint="centre" orientation="vertical">
+						<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
+							<stackpanel orientation="vertical">
+								<text font="default" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
+									WARFARMER
 								</text>
-							</backgroundbox>
-							<textButton btnType="OnDown" onPress="OnLoadPress" paddingBottom="20">
-								Load
-							</textButton>
-						</stackpanel>
-						<radioGroup paddingBottom="20" orientation="vertical" selectedChild="{Difficulty}" paddingRight="20">
-							<radioButton btnPlacement="Below">
-								easy
-							</radioButton>
-							<radioButton btnPlacement="Below">
-								medium
-							</radioButton>
-							<radioButton btnPlacement="Below">
-								hard
-							</radioButton>
-						</radioGroup>
+								<stackpanel dockPoint="centre" orientation="horizontal">
+									<stackpanel dockPoint="centre" orientation="vertical">
+										<static sprite="bar_round_gloss_large_square" paddingBottom="20" scaleX="2.0" scaleY="2.0"/>
+										<backgroundbox sprite="{NewButtonBackgroundSprite}" paddingBottom="20" onMouseDown="OnNewGameMouseDown" onMouseLeave="OnNewGameMouseLeave" onMouseUp="OnNewGameMouseUp">
+											<text font="default" fontSize="32pts" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
+												New
+											</text>
+										</backgroundbox>
+										<textButton btnType="OnDown" onPress="OnLoadPress" paddingBottom="20">
+											Load
+										</textButton>
+									</stackpanel>
+									<radioGroup paddingBottom="20" orientation="vertical" selectedChild="{Difficulty}" paddingRight="20">
+										<radioButton btnPlacement="Below">
+											easy
+										</radioButton>
+										<radioButton btnPlacement="Below">
+											medium
+										</radioButton>
+										<radioButton btnPlacement="Below">
+											hard
+										</radioButton>
+									</radioGroup>
+								</stackpanel>
+								<slider paddingBottom="20" val="{SliderVal}"/>
+							</stackpanel>
+						</backgroundbox>
 					</stackpanel>
-					<slider paddingBottom="20" val="{SliderVal}"/>
-				</stackpanel>
-			</backgroundbox>
-		</stackpanel>
+				</canvas>
+		</backgroundbox>
+		
 	</screen>
 </UIroot>

@@ -1,16 +1,24 @@
-﻿  DrawContext.c
+﻿  Widget.c
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
 C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(130,20): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(144,8): warning C4090: 'initializing': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(145,8): warning C4090: 'initializing': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(184,93): warning C4022: 'glad_glVertexAttribPointer': pointer mismatch for actual parameter 6
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(186,93): warning C4022: 'glad_glVertexAttribPointer': pointer mismatch for actual parameter 6
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(207,32): warning C4267: 'function': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(256,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\DrawContext.c(256,24): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
-  main.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-  Generating Code...
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(15,1): warning C4005: 'WIDGET_POOL_BOUNDS_CHECK': macro redefinition
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(14,1): message : see previous definition of 'WIDGET_POOL_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(54,2): warning C4002: too many arguments for function-like macro invocation 'WIDGET_POOL_BOUNDS_CHECK'
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(54,2): warning C4033: 'UI_CountWidgetChildren' must return a value
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(172,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(179,23): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(184,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(211,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(237,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(335,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(343,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(344,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(405,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(410,17): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(411,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(464,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(491,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(495,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(484,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\Widget.c(57): warning C4715: 'UI_CountWidgetChildren': not all control paths return a value
   Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Debug\Engine.exe
