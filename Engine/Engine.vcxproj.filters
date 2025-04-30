@@ -138,6 +138,9 @@
     <ClCompile Include="SliderWidget.c">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="CanvasWidget.c">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DynArray.h">
@@ -249,6 +252,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SliderWidget.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasWidget.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include "main.h"
 #include <string.h>        
 #include <stdlib.h>
+#include "AssertLib.h"
 
 float RootWidget_GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
@@ -19,9 +20,8 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
 	if (pThis->hFirstChild != NULL_HWIDGET)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(pThis->hFirstChild);
-		struct RootWidgetData* pRootData = pThis->pImplementationData;
-		float windowW = (float)pRootData->windowW;
-		float windowH = (float)pRootData->windowH;
+		float windowW = UI_ResolveWidgetDimPxls(pThis, pParent, &GetWidgetWidthDim, NULL);
+		float windowH = UI_ResolveWidgetDimPxls(pThis, pParent, &GetWidgetHeightDim, NULL);
 		while (pWidget)
 		{
 			float width = pWidget->fnGetWidth(pWidget, pThis);
@@ -30,32 +30,32 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
 			switch (pWidget->dockPoint)
 			{
 			case WDP_TopLeft:
-				pWidget->top = 0;
-				pWidget->left = 0;
+				pWidget->top = pThis->top;
+				pWidget->left = pThis->left;
 				break;
 			case WDP_TopMiddle:
-				pWidget->top = 0;
-				pWidget->left = (windowW / 2) - (width / 2);
+				pWidget->top = pThis->top;
+				pWidget->left = pThis->left + ((windowW / 2) - (width / 2));
 				break;
 			case WDP_TopRight:
-				pWidget->top = 0;
-				pWidget->left = windowW - width;
+				pWidget->top = pThis->top;
+				pWidget->left = pThis->left + (windowW - width);
 				break;
 			case WDP_MiddleRight:
-				pWidget->top = (windowH / 2.0f) - (height / 2.0f);
-				pWidget->left = windowW - width;
+				pWidget->top = pThis->top + ((windowH / 2.0f) - (height / 2.0f));
+				pWidget->left = pThis->left + (windowW - width);
 				break;
 			case WDP_BottomRight:
-				pWidget->top = windowH - height;
-				pWidget->left = windowW - width;
+				pWidget->top = pThis->top + (windowH - height);
+				pWidget->left = pThis->left + (windowW - width);
 				break;
 			case WDP_BottomMiddle:
-				pWidget->top = windowH - height;
-				pWidget->left = windowW / 2.0f - width / 2.0f;
+				pWidget->top = pThis->top + (windowH - height);
+				pWidget->left = pThis->left + (windowW / 2.0f - width / 2.0f);
 				break;
 			case WDP_BottomLeft:
-				pWidget->top = windowH - height;
-				pWidget->left = 0;
+				pWidget->top = pThis->top + (windowH - height);
+				pWidget->left = pThis->left;
 				break;
 			case WDP_MiddleLeft:
 				pWidget->top = (windowH / 2.0f) - (height / 2.0f);
@@ -66,6 +66,9 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
 				pWidget->left = (windowW / 2.0f) - (width / 2.0f);
 				break;
 			}
+
+
+
 			pWidget->fnLayoutChildren(pWidget, pThis);
 			if (pWidget->hNext != NULL_HWIDGET)
 			{
@@ -128,6 +131,11 @@ void MakeIntoRootWidget(HWidget widget)
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->left = 0.0f;
 	pWidget->top = 0.0f;
+
+	pWidget->width.type = WD_Pixels;
+	pWidget->width.data = pRootWidgetData->windowW;
+	pWidget->height.type = WD_Pixels;
+	pWidget->height.data = pRootWidgetData->windowH;
 }
 
 HWidget NewRootWidget()

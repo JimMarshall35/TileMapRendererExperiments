@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "xml.h"
+#include "XMLHelpers.h"
 #include <stdlib.h>
 #include "Scripting.h"
 #include "AssertLib.h"
@@ -29,6 +30,8 @@ HWidget UI_NewBlankWidget()
 	pWidget->hPrev = NULL_HWIDGET;
 	pWidget->hParent = NULL_HWIDGET;
 	pWidget->numBindings = 0;
+	pWidget->width.type = WD_Auto;
+	pWidget->height.type = WD_Auto;
 	MakeBlankScriptingCallbacks(&pWidget->scriptCallbacks);
 	return widget;
 }
@@ -121,22 +124,42 @@ void UI_DestroyWidget(HWidget widget)
 	}
 }
 
-void UI_ParseWidgetDimsAttribute(struct xml_string* contents, struct WidgetDim* outWidgetDims)
+void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim* outWidgetDims)
 {
-	char attributeBuffer[256];
-
-	int len = xml_string_length(contents);
-
-	xml_string_copy(contents, attributeBuffer, len);
-	attributeBuffer[len] = '\0';
-	if (strcmp(attributeBuffer, "auto") == 0)
+	if (strcmp(attributeContent, "auto") == 0)
 	{
 		outWidgetDims->type = WD_Auto;
 	}
-	if (strcmp(attributeBuffer, "stretch") == 0)
+	if (strcmp(attributeContent, "*") == 0)
 	{
 		outWidgetDims->type = WD_Stretch;
 	}
+
+	char dimType[16];
+	float dimVal = 0.0f;
+	int numMatched = sscanf(attributeContent, "%f%s", &dimVal, dimType);
+	float val = 0.0f;
+	switch (numMatched)
+	{
+	case 1:
+		outWidgetDims->type = WD_Pixels;
+		break;
+	case 2:
+		if (strcmp(dimType, "px") == 0)
+		{
+			outWidgetDims->type = WD_Pixels;
+		}
+		else if (strcmp(dimType, "*") == 0)
+		{
+			outWidgetDims->type = WD_StretchFraction;
+		}
+		break;
+	default:
+		printf("invalid widget dim value %s\n", attributeContent);
+		EASSERT(false);
+		break;
+	}
+	outWidgetDims->data = val;
 }
 
 void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding)
@@ -226,13 +249,60 @@ void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum Widge
 	{
 		*outAlignment = WVA_Middle;
 	}
-	
 }
 
-float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim)
+struct WidgetDim* GetWidgetWidthDim(struct UIWidget* pWidget) { return &pWidget->width; }
+struct WidgetDim* GetWidgetHeightDim(struct UIWidget* pWidget) { return &pWidget->height; }
+
+/// <summary>
+/// helper that finds all child widgets with width type WD_ParentFraction
+/// and returns the total of their "*" values
+/// </summary>
+/// <param name="pWidgetParent"></param>
+/// <returns></returns>
+static void GetTotalFractionAmongChildren(struct UIWidget* pWidgetParent, float* outV, WidgetDimGetterFn getter)
 {
-	// TODO: STUB!
-	// IMPLEMENT DIFFERENT TYPES OF DIMENSION
+	*outV = 0.0f;
+	HWidget hChild = pWidgetParent->hFirstChild;
+	while (hChild != NULL_HWIDGET)
+	{
+		struct UIWidget* pChild = UI_GetWidget(hChild);
+		const struct WidgetDim* dim = getter(pChild);
+
+		EASSERT(dim->type == WD_StretchFraction);
+		*outV += dim->data;
+		hChild = pChild->hNext;
+	}
+}
+
+
+
+float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, struct UIWidget* pWidgetParent, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn)
+{
+	const struct WidgetDim* dim = getter(pWidget);
+	switch (dim->type)
+	{
+	case WD_Auto:            return autoFn(pWidget, pWidgetParent);
+	case WD_Pixels:          return dim->data;
+	case WD_StretchFraction:
+	{
+		float wFraction;
+		EASSERT(pWidgetParent->width.type != WD_Auto);
+		GetTotalFractionAmongChildren(pWidgetParent, &wFraction, getter);
+		struct UIWidget* pWidgetGrandParent = UI_GetWidget(pWidgetParent->hParent);
+		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, pWidgetGrandParent, getter, autoFn);
+		return (dim->data / wFraction) * parentW;
+	}
+	case WD_Percentage:
+	{
+		EASSERT(pWidgetParent->width.type != WD_Auto);
+		struct UIWidget* pWidgetGrandParent = UI_GetWidget(pWidgetParent->hParent);
+		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, pWidgetGrandParent, getter, autoFn);
+		return dim->data * parentW;
+	}
+	default:
+		break;
+	}
 	return dim->data;
 }
 
@@ -363,11 +433,53 @@ static void ParseLuaCallbacks(struct xml_node* pInNode, struct UIWidget* outWidg
 	}
 }
 
+static void ParseWidgetDims(struct xml_node* pInNode, struct UIWidget* outWidget)
+{
+	char attribName[64];
+	char attribContent[64];
+	int numAttribs = xml_node_attributes(pInNode);
+	for (int i = 0; i < numAttribs; i++)
+	{
+		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
+		XML_AttributeContentToBuffer(pInNode, attribName, i, 64);
+		if (strcmp(attribName, "width") == 0)
+		{
+			UI_ParseWidgetDimsAttribute(attribContent, &outWidget->width);
+		}
+		else if (strcmp(attribName, "height") == 0)
+		{
+			UI_ParseWidgetDimsAttribute(attribContent, &outWidget->height);
+		}
+	}
+}
+
+static void ParseWidgetOffsets(struct xml_node* pInNode, struct UIWidget* outWidget)
+{
+	char attribName[64];
+	char attribContent[64];
+	int numAttribs = xml_node_attributes(pInNode);
+	for (int i = 0; i < numAttribs; i++)
+	{
+		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
+		XML_AttributeContentToBuffer(pInNode, attribName, i, 64);
+		if (strcmp(attribName, "x") == 0)
+		{
+			outWidget->offsetX = atof(attribContent);
+		}
+		else if (strcmp(attribName, "y") == 0)
+		{
+			outWidget->offsetY = atof(attribContent);
+		}
+	}
+}
+
 void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget)
 {
 	UI_ParseWidgetPaddingAttributes(pInNode, &outWidget->padding);
 	UI_ParseWidgetDockPoint(pInNode, outWidget);
 	ParseLuaCallbacks(pInNode, outWidget);
+	ParseWidgetDims(pInNode, outWidget);
+	ParseWidgetOffsets(pInNode, outWidget);
 }
 
 static const char* GetDockingPointName(WidgetDockPoint dockingPoint)

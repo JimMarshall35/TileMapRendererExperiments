@@ -29,6 +29,11 @@ typedef void*(*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(stru
 typedef void(*OnWidgetInitFn)(struct UIWidget* pWidget);
 typedef void(*OnBoundPropertyChangedFn)(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding);
 
+typedef struct WidgetDim* (*WidgetDimGetterFn)(struct UIWidget* pWidget);
+
+struct WidgetDim* GetWidgetWidthDim(struct UIWidget* pWidget);
+struct WidgetDim* GetWidgetHeightDim(struct UIWidget* pWidget);
+
 struct WidgetPadding
 {
 	float paddingTop;
@@ -43,12 +48,29 @@ struct WidgetScale
 	float scaleY;
 };
 
+/*
+	some are relative to their parent. In which case these should be relative to THEIR parent, fixed, or the top level window.
+*/
 enum WidgetDimType
 {
+	/* take as much space as it naturally takes */
 	WD_Auto,
+	/* stretch to fill all available space */
 	WD_Stretch,
-	FD_Pixels,
-	FD_ScreenFraction,
+	/* a literal value */
+	WD_Pixels,
+	/*
+		a fraction that's relative with other children.
+		meaning this:
+
+		width: 1* ------|
+		width: 2* -----------|
+		              | a |   b  |
+		ui element a is twice the width of ui element b, and together they take up the entirety of their parents width
+	*/
+	WD_StretchFraction,
+	/* a percentage of parents dimension but as a decimal between 0 and 1 */
+	WD_Percentage
 };
 
 typedef enum WidgetHorizontalAlignment
@@ -196,7 +218,11 @@ struct UIWidget
 	struct LuaWidgetCallbacks scriptCallbacks;
 	struct CWidgetCallbacks cCallbacks;
 	struct WidgetPropertyBinding bindings[MAX_NUM_BINDINGS];
+	struct WidgetDim width;
+	struct WidgetDim height;
 	size_t numBindings;
+	float offsetX;
+	float offsetY
 };
 
 
@@ -216,7 +242,7 @@ struct UIWidget* UI_GetWidget(HWidget hWidget);
 
 void UI_AddChild(HWidget hParent, HWidget hChild);
 
-void UI_ParseWidgetDimsAttribute(struct xml_string* contents, struct WidgetDim* outWidgetDims);
+void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim* outWidgetDims);
 
 void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding);
 
@@ -224,7 +250,7 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 
 void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment);
 
-float UI_ResolveWidgetDimPxls(const struct WidgetDim* dim);
+float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, struct UIWidget* pWidgetParent, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn);
 
 bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidget);
 

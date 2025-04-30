@@ -28,6 +28,7 @@ float StaticWidget_GetHeight(struct StaticWidgetData* pStaticData, struct Widget
 	{
 		return 0;
 	}
+
 	return pAtlasSprite->heightPx * pStaticData->scale.scaleY + pPadding->paddingTop + pPadding->paddingBottom;
 }
 
@@ -57,7 +58,6 @@ void* StaticWidget_OnOutputVerts(struct StaticWidgetData* pStaticData, float lef
 
 void StaticWidget_MakeFromXML(struct StaticWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
-
 	pWidgetData->atlas = pUILayerData->atlas;
 	size_t numAttributes = xml_node_attributes(pXMLNode);
 	char attributeNameBuffer[128];

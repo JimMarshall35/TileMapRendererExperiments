@@ -1,15 +1,1 @@
-﻿  RadioGroupWidget.c
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(43,1): warning C4005: 'OBJ_POOL_BOUNDS_CHECK': macro redefinition
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\ObjectPool.h(34,1): message : see previous definition of 'OBJ_POOL_BOUNDS_CHECK'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RadioGroupWidget.c(116,47): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RadioGroupWidget.c(116,62): warning C4090: 'function': different 'const' qualifiers
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RadioGroupWidget.c(128,19): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RadioGroupWidget.c(170,69): warning C4113: 'void (__cdecl *)(UIWidget *,float,float)' differs in parameter lists from 'WidgetMouseBtnCallbackFn'
-C:\Users\User1\source\repos\TileMapRendererExperiments\Engine\RadioGroupWidget.c(173,68): warning C4113: 'void (__cdecl *)(UIWidget *,float,float)' differs in parameter lists from 'WidgetMouseBtnCallbackFn'
-     Creating library C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Release\Engine.lib and object C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Release\Engine.exp
-  Generating code
-  3 of 663 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  Engine.vcxproj -> C:\Users\User1\source\repos\TileMapRendererExperiments\x64\Release\Engine.exe
+﻿

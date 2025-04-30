@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="Atlas.c" />
     <ClCompile Include="BackgroundBoxWidget.c" />
+    <ClCompile Include="CanvasWidget.c" />
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="CtorDtor.c" />
     <ClCompile Include="DrawContext.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="AssertLib.h" />
     <ClInclude Include="Atlas.h" />
     <ClInclude Include="BackgroundBoxWidget.h" />
+    <ClInclude Include="CanvasWidget.h" />
     <ClInclude Include="cJSON.h" />
     <ClInclude Include="CtorDtor.h" />
     <ClInclude Include="DrawContext.h" />
