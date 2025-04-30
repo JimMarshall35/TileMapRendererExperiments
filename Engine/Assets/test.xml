@@ -25,7 +25,8 @@
 		</font>
 	</atlas>
 	<screen viewmodelFile="Assets\test.lua" viewmodelFunction="GetTestViewModel">
-		<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0" dockPoint="centre">
+		<stackpanel dockPoint="centre" orientation = "horizontal">
+			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
 				<canvas width="0.5%" height="1.0%">
 					<stackpanel dockPoint="centre" orientation="vertical">
 						<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
@@ -62,7 +63,12 @@
 						</backgroundbox>
 					</stackpanel>
 				</canvas>
-		</backgroundbox>
+			</backgroundbox>
+			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
+				<canvas width="0.5%" height="1.0%">
+				</canvas>
+			</backgroundbox>
+		</stackpanel>
 		
 	</screen>
 </UIroot>

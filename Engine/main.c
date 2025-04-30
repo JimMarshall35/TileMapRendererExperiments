@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 
     while (!glfwWindowShouldClose(window))
     {
-        double delta = glfwGetTime();// () - lastUpdate
+        double delta = glfwGetTime() - lastUpdate;
         lastUpdate += delta;
         accumulator += delta;
         while (accumulator > slice)

@@ -313,9 +313,10 @@ float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter
 	{
 		float wFraction;
 		//EASSERT(pWidgetParent->width.type != WD_Auto);
-		struct UIWidget*  pWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
-		GetTotalFractionAmongChildren(pWidgetParent, &wFraction, getter);
-		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, getter, autoFn);
+		struct UIWidget*  pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
+		struct UIWidget* pActualWidgetParent = UI_GetWidget(pWidget->hParent);
+		GetTotalFractionAmongChildren(pActualWidgetParent, &wFraction, getter);
+		float parentW = UI_ResolveWidgetDimPxls(pResolvableWidgetParent, getter, autoFn);
 		return (dim->data / wFraction) * parentW;
 	}
 	case WD_Percentage:
