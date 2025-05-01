@@ -18,6 +18,8 @@ struct WidgetQuad
 	struct WidgetVertex v[4];
 };
 
+
+
 void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt);
 void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR);
 void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad);
@@ -29,4 +31,7 @@ float WidgetQuadHeight(const struct WidgetQuad* pInQuad);
 void ScaleWidgetQuad(float scaleX, float scaleY, struct WidgetQuad* pOutQuad);
 void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a);
 
+// clip any polys on output to be within this region
+void SetClipRect(GeomRect clipRect);
+void UnsetClipRect();
 #endif

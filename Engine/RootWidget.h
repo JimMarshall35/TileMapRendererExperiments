@@ -19,6 +19,6 @@ HWidget NewRootWidget();
 
 void RootWidget_OnWindowSizeChanged(HWidget rootWidget, int newW, int newH);
 
-void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent);
+void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent, float scrollX, float scrollY);
 
 #endif

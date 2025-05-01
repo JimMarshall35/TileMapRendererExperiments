@@ -1,4 +1,9 @@
 #include "WidgetVertexOutputHelpers.h"
+#include <stdlib.h>
+#include <string.h>
+
+static bool bClipRegionSet = false;
+GeomRect gClipRect = { 0,0,0,0 };
 
 void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a)
 {
@@ -9,6 +14,17 @@ void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, fl
 		pQuad->v[i].b = b;
 		pQuad->v[i].a = a;
 	}
+}
+
+void SetClipRect(GeomRect clipRect)
+{
+	memcpy(gClipRect, clipRect, sizeof(GeomRect));
+	bClipRegionSet = true;
+}
+
+void UnsetClipRect()
+{
+	bClipRegionSet = false;
 }
 
 void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt)
@@ -60,9 +76,37 @@ void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSp
 
 }
 
+static bool AnyCornerOutsideOfRegion(struct WidgetQuad* pQuad)
+{
+	for (int i = 0; i < VT_NUM; i++)
+	{
+		if (!Ge_PointInAABB(pQuad->v[i].x, pQuad->v[i].y, gClipRect))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+static bool ClipQuad(struct WidgetQuad* pQuad)
+{
+	
+	return AnyCornerOutsideOfRegion(pQuad);
+}
 
 void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad)
 {
+	struct WidgetQuad cpy;
+	memcpy(&cpy, pQuad, sizeof(struct WidgetQuad));
+
+	if (bClipRegionSet)
+	{
+		if (!ClipQuad(&cpy))
+		{
+			return pOutVerts;
+		}
+	}
+
 	const int numIndices = 6;
 	const WidgetQuadVertexLocation indices[6] = {
 		VL_TL,
@@ -75,7 +119,7 @@ void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct Widge
 	for (int i = 0; i < numIndices; i++)
 	{
 		int index = indices[i];
-		pOutVerts = VectorPush(pOutVerts, &pQuad->v[index]);
+		pOutVerts = VectorPush(pOutVerts, &cpy.v[index]);
 	}
 	return pOutVerts;
 }

@@ -15,7 +15,7 @@ float RootWidget_GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 	return ((struct RootWidgetData*)pWidget->pImplementationData)->windowH;
 }
 
-void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
+void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent, float scrollX, float scrollY)
 {
 	if (pThis->hFirstChild != NULL_HWIDGET)
 	{
@@ -114,6 +114,11 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 }
 
+static void LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent)
+{
+	RootWidget_LayoutChildren(pThis, pParent, 0.0f, 0.0f);
+}
+
 void MakeIntoRootWidget(HWidget widget)
 {
 	struct UIWidget* pWidget = UI_GetWidget(widget);
@@ -126,7 +131,7 @@ void MakeIntoRootWidget(HWidget widget)
 	pWidget->pImplementationData = pRootWidgetData;
 	pWidget->fnGetWidth = &RootWidget_GetWidth;
 	pWidget->fnGetHeight = &RootWidget_GetHeight;
-	pWidget->fnLayoutChildren = &RootWidget_LayoutChildren;
+	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &RootWidget_OnDestroy;
 	pWidget->fnOnDebugPrint = &DebugPrintWidget;
 	pWidget->fnOutputVertices = &OnOutputVerts;

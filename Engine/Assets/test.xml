@@ -65,7 +65,30 @@
 				</canvas>
 			</backgroundbox>
 			<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
-				<canvas width="0.5%" height="1.0%">
+				<canvas width="0.5%" height="0.4%">
+					<stackpanel orientation="vertical" dockPoint="centre">
+						<textButton btnType="OnDown" paddingBottom="20" paddingTop="20" paddingLeft="20" paddingRight="20">
+							abutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+						<textButton btnType="OnDown" paddingBottom="20" paddingLeft="20" paddingRight="20">
+							anotherbutton
+						</textButton>
+					</stackpanel>
 				</canvas>
 			</backgroundbox>
 		</stackpanel>
