@@ -168,6 +168,7 @@ void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParen
 				pChild->top = top;
 				left += pChild->fnGetWidth(pChild, pWidget);
 			}
+			eks
 			else
 			{
 				assert(childHeight < h);

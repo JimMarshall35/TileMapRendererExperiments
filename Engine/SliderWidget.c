@@ -14,36 +14,17 @@
 #include "RootWidget.h"
 #include "Scripting.h"
 
-enum SliderOrientation
-{
-	SO_Vertical,
-	SO_Horizontal
-};
 
-struct SliderData
+float SliderWidget_GetWidth(struct SliderData* pData, struct WidgetPadding* pPadding)
 {
-	enum SliderOrientation orientation;
-	struct StaticWidgetData railStaticData;
-	struct StaticWidgetData sliderStaticData;
-	float fVal;
-	float fMaxVal;
-	float fMinVal;
-	float lengthPx;
-	HWidget rootWidget;
-	bool bMouseDown;
-};
-
-static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
-{
-	struct SliderData* pData = pWidget->pImplementationData;
 	switch (pData->orientation)
 	{
 	case SO_Horizontal:
-		return pData->lengthPx + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
+		return pData->lengthPx + pPadding->paddingLeft + pPadding->paddingRight;
 	case SO_Vertical:
 	{
 		AtlasSprite* pSprite = At_GetSprite(pData->sliderStaticData.sprite, pData->sliderStaticData.atlas);
-		return pSprite->widthPx * pData->sliderStaticData.scale.scaleX + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
+		return pSprite->widthPx * pData->sliderStaticData.scale.scaleX + pPadding->paddingLeft + pPadding->paddingRight;
 	}
 	default:
 		EASSERT(false);
@@ -52,21 +33,18 @@ static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 	return 0.0f;
 }
 
-static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
+float SliderWidget_GetHeight(struct SliderData* pData, struct WidgetPadding* pPadding)
 {
-	struct SliderData* pData = pWidget->pImplementationData;
 	switch (pData->orientation)
 	{
 	case SO_Horizontal:
 	{
 		AtlasSprite* pSprite = At_GetSprite(pData->sliderStaticData.sprite, pData->sliderStaticData.atlas);
-		return pSprite->heightPx * pData->sliderStaticData.scale.scaleY + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
-
+		return pSprite->heightPx * pData->sliderStaticData.scale.scaleY + pPadding->paddingTop + pPadding->paddingBottom;
 	}
 	case SO_Vertical:
 	{
-		return pData->lengthPx + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
-
+		return pData->lengthPx + pPadding->paddingTop + pPadding->paddingBottom;
 	}
 	default:
 		EASSERT(false);
@@ -74,6 +52,19 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 	}
 
 	return 0.0f;
+}
+
+static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
+{
+	struct SliderData* pData = pWidget->pImplementationData;
+	return SliderWidget_GetWidth(pData, &pWidget->padding);
+}
+
+static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
+{
+	struct SliderData* pData = pWidget->pImplementationData;
+	return SliderWidget_GetHeight(pData, &pWidget->padding);
+
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -162,7 +153,7 @@ static void Populate3PanelRailQuads(float left, float top, struct WidgetQuad* pO
 
 static void PopulateSliderQuad(float left, float top, struct WidgetQuad* pOutQuad, struct SliderData* pData)
 {
-	EASSERT(pData->fVal >= pData->fMinVal && pData->fVal <= pData->fMaxVal);
+	//EASSERT(pData->fVal >= pData->fMinVal && pData->fVal <= pData->fMaxVal);
 	AtlasSprite* pSprite = At_GetSprite(pData->sliderStaticData.sprite, pData->sliderStaticData.atlas);
 	float fraction = (pData->fVal - pData->fMinVal) / (pData->fMaxVal - pData->fMinVal);
 	PopulateWidgetQuadWholeSprite(pOutQuad, pSprite);
@@ -181,8 +172,8 @@ static void PopulateSliderQuad(float left, float top, struct WidgetQuad* pOutQua
 			maxLen* fraction
 		};
 		TranslateWidgetQuad(t, pOutQuad);
-	}
 		break;
+	}
 	case SO_Horizontal:
 	{
 		float maxLen = pData->lengthPx - pSprite->widthPx;
@@ -191,23 +182,28 @@ static void PopulateSliderQuad(float left, float top, struct WidgetQuad* pOutQua
 			0
 		};
 		TranslateWidgetQuad(t, pOutQuad);
-	}
 		break;
+	}
 	default:
 		EASSERT(false);
 		break;
 	}
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* SliderWidget_OnOutputVerts(VECTOR(struct WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding)
 {
-	struct SliderData* pData = pWidget->pImplementationData;
 	struct WidgetQuad rail[4];
-	float top = pWidget->top + pWidget->padding.paddingTop;
-	float left = pWidget->left + pWidget->padding.paddingLeft;
+	top = top + pPadding->paddingTop;
+	left = left + pPadding->paddingLeft;
 	Populate3PanelRailQuads(left, top, rail, pData);
 	PopulateSliderQuad(left, top, &rail[3], pData);
 	return OutputWidgetQuads(pOutVerts, rail, 4);
+}
+
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+{
+	struct SliderData* pData = pWidget->pImplementationData;
+	return SliderWidget_OnOutputVerts(pOutVerts, pData, pWidget->top, pWidget->left, &pWidget->padding);
 }
 
 static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
@@ -224,22 +220,22 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 	}
 }
 
-static void SetSliderPosition(struct UIWidget* pWidget, struct SliderData* pData, float x, float y)
+void SliderWudget_SetSliderPositionFromMouse(struct UIWidget* pWidget, struct SliderData* pData, float x, float y, float top, float left, struct WidgetPadding padding)
 {
 	switch (pData->orientation)
 	{
 	case SO_Vertical:
 	{
-		float zeroY = pWidget->top + pWidget->padding.paddingTop;
-		float maxY = pWidget->top + pWidget->padding.paddingTop + pData->lengthPx;
+		float zeroY = top + padding.paddingTop;
+		float maxY = top + padding.paddingTop + pData->lengthPx;
 		float fraction = (y - zeroY) / (maxY - zeroY);
 		pData->fVal = pData->fMinVal + fraction * (pData->fMaxVal - pData->fMinVal);
 		break;
 	}
 	case SO_Horizontal:
 	{
-		float zeroX = pWidget->left + pWidget->padding.paddingLeft;
-		float maxX = pWidget->left + pWidget->padding.paddingLeft + pData->lengthPx;
+		float zeroX = left + padding.paddingLeft;
+		float maxX = left + padding.paddingLeft + pData->lengthPx;
 		float fraction = (x - zeroX) / (maxX - zeroX);
 		pData->fVal = pData->fMinVal + fraction * (pData->fMaxVal - pData->fMinVal);
 		break;
@@ -265,7 +261,7 @@ static void MouseButtonDownCallback(struct UIWidget* pWidget, float x, float y, 
 {
 	struct SliderData* pData = pWidget->pImplementationData;
 	pData->bMouseDown = true;
-	SetSliderPosition(pWidget, pData, x, y);
+	SliderWudget_SetSliderPositionFromMouse(pWidget, pData, x, y, pWidget->top, pWidget->left, pWidget->padding);
 }
 
 static void MouseButtonUpCallback(struct UIWidget* pWidget, float x, float y, int btn)
@@ -285,7 +281,7 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 	struct SliderData* pData = pWidget->pImplementationData;
 	if (pData->bMouseDown)
 	{
-		SetSliderPosition(pWidget, pData, x, y);
+		SliderWudget_SetSliderPositionFromMouse(pWidget, pData, x, y, pWidget->top, pWidget->left, pWidget->padding);
 	}
 }
 
@@ -386,16 +382,34 @@ static void MakeSliderFromXML(struct UIWidget* pWidget, struct SliderData* pData
 	}
 }
 
-static void MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUIData* pUILayerData)
+void SliderWidget_MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUIData* pUILayerData, enum SliderOrientation orientation)
 {
-	pData->orientation = SO_Horizontal;
+	pData->orientation = orientation;
 	pData->rootWidget = pUILayerData->rootWidget;
 
 	// slider and rail sprites
-	pData->sliderStaticData.imageName = malloc(strlen("defaultSliderHorizontal") + 1);
-	strcpy(pData->sliderStaticData.imageName, "defaultSliderHorizontal");
-	pData->railStaticData.imageName = malloc(strlen("defaultRailHorizontal") + 1);
-	strcpy(pData->railStaticData.imageName, "defaultRailHorizontal");
+	switch (pData->orientation)
+	{
+	case SO_Horizontal:
+		{
+			pData->sliderStaticData.imageName = malloc(strlen("defaultSliderHorizontal") + 1);
+			strcpy(pData->sliderStaticData.imageName, "defaultSliderHorizontal");
+			pData->railStaticData.imageName = malloc(strlen("defaultRailHorizontal") + 1);
+			strcpy(pData->railStaticData.imageName, "defaultRailHorizontal");
+			break;
+		}
+	case SO_Vertical:
+	{
+		pData->sliderStaticData.imageName = malloc(strlen("defaultSliderVertical") + 1);
+		strcpy(pData->sliderStaticData.imageName, "defaultSliderVertical");
+		pData->railStaticData.imageName = malloc(strlen("defaultRailVertical") + 1);
+		strcpy(pData->railStaticData.imageName, "defaultRailVertical");
+		break;
+	}
+	default:
+		break;
+	}
+
 
 	pData->sliderStaticData.scale.scaleX = 1.0f;
 	pData->sliderStaticData.scale.scaleY = 1.0f;
@@ -415,6 +429,7 @@ static void MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUIData* 
 	pData->fVal = 0.0f;
 
 }
+
 
 static void MakeWidgetIntoSliderWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
 {
@@ -445,7 +460,7 @@ static void MakeWidgetIntoSliderWidget(HWidget hWidget, struct xml_node* pXMLNod
 	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].callback.mouseBtnFn = &MouseMoveCallback;
 
 	memset(pWidget->pImplementationData, 0, sizeof(struct SliderData));
-	MakeDefaultSliderWidget(pWidget->pImplementationData, pUILayerData);
+	SliderWidget_MakeDefaultSliderWidget(pWidget->pImplementationData, pUILayerData, SO_Horizontal);
 	struct SliderData* pData = pWidget->pImplementationData;
 	MakeSliderFromXML(pWidget, pData, pXMLNode, pUILayerData);
 }

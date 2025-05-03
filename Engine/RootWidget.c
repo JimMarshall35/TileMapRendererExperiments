@@ -70,6 +70,10 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent,
 			pWidget->left += pWidget->offsetX;
 			pWidget->top += pWidget->offsetY;
 
+			pWidget->left += scrollX;
+			pWidget->top += scrollY;
+
+
 			pWidget->fnLayoutChildren(pWidget, pThis);
 			if (pWidget->hNext != NULL_HWIDGET)
 			{

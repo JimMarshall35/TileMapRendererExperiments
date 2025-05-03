@@ -1,6 +1,7 @@
 #include "WidgetVertexOutputHelpers.h"
 #include <stdlib.h>
 #include <string.h>
+#include "AssertLib.h"
 
 static bool bClipRegionSet = false;
 GeomRect gClipRect = { 0,0,0,0 };
@@ -76,22 +77,68 @@ void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSp
 
 }
 
-static bool AnyCornerOutsideOfRegion(struct WidgetQuad* pQuad)
+static bool AllCornerOutsideOfRegion(struct WidgetQuad* pQuad)
 {
+	int count = 0;
 	for (int i = 0; i < VT_NUM; i++)
 	{
 		if (!Ge_PointInAABB(pQuad->v[i].x, pQuad->v[i].y, gClipRect))
 		{
-			return false;
+			count++;
 		}
 	}
-	return true;
+	return count == 4;
+}
+
+static float ClipUV(float p0, float p1, float uv0, float uv1, float midpos)
+{
+	EASSERT(p1 > p0);
+	EASSERT(midpos >= p0 && midpos <= p1);
+	float s = p1 - p0;
+	float s2 = midpos - p0;
+	float t = s2 / s;
+	float us = uv1 - uv0;
+	return uv0 + (us)*t;
 }
 
 static bool ClipQuad(struct WidgetQuad* pQuad)
 {
-	
-	return AnyCornerOutsideOfRegion(pQuad);
+	if (AllCornerOutsideOfRegion(pQuad))
+	{
+		/*
+			IF A QUAD IS GREATER THAN THE SIZE OF THE CANVAS IN BOTH DIMENSIONS IT WILL BE CLIPPED!!
+		*/
+		return false;
+	}
+	for (int i = 0; i < VT_NUM; i++)
+	{
+		struct WidgetVertex* pVert = &pQuad->v[i];
+		if (pVert->x < gClipRect[0])
+		{
+			EASSERT(i == VL_TL || i == VL_BL);
+			pVert->u = ClipUV(pQuad->v[VL_TL].x, pQuad->v[VL_TR].x, pQuad->v[VL_TL].u, pQuad->v[VL_TR].u, gClipRect[0]);
+			pVert->x = gClipRect[0];
+		}
+		if (pVert->x > gClipRect[2])
+		{
+			EASSERT(i == VL_TR || i == VL_BR);
+			pVert->u = ClipUV(pQuad->v[VL_TL].x, pQuad->v[VL_TR].x, pQuad->v[VL_TL].u, pQuad->v[VL_TR].u, gClipRect[2]);
+			pVert->x = gClipRect[2];
+		}
+		if (pVert->y < gClipRect[1])
+		{
+			EASSERT(i == VL_TL || i == VL_TR);
+			pVert->v = ClipUV(pQuad->v[VL_TL].y, pQuad->v[VL_BL].y, pQuad->v[VL_TL].v, pQuad->v[VL_BL].v, gClipRect[1]);
+			pVert->y = gClipRect[1];
+		}
+		if (pVert->y > gClipRect[3])
+		{
+			EASSERT(i == VL_BL || i == VL_BR);
+			pVert->v = ClipUV(pQuad->v[VL_TL].y, pQuad->v[VL_BL].y, pQuad->v[VL_TL].v, pQuad->v[VL_BL].v, gClipRect[3]);
+			pVert->y = gClipRect[3];
+		}
+	}
+	return true;
 }
 
 void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad)
