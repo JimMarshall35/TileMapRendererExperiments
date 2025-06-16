@@ -1,0 +1,3 @@
+[submodule "Stardew/lib/lua-cmake"]
+	path = Stardew/lib/lua-cmake
+	url = https://github.com/lubgr/lua-cmake.git
