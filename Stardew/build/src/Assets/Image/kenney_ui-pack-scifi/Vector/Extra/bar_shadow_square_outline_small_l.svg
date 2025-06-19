@@ -1,0 +1,7 @@
+<svg width="8" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g>
+    <path stroke="none" fill="#000000" fill-opacity="0.2980392156862745" d="M8 4 L8 12 4 12 4 4 8 4 M8 14 L8 16 4 16 Q0 16 0 12 L0 4 Q0 0 4 0 L8 0 8 2 4 2 Q2 2 2 4 L2 12 Q2 14 4 14 L8 14"/>
+    <path stroke="none" fill="#000000" fill-opacity="0.2" d="M8 14 L4 14 Q2 14 2 12 L2 4 Q2 2 4 2 L8 2 8 4 4 4 4 12 8 12 8 14"/>
+  </g>
+</svg>

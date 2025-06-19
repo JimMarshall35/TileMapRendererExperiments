@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="DrawMetaSpriteSystem.cpp" />
+    <ClCompile Include="ECS.cpp" />
+    <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorToolBase.cpp" />
+    <ClCompile Include="EditorUi.cpp" />
+    <ClCompile Include="EntityInspectorTool.cpp" />
+    <ClCompile Include="flecs.c" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="GameFramework.cpp" />
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="GLTextureHelper.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="janet.c" />
+    <ClCompile Include="JanetScriptProceduralPopulater.cpp" />
+    <ClCompile Include="JanetVmService.cpp" />
+    <ClCompile Include="jsonhelper.cpp" />
+    <ClCompile Include="JSONPopulator.cpp" />
+    <ClCompile Include="LutDrawTool.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MetaAtlas.cpp" />
+    <ClCompile Include="MetaspriteTool.cpp" />
+    <ClCompile Include="NewRenderer.cpp" />
+    <ClCompile Include="OpenGlRenderer.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp" />
+    <ClCompile Include="ProceduralHelpers.cpp" />
+    <ClCompile Include="SingleTileDrawTool.cpp" />
+    <ClCompile Include="StaticCollisionDrawerTool.cpp" />
+    <ClCompile Include="stbi_image.cpp" />
+    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="AtlasLoader.cpp" />
+    <ClCompile Include="TileChunk.cpp" />
+    <ClCompile Include="TiledWorld.cpp" />
+    <ClCompile Include="TileInfoTool.cpp" />
+    <ClCompile Include="TypeOfTile.cpp" />
+    <ClCompile Include="Undo.cpp" />
+    <ClCompile Include="WaveFunctionCollapseTool.cpp" />
+    <ClCompile Include="WindowsFilesystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AutoList.h" />
+    <ClInclude Include="BasicTypedefs.h" />
+    <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="DrawMetaSpriteSystem.h" />
+    <ClInclude Include="ECS.h" />
+    <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorToolBase.h" />
+    <ClInclude Include="EditorUi.h" />
+    <ClInclude Include="EntityInspectorTool.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="GameInput.h" />
+    <ClInclude Include="GeneratedTileDefs.h" />
+    <ClInclude Include="IFilesystem.h" />
+    <ClInclude Include="ITiledWorldPopulater.h" />
+    <ClInclude Include="janet.h" />
+    <ClInclude Include="JanetScriptProceduralPopulater.h" />
+    <ClInclude Include="JanetVmService.h" />
+    <ClInclude Include="jsonhelper.h" />
+    <ClInclude Include="JSONPopulator.h" />
+    <ClInclude Include="LutDrawTool.h" />
+    <ClInclude Include="MetaAtlas.h" />
+    <ClInclude Include="MetaSpriteComponent.h" />
+    <ClInclude Include="MetaspriteTool.h" />
+    <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="ProceduralCppTiledWorldPopulater.h" />
+    <ClInclude Include="ProceduralHelpers.h" />
+    <ClInclude Include="QuadTree.h" />
+    <ClInclude Include="Rect.h" />
+    <ClInclude Include="Rotation.h" />
+    <ClInclude Include="Scale.h" />
+    <ClInclude Include="SingleTileDrawTool.h" />
+    <ClInclude Include="StaticCollisionDrawerTool.h" />
+    <ClInclude Include="StaticPhysicsBody.h" />
+    <ClInclude Include="TestMoveComponent.h" />
+    <ClInclude Include="TileInfoTool.h" />
+    <ClInclude Include="WaveFunctionCollapseTool.h" />
+    <ClInclude Include="WindowsFilesystem.h" />
+    <ClInclude Include="flecs.h" />
+    <ClInclude Include="GLTextureHelper.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="NewRenderer.h" />
+    <ClInclude Include="OpenGlRenderer.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="stb_image_resize.h" />
+    <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="AtlasLoader.h" />
+    <ClInclude Include="TileChunk.h" />
+    <ClInclude Include="TiledWorld.h" />
+    <ClInclude Include="TileMapConfigOptions.h" />
+    <ClInclude Include="TileSetInfo.h" />
+    <ClInclude Include="TypeOfTile.h" />
+    <ClInclude Include="Undo.h" />
+    <ClInclude Include="WindowSizeChangedMessage.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ea3a8673-c451-4d2b-9766-c314748be47d}</ProjectGuid>
+    <RootNamespace>TileMapRendererExperiments</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(SolutionDir)box2d-main\box2d-main\build\bin\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)box2d-main\box2d-main\include;$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>$(SolutionDir)glfw-3.3.5.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)glfw-3.3.5.bin.WIN64\include;$(SolutionDir)glad\include;$(SolutionDir)glm-master;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

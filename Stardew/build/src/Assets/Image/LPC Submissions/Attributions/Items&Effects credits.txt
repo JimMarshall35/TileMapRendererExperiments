@@ -1,0 +1,194 @@
+items.png
+= Swords and daggers =
+* By Tuomo Untinen
+= Axes =
+* By Tuomo Untinen
+= Plate mails =
+* by Johannes Sjölund AKA Wulax
+= Helmet =
+* by Johannes Sjölund AKA Wulax
+= Bows = 
+* By Tuomo Untinen
+= Round shields =
+* by Johannes Sjölund AKA Wulax
+= Gloves =
+* by Johannes Sjölund AKA Wulax
+= Bottles =
+* by Tuomo Untinen
+= Kite shields =
+* By Tuomo Untinen
+= Pick-Axe =
+* By Tuomo Untinen
+= Spiked Gloves =
+* by Johannes Sjölund AKA Wulax
+* Modifed by Tuomo Untinen
+= Keys and pick locks =
+* By Tuomo Untinen
+= Leather armors =
+* by Johannes Sjölund AKA Wulax
+* Spikes done by Tuomo Untinen
+= Maces =
+* By Tuomo Untinen
+= Carrot =
+* By Tuomo Untinen
+= Carrot =
+* By Tuomo Untinen
+= Money bag =
+* Small sack from LPC farming tileset by Daniel Eddeland (http://opengameart.org/content/lpc-farming-tilesets-magic-animations-and-ui-elements)
+= Spears = 
+* By Tuomo Untinen
+= Salad =
+* Based on LPC base tileset by Lanea Zimmerman (AKA Sharm)
+* Modifications by Tuomo Untinen
+= Cheese =
+* By Tuomo Untinen
+= Bread, roast on plate and apple =
+* By Jetrel
+= Chainmail =
+* By Johannes Sjölund AKA Wulax
+= Crossbow =
+* By Gwes
+= Crudge Leather armor =
+* Leather armor by Johannes Sjölund AKA Wulax
+* Single bauldron by Nila122
+= Jackets =
+* Jacket by Tuomo Untinen, pennomi, laetissima and makrohn.
+* Belt by Johannes Sjölund AKA Wulax
+= Scrolls and books =
+* Modified by Tuomo Untinen originals by Gwes
+= Cabbage =
+* By Daniel Eddeland (http://opengameart.org/content/lpc-farming-tilesets-magic-animations-and-ui-elements) 
+= Witch Hat =
+* By Tuomo Untinen
+= Torch and Lantern =
+* By Tuomo Untinen
+= Staff =
+* By Tuomo Untinen
+= Amulets =
+* Ruby by Gwes
+* Modifications by Tuomo Untinen
+= Rapier =
+* By Tuomo Untinen
+= Sling =
+* By Tuomo Untinen
+= Rope =
+* By Tuomo Untinen
+= Flails =
+* By Tuomo Untinen
+= Big hammers =
+* By Tuomo Untinen
+= Cooked fish =
+* By Tuomo Untinen
+= Exploding barrel =
+* Original barrel by by Lanea Zimmerman (AKA Sharm)
+* Modified by Tuomo Untinen
+= Splint Mail =
+* Leather armor by Johannes Sjölund AKA Wulax
+* Modified by Tuomo Untinen
+= Cape =
+* By Jaidyn Reiman
+= Sawtooth blade =
+* By Gwes
+= Diamonds = 
+* By Tuomo Untinen
+= Shurikens =
+* By Tuomo Untinen
+= Rings =
+* By Tuomo Untinen
+= Leather boots =
+* By Tuomo Untinen
+= Hairpin =
+* By Tuomo Untinen
+= Toolbox =
+* By Tuomo Untinen
+= Large shields =
+* By Gwes
+= Large key =
+* By Gwes 
+= Evil magic staff =
+* By Gwes
+* Modified by Tuomo Untinen
+= Iron boots =
+* By Gwes
+= Magic swords =
+* Handle by Gwes
+* Blade by Tuomo Untinen
+= Skull key =
+* By Tuomo Untinen
+= Javelins and throwing axes =
+* By Tuomo Untinen
+= Medikit =
+* By Tuomo Untinen
+= Buckler =
+* By Gwes
+= Fishing rod =
+* By Tuomo Untinen
+= Raw fish =
+* By Tuomo Untinen
+= Troll Head =
+* Base character by Stephen Challener AKA Redshrike
+* Fangs by Tuomo Untinen
+* Elven ears by Jaidyn Reiman
+= Map =
+* By Tuomo Untinen
+= Rope ladder =
+* By Tuomo Untinen
+= Shovel =
+* By Tuomo Untinen
+= Zombie head on rope =
+* Original Zombie by ArtisticDude, modified by Tuomo Untinen
+= Master key =
+* By Tuomo Untinen
+= Magic Hatchet =
+* By Tuomo Untinen
+= Blue plant and seeds =
+* By Tuomo Untinen
+= Wooden shield =
+* By Tuomo Untinen
+= Boomerang =
+* By Tuomo Untinen
+= Skull shield =
+* By Gwes
+= Magic wand =
+* By Gwes
+= Swords with black handle =
+* Handle by Gwes
+* Blade by Tuomo Untinen
+= Mystic books =
+* By Gwes
+= Phylantery =
+* By Jetrel
+= Magic sickle =
+* By Tuomo Untinen
+= Locket =
+* By Tuomo Untinen
+= Bridge repair kit =
+* By Tuomo Untinen
+
+effects.png
+= Look cursor, cast cursor, attack cursor, use cursor and talk cursor =
+* By Tuomo Untinen
+= Speech ballons and sweat =
+* By Tuomo Untinen
+= Small magic effect, good magic effect, poison and flame spell effects =
+* By Tuomo Untinen
+= Curse fear and darkness spell effects =
+* By Tuomo Untinen
+* Skull by Johannes Sjölund
+= Electric, teleport, freezing drowning and force fist spell effects =
+* By Tuomo Untinen
+= Bright light spell effect, blood stains and blade swing effects =
+* By Tuomo Untinen
+= Ranged attack miss effect =
+* By Tuomo Untinen
+= Sleeping speech bubble =
+* By Tuomo Untinen
+= Shopkeeper's speech bubble =
+* By Tuomo Untinen
+= Teddy bear speech bubble =
+* By Tuomo Untinen
+= Eating speech bubble =
+* Original meat By Jetrel
+* Adaptation by Tuomo Untinen
+
+

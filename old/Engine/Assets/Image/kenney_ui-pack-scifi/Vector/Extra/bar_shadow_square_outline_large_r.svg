@@ -1,0 +1,7 @@
+<svg width="12" height="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g>
+    <path stroke="none" fill="#000000" fill-opacity="0.2980392156862745" d="M0 22 L8 22 Q10 22 10 20 L10 4 Q10 2 8 2 L0 2 0 0 8 0 Q12 0 12 4 L12 20 Q12 24 8 24 L0 24 0 22 M0 4 L8 4 8 20 0 20 0 4"/>
+    <path stroke="none" fill="#000000" fill-opacity="0.2" d="M0 4 L0 2 8 2 Q10 2 10 4 L10 20 Q10 22 8 22 L0 22 0 20 8 20 8 4 0 4"/>
+  </g>
+</svg>

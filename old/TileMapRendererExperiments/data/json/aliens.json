@@ -1,0 +1,15 @@
+{ "columns":12,
+ "image":"Spritesheet\/Modern Fantasy JRPG Character Sprites (transparent).png",
+ "imageheight":128,
+ "imagewidth":288,
+ "margin":0,
+ "name":"aliens",
+ "spacing":0,
+ "tilecount":48,
+ "tiledversion":"1.5.0",
+ "tileheight":32,
+ "tilewidth":24,
+ "type":"tileset",
+ "version":1.5,
+ "gensprites" : true
+}

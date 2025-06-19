@@ -1,0 +1,456 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\editor tools">
+      <UniqueIdentifier>{b5f0d0d0-82c7-4bde-97d5-8d7159718cb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{11a8f406-173f-41e1-a90d-1f482bd79dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\editor tools">
+      <UniqueIdentifier>{26303b05-e267-4c37-b9ef-9197d3eea94b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cameras">
+      <UniqueIdentifier>{05a0b343-bd55-4409-994e-6a9d56691556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cameras">
+      <UniqueIdentifier>{8aa8d230-4662-433c-87e3-86ab5002bd36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics">
+      <UniqueIdentifier>{08618db8-ebd7-412e-9c1a-09c7c295d4d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{844e05bb-889c-4914-8ddd-da2a8b4c0a09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics\metasprites">
+      <UniqueIdentifier>{42e10e1b-5774-4bdf-839a-b0cf641b0ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics\metasprites">
+      <UniqueIdentifier>{7b0903db-0fb0-4d23-a443-b34db1de282e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics\atlas">
+      <UniqueIdentifier>{e0432c60-32ba-48a2-8c16-3c76029bea70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics\atlas">
+      <UniqueIdentifier>{1b50d80d-0923-4635-9f09-cd3172f759ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game framework">
+      <UniqueIdentifier>{189cca8a-be36-4c88-b04f-14b80068299a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game framework\framework layers">
+      <UniqueIdentifier>{185307e1-56f2-44ab-8316-597530bd1229}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game framework">
+      <UniqueIdentifier>{0bb63435-74b4-4fb0-8f30-7210a0f7b033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game framework\framework layers">
+      <UniqueIdentifier>{c6d994fb-2187-48f0-b5d1-a746055c9875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\scripting">
+      <UniqueIdentifier>{d082d3b5-685b-4c3c-ad4e-e612c57068fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stb image">
+      <UniqueIdentifier>{f483a12f-9629-444f-93bf-544df41734a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\stb image">
+      <UniqueIdentifier>{85a8a998-e860-471f-84a9-deb0ecdf0ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{776a79c6-4c0f-49df-bede-422d23adc3fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{40f636f2-64b1-4d97-bfa0-bd4ad3505b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game framework\framework messages">
+      <UniqueIdentifier>{c8b80d97-2258-442a-b56c-201a25fa9e84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{ec17f2b1-801b-436f-9c2c-cf4c84a25955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\populators">
+      <UniqueIdentifier>{f6e78bf9-87b8-43f4-ae77-b402a615dddc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\populators">
+      <UniqueIdentifier>{4cddc03a-8934-42ff-9ad2-ef26ce261fc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\scripting">
+      <UniqueIdentifier>{b736c026-42b4-46e6-baf5-89e3c7d76663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs">
+      <UniqueIdentifier>{e1a6b362-3d7a-44eb-88e4-9fcc73506ce1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\systems">
+      <UniqueIdentifier>{0e4ef92b-59ba-4813-99eb-835e59cefee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\components">
+      <UniqueIdentifier>{ac2c23ca-ee80-4fc6-a28c-c23151e025bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs">
+      <UniqueIdentifier>{0d1056f2-f3ef-4e49-aac0-46b10bc4d151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\systems">
+      <UniqueIdentifier>{154552c6-7c32-459d-8b1d-3dea8d254515}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="flecs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLTextureHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TiledWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Undo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LutDrawTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="TileInfoTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveFunctionCollapseTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleTileDrawTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorToolBase.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaspriteTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera2D.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCamera.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGlRenderer.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="NewRenderer.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaAtlas.cpp">
+      <Filter>Source Files\graphics\metasprites</Filter>
+    </ClCompile>
+    <ClCompile Include="AtlasLoader.cpp">
+      <Filter>Source Files\graphics\atlas</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>Source Files\game framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\game framework\framework layers</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorUi.cpp">
+      <Filter>Source Files\game framework\framework layers</Filter>
+    </ClCompile>
+    <ClCompile Include="TileChunk.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files\graphics\atlas</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralHelpers.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralCppTiledWorldPopulater.cpp">
+      <Filter>Source Files\populators</Filter>
+    </ClCompile>
+    <ClCompile Include="JanetScriptProceduralPopulater.cpp">
+      <Filter>Source Files\populators</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawMetaSpriteSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeOfTile.cpp">
+      <Filter>Source Files\graphics\atlas</Filter>
+    </ClCompile>
+    <ClCompile Include="janet.c">
+      <Filter>Source Files\scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="JanetVmService.cpp">
+      <Filter>Source Files\scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi_image.cpp">
+      <Filter>Source Files\stb image</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsFilesystem.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="jsonhelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JSONPopulator.cpp">
+      <Filter>Source Files\populators</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticCollisionDrawerTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityInspectorTool.cpp">
+      <Filter>Source Files\editor tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="flecs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLTextureHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TiledWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Undo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedTileDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaSpriteComponent.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawMetaSpriteSystem.h">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="TileInfoTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleTileDrawTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveFunctionCollapseTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="LutDrawTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorToolBase.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaspriteTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMoveComponent.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera2D.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCamera.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGlRenderer.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="NewRenderer.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaAtlas.h">
+      <Filter>Header Files\graphics\metasprites</Filter>
+    </ClInclude>
+    <ClInclude Include="AtlasLoader.h">
+      <Filter>Header Files\graphics\atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>Header Files\game framework</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUi.h">
+      <Filter>Header Files\game framework\framework layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\game framework\framework layers</Filter>
+    </ClInclude>
+    <ClInclude Include="TileChunk.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Header Files\graphics\atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeOfTile.h">
+      <Filter>Header Files\graphics\atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="TileSetInfo.h">
+      <Filter>Header Files\graphics\atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapConfigOptions.h">
+      <Filter>Header Files\graphics\atlas</Filter>
+    </ClInclude>
+    <ClInclude Include="ITiledWorldPopulater.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="JanetScriptProceduralPopulater.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralCppTiledWorldPopulater.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralHelpers.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="janet.h">
+      <Filter>Header Files\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="JanetVmService.h">
+      <Filter>Header Files\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Header Files\stb image</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\stb image</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_resize.h">
+      <Filter>Header Files\stb image</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IFilesystem.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTypedefs.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoList.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsFilesystem.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowSizeChangedMessage.h">
+      <Filter>Header Files\game framework\framework messages</Filter>
+    </ClInclude>
+    <ClInclude Include="jsonhelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JSONPopulator.h">
+      <Filter>Header Files\populators</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rotation.h">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticPhysicsBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityInspectorTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticCollisionDrawerTool.h">
+      <Filter>Header Files\editor tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

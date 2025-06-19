@@ -1,0 +1,16 @@
+.DS_Store
+bin
+.bake_cache
+.vscode
+gcov
+.idea
+*.pdb
+deps
+cmake-build-debug
+bazel-bin
+bazel-flecs
+bazel-bazel
+bazel-genfiles
+bazel-out
+bazel-testlogs
+**/CMakeFiles/*
