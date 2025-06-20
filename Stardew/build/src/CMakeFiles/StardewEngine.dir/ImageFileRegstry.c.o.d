@@ -1,8 +1,8 @@
 src/CMakeFiles/StardewEngine.dir/ImageFileRegstry.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/ImageFileRegstry.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ImageFileRegstry.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ImageFileRegstry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -19,8 +19,8 @@ src/CMakeFiles/StardewEngine.dir/ImageFileRegstry.c.o: \
  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/HandleDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/HandleDefs.h \
  /usr/include/stdio.h /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h \
  /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h \
@@ -60,9 +60,9 @@ src/CMakeFiles/StardewEngine.dir/ImageFileRegstry.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/cJSON.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/FileHelpers.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/stb/stb_image.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/cJSON.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/FileHelpers.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/stb/stb_image.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h \
  /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \

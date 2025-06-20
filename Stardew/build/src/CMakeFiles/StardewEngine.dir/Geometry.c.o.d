@@ -1,7 +1,7 @@
 src/CMakeFiles/StardewEngine.dir/Geometry.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/Geometry.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Geometry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Geometry.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/cglm.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/common.h \

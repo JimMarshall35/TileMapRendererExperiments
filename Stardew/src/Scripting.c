@@ -9,6 +9,8 @@
 #include "XMLUIGameLayer.h"
 #include "RootWidget.h"
 
+#define GAME_LUA_MINOR_VERSION 1
+
 static lua_State* gL = NULL;
 
 static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const char* pChangedPropName)
@@ -78,7 +80,10 @@ bool Sc_OpenFile(const char* path)
 		return false;
 	}
 	lua_pcall(gL, 0, LUA_MULTRET, 0);
+	return status == 0;
+#if GAME_LUA_VERSION > 1
 	return status == LUA_OK;
+#endif
 }
 
 static const char* GetTypeOnTopOfStack()
@@ -207,7 +212,9 @@ void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void
 
 int Sc_Int()
 {
+#if GAME_LUA_MINOR_VERSION >= 3
 	EASSERT(lua_isinteger(gL, -1));
+#endif
 	return lua_tointeger(gL, -1);
 }
 

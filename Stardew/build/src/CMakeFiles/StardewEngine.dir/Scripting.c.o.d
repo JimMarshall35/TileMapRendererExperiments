@@ -1,10 +1,10 @@
 src/CMakeFiles/StardewEngine.dir/Scripting.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/Scripting.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Scripting.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Scripting.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -20,9 +20,9 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o: \
  /usr/include/aarch64-linux-gnu/bits/wchar.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lua.h \
+ /usr/include/lua5.1/lua.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h \
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/luaconf.h \
+ /usr/include/lua5.1/luaconf.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h \
  /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \
@@ -31,10 +31,9 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o: \
  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h \
  /usr/include/aarch64-linux-gnu/bits/posix2_lim.h \
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lualib.h \
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lua.h \
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lauxlib.h \
- /usr/include/stdio.h \
+ /usr/include/aarch64-linux-gnu/lua5.1-deb-multiarch.h \
+ /usr/include/lua5.1/lualib.h /usr/include/lua5.1/lua.h \
+ /usr/include/lua5.1/lauxlib.h /usr/include/stdio.h \
  /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h \
@@ -72,14 +71,14 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/AssertLib.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/AssertLib.h \
  /usr/include/assert.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/XMLUIGameLayer.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/HandleDefs.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Widget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ObjectPool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Geometry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/XMLUIGameLayer.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/HandleDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Widget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ObjectPool.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Geometry.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/cglm.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/common.h \
  /usr/include/math.h /usr/include/aarch64-linux-gnu/bits/math-vector.h \
@@ -158,6 +157,6 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/bezier.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/ray.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/affine2d.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DrawContext.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/RootWidget.h
+ /home/jim/TileMapRendererExperiments/Stardew/include/DrawContext.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/RootWidget.h

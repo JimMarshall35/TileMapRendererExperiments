@@ -1,8 +1,8 @@
 src/CMakeFiles/StardewEngine.dir/main.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/main.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/glad/include/glad/glad.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/glad/include/KHR/khrplatform.h \
+ /home/jim/TileMapRendererExperiments/Stardew/lib/glad/include/glad/glad.h \
+ /home/jim/TileMapRendererExperiments/Stardew/lib/glad/include/KHR/khrplatform.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -30,15 +30,15 @@ src/CMakeFiles/StardewEngine.dir/main.c.o: \
  /usr/include/aarch64-linux-gnu/bits/stdio_lim.h \
  /usr/include/aarch64-linux-gnu/bits/floatn.h \
  /usr/include/aarch64-linux-gnu/bits/floatn-common.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/GameFramework.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/InputContext.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/GameFramework.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/InputContext.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/HandleDefs.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DrawContext.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/HandleDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DrawContext.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/cglm.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/common.h \
  /usr/include/stdlib.h /usr/include/aarch64-linux-gnu/bits/waitflags.h \
@@ -142,19 +142,19 @@ src/CMakeFiles/StardewEngine.dir/main.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/bezier.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/ray.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/affine2d.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/XMLUIGameLayer.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Widget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ObjectPool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Geometry.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ImageFileRegstry.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Widget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Scripting.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/XMLUIGameLayer.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Widget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ObjectPool.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Geometry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ImageFileRegstry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Widget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Scripting.h \
  /usr/include/string.h \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/PlatformDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/PlatformDefs.h \
  /usr/include/time.h /usr/include/aarch64-linux-gnu/bits/time.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_tm.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h

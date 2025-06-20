@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/jim/TileMapRendererExperiments/Stardew/src/../include -I/home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include -I/home/jim/TileMapRendererExperiments/Stardew/src/../lib/glad/include -I/home/jim/TileMapRendererExperiments/Stardew/build/lib/freetype-2.13.3/include -I/home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include -I/home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include -I/home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include
+C_INCLUDES = -I/home/jim/TileMapRendererExperiments/Stardew/include -I/home/jim/TileMapRendererExperiments/Stardew/lib/glad/include -I/usr/include/freetype2 -I/usr/include/lua5.1 -I/usr/include/libxml2 -I/home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include
 
 C_FLAGS = -g
 

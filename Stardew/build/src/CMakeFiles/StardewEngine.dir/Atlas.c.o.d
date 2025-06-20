@@ -1,8 +1,8 @@
 src/CMakeFiles/StardewEngine.dir/Atlas.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/Atlas.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -18,7 +18,7 @@ src/CMakeFiles/StardewEngine.dir/Atlas.c.o: \
  /usr/include/aarch64-linux-gnu/bits/wchar.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/HandleDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/HandleDefs.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/cglm.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/common.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h /usr/include/stdlib.h \
@@ -134,19 +134,18 @@ src/CMakeFiles/StardewEngine.dir/Atlas.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/bezier.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/ray.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/affine2d.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ImageFileRegstry.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ImageFileRegstry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
  /usr/include/string.h \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
- /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/ft2build.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/ftheader.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/freetype.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/ftconfig.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/ftoption.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/ftstdlib.h \
+ /usr/include/strings.h /usr/include/freetype2/ft2build.h \
+ /usr/include/freetype2/freetype/config/ftheader.h \
+ /usr/include/freetype2/freetype/freetype.h \
+ /usr/include/freetype2/freetype/config/ftconfig.h \
+ /usr/include/freetype2/freetype/config/ftoption.h \
+ /usr/include/freetype2/freetype/config/ftstdlib.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h \
  /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \
@@ -157,17 +156,17 @@ src/CMakeFiles/StardewEngine.dir/Atlas.c.o: \
  /usr/include/aarch64-linux-gnu/bits/posix2_lim.h /usr/include/setjmp.h \
  /usr/include/aarch64-linux-gnu/bits/setjmp.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/integer-types.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/public-macros.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/config/mac-support.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/fttypes.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/ftsystem.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/ftimage.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/fterrors.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/ftmoderr.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/freetype-2.13.3/include/freetype/fterrdef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/stb/stb_image_write.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DrawContext.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/SharedPtr.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/FloatingPointLib.h
+ /usr/include/freetype2/freetype/config/integer-types.h \
+ /usr/include/freetype2/freetype/config/public-macros.h \
+ /usr/include/freetype2/freetype/config/mac-support.h \
+ /usr/include/freetype2/freetype/fttypes.h \
+ /usr/include/freetype2/freetype/ftsystem.h \
+ /usr/include/freetype2/freetype/ftimage.h \
+ /usr/include/freetype2/freetype/fterrors.h \
+ /usr/include/freetype2/freetype/ftmoderr.h \
+ /usr/include/freetype2/freetype/fterrdef.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/stb/stb_image_write.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DrawContext.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/SharedPtr.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/FloatingPointLib.h

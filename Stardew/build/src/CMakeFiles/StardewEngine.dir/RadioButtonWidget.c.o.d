@@ -1,9 +1,9 @@
 src/CMakeFiles/StardewEngine.dir/RadioButtonWidget.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/RadioButtonWidget.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/RadioButtonWidget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/HandleDefs.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/RadioButtonWidget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/HandleDefs.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -20,10 +20,10 @@ src/CMakeFiles/StardewEngine.dir/RadioButtonWidget.c.o: \
  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Widget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ObjectPool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DynArray.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Geometry.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Widget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ObjectPool.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DynArray.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Geometry.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/cglm.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/common.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h /usr/include/stdlib.h \
@@ -138,18 +138,18 @@ src/CMakeFiles/StardewEngine.dir/RadioButtonWidget.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/bezier.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/ray.h \
  /home/jim/TileMapRendererExperiments/Stardew/lib/cglm-0.9.6/include/cglm/affine2d.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/xml.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/xml.h \
  /usr/include/string.h \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/XMLHelpers.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/XMLUIGameLayer.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Widget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/DrawContext.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/Atlas.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/AssertLib.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/TextWidget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/StaticWidget.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/RadioGroupWidget.h
+ /home/jim/TileMapRendererExperiments/Stardew/include/XMLHelpers.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/XMLUIGameLayer.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Widget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/DrawContext.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/AssertLib.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/TextWidget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/StaticWidget.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/RadioGroupWidget.h

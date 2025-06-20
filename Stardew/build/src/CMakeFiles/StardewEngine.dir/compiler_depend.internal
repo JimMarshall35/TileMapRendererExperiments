@@ -151,12 +151,12 @@ src/CMakeFiles/StardewEngine.dir/Atlas.c.o
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h
  /usr/include/strings.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/ft2build.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/ftheader.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/freetype.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/ftconfig.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/ftoption.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/ftstdlib.h
+ /usr/include/freetype2/ft2build.h
+ /usr/include/freetype2/freetype/config/ftheader.h
+ /usr/include/freetype2/freetype/freetype.h
+ /usr/include/freetype2/freetype/config/ftconfig.h
+ /usr/include/freetype2/freetype/config/ftoption.h
+ /usr/include/freetype2/freetype/config/ftstdlib.h
  /usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h
  /usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h
  /usr/include/limits.h
@@ -169,15 +169,15 @@ src/CMakeFiles/StardewEngine.dir/Atlas.c.o
  /usr/include/setjmp.h
  /usr/include/aarch64-linux-gnu/bits/setjmp.h
  /usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/integer-types.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/public-macros.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/config/mac-support.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/fttypes.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/ftsystem.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/ftimage.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/fterrors.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/ftmoderr.h
- /home/jim/TileMapRendererExperiments/Stardew/lib/freetype-2.13.3/include/freetype/fterrdef.h
+ /usr/include/freetype2/freetype/config/integer-types.h
+ /usr/include/freetype2/freetype/config/public-macros.h
+ /usr/include/freetype2/freetype/config/mac-support.h
+ /usr/include/freetype2/freetype/fttypes.h
+ /usr/include/freetype2/freetype/ftsystem.h
+ /usr/include/freetype2/freetype/ftimage.h
+ /usr/include/freetype2/freetype/fterrors.h
+ /usr/include/freetype2/freetype/ftmoderr.h
+ /usr/include/freetype2/freetype/fterrdef.h
  /home/jim/TileMapRendererExperiments/Stardew/include/stb/stb_image_write.h
  /home/jim/TileMapRendererExperiments/Stardew/include/DrawContext.h
  /home/jim/TileMapRendererExperiments/Stardew/include/Atlas.h
@@ -1818,9 +1818,9 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o
  /usr/include/aarch64-linux-gnu/bits/wchar.h
  /usr/include/aarch64-linux-gnu/bits/stdint-intn.h
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lua.h
+ /usr/include/lua5.1/lua.h
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/luaconf.h
+ /usr/include/lua5.1/luaconf.h
  /usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h
  /usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h
  /usr/include/limits.h
@@ -1830,9 +1830,10 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.o
  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h
  /usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h
  /usr/include/aarch64-linux-gnu/bits/posix2_lim.h
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lualib.h
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lua.h
- /home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/include/lauxlib.h
+ /usr/include/aarch64-linux-gnu/lua5.1-deb-multiarch.h
+ /usr/include/lua5.1/lualib.h
+ /usr/include/lua5.1/lua.h
+ /usr/include/lua5.1/lauxlib.h
  /usr/include/stdio.h
  /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h
  /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h

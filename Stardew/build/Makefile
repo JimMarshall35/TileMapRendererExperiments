@@ -107,7 +107,7 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target list_install_components
 list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\" \"headers\" \"pkgconfig\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
 .PHONY : list_install_components
 
 # Special rule for the target list_install_components
@@ -182,19 +182,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named freetype
-
-# Build rule for target.
-freetype: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 freetype
-.PHONY : freetype
-
-# fast build rule for target.
-freetype/fast:
-	$(MAKE) $(MAKESILENT) -f lib/freetype-2.13.3/CMakeFiles/freetype.dir/build.make lib/freetype-2.13.3/CMakeFiles/freetype.dir/build
-.PHONY : freetype/fast
-
-#=============================================================================
 # Target rules for targets named StardewEngine
 
 # Build rule for target.
@@ -220,19 +207,6 @@ cglm/fast:
 	$(MAKE) $(MAKESILENT) -f lib/cglm-0.9.6/CMakeFiles/cglm.dir/build.make lib/cglm-0.9.6/CMakeFiles/cglm.dir/build
 .PHONY : cglm/fast
 
-#=============================================================================
-# Target rules for targets named lua
-
-# Build rule for target.
-lua: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lua
-.PHONY : lua
-
-# fast build rule for target.
-lua/fast:
-	$(MAKE) $(MAKESILENT) -f lib/lua-cmake/CMakeFiles/lua.dir/build.make lib/lua-cmake/CMakeFiles/lua.dir/build
-.PHONY : lua/fast
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -249,8 +223,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... StardewEngine"
 	@echo "... cglm"
-	@echo "... freetype"
-	@echo "... lua"
 .PHONY : help
 
 

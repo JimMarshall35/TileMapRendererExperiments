@@ -1,8 +1,8 @@
 src/CMakeFiles/StardewEngine.dir/ObjectPool.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/ObjectPool.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/ObjectPool.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/ObjectPool.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -50,4 +50,4 @@ src/CMakeFiles/StardewEngine.dir/ObjectPool.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h /usr/include/assert.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h

@@ -1,7 +1,7 @@
 src/CMakeFiles/StardewEngine.dir/xml.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/xml.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/xml.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/xml.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \

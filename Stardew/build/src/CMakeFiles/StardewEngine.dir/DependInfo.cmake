@@ -43,8 +43,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/jim/TileMapRendererExperiments/Stardew/build/lib/freetype-2.13.3/CMakeFiles/freetype.dir/DependInfo.cmake"
-  "/home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/CMakeFiles/lua.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

@@ -1,7 +1,7 @@
 src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/FileHelpers.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/FileHelpers.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/FileHelpers.h \
  /usr/include/stdio.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \

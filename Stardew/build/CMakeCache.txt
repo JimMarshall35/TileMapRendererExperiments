@@ -352,6 +352,18 @@ CPACK_SOURCE_TZ:BOOL=ON
 //Enable to build ZIP source packages
 CPACK_SOURCE_ZIP:BOOL=OFF
 
+//Path to a file.
+FREETYPE_INCLUDE_DIR_freetype2:PATH=/usr/include/freetype2
+
+//Path to a file.
+FREETYPE_INCLUDE_DIR_ft2build:PATH=/usr/include/freetype2
+
+//Path to a library.
+FREETYPE_LIBRARY_DEBUG:FILEPATH=FREETYPE_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+FREETYPE_LIBRARY_RELEASE:FILEPATH=/usr/lib/aarch64-linux-gnu/libfreetype.so
+
 //Disable support of compressed WOFF2 fonts.
 FT_DISABLE_BROTLI:BOOL=OFF
 
@@ -391,6 +403,30 @@ HarfBuzz_INCLUDE_DIR:PATH=HarfBuzz_INCLUDE_DIR-NOTFOUND
 
 //Path to a library.
 HarfBuzz_LIBRARY:FILEPATH=HarfBuzz_LIBRARY-NOTFOUND
+
+//Path to a file.
+LIBXML2_INCLUDE_DIR:PATH=/usr/include/libxml2
+
+//Path to a library.
+LIBXML2_LIBRARY:FILEPATH=/usr/lib/aarch64-linux-gnu/libxml2.so
+
+//Path to a program.
+LIBXML2_XMLLINT_EXECUTABLE:FILEPATH=LIBXML2_XMLLINT_EXECUTABLE-NOTFOUND
+
+//Path to a file.
+LUA_INCLUDE_DIR:PATH=/usr/include/lua5.1
+
+//Lua Libraries
+LUA_LIBRARIES:STRING=/usr/lib/aarch64-linux-gnu/liblua5.1.so;/usr/lib/aarch64-linux-gnu/libm.so
+
+//Path to a library.
+LUA_LIBRARY:FILEPATH=/usr/lib/aarch64-linux-gnu/liblua5.1.so
+
+//Path to a library.
+LUA_MATH_LIBRARY:FILEPATH=/usr/lib/aarch64-linux-gnu/libm.so
+
+//The directory containing a CMake configuration file for Lua54.
+Lua54_DIR:PATH=Lua54_DIR-NOTFOUND
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -452,6 +488,12 @@ freetype_SOURCE_DIR:STATIC=/home/jim/TileMapRendererExperiments/Stardew/lib/free
 //The directory containing a CMake configuration file for glfw3.
 glfw3_DIR:PATH=/usr/lib/aarch64-linux-gnu/cmake/glfw3
 
+//The directory containing a CMake configuration file for libxml2-dev.
+libxml2-dev_DIR:PATH=libxml2-dev_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for libxml2.
+libxml2_DIR:PATH=libxml2_DIR-NOTFOUND
+
 //Value Computed by CMake
 lua-cmake_BINARY_DIR:STATIC=/home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake
 
@@ -463,6 +505,9 @@ lua-cmake_SOURCE_DIR:STATIC=/home/jim/TileMapRendererExperiments/Stardew/lib/lua
 
 //Path to a library.
 pkgcfg_lib_PC_BROTLIDEC_brotlidec:FILEPATH=/usr/lib/aarch64-linux-gnu/libbrotlidec.so
+
+//Path to a library.
+pkgcfg_lib_PC_LIBXML_xml2:FILEPATH=/usr/lib/aarch64-linux-gnu/libxml2.so
 
 
 ########################
@@ -611,7 +656,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -688,16 +733,44 @@ CPACK_SOURCE_TZ-ADVANCED:INTERNAL=1
 CPACK_SOURCE_ZIP-ADVANCED:INTERNAL=1
 //Details about finding BrotliDec
 FIND_PACKAGE_MESSAGE_DETAILS_BrotliDec:INTERNAL=[/usr/include][/usr/lib/aarch64-linux-gnu/libbrotlidec.so][v1.0.9()]
+//Details about finding Freetype
+FIND_PACKAGE_MESSAGE_DETAILS_Freetype:INTERNAL=[/usr/lib/aarch64-linux-gnu/libfreetype.so][/usr/include/freetype2][v2.12.1()]
+//Details about finding LibXml2
+FIND_PACKAGE_MESSAGE_DETAILS_LibXml2:INTERNAL=[/usr/lib/aarch64-linux-gnu/libxml2.so][/usr/include/libxml2][v2.9.14()]
+//Details about finding Lua51
+FIND_PACKAGE_MESSAGE_DETAILS_Lua51:INTERNAL=[/usr/lib/aarch64-linux-gnu/liblua5.1.so;/usr/lib/aarch64-linux-gnu/libm.so][/usr/include/lua5.1][v5.1.5()]
 //Details about finding PNG
 FIND_PACKAGE_MESSAGE_DETAILS_PNG:INTERNAL=[/usr/lib/aarch64-linux-gnu/libpng.so][/usr/include][v1.6.39()]
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding ZLIB
 FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib/aarch64-linux-gnu/libz.so][/usr/include][v1.2.13()]
+//ADVANCED property for variable: FREETYPE_INCLUDE_DIR_freetype2
+FREETYPE_INCLUDE_DIR_freetype2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FREETYPE_INCLUDE_DIR_ft2build
+FREETYPE_INCLUDE_DIR_ft2build-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FREETYPE_LIBRARY_DEBUG
+FREETYPE_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: FREETYPE_LIBRARY_RELEASE
+FREETYPE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //Have include fcntl.h
 HAVE_FCNTL_H:INTERNAL=1
 //Have include unistd.h
 HAVE_UNISTD_H:INTERNAL=1
+//ADVANCED property for variable: LIBXML2_INCLUDE_DIR
+LIBXML2_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LIBXML2_LIBRARY
+LIBXML2_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LIBXML2_XMLLINT_EXECUTABLE
+LIBXML2_XMLLINT_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LUA_INCLUDE_DIR
+LUA_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LUA_LIBRARIES
+LUA_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LUA_LIBRARY
+LUA_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LUA_MATH_LIBRARY
+LUA_MATH_LIBRARY-ADVANCED:INTERNAL=1
 PC_BROTLIDEC_CFLAGS:INTERNAL=
 PC_BROTLIDEC_CFLAGS_I:INTERNAL=
 PC_BROTLIDEC_CFLAGS_OTHER:INTERNAL=
@@ -783,6 +856,41 @@ PC_HARFBUZZ_harfbuzz_INCLUDEDIR:INTERNAL=
 PC_HARFBUZZ_harfbuzz_LIBDIR:INTERNAL=
 PC_HARFBUZZ_harfbuzz_PREFIX:INTERNAL=
 PC_HARFBUZZ_harfbuzz_VERSION:INTERNAL=
+PC_LIBXML_CFLAGS:INTERNAL=-I/usr/include/libxml2
+PC_LIBXML_CFLAGS_I:INTERNAL=
+PC_LIBXML_CFLAGS_OTHER:INTERNAL=
+PC_LIBXML_FOUND:INTERNAL=1
+PC_LIBXML_INCLUDEDIR:INTERNAL=/usr/include
+PC_LIBXML_INCLUDE_DIRS:INTERNAL=/usr/include/libxml2
+PC_LIBXML_LDFLAGS:INTERNAL=-L/usr/lib/aarch64-linux-gnu;-lxml2
+PC_LIBXML_LDFLAGS_OTHER:INTERNAL=
+PC_LIBXML_LIBDIR:INTERNAL=/usr/lib/aarch64-linux-gnu
+PC_LIBXML_LIBRARIES:INTERNAL=xml2
+PC_LIBXML_LIBRARY_DIRS:INTERNAL=/usr/lib/aarch64-linux-gnu
+PC_LIBXML_LIBS:INTERNAL=
+PC_LIBXML_LIBS_L:INTERNAL=
+PC_LIBXML_LIBS_OTHER:INTERNAL=
+PC_LIBXML_LIBS_PATHS:INTERNAL=
+PC_LIBXML_MODULE_NAME:INTERNAL=libxml-2.0
+PC_LIBXML_PREFIX:INTERNAL=/usr
+PC_LIBXML_STATIC_CFLAGS:INTERNAL=-I/usr/include/libxml2
+PC_LIBXML_STATIC_CFLAGS_I:INTERNAL=
+PC_LIBXML_STATIC_CFLAGS_OTHER:INTERNAL=
+PC_LIBXML_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/libxml2
+PC_LIBXML_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/aarch64-linux-gnu;-lxml2;-licui18n;-licuuc;-licudata;-lz;-llzma;-lm
+PC_LIBXML_STATIC_LDFLAGS_OTHER:INTERNAL=
+PC_LIBXML_STATIC_LIBDIR:INTERNAL=
+PC_LIBXML_STATIC_LIBRARIES:INTERNAL=xml2;icui18n;icuuc;icudata;z;lzma;m
+PC_LIBXML_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/aarch64-linux-gnu
+PC_LIBXML_STATIC_LIBS:INTERNAL=
+PC_LIBXML_STATIC_LIBS_L:INTERNAL=
+PC_LIBXML_STATIC_LIBS_OTHER:INTERNAL=
+PC_LIBXML_STATIC_LIBS_PATHS:INTERNAL=
+PC_LIBXML_VERSION:INTERNAL=2.9.14
+PC_LIBXML_libxml-2.0_INCLUDEDIR:INTERNAL=
+PC_LIBXML_libxml-2.0_LIBDIR:INTERNAL=
+PC_LIBXML_libxml-2.0_PREFIX:INTERNAL=
+PC_LIBXML_libxml-2.0_VERSION:INTERNAL=
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
@@ -804,10 +912,14 @@ _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //CMAKE_INSTALL_PREFIX during last run
 _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/usr/local
 __pkg_config_arguments_PC_BROTLIDEC:INTERNAL=QUIET;libbrotlidec
+__pkg_config_arguments_PC_LIBXML:INTERNAL=QUIET;libxml-2.0
 __pkg_config_checked_PC_BROTLIDEC:INTERNAL=1
 __pkg_config_checked_PC_BZIP2:INTERNAL=1
 __pkg_config_checked_PC_HARFBUZZ:INTERNAL=1
+__pkg_config_checked_PC_LIBXML:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PC_BROTLIDEC_brotlidec
 pkgcfg_lib_PC_BROTLIDEC_brotlidec-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_PC_LIBXML_xml2
+pkgcfg_lib_PC_LIBXML_xml2-ADVANCED:INTERNAL=1
 prefix_result:INTERNAL=/usr/lib/aarch64-linux-gnu
 

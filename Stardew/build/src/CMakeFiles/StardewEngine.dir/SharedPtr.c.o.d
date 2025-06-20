@@ -1,7 +1,7 @@
 src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/SharedPtr.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/SharedPtr.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/SharedPtr.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h /usr/include/stdlib.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -41,8 +41,8 @@ src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o: \
  /usr/include/aarch64-linux-gnu/bits/struct_mutex.h \
  /usr/include/aarch64-linux-gnu/bits/struct_rwlock.h \
  /usr/include/alloca.h /usr/include/aarch64-linux-gnu/bits/stdlib-float.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/IntTypes.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/IntTypes.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/wchar.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/PlatformDefs.h
+ /home/jim/TileMapRendererExperiments/Stardew/include/PlatformDefs.h

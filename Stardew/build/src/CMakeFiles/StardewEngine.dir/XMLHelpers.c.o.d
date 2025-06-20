@@ -1,9 +1,9 @@
 src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o: \
  /home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c \
  /usr/include/stdc-predef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/XMLHelpers.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/XMLHelpers.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/xml.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/xml.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdbool.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
@@ -34,5 +34,5 @@ src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../include/AssertLib.h \
+ /home/jim/TileMapRendererExperiments/Stardew/include/AssertLib.h \
  /usr/include/assert.h

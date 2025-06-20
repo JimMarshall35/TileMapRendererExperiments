@@ -52,8 +52,8 @@ src/CMakeFiles/StardewEngine.dir/glad.c.o: \
  /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/glad/include/glad/glad.h \
- /home/jim/TileMapRendererExperiments/Stardew/src/../lib/glad/include/KHR/khrplatform.h \
+ /home/jim/TileMapRendererExperiments/Stardew/lib/glad/include/glad/glad.h \
+ /home/jim/TileMapRendererExperiments/Stardew/lib/glad/include/KHR/khrplatform.h \
  /usr/lib/gcc/aarch64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/aarch64-linux-gnu/bits/wchar.h \
  /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h /usr/include/dlfcn.h \

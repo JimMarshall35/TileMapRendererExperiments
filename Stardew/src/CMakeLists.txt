@@ -31,7 +31,4 @@ XMLUIGameLayer.c
 GameFramework.c
 SharedPtr.c)
 
-target_include_directories(StardewEngine  PRIVATE ../include)
-target_include_directories(StardewEngine  PRIVATE ../lib/freetype-2.13.3/include)
-target_include_directories(StardewEngine  PRIVATE ../lib/glad/include)
 

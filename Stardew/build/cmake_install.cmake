@@ -44,17 +44,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/jim/TileMapRendererExperiments/Stardew/build/lib/freetype-2.13.3/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
   include("/home/jim/TileMapRendererExperiments/Stardew/build/src/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/home/jim/TileMapRendererExperiments/Stardew/build/lib/lua-cmake/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

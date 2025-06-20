@@ -572,9 +572,11 @@ src/StardewEngine: src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/GameFramework.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/build.make
-src/StardewEngine: lib/freetype-2.13.3/libfreetyped.so.6.20.2
 src/StardewEngine: /usr/lib/aarch64-linux-gnu/libglfw.so.3.3
-src/StardewEngine: lib/lua-cmake/liblua.so
+src/StardewEngine: /usr/lib/aarch64-linux-gnu/libfreetype.so
+src/StardewEngine: /usr/lib/aarch64-linux-gnu/liblua5.1.so
+src/StardewEngine: /usr/lib/aarch64-linux-gnu/libm.so
+src/StardewEngine: /usr/lib/aarch64-linux-gnu/libxml2.so
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Linking C executable StardewEngine"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/StardewEngine.dir/link.txt --verbose=$(VERBOSE)
