@@ -212,8 +212,7 @@ void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct 
 		pData->content = NULL;
 	}
 	pData->content = GetWhitespaceStrippedString(content);
-	//malloc(len+1);
-	//strcpy(pData->content, content);
+
 	xmlFree(content);
 
 	bool bFontSet = false;
