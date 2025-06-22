@@ -1,7 +1,5 @@
 #include "RadioGroupWidget.h"
 #include "Widget.h"
-#include "xml.h"
-#include "XMLHelpers.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -12,6 +10,7 @@
 #include "RadioButtonWidget.h"
 #include "RootWidget.h"
 #include "Scripting.h"
+#include <libxml/tree.h>
 
 struct RadioGroupData
 {
@@ -109,7 +108,7 @@ static void OnWidgetInit(struct UIWidget* pWidget)
 	SetRootWidgetIsDirty(pData->rootWidget, true);
 }
 
-static void ParseBindingEspressionAttribute(const char* attribName, const char* attribContent, struct UIWidget* pWidget, struct RadioGroupData* pData, struct XMLUIData* pUILayerData)
+static void ParseBindingEspressionAttribute(char* attribName, char* attribContent, struct UIWidget* pWidget, struct RadioGroupData* pData, struct XMLUIData* pUILayerData)
 {
 	if (strcmp(attribName, "selectedChild") == 0)
 	{
@@ -121,29 +120,23 @@ static void ParseBindingEspressionAttribute(const char* attribName, const char* 
 	}
 }
 
-static void PopulateRadioGroupDataFromXML(struct UIWidget* pWidget, struct RadioGroupData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void PopulateRadioGroupDataFromXML(struct UIWidget* pWidget, struct RadioGroupData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
-	char attribName[64];
-	char attribContent[64];
-	int numAttribs = xml_node_attributes(pXMLNode);
-	for (int i = 0; i < numAttribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pXMLNode, "selectedChild"))
 	{
-		XML_AttributeNameToBuffer(pXMLNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pXMLNode, attribContent, i, 64);
-		if (UI_IsAttributeStringABindingExpression(attribContent))
+		if (UI_IsAttributeStringABindingExpression(attribute))
 		{
-			ParseBindingEspressionAttribute(attribName, attribContent, pWidget, pData, pUILayerData);
-			continue;
+			ParseBindingEspressionAttribute("selectedChild", attribute, pWidget, pData, pUILayerData);
 		}
-
-		if (strcmp(attribName, "selectedChild") == 0)
+		else
 		{
-			pData->nSelectecedChild = atoi(attribContent);
+			pData->nSelectecedChild = atoi(attribute);
 		}
 	}
 }
 
-static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -167,10 +160,10 @@ static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, struct xml_node* pXM
 	pWidget->cCallbacks.Callbacks[WC_OnMouseUp].callback.mouseBtnFn = &MouseButtonUpCallback;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].type = WC_OnMouseLeave;
-	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mouseBtnFn = &MouseLeaveCallback;
+	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mousePosFn = &MouseLeaveCallback;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].type = WC_OnMouseMove;
-	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].callback.mouseBtnFn = &MouseMoveCallback;
+	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].callback.mousePosFn = &MouseMoveCallback;
 
 	memset(pWidget->pImplementationData, 0, sizeof(struct RadioGroupData));
 	struct RadioGroupData* pData = pWidget->pImplementationData;
@@ -180,7 +173,7 @@ static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, struct xml_node* pXM
 	PopulateRadioGroupDataFromXML(pWidget, pData, pXMLNode, pUILayerData);
 }
 
-HWidget RadioGroupWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget RadioGroupWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoRadioGroupWidget(hWidget, pXMLNode, pUILayerData);

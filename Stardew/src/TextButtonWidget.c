@@ -1,6 +1,5 @@
 #include "TextButtonWidget.h"
 #include "Widget.h"
-#include "xml.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -11,7 +10,7 @@
 #include "BackgroundBoxWidget.h"
 #include "RootWidget.h"
 #include "Scripting.h"
-#include "XMLHelpers.h"
+#include <libxml/tree.h>
 
 enum ButtonType
 {
@@ -181,10 +180,10 @@ static void SetCMouseCallbacks(struct UIWidget* pWidget)
 	pWidget->cCallbacks.Callbacks[WC_OnMouseUp].callback.mouseBtnFn = &MouseButtonUpCallback;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].type = WC_OnMouseLeave;
-	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mouseBtnFn = &MouseLeaveCallback;
+	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mousePosFn = &MouseLeaveCallback;
 }
 
-static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -207,34 +206,29 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct xml_node* pXM
 	BackgroundBoxWidget_fromXML(pWidget, &pData->backgroundBoxWidgetData, pXMLNode, pUILayerData);
 	SetCMouseCallbacks(pWidget);
 
-	int numAttributes = xml_node_attributes(pXMLNode);
-	char attributeNameBuf[128];
-	char attributeContentBuf[128];
-	for (int i = 0; i < numAttributes; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pXMLNode, "onPress"))
 	{
-		XML_AttributeContentToBuffer(pXMLNode, attributeContentBuf, i, 128);
-		XML_AttributeNameToBuffer(pXMLNode, attributeNameBuf, i, 128);
-		if (strcmp(attributeNameBuf, "onPress") == 0)
+		EASSERT(strlen(attribute) < MAX_SCRIPT_FUNCTION_NAME_SIZE);
+		strcpy(pData->onPressFunctionName, attribute);
+		pData->bLuaCallbackSet = true;
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "btnType"))
+	{
+		if (strcmp(attribute, "OnRelease") == 0)
 		{
-			EASSERT(strlen(attributeContentBuf) < MAX_SCRIPT_FUNCTION_NAME_SIZE);
-			strcpy(pData->onPressFunctionName, attributeContentBuf);
-			pData->bLuaCallbackSet = true;
+			pData->type = BT_FireOnRelease;
 		}
-		else if (strcmp(attributeNameBuf, "btnType") == 0)
+		else if (strcmp(attribute, "OnDown") == 0)
 		{
-			if (strcmp(attributeContentBuf, "OnRelease") == 0)
-			{
-				pData->type = BT_FireOnRelease;
-			}
-			else if (strcmp(attributeContentBuf, "OnDown") == 0)
-			{
-				pData->type = BT_FireOnDown;
-			}
+			pData->type = BT_FireOnDown;
 		}
+		xmlFree(attribute);
 	}
 }
 
-HWidget TextButtonWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget TextButtonWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoTextButtonWidget(hWidget, pXMLNode, pUILayerData);

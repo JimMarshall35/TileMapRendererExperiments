@@ -2,7 +2,7 @@
 #define STACKPANEL_WIDGET_H
 #include "HandleDefs.h"
 
-struct xml_node;
+typedef struct _xmlNode xmlNode;
 
 typedef enum
 {
@@ -16,12 +16,11 @@ struct StackPanelWidgetData
 };
 
 struct UIWidget;
-struct xml_node;
 struct XMLUIData;
 
-HWidget StackPanelWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUIData);
+HWidget StackPanelWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUIData);
 
-void StackPanel_PopulateDataFromXML(struct xml_node* pXMLNode, struct StackPanelWidgetData* pData);
+void StackPanel_PopulateDataFromXML(xmlNode* pXMLNode, struct StackPanelWidgetData* pData);
 float StackPanel_GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData);
 float StackPanel_GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData);
 void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData, float w, float h);

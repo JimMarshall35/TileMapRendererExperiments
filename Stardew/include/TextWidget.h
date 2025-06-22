@@ -4,6 +4,8 @@
 #include "HandleDefs.h"
 #include "DynArray.h"
 
+typedef struct _xmlNode xmlNode;
+
 struct TextWidgetData
 {
 	char* content;
@@ -13,14 +15,14 @@ struct TextWidgetData
 	float r, g, b, a;
 };
 
-struct xml_node;
+
 struct XMLUIData;
 struct WidgetPadding;
 struct WidgetVertex;
 
-void TextWidget_FromXML(struct TextWidgetData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
-HWidget TextWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget TextWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts);
 

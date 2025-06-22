@@ -1,5 +1,4 @@
 #include "BackgroundBoxWidget.h"
-#include "xml.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -7,6 +6,7 @@
 #include "WidgetVertexOutputHelpers.h"
 #include "AssertLib.h"
 #include "Scripting.h"
+#include <libxml/tree.h>
 
 
 
@@ -299,7 +299,7 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 	}
 }
 
-void ParseBindingEspressionAttribute(const char* pAttributeName, const char* pAttributeContent, struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct XMLUIData* pUILayerData)
+static void ParseBindingEspressionAttribute(char* pAttributeName, char* pAttributeContent, struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct XMLUIData* pUILayerData)
 {
 
 	if (strcmp(pAttributeName, "sprite") == 0)
@@ -343,43 +343,34 @@ static void ParseLiteralBackgroundBoxData(struct BackgroundBoxWidgetData* pWidge
 	}
 }
 
-void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pWidgetData->scale.scaleX = 1.0f;
 	pWidgetData->scale.scaleY = 1.0f;
 
 	pWidgetData->atlas = pUILayerData->atlas;
-	size_t numAttributes = xml_node_attributes(pXMLNode);
-	char attributeNameBuffer[128];
-	char attributeContentBuffer[128];
-	for (int i = 0; i < numAttributes; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pXMLNode, "sprite"))
 	{
-		struct xml_string* name = xml_node_attribute_name(pXMLNode, i);
-		struct xml_string* content = xml_node_attribute_content(pXMLNode, i);
-		int nameLen = xml_string_length(name);
-		int contentLen = xml_string_length(content);
-		if (nameLen >= 128)
+		if (UI_IsAttributeStringABindingExpression(attribute))
 		{
-			printf("function %s, namelen > 128. namelen is %i", __FUNCTION__, nameLen);
-			continue;
+			ParseBindingEspressionAttribute("sprite", attribute, pWidget, pWidgetData, pUILayerData);
 		}
-		if (contentLen >= 128)
+		else
 		{
-			printf("function %s, content > 128. contentlen is %i", __FUNCTION__, nameLen);
-			continue;
+			ParseLiteralBackgroundBoxData(pWidgetData, "sprite", attribute);
 		}
-		xml_string_copy(name, attributeNameBuffer, nameLen);
-		attributeNameBuffer[nameLen] = '\0';
-		xml_string_copy(content, attributeContentBuffer, contentLen);
-		attributeContentBuffer[contentLen] = '\0';
-
-		if (UI_IsAttributeStringABindingExpression(attributeContentBuffer))
-		{
-			ParseBindingEspressionAttribute(attributeNameBuffer, attributeContentBuffer, pWidget, pWidgetData, pUILayerData);
-			continue;
-		}
-
-		ParseLiteralBackgroundBoxData(pWidgetData, attributeNameBuffer, attributeContentBuffer);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "scaleX"))
+	{
+		ParseLiteralBackgroundBoxData(pWidgetData, "scaleX", attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "scaleY"))
+	{
+		ParseLiteralBackgroundBoxData(pWidgetData, "scaleY", attribute);
+		xmlFree(attribute);
 	}
 	if (pWidgetData->imageName)
 	{
@@ -388,7 +379,7 @@ void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxW
 	}
 }
 
-static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -410,7 +401,7 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct xml_node* 
 	BackgroundBoxWidget_fromXML(pWidget, pWidgetData, pXMLNode, pUILayerData);
 }
 
-HWidget BackgroundBoxWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget BackgroundBoxWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoBackgroundBoxWidget(hWidget, pXMLNode, pUILayerData);

@@ -712,7 +712,7 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts)
 {
-	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL);
+	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, NULL_HANDLE);
 	Atlas* pAtlas = &gAtlases[hAtlas];
 	HFont matchingName = NULL_HANDLE; // if one with a matching name but not matching size is found then return that
 	

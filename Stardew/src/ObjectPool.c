@@ -1,6 +1,7 @@
 #include "ObjectPool.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include "IntTypes.h"
@@ -10,7 +11,7 @@ void* InitObjectPool(int objectSize, int poolInitialSize)
 {
 	assert(poolInitialSize >= 10);
 	struct ObjectPoolData* pAlloc = malloc(objectSize * poolInitialSize + poolInitialSize * sizeof(u64) + sizeof(struct ObjectPoolData));
-	if (!pAlloc) { assert(false); return; }
+	if (!pAlloc) { assert(false); return NULL; }
 	pAlloc->freeObjectIndicessArray = (u64*)((char*)pAlloc + sizeof(struct ObjectPoolData) + poolInitialSize * objectSize);
 	pAlloc->capacity = poolInitialSize;
 	pAlloc->freeObjectsArraySize = 0;

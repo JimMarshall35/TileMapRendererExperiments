@@ -6,11 +6,11 @@
 #include <stdbool.h>
 #include "DynArray.h"
 #include "Geometry.h"
+#include <libxml/tree.h>
+
 
 struct UIWidget;
-
-struct xml_string;
-struct xml_node;
+struct WidgetPropertyBinding;
 
 struct WidgetVertex
 {
@@ -19,7 +19,8 @@ struct WidgetVertex
 	float r, g, b, a;
 };
 
-typedef void(*PrintfFn)(const char* fmt, ...);
+typedef int(*PrintfFn)(const char* restrict fmt, ...);
+
 
 struct UIWidget;
 
@@ -246,15 +247,15 @@ void UI_AddChild(HWidget hParent, HWidget hChild);
 
 void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim* outWidgetDims);
 
-void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding);
+void UI_ParseWidgetPaddingAttributes(xmlNode* pInNode, struct WidgetPadding* outWidgetPadding);
 
-void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum WidgetHorizontalAlignment* outAlignment);
+void UI_ParseHorizontalAlignementAttribute(xmlChar* contents, enum WidgetHorizontalAlignment* outAlignment);
 
-void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment);
+void UI_ParseVerticalAlignementAttribute(xmlChar* contents, enum WidgetVerticalAlignment* outAlignment);
 
 float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn);
 
-bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidget);
+bool UI_ParseWidgetDockPoint(xmlNode* pInNode, struct UIWidget* outWidget);
 
 /// <summary>
 /// Init common attributes that all widgets can have
@@ -262,7 +263,7 @@ bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidge
 /// </summary>
 /// <param name="pInNode"></param>
 /// <param name="outWidget"></param>
-void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget);
+void UI_WidgetCommonInit(xmlNode* pInNode, struct UIWidget* outWidget);
 
 /// <summary>
 /// print a text representation of the widget tree.

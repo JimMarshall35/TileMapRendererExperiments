@@ -11,10 +11,10 @@ Arranges its children according to docking position
 
 */
 
-struct xml_node;
+typedef struct _xmlNode xmlNode;
 struct XMLUIData;
 
-HWidget CanvasWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget CanvasWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 
 #endif // !CANVASWIDGET_H

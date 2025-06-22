@@ -10,7 +10,7 @@ typedef struct
 {
 	hAtlas atlas;
 	HImage srcImage;
-	const char* name;
+	char* name;
 	int srcImageTopLeftXPx;
 	int srcImageTopLeftYPx;
 	int widthPx;

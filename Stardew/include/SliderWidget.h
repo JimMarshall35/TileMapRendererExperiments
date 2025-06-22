@@ -25,10 +25,11 @@ struct SliderData
 	bool bMouseDown;
 };
 struct XMLUIData;
+typedef struct _xmlNode xmlNode;
 
 void SliderWidget_MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUIData* pUILayerData, enum SliderOrientation orientation);
 
-HWidget SliderWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget SliderWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 void* SliderWidget_OnOutputVerts(VECTOR(struct WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding);
 

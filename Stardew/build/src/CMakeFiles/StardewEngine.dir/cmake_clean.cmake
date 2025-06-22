@@ -49,8 +49,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/StardewEngine.dir/Widget.c.o.d"
   "CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o"
   "CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o.d"
-  "CMakeFiles/StardewEngine.dir/XMLHelpers.c.o"
-  "CMakeFiles/StardewEngine.dir/XMLHelpers.c.o.d"
   "CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o"
   "CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o.d"
   "CMakeFiles/StardewEngine.dir/cJSON.c.o"
@@ -59,8 +57,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/StardewEngine.dir/glad.c.o.d"
   "CMakeFiles/StardewEngine.dir/main.c.o"
   "CMakeFiles/StardewEngine.dir/main.c.o.d"
-  "CMakeFiles/StardewEngine.dir/xml.c.o"
-  "CMakeFiles/StardewEngine.dir/xml.c.o.d"
   "StardewEngine"
   "StardewEngine.pdb"
 )

@@ -1,5 +1,12 @@
 {
     "files.associations": {
-        "rootwidget.h": "c"
-    }
+        "rootwidget.h": "c",
+        "assertlib.h": "c",
+        "radiogroupwidget.h": "c",
+        "handledefs.h": "c",
+        "staticwidget.h": "c",
+        "sliderwidget.h": "c",
+        "widget.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

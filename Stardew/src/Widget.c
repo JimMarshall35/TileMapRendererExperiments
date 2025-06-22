@@ -1,8 +1,6 @@
 #include "Widget.h"
 #include <stdbool.h>
 #include <string.h>
-#include "xml.h"
-#include "XMLHelpers.h"
 #include <stdlib.h>
 #include "Scripting.h"
 #include "AssertLib.h"
@@ -167,60 +165,43 @@ void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim*
 	outWidgetDims->data = dimVal;
 }
 
-void UI_ParseWidgetPaddingAttributes(struct xml_node* pInNode, struct WidgetPadding* outWidgetPadding)
+void UI_ParseWidgetPaddingAttributes(xmlNode* pInNode, struct WidgetPadding* outWidgetPadding)
 {
-	int attribs = xml_node_attributes(pInNode);
-	char attribNameBuf[128];
-	char attribValBuf[128];
-	memset(outWidgetPadding, 0, sizeof(struct WidgetPadding));
-	for (int i = 0; i < attribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "paddingTop"))
 	{
-		struct xml_string* pAttribName = xml_node_attribute_name(pInNode, i);
-		int attribNameLen = xml_string_length(pAttribName);
-		xml_string_copy(pAttribName, attribNameBuf, attribNameLen);
-		attribNameBuf[attribNameLen] = '\0';
-
-		struct xml_string* pAttribVal = xml_node_attribute_content(pInNode, i);
-		int attribValLen = xml_string_length(pAttribVal);
-		xml_string_copy(pAttribVal, attribValBuf, attribValLen);
-		attribValBuf[attribValLen] = '\0';
-
-		if (strcmp(attribNameBuf, "paddingTop") == 0)
-		{
-			outWidgetPadding->paddingTop = (float)atof(attribValBuf);
-		}
-		else if (strcmp(attribNameBuf, "paddingBottom") == 0)
-		{
-			outWidgetPadding->paddingBottom = (float)atof(attribValBuf);
-		}
-		else if (strcmp(attribNameBuf, "paddingLeft") == 0)
-		{
-			outWidgetPadding->paddingLeft = (float)atof(attribValBuf);
-		}
-		else if (strcmp(attribNameBuf, "paddingRight") == 0)
-		{
-			outWidgetPadding->paddingRight = (float)atof(attribValBuf);
-		}
+		outWidgetPadding->paddingTop = (float)atof(attribute);
+		xmlFree(attribute);
 	}
+	if(attribute = xmlGetProp(pInNode, "paddingBottom"))
+	{
+		outWidgetPadding->paddingBottom = (float)atof(attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "paddingLeft"))
+	{
+		outWidgetPadding->paddingLeft = (float)atof(attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "paddingRight"))
+	{
+		outWidgetPadding->paddingRight = (float)atof(attribute);
+		xmlFree(attribute);
+	}
+
 }
 
-void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum WidgetHorizontalAlignment* outAlignment)
+void UI_ParseHorizontalAlignementAttribute(xmlChar* contents, enum WidgetHorizontalAlignment* outAlignment)
 {
-	char attributeBuffer[256];
-
-	int len = xml_string_length(contents);
-
-	xml_string_copy(contents, attributeBuffer, len);
-	attributeBuffer[len] = '\0';
-	if (strcmp(attributeBuffer, "left") == 0)
+	if (strcmp(contents, "left") == 0)
 	{
 		*outAlignment = WHA_Left;
 	}
-	else if (strcmp(attributeBuffer, "middle") == 0)
+	else if (strcmp(contents, "middle") == 0)
 	{
 		*outAlignment = WHA_Middle;
 	}
-	else if (strcmp(attributeBuffer, "right") == 0)
+	else if (strcmp(contents, "right") == 0)
 	{
 		*outAlignment = WHA_Right;
 	}
@@ -230,23 +211,17 @@ void UI_ParseHorizontalAlignementAttribute(struct xml_string* contents, enum Wid
 	}
 }
 
-void UI_ParseVerticalAlignementAttribute(struct xml_string* contents, enum WidgetVerticalAlignment* outAlignment)
+void UI_ParseVerticalAlignementAttribute(xmlChar* contents, enum WidgetVerticalAlignment* outAlignment)
 {
-	char attributeBuffer[256];
-
-	int len = xml_string_length(contents);
-
-	xml_string_copy(contents, attributeBuffer, len);
-	attributeBuffer[len] = '\0';
-	if (strcmp(attributeBuffer, "top") == 0)
+	if (strcmp(contents, "top") == 0)
 	{
 		*outAlignment = WVA_Top;
 	}
-	else if (strcmp(attributeBuffer, "middle") == 0)
+	else if (strcmp(contents, "middle") == 0)
 	{
 		*outAlignment = WVA_Middle;
 	}
-	else if (strcmp(attributeBuffer, "bottom") == 0)
+	else if (strcmp(contents, "bottom") == 0)
 	{
 		*outAlignment = WVA_Bottom;
 	}
@@ -331,174 +306,142 @@ float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter
 	return dim->data;
 }
 
-bool UI_ParseWidgetDockPoint(struct xml_node* pInNode, struct UIWidget* outWidget)
+bool UI_ParseWidgetDockPoint(xmlNode* pInNode, struct UIWidget* outWidget)
 {
-	int numAttribs = xml_node_attributes(pInNode);
-	char attribNameBuf[256];
-	char attribValBuf[256];
-	outWidget->dockPoint = 0;
-	for (int i = 0; i < numAttribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "dockPoint"))
 	{
-		struct xml_string* pName = xml_node_attribute_name(pInNode, i);
-		struct xml_string* pVal = xml_node_attribute_content(pInNode, i);
-		int namelen = xml_string_length(pName);
-		int vallen = xml_string_length(pVal);
-		xml_string_copy(pName, attribNameBuf, namelen);
-		xml_string_copy(pVal, attribValBuf, vallen);
-		attribNameBuf[namelen] = '\0';
-		attribValBuf[vallen] = '\0';
-		if (strcmp(attribNameBuf, "dockPoint") == 0)
+		if (strcmp(attribute, "topLeft") == 0)
 		{
-			if (strcmp(attribValBuf, "topLeft") == 0)
-			{
-				outWidget->dockPoint = WDP_TopLeft;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "topMiddle") == 0)
-			{
-				outWidget->dockPoint = WDP_TopMiddle;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "topRight") == 0)
-			{
-				outWidget->dockPoint = WDP_TopRight;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "middleRight") == 0)
-			{
-				outWidget->dockPoint = WDP_MiddleRight;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "bottomRight") == 0)
-			{
-				outWidget->dockPoint = WDP_BottomRight;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "bottomMiddle") == 0)
-			{
-				outWidget->dockPoint = WDP_BottomMiddle;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "bottomLeft") == 0)
-			{
-				outWidget->dockPoint = WDP_BottomLeft;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "middleLeft") == 0)
-			{
-				outWidget->dockPoint = WDP_MiddleLeft;
-				return true;
-			}
-			else if (strcmp(attribValBuf, "centre") == 0)
-			{
-				outWidget->dockPoint = WDP_Centre;
-				return true;
-			}
+			outWidget->dockPoint = WDP_TopLeft;
+			return true;
 		}
+		else if (strcmp(attribute, "topMiddle") == 0)
+		{
+			outWidget->dockPoint = WDP_TopMiddle;
+			return true;
+		}
+		else if (strcmp(attribute, "topRight") == 0)
+		{
+			outWidget->dockPoint = WDP_TopRight;
+			return true;
+		}
+		else if (strcmp(attribute, "middleRight") == 0)
+		{
+			outWidget->dockPoint = WDP_MiddleRight;
+			return true;
+		}
+		else if (strcmp(attribute, "bottomRight") == 0)
+		{
+			outWidget->dockPoint = WDP_BottomRight;
+			return true;
+		}
+		else if (strcmp(attribute, "bottomMiddle") == 0)
+		{
+			outWidget->dockPoint = WDP_BottomMiddle;
+			return true;
+		}
+		else if (strcmp(attribute, "bottomLeft") == 0)
+		{
+			outWidget->dockPoint = WDP_BottomLeft;
+			return true;
+		}
+		else if (strcmp(attribute, "middleLeft") == 0)
+		{
+			outWidget->dockPoint = WDP_MiddleLeft;
+			return true;
+		}
+		else if (strcmp(attribute, "centre") == 0)
+		{
+			outWidget->dockPoint = WDP_Centre;
+			return true;
+		}
+		xmlFree(attribute);
 	}
 	return false;
 }
 
-static void ParseLuaCallbacks(struct xml_node* pInNode, struct UIWidget* outWidget)
+static void ParseLuaCallbacks(xmlNode* pInNode, struct UIWidget* outWidget)
 {
-	char attribNameBuf[256];
-	char attribValBuf[256];
-	int numAttribs = xml_node_attributes(pInNode);
-	for (int i = 0; i < numAttribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "onMouseEnter"))
 	{
-		struct xml_string* pName = xml_node_attribute_name(pInNode, i);
-		struct xml_string* pVal = xml_node_attribute_content(pInNode, i);
-		int namelen = xml_string_length(pName);
-		int vallen = xml_string_length(pVal);
-		xml_string_copy(pName, attribNameBuf, namelen);
-		xml_string_copy(pVal, attribValBuf, vallen);
-		attribNameBuf[namelen] = '\0';
-		attribValBuf[vallen] = '\0';
-
-		if (strcmp(attribNameBuf, "onMouseEnter") == 0)
-		{
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].bActive = true;
-			strcpy(
-				outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].name,
-				attribValBuf
-			);
-		}
-		else if (strcmp(attribNameBuf, "onMouseLeave") == 0)
-		{
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].bActive = true;
-			strcpy(
-				outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].name,
-				attribValBuf
-			);
-		}
-		else if (strcmp(attribNameBuf, "onMouseMove") == 0)
-		{
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].bActive = true;
-			strcpy(
-				outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].name,
-				attribValBuf
-			);
-		}
-		else if (strcmp(attribNameBuf, "onMouseDown") == 0)
-		{
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].bActive = true;
-			strcpy(
-				outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].name,
-				attribValBuf
-			);
-		}
-		else if (strcmp(attribNameBuf, "onMouseUp") == 0)
-		{
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].bActive = true;
-			strcpy(
-				outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].name,
-				attribValBuf
-			);
-		}
+		outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].bActive = true;
+		strcpy(
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].name,
+			attribute
+		);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "onMouseLeave"))
+	{
+		outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].bActive = true;
+		strcpy(
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].name,
+			attribute
+		);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "onMouseMove"))
+	{
+		outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].bActive = true;
+		strcpy(
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].name,
+			attribute
+		);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "onMouseDown"))
+	{
+		outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].bActive = true;
+		strcpy(
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].name,
+			attribute
+		);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "onMouseUp"))
+	{
+		outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].bActive = true;
+		strcpy(
+			outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].name,
+			attribute
+		);
+		xmlFree(attribute);
 	}
 }
 
-static void ParseWidgetDims(struct xml_node* pInNode, struct UIWidget* outWidget)
+static void ParseWidgetDims(xmlNode* pInNode, struct UIWidget* outWidget)
 {
-	char attribName[64];
-	char attribContent[64];
-	int numAttribs = xml_node_attributes(pInNode);
-	for (int i = 0; i < numAttribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "width"))
 	{
-		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pInNode, attribContent, i, 64);
-		if (strcmp(attribName, "width") == 0)
-		{
-			UI_ParseWidgetDimsAttribute(attribContent, &outWidget->width);
-		}
-		else if (strcmp(attribName, "height") == 0)
-		{
-			UI_ParseWidgetDimsAttribute(attribContent, &outWidget->height);
-		}
+		UI_ParseWidgetDimsAttribute(attribute, &outWidget->width);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "height"))
+	{
+		UI_ParseWidgetDimsAttribute(attribute, &outWidget->height);
+		xmlFree(attribute);
 	}
 }
 
-static void ParseWidgetOffsets(struct xml_node* pInNode, struct UIWidget* outWidget)
+static void ParseWidgetOffsets(xmlNode* pInNode, struct UIWidget* outWidget)
 {
-	char attribName[64];
-	char attribContent[64];
-	int numAttribs = xml_node_attributes(pInNode);
-	for (int i = 0; i < numAttribs; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "x"))
 	{
-		XML_AttributeNameToBuffer(pInNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pInNode, attribContent, i, 64);
-		if (strcmp(attribName, "x") == 0)
-		{
-			outWidget->offsetX = atof(attribContent);
-		}
-		else if (strcmp(attribName, "y") == 0)
-		{
-			outWidget->offsetY = atof(attribContent);
-		}
+		outWidget->offsetX = atof(attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pInNode, "y"))
+	{
+		outWidget->offsetY = atof(attribute);
+		xmlFree(attribute);
 	}
 }
 
-void UI_WidgetCommonInit(struct xml_node* pInNode, struct UIWidget* outWidget)
+void UI_WidgetCommonInit(xmlNode* pInNode, struct UIWidget* outWidget)
 {
 	UI_ParseWidgetPaddingAttributes(pInNode, &outWidget->padding);
 	UI_ParseWidgetDockPoint(pInNode, outWidget);

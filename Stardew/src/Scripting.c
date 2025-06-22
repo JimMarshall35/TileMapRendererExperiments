@@ -43,7 +43,7 @@ static int L_OnPropertyChanged(lua_State* L)
 	bool bIsTable = lua_istable(L, 1);
 	EASSERT(bIsTable);
 	const char* pStr = luaL_checkstring(L, 2);
-	const char* pNameCpy = malloc(strlen(pStr) + 1);
+	char* pNameCpy = malloc(strlen(pStr) + 1);
 	strcpy(pNameCpy, pStr);
 	lua_pop(L, 1);
 	lua_getfield(L, -1, "XMLUIDataPtr");

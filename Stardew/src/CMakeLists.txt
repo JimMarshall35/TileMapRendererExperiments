@@ -21,10 +21,8 @@ RadioButtonWidget.c
 WidgetVertexOutputHelpers.c
 DynArray.c
 RadioGroupWidget.c
-xml.c
 FileHelpers.c
 RootWidget.c
-XMLHelpers.c
 FloatingPointLib.c
 Scripting.c
 XMLUIGameLayer.c

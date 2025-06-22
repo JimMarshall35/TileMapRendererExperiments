@@ -1,13 +1,12 @@
 #include "TextWidget.h"
 #include "XMLUIGameLayer.h"
-#include "xml.h"
-#include "XMLHelpers.h"
 #include "Widget.h"
 #include "Atlas.h"
 #include "AssertLib.h"
 #include <stdio.h>
 #include <string.h>
 #include "WidgetVertexOutputHelpers.h"
+#include <libxml/tree.h>
 
 void TextWidget_Destroy(struct TextWidgetData* pData)
 {
@@ -27,9 +26,9 @@ static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 	return Fo_StringHeight(pData->atlas, pData->font, pData->content) + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 }
 
-static float LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
+static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return 0.0f;
+
 }
 
 
@@ -144,50 +143,47 @@ static void ParseSizeAttribute(char* inText, struct TextWidgetData* pOutWidgetDa
 	pOutWidgetData->fSizePts = val;
 }
 
-void TextWidget_FromXML(struct TextWidgetData* pData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pData->atlas = pUILayerData->atlas;
 	char attribName[64];
 	char attribContent[64];
-	char fontName[64];
+	char* fontName = NULL;
 
 	memset(attribName, 0, 64);
 
-	struct xml_string* pString = xml_node_content(pXMLNode);
-	int l = xml_string_length(pString);
-	if (pData->content)
+	xmlChar* content = xmlNodeGetContent(pXMLNode);
+	int len = strlen(content);
+	if(pData->content)
 	{
 		free(pData->content);
 		pData->content = NULL;
 	}
-	EASSERT(pData->content == NULL);
-	pData->content = malloc(l + 1);
-	xml_string_copy(pString, pData->content, l);
-	pData->content[l] = '\0';
+	pData->content = malloc(len+1);
+	strcpy(pData->content, content);
+	xmlFree(content);
 
 	bool bFontSet = false;
 	bool bFontSizeSet = false;
 
-	for (int i = 0; i < xml_node_attributes(pXMLNode); i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pXMLNode, "font"))
 	{
-		XML_AttributeNameToBuffer(pXMLNode, attribName, i, 64);
-		XML_AttributeContentToBuffer(pXMLNode, attribContent, i, 64);
-
-		if (strcmp(attribName, "font") == 0)
-		{
-			strcpy(fontName, attribContent);
-			bFontSet = true;
-		}
-		else if (strcmp(attribName, "colour") == 0)
-		{
-			ParseColourAttribute(attribContent, pData);
-		}
-		else if (strcmp(attribName, "fontSize") == 0)
-		{
-			ParseSizeAttribute(attribContent, pData);
-			bFontSizeSet = true;
-		}
+		fontName = attribute;
+		bFontSet = true;
 	}
+	if(attribute = xmlGetProp(pXMLNode, "colour"))
+	{
+		ParseColourAttribute(attribute, pData);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "fontSize"))
+	{
+		ParseSizeAttribute(attribute, pData);
+		bFontSizeSet = true;
+		xmlFree(attribute);
+	}
+
 	if (bFontSet && bFontSizeSet)
 	{
 		HFont font = Fo_FindFont(pUILayerData->atlas, fontName, pData->fSizePts);
@@ -197,9 +193,13 @@ void TextWidget_FromXML(struct TextWidgetData* pData, struct xml_node* pXMLNode,
 		}
 		pData->font = font;
 	}
+	if(fontName)
+	{
+		xmlFree(fontName);
+	}
 }
 
-static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoTextWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
@@ -222,7 +222,7 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, struct xml_node* pXMLNode,
 
 }
 
-HWidget TextWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget TextWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoTextWidget(hWidget, pXMLNode, pUILayerData);

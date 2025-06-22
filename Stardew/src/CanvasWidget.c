@@ -1,6 +1,6 @@
 #include "CanvasWidget.h"
 #include "Widget.h"
-#include "xml.h"
+#include <libxml/tree.h>
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -323,7 +323,7 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 	}
 }
 
-static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoCanvasWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -347,10 +347,10 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct xml_node* pXMLNod
 	pWidget->cCallbacks.Callbacks[WC_OnMouseUp].callback.mouseBtnFn = &MouseButtonUpCallback;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].type = WC_OnMouseLeave;
-	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mouseBtnFn = &MouseLeaveCallback;
+	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mousePosFn = &MouseLeaveCallback;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].type = WC_OnMouseMove;
-	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].callback.mouseBtnFn = &MouseMoveCallback;
+	pWidget->cCallbacks.Callbacks[WC_OnMouseMove].callback.mousePosFn = &MouseMoveCallback;
 
 	pWidget->pImplementationData = malloc(sizeof(struct CanvasData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct CanvasData));
@@ -360,7 +360,7 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct xml_node* pXMLNod
 
 }
 
-HWidget CanvasWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget CanvasWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoCanvasWidget(hWidget, pXMLNode, pUILayerData);

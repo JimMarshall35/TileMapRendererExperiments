@@ -41,7 +41,7 @@ typedef enum
 typedef struct
 {
 	InputMappingType type;
-	const char* name;
+	char* name;
 	union
 	{
 		struct

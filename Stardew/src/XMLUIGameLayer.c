@@ -10,8 +10,6 @@
 #include "DynArray.h"
 #include "ObjectPool.h"
 #include "Widget.h"
-#include "XMLHelpers.h"
-#include "xml.h"
 #include "Widget.h"
 #include "StaticWidget.h"
 #include "StackPanelWidget.h"
@@ -29,6 +27,9 @@
 #include "SliderWidget.h"
 #include "CanvasWidget.h"
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 struct NameConstructorPair
 {
 	const char* name;
@@ -37,15 +38,15 @@ struct NameConstructorPair
 
 struct NameConstructorPair gNodeNameTable[] =
 {
-	{"stackpanel",    &StackPanelWidgetNew},
-	{"static",        &StaticWidgetNew},
-	{"text",          &TextWidgetNew},
-	{"backgroundbox", &BackgroundBoxWidgetNew},
-	{"textButton",    &TextButtonWidgetNew},
-	{"radioGroup",    &RadioGroupWidgetNew},
-	{"radioButton",   &RadioButtonWidgetNew},
-	{"slider",        &SliderWidgetNew},
-	{"canvas",        &CanvasWidgetNew}
+	{"stackpanel",    &StackPanelWidgetNew},     // done
+	{"static",        &StaticWidgetNew},         // done
+	{"text",          &TextWidgetNew},           // done
+	{"backgroundbox", &BackgroundBoxWidgetNew},  // done
+	{"textButton",    &TextButtonWidgetNew},     // done
+	{"radioGroup",    &RadioGroupWidgetNew},     // done
+	{"radioButton",   &RadioButtonWidgetNew},    // done
+	{"slider",        &SliderWidgetNew},         // done
+	{"canvas",        &CanvasWidgetNew} 
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
@@ -60,10 +61,6 @@ AddChildFn LookupWidgetCtor(const char* widgetName)
 	return NULL;
 }
 
-HWidget GetWidgetFromNode(struct xml_node* pNode)
-{
-
-}
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
@@ -310,27 +307,21 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 	}
 }
 
-void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
+void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 {
-	printf("adding node children\n");
-
-	size_t children = xml_node_children(pNode);
-	for (int i = 0; i < children; i++)
+	for (xmlNode* pChild = pNode->children; pChild; pChild = pChild->next)
 	{
-		struct xml_node* pChild = xml_node_child(pNode, i);
-		struct xml_string* pString = xml_node_name(pChild);
-		char* pBuf =  malloc(xml_string_length(pString) + 1);
-		memset(pBuf, 0, xml_string_length(pString) + 1);
-		xml_string_copy(pString, pBuf, xml_string_length(pString));
-
-		AddChildFn pCtor = LookupWidgetCtor(pBuf);
+		if (pChild->type != XML_ELEMENT_NODE)
+		{
+			continue;
+		}
+		AddChildFn pCtor = LookupWidgetCtor(pChild->name);
 		if (!pCtor)
 		{
 			// log error
 			printf("error occured\n");
 			return;
 		}
-
 		HWidget childWidget = pCtor(widget, pChild, pUIData);
 
 		struct UIWidget* pWiddget = UI_GetWidget(childWidget);
@@ -341,248 +332,226 @@ void AddNodeChildren(HWidget widget, struct xml_node* pNode, XMLUIData* pUIData)
 		
 		AddNodeChildren(childWidget, pChild, pUIData);
 	}
-	printf("done\n");
 }
 
-void LoadAtlas(XMLUIData* pUIData, struct xml_node* child0, DrawContext* pDC)
+static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 {
-	printf("loading atlas\n");
-	At_BeginAtlas();
-
-	char attributeNameBuf[64];
-	char spriteName[64];
-	char spritePath[256];
-	char numberBuf[64];
-
+	bool bNameset = false;
+	bool bPathSet = false;
+	bool bTopSet = false;
+	bool bLeftSet = false;
+	bool bWidthSet = false;
+	bool bHeightSet = false;
+	bool bAllSet = true;
 	int top = 0;
 	int left = 0;
 	int width = 0;
 	int height = 0;
-	int numChildren = xml_node_children(child0);
 
-
-	for (int i = 0; i < numChildren; i++)
+	xmlChar* spritePath = NULL;
+	xmlChar* spriteName = NULL;
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pChild, "source"))
 	{
-		struct xml_node* pChild = xml_node_child(child0, i);
-		int numAttributes = xml_node_attributes(pChild);
-		bool bNameset = false;
-		bool bPathSet = false;
-		bool bTopSet = false;
-		bool bLeftSet = false;
-		bool bWidthSet = false;
-		bool bHeightSet = false;
-		bool bAllSet = true;
-		char childNameBuf[128];
-		XML_NodeName(pChild, childNameBuf, 128);
-		if (strcmp(childNameBuf, "sprite") == 0)
-		{
-			for (int j = 0; j < numAttributes; j++)
-			{
-				XML_AttributeNameToBuffer(pChild, attributeNameBuf, j, 64);
-				if (strcmp(attributeNameBuf, "source") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, spritePath, j, 256);
-					bPathSet = true;
-				}
-				else if (strcmp(attributeNameBuf, "name") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, spriteName, j, 64);
-					bNameset = true;
-				}
-				else if (strcmp(attributeNameBuf, "top") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
-					top = atoi(numberBuf);
-					bTopSet = true;
-				}
-				else if (strcmp(attributeNameBuf, "left") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
-					left = atoi(numberBuf);
-					bLeftSet = true;
-				}
-				else if (strcmp(attributeNameBuf, "width") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
-					width = atoi(numberBuf);
-					bWidthSet = true;
-				}
-				else if (strcmp(attributeNameBuf, "height") == 0)
-				{
-					XML_AttributeContentToBuffer(pChild, numberBuf, j, 64);
-					height = atoi(numberBuf);
-					bHeightSet = true;
-				}
-			}
-			if (!bPathSet)
-			{
-				printf("%s atlas child %i path not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (!bNameset)
-			{
-				printf("%s atlas child %i name not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (!bTopSet)
-			{
-				printf("%s atlas child %i top not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (!bLeftSet)
-			{
-				printf("%s atlas child %i left not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (!bWidthSet)
-			{
-				printf("%s atlas child %i top not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (!bHeightSet)
-			{
-				printf("%s atlas child %i left not set\n", __FUNCTION__, i);
-				bAllSet = false;
-			}
-			if (bAllSet)
-			{
-				printf("adding sprite %s\n", spritePath);
-				At_AddSprite(spritePath, top, left, width, height, spriteName);
-				printf("done\n");
-			}
+		spritePath = attribute;
+		bPathSet = true;
+	}
+	if(attribute = xmlGetProp(pChild, "name"))
+	{
+		spriteName = attribute;
+		bNameset = true;
+	}
+	if(attribute = xmlGetProp(pChild, "top"))
+	{
+		top = atoi(attribute);
+		xmlFree(attribute);
+		bTopSet = true;
+	}
+	if(attribute = xmlGetProp(pChild, "left"))
+	{
+		left = atoi(attribute);
+		xmlFree(attribute);
+		bLeftSet = true;
+	}
+	if(attribute = xmlGetProp(pChild, "width"))
+	{
+		width = atoi(attribute);
+		xmlFree(attribute);
+		bWidthSet = true;
+	}
+	if(attribute = xmlGetProp(pChild, "height"))
+	{
+		height = atoi(attribute);
+		xmlFree(attribute);
+		bHeightSet = true;
+	}
+	if (!bPathSet)
+	{
+		printf("%s atlas child %i path not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bNameset)
+	{
+		printf("%s atlas child %i name not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bTopSet)
+	{
+		printf("%s atlas child %i top not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bLeftSet)
+	{
+		printf("%s atlas child %i left not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bWidthSet)
+	{
+		printf("%s atlas child %i top not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bHeightSet)
+	{
+		printf("%s atlas child %i left not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (bAllSet)
+	{
+		printf("adding sprite %s\n", spritePath);
+		At_AddSprite(spritePath, top, left, width, height, spriteName);
+		EASSERT(spritePath);
+		EASSERT(spriteName);
+		xmlFree(spritePath);
+		xmlFree(spriteName);
 
-		}
-		else if (strcmp(childNameBuf, "font") == 0)
+		printf("done\n");
+	}
+}
+
+static void LoadAtlasFont(xmlNode* pChild)
+{
+	struct FontAtlasAdditionSpec faas;
+	memset(&faas, 0, sizeof(struct FontAtlasAdditionSpec));
+	
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pChild, "source"))
+	{
+		strcpy(faas.path, attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pChild, "name"))
+	{
+		strcpy(faas.name, attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pChild, "options"))
+	{
+		if (strcmp(attribute, "normal") == 0)
 		{
-			struct FontAtlasAdditionSpec faas;
-			memset(&faas, 0, sizeof(struct FontAtlasAdditionSpec));
-			
-			for (int j = 0; j < numAttributes; j++)
-			{
-				struct xml_string* pAttr = xml_node_attribute_name(pChild, j);
-				int attrNameLen = xml_string_length(pAttr);
-				xml_string_copy(pAttr, attributeNameBuf, attrNameLen);
-				attributeNameBuf[attrNameLen] = '\0';
-				if (strcmp(attributeNameBuf, "source") == 0)
-				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int dsdslen = xml_string_length(pSrcVal);
-					memset(faas.path, 0, MAX_FONT_PATH_SIZE);
-					xml_string_copy(pSrcVal, faas.path, dsdslen);
-					
-					faas.path[dsdslen] = '\0';
-				}
-				else if (strcmp(attributeNameBuf, "name") == 0)
-				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, faas.name, len);
-					faas.name[len] = '\0';
-				}
-				else if (strcmp(attributeNameBuf, "options") == 0)
-				{
-					struct xml_string* pSrcVal = xml_node_attribute_content(pChild, j);
-					int len = xml_string_length(pSrcVal);
-					xml_string_copy(pSrcVal, spriteName, len);
-					spriteName[len] = '\0';
-					if (strcmp(spriteName, "normal") == 0)
-					{
-						faas.fontOptions = FS_Normal;
-					}
-					else if (strcmp(spriteName, "italic"))
-					{
-						faas.fontOptions = FS_Italic;
-					}
-					else if (strcmp(spriteName, "bold") == 0)
-					{
-						faas.fontOptions = FS_Bold;
-					}
-					else if (strcmp(spriteName, "underline") == 0)
-					{
-						faas.fontOptions = FS_Underline;
-					}
-					bNameset = true;
-				}
-			}
-			int numChildren = xml_node_children(pChild);
-			for (int j = 0; j < numChildren; j++)
-			{
-				struct xml_node* pChildChild = xml_node_child(pChild, j);
-				char name[128];
-				XML_NodeName(pChildChild, name, 128);
-				if (strcmp(name, "size") == 0)
-				{
-					char attributeName[128];
-					char attrivValBuf[64];
-					int attributes = xml_node_attributes(pChildChild);
-					struct FontSize fs;
-					memset(&fs, 0, sizeof(struct FontSize));
-					bool bTypeSet = false;
-					bool bValSet = false;
-					for (int k = 0; k < attributes; k++)
-					{
-						XML_AttributeNameToBuffer(pChildChild, attributeName, k, 128);
-						XML_AttributeContentToBuffer(pChildChild, attrivValBuf, k, 64);
-						if (strcmp(attributeName, "type") == 0)
-						{
-							if (strcmp(attrivValBuf, "pts") == 0)
-							{
-								fs.type = FOS_Pts;
-								bTypeSet = true;
-							}
-							else if (strcmp(attrivValBuf, "pxls") == 0)
-							{
-								fs.type = FOS_Pixels;
-								bTypeSet = true;
-							}
-						}
-						else if (strcmp(attributeName, "val") == 0)
-						{
-							fs.val = atof(attrivValBuf);
-							bValSet = true;
-						}
-					}
-					if (bValSet && bTypeSet)
-					{
-						faas.fontSizes[faas.numFontSizes++] = fs;
-					}
-				}
-			}
-			printf("adding font %s\n", faas.path);
-			At_AddFont(&faas);
-			printf("done\n");
+			faas.fontOptions = FS_Normal;
 		}
+		else if (strcmp(attribute, "italic"))
+		{
+			faas.fontOptions = FS_Italic;
+		}
+		else if (strcmp(attribute, "bold") == 0)
+		{
+			faas.fontOptions = FS_Bold;
+		}
+		else if (strcmp(attribute, "underline") == 0)
+		{
+			faas.fontOptions = FS_Underline;
+		}
+		xmlFree(attribute);
+	}
+	for (xmlNode* pChildChild = pChild->children; pChildChild; pChildChild = pChildChild->next)
+	{
+		if (pChildChild->type != XML_ELEMENT_NODE)
+		{
+			continue;
+		}
+		if(strcmp(pChildChild->name, "size") == 0)
+		{
+			struct FontSize fs;
+			memset(&fs, 0, sizeof(struct FontSize));
+			bool bTypeSet = false;
+			bool bValSet = false;
+			if(attribute = xmlGetProp(pChildChild, "type"))
+			{
+				if(strcmp(attribute, "pts") == 0)
+				{
+					fs.type = FOS_Pts;
+					bTypeSet = true;
+				}
+				else if (strcmp(attribute, "pxls") == 0)
+				{
+					fs.type = FOS_Pixels;
+					bTypeSet = true;
+				}
+				xmlFree(attribute);
+			}
+			if (attribute = xmlGetProp(pChildChild, "val"))
+			{
+				fs.val = atof(attribute);
+				xmlFree(attribute);
+				bValSet = true;
+			}
+			if (bValSet && bTypeSet)
+			{
+				faas.fontSizes[faas.numFontSizes++] = fs;
+			}
+		}
+	}
+	printf("adding font %s\n", faas.path);
+	At_AddFont(&faas);
+	printf("done\n");
+}
+
+void LoadAtlas(XMLUIData* pUIData, xmlNode* child0, DrawContext* pDC)
+{
+	printf("loading atlas\n");
+	At_BeginAtlas();
+
+	int onChild = 0;
+	for (xmlNode* pChild = child0->children; pChild; pChild = pChild->next)
+	{
+        if (pChild->type != XML_ELEMENT_NODE)
+		{
+			continue;
+		}
+		
+		if (strcmp(pChild->name, "sprite") == 0)
+		{
+			LoadAtlasSprite(pChild, onChild);
+		}
+		else if (strcmp(pChild->name, "font") == 0)
+		{
+			LoadAtlasFont(pChild);
+		}
+		onChild++;
 	}
 	pUIData->atlas = At_EndAtlas(pDC);
 }
 
-static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
+static bool TryLoadViewModel(XMLUIData* pUIData, xmlNode* pScreenNode)
 {
 	bool rVal = false;
-	char attribNameArr[128];
-	char attribContentArr[128];
 	bool bVMFileSet = false;
 	bool bVMFunctionSet = false;
-	const char* pFilePath = NULL;
-	const char* pFnName = NULL;
-	for (int i = 0; i < xml_node_attributes(pScreenNode); i++)
+	char* pFilePath = NULL;
+	char* pFnName = NULL;
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pScreenNode, "viewmodelFile"))
 	{
-		XML_AttributeNameToBuffer(pScreenNode, attribNameArr, i, 128);
-		XML_AttributeContentToBuffer(pScreenNode, attribContentArr, i, 128);
-		if (strcmp(attribNameArr, "viewmodelFile") == 0)
-		{
-			bVMFileSet = true;
-			pFilePath = malloc(strlen(attribContentArr) + 1);
-			strcpy(pFilePath, attribContentArr);
-
-		}
-		else if (strcmp(attribNameArr, "viewmodelFunction") == 0)
-		{
-			bVMFunctionSet = true;
-			pFnName = malloc(strlen(attribContentArr) + 1);
-			strcpy(pFnName, attribContentArr);
-		}
+		pFilePath = attribute;
+		bVMFileSet = true;
 	}
+	if(attribute = xmlGetProp(pScreenNode, "viewmodelFunction"))
+	{
+		pFnName = attribute;
+		bVMFunctionSet = true;
+	}
+
 	if (bVMFileSet && bVMFunctionSet)
 	{
 		printf("opening viewmodel file %s\n", pFilePath);
@@ -597,17 +566,14 @@ static bool TryLoadViewModel(XMLUIData* pUIData, struct xml_node* pScreenNode)
 	{
 		printf("TryLoadViewModel, either file or function (or both) not set. file: %i function name: %i\n", bVMFileSet, bVMFunctionSet);
 	}
-	if (pFilePath)
+
+	if(pFnName)
 	{
-		printf("freeing file path\n");
-		free(pFilePath);
-		printf("done\n");
+		xmlFree(pFnName);
 	}
-	if (pFnName)
+	if(pFilePath)
 	{
-		printf("freeing fn name\n");
-		free(pFnName);
-		printf("done\n");
+		xmlFree(pFilePath);
 	}
 
 	return rVal;
@@ -629,63 +595,69 @@ static void InitializeWidgets(HWidget root)
 	}
 }
 
+xmlNode* GetNthChild(xmlNode* node, unsigned int index)
+{
+	int onChild = 0;
+	assert(xmlChildElementCount(node) > index);
+	xmlNode* pChild = xmlFirstElementChild(node);
+	while(pChild)
+	{
+		if (pChild->type != XML_ELEMENT_NODE)
+		{
+			pChild = pChild->next;
+			continue;
+		}
+		if(onChild++ == index)
+		{
+			return pChild;
+		}
+		pChild = pChild->next;
+	}
+}
+
 static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 {
 	assert(!pUIData->bLoaded);
 	pUIData->bLoaded = true;
+	xmlDoc* pXMLDoc = xmlReadFile(pUIData->xmlFilePath, NULL, 0);
 
-	FILE* fp = fopen(pUIData->xmlFilePath, "r");
-	if(!fp)
-	{
-		printf("Can't open xml at %s\n", pUIData->xmlFilePath);
-	}
-	struct xml_document* pXMLDoc = xml_open_document(fp);
-	
 	char nodeNameArr[128];
 
 	if (pXMLDoc)
 	{
 		printf("pXMLDoc is valid\n");
-		struct xml_node* root = xml_document_root(pXMLDoc);
-		int numchildren = xml_node_children(root);
+		xmlNode* root = xmlDocGetRootElement(pXMLDoc);
+		unsigned long numchildren = xmlChildElementCount(root);
 		if (numchildren != 2)
 		{
-			printf("%s root should have 2 kids", __FUNCTION__);
-			xml_document_free(pXMLDoc, true);
+			printf("%s root should have 2 kids\n", __FUNCTION__);
+			xmlFreeDoc(pXMLDoc);
 			return;
 		}
-		struct xml_node* child0 = xml_node_child(root, 0);
-		struct xml_node* child1 = xml_node_child(root, 1);
-		struct xml_string* c0Name = xml_node_name(child0);
-		struct xml_string* c1Name = xml_node_name(child1);
-		int c0Length = xml_string_length(c0Name);
-		int c1Length = xml_string_length(c1Name);
+		xmlNode* child0 = GetNthChild(root, 0);
+		xmlNode* child1 = GetNthChild(root, 1);
 		
 		bool bDoneAtlas = false;
 		bool bDoneScreen = false;
 		
-		xml_string_copy(c0Name, nodeNameArr, c0Length);
-		nodeNameArr[c0Length] = '\0';
-		if (strcmp(nodeNameArr, "atlas") == 0)
+		if (strcmp(child0->name, "atlas") == 0)
 		{
 			bDoneAtlas = true;
 			LoadAtlas(pUIData, child0, pDC);
 		}
-		else if (strcmp(nodeNameArr, "screen") == 0)
+		else if (strcmp(child0->name, "screen") == 0)
 		{
 			bDoneScreen = true;
 			TryLoadViewModel(pUIData, child0);
 			AddNodeChildren(pUIData->rootWidget, child0, pUIData);
 		}
 
-		xml_string_copy(c1Name, nodeNameArr, c1Length);
-		nodeNameArr[c1Length] = '\0';
-		if (strcmp(nodeNameArr, "atlas") == 0 && !bDoneAtlas)
+		if (strcmp(child1->name, "atlas") == 0 && !bDoneAtlas)
 		{
 			bDoneAtlas = true;
 			LoadAtlas(pUIData, child1, pDC);
 		}
-		else if (strcmp(nodeNameArr, "screen") == 0 && !bDoneScreen)
+		else if (strcmp(child1->name, "screen") == 0 && !bDoneScreen)
 		{
 			bDoneScreen = true;
 			TryLoadViewModel(pUIData, child1);
@@ -695,7 +667,8 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		{
 			printf("%s ui xml file doesn't have both screen and atlas components\n", __FUNCTION__);
 		}
-		xml_document_free(pXMLDoc, true);
+		//xml_document_free(pXMLDoc, true);
+		xmlFreeDoc(pXMLDoc);
 
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->rootWidget);
 		pWidget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;

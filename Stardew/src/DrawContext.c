@@ -174,8 +174,8 @@ static void CreateUIShader()
 	int success = GL_FALSE;
 
 	gUIShader.vert = glCreateShader(GL_VERTEX_SHADER);
-	char* v = uiVert;
-	char* f = uiFrag;
+	const char* v = uiVert;
+	const char* f = uiFrag;
 
 
 	glShaderSource(gUIShader.vert, 1, (const char**)&v, 0);
@@ -214,9 +214,9 @@ static HUIVertexBuffer NewUIVertexBuffer(int size)
 	glBindBuffer(GL_ARRAY_BUFFER, pBuf->vbo);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), sizeof(float) * 2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)(sizeof(float) * 2));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), sizeof(float) * 4);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)(sizeof(float) * 4));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

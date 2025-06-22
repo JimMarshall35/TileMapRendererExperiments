@@ -3,11 +3,11 @@
 
 #include "HandleDefs.h"
 
-struct xml_node;
 struct XMLUIData;
 struct UIWidget;
+typedef struct _xmlNode xmlNode;
 
-HWidget RadioGroupWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget RadioGroupWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 void RadioGroup_ChildSelected(HWidget hRadioGroup, struct UIWidget* pRadioButtonChild);
 
 

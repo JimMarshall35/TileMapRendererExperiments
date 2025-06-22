@@ -795,30 +795,6 @@ WidgetVertexOutputHelpers.c.s:
 	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.s
 .PHONY : WidgetVertexOutputHelpers.c.s
 
-XMLHelpers.o: XMLHelpers.c.o
-.PHONY : XMLHelpers.o
-
-# target to build an object file
-XMLHelpers.c.o:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o
-.PHONY : XMLHelpers.c.o
-
-XMLHelpers.i: XMLHelpers.c.i
-.PHONY : XMLHelpers.i
-
-# target to preprocess a source file
-XMLHelpers.c.i:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.i
-.PHONY : XMLHelpers.c.i
-
-XMLHelpers.s: XMLHelpers.c.s
-.PHONY : XMLHelpers.s
-
-# target to generate assembly for a file
-XMLHelpers.c.s:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.s
-.PHONY : XMLHelpers.c.s
-
 XMLUIGameLayer.o: XMLUIGameLayer.c.o
 .PHONY : XMLUIGameLayer.o
 
@@ -915,30 +891,6 @@ main.c.s:
 	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/main.c.s
 .PHONY : main.c.s
 
-xml.o: xml.c.o
-.PHONY : xml.o
-
-# target to build an object file
-xml.c.o:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/xml.c.o
-.PHONY : xml.c.o
-
-xml.i: xml.c.i
-.PHONY : xml.i
-
-# target to preprocess a source file
-xml.c.i:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/xml.c.i
-.PHONY : xml.c.i
-
-xml.s: xml.c.s
-.PHONY : xml.s
-
-# target to generate assembly for a file
-xml.c.s:
-	cd /home/jim/TileMapRendererExperiments/Stardew/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/StardewEngine.dir/build.make src/CMakeFiles/StardewEngine.dir/xml.c.s
-.PHONY : xml.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1029,9 +981,6 @@ help:
 	@echo "... WidgetVertexOutputHelpers.o"
 	@echo "... WidgetVertexOutputHelpers.i"
 	@echo "... WidgetVertexOutputHelpers.s"
-	@echo "... XMLHelpers.o"
-	@echo "... XMLHelpers.i"
-	@echo "... XMLHelpers.s"
 	@echo "... XMLUIGameLayer.o"
 	@echo "... XMLUIGameLayer.i"
 	@echo "... XMLUIGameLayer.s"
@@ -1044,9 +993,6 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... xml.o"
-	@echo "... xml.i"
-	@echo "... xml.s"
 .PHONY : help
 
 

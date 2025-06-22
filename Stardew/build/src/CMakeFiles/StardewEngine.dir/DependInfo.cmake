@@ -33,12 +33,10 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jim/TileMapRendererExperiments/Stardew/src/TextWidget.c" "src/CMakeFiles/StardewEngine.dir/TextWidget.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/TextWidget.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/Widget.c" "src/CMakeFiles/StardewEngine.dir/Widget.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/Widget.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/WidgetVertexOutputHelpers.c" "src/CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o.d"
-  "/home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c" "src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/XMLUIGameLayer.c" "src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/cJSON.c" "src/CMakeFiles/StardewEngine.dir/cJSON.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/cJSON.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/glad.c" "src/CMakeFiles/StardewEngine.dir/glad.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/glad.c.o.d"
   "/home/jim/TileMapRendererExperiments/Stardew/src/main.c" "src/CMakeFiles/StardewEngine.dir/main.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/main.c.o.d"
-  "/home/jim/TileMapRendererExperiments/Stardew/src/xml.c" "src/CMakeFiles/StardewEngine.dir/xml.c.o" "gcc" "src/CMakeFiles/StardewEngine.dir/xml.c.o.d"
   )
 
 # Targets to which this target links.

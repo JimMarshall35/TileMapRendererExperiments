@@ -1,6 +1,4 @@
 #include "StaticWidget.h"
-#include "xml.h"
-#include "XMLHelpers.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -8,6 +6,7 @@
 #include "Atlas.h"
 #include "AssertLib.h"
 #include "WidgetVertexOutputHelpers.h"
+#include <libxml/tree.h>
 
 
 
@@ -56,36 +55,29 @@ void* StaticWidget_OnOutputVerts(struct StaticWidgetData* pStaticData, float lef
 	return pOutVerts;
 }
 
-void StaticWidget_MakeFromXML(struct StaticWidgetData* pWidgetData, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+void StaticWidget_MakeFromXML(struct StaticWidgetData* pWidgetData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
-	pWidgetData->atlas = pUILayerData->atlas;
-	size_t numAttributes = xml_node_attributes(pXMLNode);
-	char attributeNameBuffer[128];
-	char attributeContentBuffer[128];
-	for (int i = 0; i < numAttributes; i++)
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pXMLNode, "sprite"))
 	{
-		XML_AttributeNameToBuffer(pXMLNode, attributeNameBuffer, i, 128);
-		XML_AttributeContentToBuffer(pXMLNode, attributeContentBuffer, i, 128);
-		if (strcmp(attributeNameBuffer, "sprite") == 0)
+		int len = strlen(attribute);
+		if (pWidgetData->imageName)
 		{
-			struct xml_string* contents = xml_node_attribute_content(pXMLNode, i);
-			if (pWidgetData->imageName)
-			{
-				free(pWidgetData->imageName);
-			}
-			pWidgetData->imageName = malloc(xml_string_length(contents) + 1);
-			xml_string_copy(contents, pWidgetData->imageName, xml_string_length(contents));
-			pWidgetData->imageName[xml_string_length(contents)] = '\0';
-			pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
+			free(pWidgetData->imageName);
 		}
-		else if (strcmp(attributeNameBuffer, "scaleX") == 0)
-		{
-			pWidgetData->scale.scaleX = atof(attributeContentBuffer);
-		}
-		else if (strcmp(attributeNameBuffer, "scaleY") == 0)
-		{
-			pWidgetData->scale.scaleY = atof(attributeContentBuffer);
-		}
+		pWidgetData->imageName = malloc(len + 1);
+		strcpy(pWidgetData->imageName, attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "scaleX"))
+	{
+		pWidgetData->scale.scaleX = atof(attribute);
+		xmlFree(attribute);
+	}
+	if(attribute = xmlGetProp(pXMLNode, "scaleY"))
+	{
+		pWidgetData->scale.scaleY = atof(attribute);
+		xmlFree(attribute);
 	}
 	if (pWidgetData->imageName)
 	{
@@ -144,7 +136,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return pOutVerts;
 }
 
-static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoStatic(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
@@ -167,7 +159,7 @@ static void MakeWidgetIntoStatic(HWidget hWidget, struct xml_node* pXMLNode, str
 	StaticWidget_MakeFromXML(pWidgetData, pXMLNode, pUILayerData);
 }
 
-HWidget StaticWidgetNew(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget StaticWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoStatic(hWidget, pXMLNode, pUILayerData);

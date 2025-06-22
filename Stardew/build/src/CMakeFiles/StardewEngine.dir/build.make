@@ -377,24 +377,10 @@ src/CMakeFiles/StardewEngine.dir/RadioGroupWidget.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/StardewEngine.dir/RadioGroupWidget.c.s"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jim/TileMapRendererExperiments/Stardew/src/RadioGroupWidget.c -o CMakeFiles/StardewEngine.dir/RadioGroupWidget.c.s
 
-src/CMakeFiles/StardewEngine.dir/xml.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
-src/CMakeFiles/StardewEngine.dir/xml.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/xml.c
-src/CMakeFiles/StardewEngine.dir/xml.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/CMakeFiles/StardewEngine.dir/xml.c.o"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/xml.c.o -MF CMakeFiles/StardewEngine.dir/xml.c.o.d -o CMakeFiles/StardewEngine.dir/xml.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/xml.c
-
-src/CMakeFiles/StardewEngine.dir/xml.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/StardewEngine.dir/xml.c.i"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/jim/TileMapRendererExperiments/Stardew/src/xml.c > CMakeFiles/StardewEngine.dir/xml.c.i
-
-src/CMakeFiles/StardewEngine.dir/xml.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/StardewEngine.dir/xml.c.s"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jim/TileMapRendererExperiments/Stardew/src/xml.c -o CMakeFiles/StardewEngine.dir/xml.c.s
-
 src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/FileHelpers.c
 src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o -MF CMakeFiles/StardewEngine.dir/FileHelpers.c.o.d -o CMakeFiles/StardewEngine.dir/FileHelpers.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/FileHelpers.c
 
 src/CMakeFiles/StardewEngine.dir/FileHelpers.c.i: cmake_force
@@ -408,7 +394,7 @@ src/CMakeFiles/StardewEngine.dir/FileHelpers.c.s: cmake_force
 src/CMakeFiles/StardewEngine.dir/RootWidget.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/RootWidget.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/RootWidget.c
 src/CMakeFiles/StardewEngine.dir/RootWidget.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/CMakeFiles/StardewEngine.dir/RootWidget.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/CMakeFiles/StardewEngine.dir/RootWidget.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/RootWidget.c.o -MF CMakeFiles/StardewEngine.dir/RootWidget.c.o.d -o CMakeFiles/StardewEngine.dir/RootWidget.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/RootWidget.c
 
 src/CMakeFiles/StardewEngine.dir/RootWidget.c.i: cmake_force
@@ -419,24 +405,10 @@ src/CMakeFiles/StardewEngine.dir/RootWidget.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/StardewEngine.dir/RootWidget.c.s"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jim/TileMapRendererExperiments/Stardew/src/RootWidget.c -o CMakeFiles/StardewEngine.dir/RootWidget.c.s
 
-src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
-src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c
-src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o -MF CMakeFiles/StardewEngine.dir/XMLHelpers.c.o.d -o CMakeFiles/StardewEngine.dir/XMLHelpers.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c
-
-src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/StardewEngine.dir/XMLHelpers.c.i"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c > CMakeFiles/StardewEngine.dir/XMLHelpers.c.i
-
-src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/StardewEngine.dir/XMLHelpers.c.s"
-	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jim/TileMapRendererExperiments/Stardew/src/XMLHelpers.c -o CMakeFiles/StardewEngine.dir/XMLHelpers.c.s
-
 src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/FloatingPointLib.c
 src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o -MF CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o.d -o CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/FloatingPointLib.c
 
 src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.i: cmake_force
@@ -450,7 +422,7 @@ src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.s: cmake_force
 src/CMakeFiles/StardewEngine.dir/Scripting.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/Scripting.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/Scripting.c
 src/CMakeFiles/StardewEngine.dir/Scripting.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object src/CMakeFiles/StardewEngine.dir/Scripting.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/CMakeFiles/StardewEngine.dir/Scripting.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/Scripting.c.o -MF CMakeFiles/StardewEngine.dir/Scripting.c.o.d -o CMakeFiles/StardewEngine.dir/Scripting.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/Scripting.c
 
 src/CMakeFiles/StardewEngine.dir/Scripting.c.i: cmake_force
@@ -464,7 +436,7 @@ src/CMakeFiles/StardewEngine.dir/Scripting.c.s: cmake_force
 src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/XMLUIGameLayer.c
 src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building C object src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o -MF CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o.d -o CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/XMLUIGameLayer.c
 
 src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.i: cmake_force
@@ -478,7 +450,7 @@ src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.s: cmake_force
 src/CMakeFiles/StardewEngine.dir/GameFramework.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/GameFramework.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/GameFramework.c
 src/CMakeFiles/StardewEngine.dir/GameFramework.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building C object src/CMakeFiles/StardewEngine.dir/GameFramework.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object src/CMakeFiles/StardewEngine.dir/GameFramework.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/GameFramework.c.o -MF CMakeFiles/StardewEngine.dir/GameFramework.c.o.d -o CMakeFiles/StardewEngine.dir/GameFramework.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/GameFramework.c
 
 src/CMakeFiles/StardewEngine.dir/GameFramework.c.i: cmake_force
@@ -492,7 +464,7 @@ src/CMakeFiles/StardewEngine.dir/GameFramework.c.s: cmake_force
 src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o: src/CMakeFiles/StardewEngine.dir/flags.make
 src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o: /home/jim/TileMapRendererExperiments/Stardew/src/SharedPtr.c
 src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o: src/CMakeFiles/StardewEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building C object src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building C object src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/StardewEngine.dir/SharedPtr.c.o -MF CMakeFiles/StardewEngine.dir/SharedPtr.c.o.d -o CMakeFiles/StardewEngine.dir/SharedPtr.c.o -c /home/jim/TileMapRendererExperiments/Stardew/src/SharedPtr.c
 
 src/CMakeFiles/StardewEngine.dir/SharedPtr.c.i: cmake_force
@@ -527,10 +499,8 @@ StardewEngine_OBJECTS = \
 "CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o" \
 "CMakeFiles/StardewEngine.dir/DynArray.c.o" \
 "CMakeFiles/StardewEngine.dir/RadioGroupWidget.c.o" \
-"CMakeFiles/StardewEngine.dir/xml.c.o" \
 "CMakeFiles/StardewEngine.dir/FileHelpers.c.o" \
 "CMakeFiles/StardewEngine.dir/RootWidget.c.o" \
-"CMakeFiles/StardewEngine.dir/XMLHelpers.c.o" \
 "CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o" \
 "CMakeFiles/StardewEngine.dir/Scripting.c.o" \
 "CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o" \
@@ -562,10 +532,8 @@ src/StardewEngine: src/CMakeFiles/StardewEngine.dir/RadioButtonWidget.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/WidgetVertexOutputHelpers.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/DynArray.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/RadioGroupWidget.c.o
-src/StardewEngine: src/CMakeFiles/StardewEngine.dir/xml.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/FileHelpers.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/RootWidget.c.o
-src/StardewEngine: src/CMakeFiles/StardewEngine.dir/XMLHelpers.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/FloatingPointLib.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/Scripting.c.o
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/XMLUIGameLayer.c.o
@@ -578,7 +546,7 @@ src/StardewEngine: /usr/lib/aarch64-linux-gnu/liblua5.1.so
 src/StardewEngine: /usr/lib/aarch64-linux-gnu/libm.so
 src/StardewEngine: /usr/lib/aarch64-linux-gnu/libxml2.so
 src/StardewEngine: src/CMakeFiles/StardewEngine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Linking C executable StardewEngine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jim/TileMapRendererExperiments/Stardew/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Linking C executable StardewEngine"
 	cd /home/jim/TileMapRendererExperiments/Stardew/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/StardewEngine.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

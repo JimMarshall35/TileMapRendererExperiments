@@ -17,7 +17,7 @@ struct ImageFile
 
 struct ImageLoadError
 {
-	const char* message;
+	char* message;
 };
 
 
