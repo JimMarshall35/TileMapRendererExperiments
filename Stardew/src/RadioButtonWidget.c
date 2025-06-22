@@ -35,8 +35,8 @@ struct RadioButtonData
 
 static float GetBtnW(struct RadioButtonData* pData)
 {
-	printf("selected %i\n",pData->selectedRadioStatic.sprite);
-	printf("unselected %i\n",pData->unSelectedRadioStatic.sprite);
+	//printf("selected %i\n",pData->selectedRadioStatic.sprite);
+	//printf("unselected %i\n",pData->unSelectedRadioStatic.sprite);
 	AtlasSprite* pAtlasSprite = At_GetSprite(pData->bSelected ? pData->selectedRadioStatic.sprite : pData->unSelectedRadioStatic.sprite,
 		pData->bSelected ? pData->selectedRadioStatic.atlas : pData->unSelectedRadioStatic.atlas);
 	return pAtlasSprite->widthPx;

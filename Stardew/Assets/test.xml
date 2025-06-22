@@ -32,7 +32,7 @@
 						<backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
 							<stackpanel orientation="vertical">
 								<text font="default" paddingTop="20" paddingBottom="20" paddingLeft="20" paddingRight="20" colour="0,0,0,255">
-									WARFARMER
+									WAR FARMER
 								</text>
 								<stackpanel dockPoint="centre" orientation="horizontal">
 									<stackpanel dockPoint="centre" orientation="vertical">
@@ -68,13 +68,13 @@
 				<canvas width="0.5%" height="0.4%">
 					<stackpanel orientation="vertical" dockPoint="centre">
 						<textButton btnType="OnDown" paddingBottom="20">
-							abutton
+							a button
 						</textButton>
 						<textButton btnType="OnDown" paddingBottom="20">
-							anotherbutton
+							another  button
 						</textButton>
 						<textButton btnType="OnDown" paddingBottom="20">
-							anotherbutton
+							another button
 						</textButton>
 						<textButton btnType="OnDown" paddingBottom="20">
 							anotherbutton

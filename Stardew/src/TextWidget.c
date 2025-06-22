@@ -143,6 +143,58 @@ static void ParseSizeAttribute(char* inText, struct TextWidgetData* pOutWidgetDa
 	pOutWidgetData->fSizePts = val;
 }
 
+static bool IsWhitespaceChar(xmlChar character)
+{
+	return 
+		character == ' '  ||
+		character == '\n' ||
+		character == '\t' ||
+		character == '\r';
+}
+
+/*
+	params:
+		inString - input string to strip
+		outStrippedStart - output ptr to starting character
+	returns:
+		length after stripping start and end whitespace
+*/
+static int GetWhitespaceStrippedLengthAndStart(xmlChar* inString, xmlChar** outStrippedStart)
+{
+	xmlChar* strippedStart = inString;
+	xmlChar* strippedEnd = NULL;
+	
+	// find start ptr
+	while(IsWhitespaceChar(*strippedStart)) 
+	{
+		strippedStart++;
+	}
+	*outStrippedStart = strippedStart;
+
+	// find end
+	int len = strlen(inString);
+	strippedEnd = inString + (len - 1);
+	while(IsWhitespaceChar(*strippedEnd))
+	{
+		strippedEnd--;
+	}
+	return (strippedEnd - strippedStart) + 1;
+}
+
+/*
+	returns a string that is the input string with trailing and leading whitespace stripped.
+	Callers responsibility to free with free()
+*/
+static char* GetWhitespaceStrippedString(xmlChar* inString)
+{
+	xmlChar* pStart = NULL;
+	int strippedLen = GetWhitespaceStrippedLengthAndStart(inString, &pStart);
+	char* outStr = malloc(strippedLen + 1);
+	memcpy(outStr, pStart, strippedLen);
+	outStr[strippedLen] = '\0';
+	return outStr;
+}
+
 void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pData->atlas = pUILayerData->atlas;
@@ -159,8 +211,9 @@ void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct 
 		free(pData->content);
 		pData->content = NULL;
 	}
-	pData->content = malloc(len+1);
-	strcpy(pData->content, content);
+	pData->content = GetWhitespaceStrippedString(content);
+	//malloc(len+1);
+	//strcpy(pData->content, content);
 	xmlFree(content);
 
 	bool bFontSet = false;
