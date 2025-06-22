@@ -171,8 +171,8 @@ static void SetSliderPositionAndDims(struct UIWidget* pWidget, struct CanvasData
 	pData->sliderV.lengthPx = canvasH;
 	pData->sliderH.lengthPx = canvasW;
 	vec2 canvasTL = {
-		pWidget->left + pWidget->padding.paddingLeft,
-		pWidget->top + pWidget->padding.paddingTop
+		pWidget->left,
+		pWidget->top
 	};
 	pData->sliderHTopLeft[0] = canvasTL[0];
 	pData->sliderHTopLeft[1] = canvasTL[1] + (canvasH - SliderWidget_GetHeight(&pData->sliderH, &zeroPadding));

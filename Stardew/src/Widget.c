@@ -411,6 +411,21 @@ static void ParseLuaCallbacks(xmlNode* pInNode, struct UIWidget* outWidget)
 	}
 }
 
+static void ParseWidgetAlignments(xmlNode* pInNode, struct UIWidget* outWidget)
+{
+	outWidget->horizontalAlignment = WHA_Middle;
+	outWidget->verticalAlignment = WVA_Middle;
+	xmlChar* attribute = NULL;
+	if(attribute = xmlGetProp(pInNode, "horizontalAlignment"))
+	{
+		UI_ParseHorizontalAlignementAttribute(attribute, &outWidget->horizontalAlignment);
+	}
+	if(attribute = xmlGetProp(pInNode, "verticalAlignment"))
+	{
+		UI_ParseVerticalAlignementAttribute(attribute, &outWidget->verticalAlignment);
+	}
+}
+
 static void ParseWidgetDims(xmlNode* pInNode, struct UIWidget* outWidget)
 {
 	xmlChar* attribute = NULL;
@@ -448,6 +463,7 @@ void UI_WidgetCommonInit(xmlNode* pInNode, struct UIWidget* outWidget)
 	ParseLuaCallbacks(pInNode, outWidget);
 	ParseWidgetDims(pInNode, outWidget);
 	ParseWidgetOffsets(pInNode, outWidget);
+	ParseWidgetAlignments(pInNode, outWidget);
 }
 
 static const char* GetDockingPointName(WidgetDockPoint dockingPoint)

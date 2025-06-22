@@ -163,11 +163,25 @@ void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParen
 			}
 			else
 			{
-				assert(childHeight < h);
-				// TODO: move horizontal + vertical alignment directly into widget class, query here, centre alignment implemented currently
+				EASSERT(childHeight < h);
+				switch(pChild->verticalAlignment)
+				{
+				case WVA_Middle:
+					pChild->top = top + (h - childHeight) * 0.5;
+					break;
+				case WVA_Bottom:
+					pChild->top = top + (h - childHeight);
+					break;
+				case WVA_Top:
+					pChild->top = top;
+					break;
+				default:
+					EASSERT(false);
+					break;
+				}
 				pChild->left = left;
-				pChild->top = top + (h - childHeight) * 0.5;
 				left += pChild->fnGetWidth(pChild, pWidget);
+
 			}
 
 			if (pChild->hNext == NULL_HWIDGET)
@@ -196,9 +210,20 @@ void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParen
 			}
 			else
 			{
-				assert(childWidth < w);
+				EASSERT(childWidth < w);
 				// TODO: move horizontal + vertical alignment directly into widget class, query here, centre alignment implemented currently
-				pChild->left = left + (w - childWidth) * 0.5f;
+				switch(pChild->horizontalAlignment)
+				{
+				case WHA_Left:
+					pChild->left = left;
+					break;
+				case WHA_Middle:
+					pChild->left = left + (w - childWidth) * 0.5f;
+					break;
+				case WHA_Right:
+					pChild->left = left + (w - childWidth);
+					break;
+				}
 				pChild->top = top;
 				top += pChild->fnGetHeight(pChild, pWidget);
 			}

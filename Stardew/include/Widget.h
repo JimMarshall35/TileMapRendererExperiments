@@ -226,6 +226,8 @@ struct UIWidget
 	size_t numBindings;
 	float offsetX;
 	float offsetY;
+	WidgetHorizontalAlignment horizontalAlignment;
+	WidgetVerticalAlignment verticalAlignment;
 };
 
 

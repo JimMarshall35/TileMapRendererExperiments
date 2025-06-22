@@ -244,8 +244,8 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 				continue;
 			}
 			error = FT_Load_Glyph(
-				*face,          /* handle to face object */
-				index,   /* glyph index           */
+				*face,             /* handle to face object */
+				index,             /* glyph index           */
 				FT_LOAD_DEFAULT);  /* load flags, see below */
 			if (error)
 			{
@@ -259,10 +259,7 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 				printf("FT_Render_Glyph error\n");
 				continue;
 			}
-			if ((*face)->glyph->bitmap.width == 0 || (*face)->glyph->bitmap.rows == 0)
-			{
-				continue;
-			}
+			
 			AtlasSprite* pSprite = &font.sprites[j];
 			pSprite->widthPx = (*face)->glyph->bitmap.width;
 			pSprite->heightPx = (*face)->glyph->bitmap.rows;
@@ -850,10 +847,10 @@ bool Fo_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
 	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
 
-	if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].individualTileBytes)
-	{
-		return false;
-	}
+	// if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].individualTileBytes)
+	// {
+	// 	return false;
+	// }
 	*outAdvance = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].advance[0];
 	return true;
 }
