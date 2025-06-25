@@ -159,7 +159,6 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	{
 		pWidgetsHovverredLastFrame = VectorPush(pWidgetsHovverredLastFrame, &pWidgetsHovverred[i]);
 	}
-	bLastLeftClick = bThisLeftClick;
 
 	pWidgetsHovverred = VectorClear(pWidgetsHovverred);
 	pWidgetsEntered = VectorClear(pWidgetsEntered);
@@ -250,6 +249,9 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		info.button = 0;
 		bSendLMouseUp = true;
 	}
+
+	bLastLeftClick = bThisLeftClick;
+
 
 	for (int i = 0; i < VectorSize(pWidgetsEntered); i++)
 	{

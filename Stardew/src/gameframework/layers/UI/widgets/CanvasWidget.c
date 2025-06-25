@@ -161,7 +161,6 @@ void GetClipRegion(GeomRect rect, struct UIWidget* pWidget)
 	rect[1] = pWidget->top + pWidget->padding.paddingTop;
 	rect[2] = rect[0] + w;
 	rect[3] = rect[1] + h;
-
 }
 
 static void SetSliderPositionAndDims(struct UIWidget* pWidget, struct CanvasData* pData)

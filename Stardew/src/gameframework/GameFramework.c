@@ -138,6 +138,7 @@ void GF_InputGameFramework(InputContext* context)
 
 void GF_DrawGameFramework(DrawContext* context)
 {
+	int c = 0;
 	for (int i = gDrawItrStart; i < VectorSize(gLayerStack); i++)
 	{
 		gLayerStack[i].draw(&gLayerStack[i], context);

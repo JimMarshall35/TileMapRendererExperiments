@@ -95,6 +95,8 @@ void In_RecieveMouseButton(InputContext* context, int button, int action, int mo
 			{
 				if (action == GLFW_PRESS)
 				{
+					static int dCounter = 0;
+					printf("glfw mouse press %i \n", dCounter++);
 					pMapping->data.ButtonMapping.bCurrent = true;
 				}
 				else if (action == GLFW_RELEASE)

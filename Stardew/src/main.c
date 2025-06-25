@@ -86,7 +86,9 @@ static void GLAPIENTRY MessageCallback(GLenum source,
     }
 }
 
-int main(int argc, char** argv)
+typedef void(*GameInitFn)(InputContext*,DrawContext*);
+
+int EngineStart(int argc, char** argv, GameInitFn init)
 {
     printf("testing libxml version...\n");
     LIBXML_TEST_VERSION
@@ -115,17 +117,7 @@ int main(int argc, char** argv)
     }
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
-
-/*
-
-    while (!glfwWindowShouldClose(window)){
-        glfwPollEvents();
-        glfwSwapBuffers(window);
-    }
-    return 0;
-
-*/
+    glfwSwapInterval(0); // Enable vsync
     
     glfwJoystickPresent(GLFW_JOYSTICK_1);
 
@@ -202,23 +194,16 @@ int main(int argc, char** argv)
     Sc_InitScripting();
     printf("done\n");
 
-    struct GameFrameworkLayer testLayer;
-    memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
-    struct XMLUIGameLayerOptions options;
-    options.bLoadImmediately = true;
-    options.xmlPath = "./Assets/test.xml";
-    options.pDc = &gDrawContext;
-    printf("making xml ui layer\n");
-    XMLUIGameLayer_Get(&testLayer, &options);
-    printf("done\n");
-    printf("pushing framework layer\n");
-    GF_PushGameFrameworkLayer(&testLayer);
-    printf("done\n");
+    init(&gInputContext, &gDrawContext);
     
+    double frameTimeTotal = 0.0;
+    int onCount = 0;
+    int numCounts = 60;
     while (!glfwWindowShouldClose(window))
     {
-        double delta = glfwGetTime() - lastUpdate;
-        lastUpdate += delta;
+        double time = glfwGetTime();
+        double delta = time - lastUpdate;
+        lastUpdate = time;
         accumulator += delta;
         while (accumulator > slice)
         {
@@ -235,6 +220,14 @@ int main(int argc, char** argv)
         GF_DrawGameFramework(&gDrawContext);
         glfwSwapBuffers(window);
         GF_EndFrame(&gDrawContext, &gInputContext);
+        frameTimeTotal += delta;
+        onCount++;
+        if(onCount == numCounts)
+        {
+            onCount = 0;
+            printf("frame time: %f\n", 1.0 / (frameTimeTotal / (double)numCounts));
+            frameTimeTotal = 0.0f;
+        }
     }
 
     Sc_DeInitScripting();
@@ -242,4 +235,25 @@ int main(int argc, char** argv)
     GF_DestroyGameFramework();
 
     glfwTerminate();
+}
+
+void GameInit(InputContext* pIC, DrawContext* pDC)
+{
+    struct GameFrameworkLayer testLayer;
+    memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
+    struct XMLUIGameLayerOptions options;
+    options.bLoadImmediately = true;
+    options.xmlPath = "./Assets/test.xml";
+    options.pDc = pDC;
+    printf("making xml ui layer\n");
+    XMLUIGameLayer_Get(&testLayer, &options);
+    printf("done\n");
+    printf("pushing framework layer\n");
+    GF_PushGameFrameworkLayer(&testLayer);
+    printf("done\n");
+}
+
+int main(int argc, char** argv)
+{
+    EngineStart(argc, argv, &GameInit);
 }

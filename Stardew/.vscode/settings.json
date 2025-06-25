@@ -6,7 +6,8 @@
         "handledefs.h": "c",
         "staticwidget.h": "c",
         "sliderwidget.h": "c",
-        "widget.h": "c"
+        "widget.h": "c",
+        "glfw3.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
