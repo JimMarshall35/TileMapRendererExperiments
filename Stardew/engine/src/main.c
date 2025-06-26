@@ -252,8 +252,3 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     GF_PushGameFrameworkLayer(&testLayer);
     printf("done\n");
 }
-
-int main(int argc, char** argv)
-{
-    EngineStart(argc, argv, &GameInit);
-}

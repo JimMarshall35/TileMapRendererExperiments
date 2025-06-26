@@ -1,4 +1,4 @@
-add_executable( StardewEngine
+add_library( StardewEngine SHARED
 core/Atlas.c
 core/CtorDtor.c
 core/DynArray.c

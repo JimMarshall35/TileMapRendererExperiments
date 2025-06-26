@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/StardewEngine",
+            "program": "${workspaceFolder}/build/game/WarFarmer",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",

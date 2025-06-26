@@ -7,7 +7,9 @@
         "staticwidget.h": "c",
         "sliderwidget.h": "c",
         "widget.h": "c",
-        "glfw3.h": "c"
+        "glfw3.h": "c",
+        "drawcontext.h": "c",
+        "inputcontext.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

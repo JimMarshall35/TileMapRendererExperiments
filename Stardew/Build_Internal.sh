@@ -7,7 +7,7 @@ echo $1
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=$1
 make
-cd src
+cd game
 
 if [ ! -d "Assets" ]; then
   mkdir Assets
@@ -17,4 +17,4 @@ cd ..
 cd ..
 
 echo "Copying assets folder..."
-cp -a Assets build/src
+cp -a Assets build/game
