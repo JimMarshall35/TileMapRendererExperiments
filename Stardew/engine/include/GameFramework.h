@@ -1,5 +1,10 @@
 #ifndef GAMEFRAMEWORK_H
 #define GAMEFRAMEWORK_H
+
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 #include "InputContext.h"
 #include "DrawContext.h"
 struct GameFrameworkLayer;
@@ -50,5 +55,9 @@ void GF_InputGameFramework(InputContext* context);
 void GF_DrawGameFramework(DrawContext* context);
 void GF_OnWindowDimsChanged(int newW, int newH);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
