@@ -2,6 +2,7 @@
 #include "GameFramework.h"
 #include <string.h>
 #include "XMLUIGameLayer.h"
+#include "DynArray.h"
 
 void GameInit(InputContext* pIC, DrawContext* pDC)
 {
@@ -21,5 +22,11 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
 
 int main(int argc, char** argv)
 {
+    VECTOR(int) test = NEW_VECTOR(int);
+    int val = 13;
+    for(int i=0; i<500; i++)
+    {
+        VectorPush(test, &val);
+    }
     EngineStart(argc, argv, &GameInit);
 }

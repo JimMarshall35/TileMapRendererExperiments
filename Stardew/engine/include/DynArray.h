@@ -1,5 +1,10 @@
 #ifndef DYNARRAY_H
 #define DYNARRAY_H
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
+
 #include "IntTypes.h"
 
 void* VectorInit(unsigned int itemSize);
@@ -25,7 +30,11 @@ typedef struct
 #define VectorSize(vector) ((((VectorData*)vector) - 1)->size)
 #define VectorData_DEBUG(vector)(((VectorData*)vector) - 1)
 
-#define NEW_VECTOR(a) VectorInit(sizeof(a));
+#define NEW_VECTOR(a) ((a*)VectorInit(sizeof(a)));
 #define VECTOR(a) a*
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
