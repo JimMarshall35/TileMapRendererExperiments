@@ -28,7 +28,7 @@ jobs:
       # Build your program with the given configuration
       run: |
         cd Stardew
-        bash ./Stardew/BuildRelease.sh
+        bash BuildRelease.sh
 
     - name: Test
       # Execute tests defined by the CMake configuration.
