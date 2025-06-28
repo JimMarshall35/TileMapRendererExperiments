@@ -22,7 +22,7 @@ jobs:
     - name: Get Dependencies
       run: |
         cd Stardew
-        bash GetDependenciesUbuntu.sh 
+        bash GetDependencies.sh 
 
     - name: Build
       # Build your program with the given configuration
