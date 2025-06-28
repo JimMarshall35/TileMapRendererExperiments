@@ -216,6 +216,7 @@ TEST(GameFramework, FunctionsCalledInCorrectOrder)
         ASSERT_EQ(3, callCounter);
     }
 
+    
     ASSERT_EQ(true, l1.Vars().update.bCalled);
     ASSERT_EQ(true, l2.Vars().update.bCalled);
     ASSERT_EQ(true, l3.Vars().update.bCalled);
@@ -223,4 +224,155 @@ TEST(GameFramework, FunctionsCalledInCorrectOrder)
     ASSERT_EQ(0, l1.Vars().update.nOrderCalled);
     ASSERT_EQ(1, l2.Vars().update.nOrderCalled);
     ASSERT_EQ(2, l3.Vars().update.nOrderCalled);
+
+    ASSERT_EQ(true, l1.Vars().input.bCalled);
+    ASSERT_EQ(true, l2.Vars().input.bCalled);
+    ASSERT_EQ(true, l3.Vars().input.bCalled);
+
+    ASSERT_EQ(0, l1.Vars().input.nOrderCalled);
+    ASSERT_EQ(1, l2.Vars().input.nOrderCalled);
+    ASSERT_EQ(2, l3.Vars().input.nOrderCalled);
+
+    ASSERT_EQ(true, l1.Vars().draw.bCalled);
+    ASSERT_EQ(true, l2.Vars().draw.bCalled);
+    ASSERT_EQ(true, l3.Vars().draw.bCalled);
+
+    ASSERT_EQ(0, l1.Vars().draw.nOrderCalled);
+    ASSERT_EQ(1, l2.Vars().draw.nOrderCalled);
+    ASSERT_EQ(2, l3.Vars().draw.nOrderCalled);
+}
+
+
+TEST(GameFramework, MaskingDisablesLayersBelow)
+{
+    int callCounter = 0;
+    ScopedTestLayer l1{callCounter};
+    ScopedTestLayer l2{callCounter};
+    ScopedTestLayer l3{callCounter};
+
+    l1.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop);
+    l2.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop | MasksDraw | MasksInput | MasksUpdate);
+    l3.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop);
+
+    {
+        ScopedGameFramework gf;
+        GF_PushGameFrameworkLayer(&l1.layer);
+        GF_PushGameFrameworkLayer(&l2.layer);
+        GF_PushGameFrameworkLayer(&l3.layer);
+        GF_EndFrame(nullptr, nullptr);
+        GF_UpdateGameFramework(0.0f);
+        ASSERT_EQ(2, callCounter);
+        callCounter = 0;
+        GF_InputGameFramework(nullptr);
+        ASSERT_EQ(2, callCounter);
+        callCounter = 0;
+        GF_DrawGameFramework(nullptr);
+        ASSERT_EQ(2, callCounter);
+    }
+
+    ASSERT_EQ(false, l1.Vars().update.bCalled);
+    ASSERT_EQ(true, l2.Vars().update.bCalled);
+    ASSERT_EQ(true, l3.Vars().update.bCalled);
+
+    ASSERT_EQ(0, l2.Vars().update.nOrderCalled);
+    ASSERT_EQ(1, l3.Vars().update.nOrderCalled);
+
+    ASSERT_EQ(false, l1.Vars().input.bCalled);
+    ASSERT_EQ(true, l2.Vars().input.bCalled);
+    ASSERT_EQ(true, l3.Vars().input.bCalled);
+
+    ASSERT_EQ(0, l2.Vars().input.nOrderCalled);
+    ASSERT_EQ(1, l3.Vars().input.nOrderCalled);
+
+    ASSERT_EQ(false, l1.Vars().draw.bCalled);
+    ASSERT_EQ(true, l2.Vars().draw.bCalled);
+    ASSERT_EQ(true, l3.Vars().draw.bCalled);
+
+    ASSERT_EQ(0, l2.Vars().draw.nOrderCalled);
+    ASSERT_EQ(1, l3.Vars().draw.nOrderCalled);
+
+}
+
+TEST(GameFramework, MaskingDisablesLayersBelowAndPoppingClears)
+{
+    int callCounter = 0;
+    ScopedTestLayer l1{callCounter};
+    ScopedTestLayer l2{callCounter};
+    ScopedTestLayer l3{callCounter};
+
+    l1.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn);
+    l2.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | MasksDraw | MasksInput | MasksUpdate);
+    l3.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn);
+
+    {
+        ScopedGameFramework gf;
+        GF_PushGameFrameworkLayer(&l1.layer);
+        GF_PushGameFrameworkLayer(&l2.layer);
+        GF_PushGameFrameworkLayer(&l3.layer);
+        GF_EndFrame(nullptr, nullptr);
+        GF_UpdateGameFramework(0.0f);
+        ASSERT_EQ(2, callCounter);
+        callCounter = 0;
+        GF_InputGameFramework(nullptr);
+        ASSERT_EQ(2, callCounter);
+        callCounter = 0;
+        GF_DrawGameFramework(nullptr);
+        ASSERT_EQ(2, callCounter);
+        
+
+        GF_PopGameFrameworkLayer();
+        GF_PopGameFrameworkLayer();
+        GF_PopGameFrameworkLayer();
+        l2.layer.flags = l1.layer.flags; // clear mask bits
+        GF_PushGameFrameworkLayer(&l1.layer);
+        GF_PushGameFrameworkLayer(&l2.layer);
+        GF_PushGameFrameworkLayer(&l3.layer);
+        GF_EndFrame(nullptr, nullptr);
+
+        callCounter = 0;
+        GF_UpdateGameFramework(0.0f);
+        ASSERT_EQ(3, callCounter);
+        callCounter = 0;
+        GF_InputGameFramework(nullptr);
+        ASSERT_EQ(3, callCounter);
+        callCounter = 0;
+        GF_DrawGameFramework(nullptr);
+        ASSERT_EQ(3, callCounter);
+    }
+
+    
+}
+
+TEST(GameFramework, WindowDimsChange)
+{
+    int callCounter = 0;
+    ScopedTestLayer l1{callCounter};
+    ScopedTestLayer l2{callCounter};
+    ScopedTestLayer l3{callCounter};
+
+    l1.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop);
+    l2.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop | MasksDraw | MasksInput | MasksUpdate);
+    l3.layer.flags |= (EnableUpdateFn | EnableInputFn | EnableDrawFn | EnableOnPop);
+
+    {
+        ScopedGameFramework gf;
+        GF_PushGameFrameworkLayer(&l1.layer);
+        GF_PushGameFrameworkLayer(&l2.layer);
+        GF_PushGameFrameworkLayer(&l3.layer);
+        GF_EndFrame(nullptr, nullptr);
+        GF_OnWindowDimsChanged(123, 321);
+        ASSERT_EQ(l1.Vars().windowW, 123);
+        ASSERT_EQ(l1.Vars().windowH, 321);
+        ASSERT_EQ(l2.Vars().windowW, 123);
+        ASSERT_EQ(l2.Vars().windowH, 321);
+        ASSERT_EQ(l3.Vars().windowW, 123);
+        ASSERT_EQ(l3.Vars().windowH, 321);
+        GF_OnWindowDimsChanged(32, 54);
+        ASSERT_EQ(l1.Vars().windowW, 32);
+        ASSERT_EQ(l1.Vars().windowH, 54);
+        ASSERT_EQ(l2.Vars().windowW, 32);
+        ASSERT_EQ(l2.Vars().windowH, 54);
+        ASSERT_EQ(l3.Vars().windowW, 32);
+        ASSERT_EQ(l3.Vars().windowH, 54);
+    }
 }

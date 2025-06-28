@@ -34,10 +34,13 @@ void* DoubleObjectPoolSize(void* pObjectPool)
 	struct ObjectPoolData* pNewData = malloc(pData->objectSize * pData->capacity + sizeof(u64) * pData->capacity + sizeof(struct ObjectPoolData));
 	memcpy(pNewData, pData, pData->objectSize * pData->capacity + sizeof(struct ObjectPoolData));
 	pNewData->freeObjectIndicessArray = (u64*)((char*)pNewData + sizeof(struct ObjectPoolData) + pData->capacity * pData->objectSize);
-	for (int i = oldCapacity; i > pData->capacity; i--)
+	memcpy(pNewData->freeObjectIndicessArray, pData->freeObjectIndicessArray, pData->freeObjectsArraySize * sizeof(u64));
+
+	for(int i=oldCapacity; i < pData->capacity; i++)
 	{
 		pNewData->freeObjectIndicessArray[pNewData->freeObjectsArraySize++] = i;
 	}
+	free(pData);
 	return pNewData + 1;
 }
 

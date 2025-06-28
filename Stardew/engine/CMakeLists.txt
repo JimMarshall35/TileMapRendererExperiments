@@ -25,8 +25,11 @@ target_include_directories(StardewEngine  PRIVATE lib/glad/include)
 target_include_directories(StardewEngine PUBLIC ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(StardewEngine PUBLIC ${LUA_INCLUDE_DIR})
 target_include_directories(StardewEngine PUBLIC ${LIBXML2_INCLUDE_DIR})
+target_include_directories(StardewEngine PUBLIC ${BOX2D_INCLUDE_DIR})
 
 target_link_libraries(StardewEngine PUBLIC ${FREETYPE_LIBRARIES})
 target_link_libraries(StardewEngine PUBLIC ${LUA_LIBRARIES})
 target_link_libraries(StardewEngine PUBLIC ${LIBXML2_LIBRARIES})
+target_link_libraries(StardewEngine PUBLIC ${BOX2D_LIBRARIES})
+
 target_link_libraries(StardewEngine PUBLIC m) 

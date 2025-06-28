@@ -1,5 +1,8 @@
 #ifndef  OBJECT_POOL_H
 #define OBJECT_POOL_H
+#ifdef __cplusplus
+extern "C"{
+#endif 
 
 #include "IntTypes.h"
 
@@ -42,5 +45,7 @@ struct ObjectPoolData
 	}\
 }
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif // ! OBJECT_POOL_H
