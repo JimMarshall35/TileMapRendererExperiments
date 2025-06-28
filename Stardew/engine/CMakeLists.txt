@@ -3,9 +3,19 @@ cmake_minimum_required(VERSION 3.25)
 project(StardewEngine)
 find_package(glfw3 REQUIRED)
 find_package(box2d)
-find_package(Lua51 REQUIRED)
+find_package(Lua REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibXml2 REQUIRED)
+
+if(Lua_FOUND AND NOT TARGET Lua::Lua)
+  add_library(Lua::Lua INTERFACE IMPORTED)
+  set_target_properties(
+    Lua::Lua
+    PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${LUA_INCLUDE_DIR}"
+      INTERFACE_LINK_LIBRARIES "${LUA_LIBRARIES}"
+  )
+endif()
 
 add_subdirectory(src)
 
@@ -32,4 +42,4 @@ target_link_libraries(StardewEngine PUBLIC ${LUA_LIBRARIES})
 target_link_libraries(StardewEngine PUBLIC ${LIBXML2_LIBRARIES})
 target_link_libraries(StardewEngine PUBLIC ${BOX2D_LIBRARIES})
 
-target_link_libraries(StardewEngine PUBLIC m) 
+target_link_libraries(StardewEngine PUBLIC Lua::Lua) 
