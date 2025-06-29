@@ -22,7 +22,17 @@ jobs:
           https://myrepo.com/conan-config.git
 
     - name: Install Conan dependencies
-      run: GetDependenciesConan.bat
+      run: |
+        cd Stardew
+        GetDependenciesConan.bat
     
     - name: Build
-      run: BuildRelease.bat
+      run: |
+        cd Stardew
+        BuildRelease.bat
+
+    - name: Test
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: |
+        Stardew/build/enginetest/StardewEngineTest.exe
