@@ -25,6 +25,12 @@ target_link_libraries(
 )
 endif()
 
+
+if(WIN32)
+
+else()
 include(GoogleTest)
 
 gtest_discover_tests(StardewEngineTest)
+
+endif()
