@@ -40,7 +40,7 @@ target_link_libraries(
   GTest::gtest_main
 )
 gtest_discover_tests(StardewEngineTest)
-
-endif()
 include(GoogleTest)
+endif()
+
 
