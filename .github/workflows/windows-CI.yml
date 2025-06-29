@@ -29,7 +29,6 @@ jobs:
       run: |
         cd Stardew
         copy build\engine\src\Release\StardewEngine.dll build\enginetest\Release
-        xcopy Assets \build\game\Release 
     - uses: actions/upload-artifact@v4
       with:
         name: my-artifact
