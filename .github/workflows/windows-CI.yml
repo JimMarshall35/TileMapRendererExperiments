@@ -28,16 +28,16 @@ jobs:
     - name: Copy Files
       run: |
         cd Stardew
-        copy build\engine\src\Release\StardewEngine.dll build\enginetest\Release
         copy build\engine\src\Release\StardewEngine.dll build\game\Release
+        copy build\enginetest\Release\StardewEngineTest.exe build\game\Release
         robocopy "Assets" "build\game\Release\Assets" /e
         exit 0
     - uses: actions/upload-artifact@v4
       with:
         name: my-artifact
-        path: Stardew/build/ # or path/to/artifact
+        path: Stardew/build/game/Release # or path/to/artifact
     - name: Test
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: |
-        ./Stardew/build/enginetest/Release/StardewEngineTest.exe
+        ./Stardew/build/game/Release/StardewEngineTest.exe
