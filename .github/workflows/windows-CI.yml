@@ -19,12 +19,12 @@ jobs:
     - name: Install Conan dependencies
       run: |
         cd Stardew
-        GetDependenciesConan.bat
+        cmd /c "GetDependenciesConan.bat"
     
     - name: Build
       run: |
         cd Stardew
-        BuildRelease.bat
+        cmd /c "BuildRelease.bat"
 
     - name: Test
       # Execute tests defined by the CMake configuration.
