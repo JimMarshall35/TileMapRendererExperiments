@@ -31,7 +31,7 @@ add_subdirectory(lib/cglm-0.9.6 EXCLUDE_FROM_ALL)
 
 target_include_directories(StardewEngine  PUBLIC include)
 target_include_directories(StardewEngine  PRIVATE lib/glad/include)
-
+cmake_print_variables(FREETYPE_INCLUDE_DIRS)
 target_include_directories(StardewEngine PUBLIC ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(StardewEngine PUBLIC ${LUA_INCLUDE_DIR})
 target_include_directories(StardewEngine PUBLIC ${LIBXML2_INCLUDE_DIR})
