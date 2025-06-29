@@ -28,7 +28,7 @@ jobs:
     - name: Copy Files
       run: |
         cd Stardew
-        copy /b ./build/engine/src/Release/StardewEngine.dll ./build/enginetest/Release/StardewEngine.dll
+        copy ./build/engine/src/Release/StardewEngine.dll ./build/enginetest/Release/StardewEngine.dll
         robocopy ./Assets ./build/game/Release /E
     - uses: actions/upload-artifact@v4
       with:
