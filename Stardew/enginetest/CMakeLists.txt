@@ -14,7 +14,7 @@ add_executable(
 target_link_libraries(
   StardewEngineTest
   PRIVATE
-  GTest::gtest_main
+  gtest::gtest
 )
 
 include(GoogleTest)

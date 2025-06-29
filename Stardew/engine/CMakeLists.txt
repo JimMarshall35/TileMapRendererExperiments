@@ -50,7 +50,7 @@ else()
 endif()
 
 if(WIN32)
-target_link_libraries(StardewEngine PUBLIC LibXml2::LibXml2 box2d::box2d Freetype::Freetype lua::lua glfw gtest::gtest)
+target_link_libraries(StardewEngine PUBLIC LibXml2::LibXml2 box2d::box2d Freetype::Freetype lua::lua glfw)
 else()
 target_link_libraries(StardewEngine PUBLIC ${FREETYPE_LIBRARIES})
 target_link_libraries(StardewEngine PUBLIC ${LUA_LIBRARIES})
