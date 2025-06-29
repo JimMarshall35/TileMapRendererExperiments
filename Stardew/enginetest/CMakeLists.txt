@@ -15,6 +15,7 @@ if(WIN32)
 target_link_libraries(
   StardewEngineTest
   PRIVATE
+  gtest::gtest
   gtest::gtest_main
 )
 else()
