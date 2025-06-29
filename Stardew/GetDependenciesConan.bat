@@ -1,4 +1,4 @@
 if not exist build mkdir build
 conan profile detect --force
 cd build
-conan install .. --deployer=full_deploy
+conan install .. --deployer=full_deploy --deployer-folder=build
