@@ -15,11 +15,6 @@ jobs:
 
     - name: Install Conan
       uses: conan-io/setup-conan@v1
-      with:
-        audit_token: ${{ secrets.CONAN_AUDIT_TOKEN }}
-        config_urls: |
-          https://github.com/<org>/conan-config.git
-          https://myrepo.com/conan-config.git
 
     - name: Install Conan dependencies
       run: |
