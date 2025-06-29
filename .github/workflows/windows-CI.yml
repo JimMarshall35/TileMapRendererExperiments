@@ -30,7 +30,7 @@ jobs:
         cd Stardew
         copy build\engine\src\Release\StardewEngine.dll build\enginetest\Release
         copy build\engine\src\Release\StardewEngine.dll build\game\Release
-        xcopy Assets  build\game \q \y
+        xcopy //q //y "Assets" "build\game"
     - uses: actions/upload-artifact@v4
       with:
         name: my-artifact
