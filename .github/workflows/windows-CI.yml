@@ -1,0 +1,28 @@
+name: Windows CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+      with:
+        audit_token: ${{ secrets.CONAN_AUDIT_TOKEN }}
+        config_urls: |
+          https://github.com/<org>/conan-config.git
+          https://myrepo.com/conan-config.git
+
+    - name: Install Conan dependencies
+      run: GetDependenciesConan.bat
+    
+    - name: Build
+      run: BuildRelease.bat

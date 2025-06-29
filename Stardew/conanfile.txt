@@ -1,0 +1,15 @@
+[requires]
+libxml2/2.13.8 
+box2d/3.1.0
+freetype/2.13.3
+lua/5.4.7
+glfw/3.4
+gtest/1.16.0
+[generators]
+CMakeDeps
+CMakeToolchain
+[layout]
+cmake_layout
+[imports]
+bin, *.dll -> ./bin # Copies all dll files from the package "bin" folder to my project "bin" folder
+lib, *.dylib* -> ./bin # Copies all dylib files from the package "lib" folder to my project "bin" folder
