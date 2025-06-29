@@ -10,13 +10,13 @@ add_executable(
   ObjectPoolTests.cpp
   GameFrameworkTests.cpp
   SharedPtrTests.cpp
+  main.cpp
 )
 if(WIN32)
 target_link_libraries(
   StardewEngineTest
   PRIVATE
   gtest::gtest
-  gtest::gtest_main
 )
 else()
 target_link_libraries(
@@ -28,10 +28,18 @@ endif()
 
 
 if(WIN32)
-
+target_link_libraries(
+  StardewEngineTest
+  PRIVATE
+  gtest::gtest
+)
 else()
+target_link_libraries(
+  StardewEngineTest
+  PRIVATE
+  GTest::gtest_main
+)
+endif()
 include(GoogleTest)
 
 gtest_discover_tests(StardewEngineTest)
-
-endif()
