@@ -39,7 +39,8 @@ target_link_libraries(
   PRIVATE
   GTest::gtest_main
 )
+gtest_discover_tests(StardewEngineTest)
+
 endif()
 include(GoogleTest)
 
-gtest_discover_tests(StardewEngineTest)
