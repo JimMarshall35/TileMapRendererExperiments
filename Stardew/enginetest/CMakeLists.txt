@@ -15,7 +15,7 @@ if(WIN32)
 target_link_libraries(
   StardewEngineTest
   PRIVATE
-  gtest::gtest_main
+  gtest::gtest
 )
 else()
 target_link_libraries(
@@ -27,7 +27,4 @@ endif()
 
 include(GoogleTest)
 
-if(WIN32)
-else()
 gtest_discover_tests(StardewEngineTest)
-endif()
