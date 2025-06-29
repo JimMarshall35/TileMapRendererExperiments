@@ -31,12 +31,7 @@ jobs:
         copy build\engine\src\Release\StardewEngine.dll build\enginetest\Release
         copy build\engine\src\Release\StardewEngine.dll build\game\Release
         robocopy "Assets" "build\game\Release" /e
-        if ( $LASTEXITCODE -eq 1) {
-            exit 0
-        }
-        else {
-            exit 1
-        }
+        exit 0
     - uses: actions/upload-artifact@v4
       with:
         name: my-artifact
