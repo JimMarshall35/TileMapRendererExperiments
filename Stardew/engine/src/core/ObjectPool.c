@@ -9,7 +9,6 @@
 
 void* InitObjectPool(int objectSize, int poolInitialSize)
 {
-	assert(poolInitialSize >= 10);
 	struct ObjectPoolData* pAlloc = malloc(objectSize * poolInitialSize + poolInitialSize * sizeof(u64) + sizeof(struct ObjectPoolData));
 	if (!pAlloc) { assert(false); return NULL; }
 	pAlloc->freeObjectIndicessArray = (u64*)((char*)pAlloc + sizeof(struct ObjectPoolData) + poolInitialSize * objectSize);
@@ -23,7 +22,6 @@ void* InitObjectPool(int objectSize, int poolInitialSize)
 	return pAlloc + 1;
 }
 
-#define ObjectPoolFreeArraySize(pObjectPool) (((struct ObjectPoolData*)pObjectPool) - 1)->freeObjectsArraySize
 
 void* DoubleObjectPoolSize(void* pObjectPool)
 {
@@ -77,4 +75,10 @@ void FreeObjectPoolIndex(void* pObjectPool, int indexToFree)
 		}
 	}
 	pData->freeObjectIndicessArray[pData->freeObjectsArraySize++] = indexToFree;
+}
+
+void* FreeObjectPool(void* pObjectPool)
+{
+	struct ObjectPoolData* pData = ((struct ObjectPoolData*)pObjectPool) - 1;
+	free(pData);
 }

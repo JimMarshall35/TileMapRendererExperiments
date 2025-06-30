@@ -245,6 +245,8 @@ size_t UI_CountWidgetChildren(HWidget pWidget);
 
 struct UIWidget* UI_GetWidget(HWidget hWidget);
 
+struct UIWidget* UI_FirstChild(HWidget hWidget);
+
 void UI_AddChild(HWidget hParent, HWidget hChild);
 
 void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim* outWidgetDims);

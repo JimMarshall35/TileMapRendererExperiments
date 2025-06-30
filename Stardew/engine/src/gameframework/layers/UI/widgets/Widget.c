@@ -63,6 +63,16 @@ struct UIWidget* UI_GetWidget(HWidget hWidget)
 	return &gWidgetPool[hWidget];
 }
 
+struct UIWidget* UI_FirstChild(HWidget hWidget)
+{
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	if(!pWidget)
+	{
+		return NULL;
+	}
+	return UI_GetWidget(pWidget->hFirstChild);
+}
+
 void UI_AddChild(HWidget hParent, HWidget hChild)
 {
 	WIDGET_POOL_BOUNDS_CHECK_NO_RETURN(hParent)

@@ -298,11 +298,33 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 	drawContext->SetCurrentAtlas(hAtlasTex);
 }
 
+static void FreeWidgetTree(HWidget root)
+{
+	struct UIWidget* pWidget = UI_GetWidget(root);
+	if(!pWidget)
+	{
+		return;
+	}
+	
+	HWidget h = pWidget->hFirstChild;
+	while(h != NULL_HWIDGET)
+	{
+		HWidget oldH = h;
+		pWidget = UI_GetWidget(h);
+			
+		h = pWidget->hNext;
+		FreeWidgetTree(oldH);
+	}
+	UI_DestroyWidget(root);
+}
+
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	XMLUIData* pData = pLayer->userData;
+	
 	DestoryVector(pData->pWidgetVertices);
 	drawContext->DestroyVertexBuffer(pData->hVertexBuffer);
+	FreeWidgetTree(pData->rootWidget);
 	if (pData->hViewModel)
 	{
 		Sc_DeleteTableInReg(pData->hViewModel);

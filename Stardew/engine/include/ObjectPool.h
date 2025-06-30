@@ -12,6 +12,7 @@ void* GetObjectPoolIndex(void* pObjectPool, int* pOutIndex);
 
 void FreeObjectPoolIndex(void* pObjectPool, int indexToFree);
 
+void* FreeObjectPool(void* pObjectPool);
 
 struct ObjectPoolData
 {
@@ -23,7 +24,7 @@ struct ObjectPoolData
 };
 
 #define OBJECT_POOL(a) a*
-#define NEW_OBJECT_POOL(a, size) InitObjectPool(sizeof(a),size);
+#define NEW_OBJECT_POOL(a, size) ((a*)InitObjectPool(sizeof(a),size))
 
 #define ObjectPoolCapacity(pObjectPool) ((((struct ObjectPoolData*)pObjectPool) - 1)->capacity)
 
@@ -44,6 +45,8 @@ struct ObjectPoolData
 		return;\
 	}\
 }
+
+#define ObjectPoolFreeArraySize(pObjectPool) (((struct ObjectPoolData*)pObjectPool) - 1)->freeObjectsArraySize
 
 #ifdef __cplusplus
 }
