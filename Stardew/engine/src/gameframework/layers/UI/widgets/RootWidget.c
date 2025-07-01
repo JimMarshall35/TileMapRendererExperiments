@@ -20,8 +20,8 @@ void RootWidget_LayoutChildren(struct UIWidget* pThis, struct UIWidget* pParent,
 	if (pThis->hFirstChild != NULL_HWIDGET)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(pThis->hFirstChild);
-		float windowW = UI_ResolveWidgetDimPxls(pThis, &GetWidgetWidthDim, NULL);
-		float windowH = UI_ResolveWidgetDimPxls(pThis, &GetWidgetHeightDim, NULL);
+		float windowW = UI_ResolveWidthDimPxls(pThis, &pThis->width);
+		float windowH = UI_ResolveHeightDimPxls(pThis, &pThis->height);
 		while (pWidget)
 		{
 			float width = pWidget->fnGetWidth(pWidget, pThis);
@@ -92,26 +92,6 @@ void RootWidget_OnDestroy(struct UIWidget* pThis)
 	free(pThis->pImplementationData);
 }
 
-static void DebugPrintWidget(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-	struct RootWidgetData* pRootWidgetData = pWidget->pImplementationData;
-	for (int i = 0; i < indentLvl; i++)
-	{
-		printfFn("\t");
-	}
-	printfFn("Root width = %i, height = %i\n", pRootWidgetData->windowW, pRootWidgetData->windowH);
-	HWidget child = pWidget->hFirstChild;
-	while (child != NULL_HWIDGET)
-	{
-		struct UIWidget* pChildWidget = UI_GetWidget(child);
-		if (pChildWidget->fnOnDebugPrint)
-		{
-			pChildWidget->fnOnDebugPrint(indentLvl + 1, pChildWidget, printfFn);
-		}
-		child = pChildWidget->hNext;
-	}
-}
-
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	//printf("pOutVerts: SIZE: %i CAPACITY: %i\n\n", VectorData_DEBUG(pOutVerts)->size, VectorData_DEBUG(pOutVerts)->capacity);
@@ -137,7 +117,6 @@ void MakeIntoRootWidget(HWidget widget)
 	pWidget->fnGetHeight = &RootWidget_GetHeight;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &RootWidget_OnDestroy;
-	pWidget->fnOnDebugPrint = &DebugPrintWidget;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->left = 0.0f;
 	pWidget->top = 0.0f;

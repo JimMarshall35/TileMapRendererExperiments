@@ -10,27 +10,13 @@
 #include "RootWidget.h"
 #include "Geometry.h"
 #include "WidgetVertexOutputHelpers.h"
-#include "SliderWidget.h"
 
 static struct WidgetPadding zeroPadding =
 {
 	0,0,0,0
 };
 
-struct CanvasData
-{
-	float scrollX;
-	float scrollY;
-	GeomRect contentBB;
 
-	struct SliderData sliderH;
-	struct SliderData sliderV;
-	vec2 sliderHTopLeft;
-	vec2 sliderVTopLeft;
-
-	bool bHSliderActive;
-	bool bVSliderActive;
-};
 
 static float BBWidth(GeomRect r)
 {
@@ -46,12 +32,12 @@ static float BBHeight(GeomRect r)
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return UI_ResolveWidgetDimPxls(pWidget, &GetWidgetWidthDim, pWidget->fnGetWidth);
+	return UI_ResolveWidthDimPxls(pWidget, &pWidget->width);
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return UI_ResolveWidgetDimPxls(pWidget, &GetWidgetHeightDim, pWidget->fnGetHeight);
+	return UI_ResolveHeightDimPxls(pWidget, &pWidget->height);
 }
 
 /// <summary>
@@ -136,10 +122,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-}
-
 static bool ContentExceedsSize(struct CanvasData* pCanvasData, struct UIWidget* pWidget, bool* pOutExceedsWidth, bool* pOutExceedsHeight)
 {
 	float w = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingRight + pWidget->padding.paddingLeft);
@@ -202,7 +184,7 @@ static void SetSliderMinAndMax(struct UIWidget* pWidget, struct CanvasData* pCan
 	pCanvasData->sliderH.fVal = 0.0f;
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	struct CanvasData* pCanvasData = pWidget->pImplementationData;
 	bool bExceedsW, bExceedsH;
@@ -333,8 +315,7 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, xmlNode* pXMLNode, struc
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
-	pWidget->fnOutputVertices = &OnOutputVerts;
+	pWidget->fnOutputVertices = &CanvasWidget_OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->fnOnWidgetInit = &OnWidgetInit;
 

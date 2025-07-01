@@ -135,10 +135,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-}
-
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	struct RadioButtonData* pData = pWidget->pImplementationData;
@@ -305,7 +301,6 @@ static void MakeWidgetIntoRadioButtonWidget(HWidget hWidget, xmlNode* pXMLNode, 
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct RadioButtonData));

@@ -8,8 +8,10 @@
 <[HeaderMultilineComment]>
 
 */
+typedef struct _xmlNode xmlNode;
+struct XMLUIData;
 
-HWidget <<WidgetName>>New(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget <<WidgetName>>New(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 
 #endif // !<<IncludeGuardDef>>

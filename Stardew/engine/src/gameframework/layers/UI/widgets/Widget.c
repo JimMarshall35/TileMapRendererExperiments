@@ -6,7 +6,7 @@
 #include "AssertLib.h"
 
 OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
-
+HWidget gScratchWidget = NULL_HANDLE; 
 
 
 #define WIDGET_POOL_BOUNDS_CHECK(handle, rVal) OBJ_POOL_BOUNDS_CHECK(handle, rVal, gWidgetPool)
@@ -101,6 +101,13 @@ void UI_AddChild(HWidget hParent, HWidget hChild)
 void UI_Init()
 {
 	gWidgetPool = NEW_OBJECT_POOL(struct UIWidget, 256);
+	GetObjectPoolIndex(gWidgetPool, &gScratchWidget);
+}
+
+HWidget UI_GetScratchWiget()
+{
+	EASSERT(gScratchWidget != NULL_HANDLE);
+	return gScratchWidget;
 }
 
 void UI_DestroyWidget(HWidget widget)
@@ -283,31 +290,33 @@ struct UIWidget* FindResolveableDimensionAncestor(struct UIWidget* pWidgetParent
 	return NULL;
 }
 
-float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn)
+float UI_ResolveWidthDimPxls(struct UIWidget* pWidget, const struct WidgetDim* dim)
 {
-	const struct WidgetDim* dim = getter(pWidget);
 	switch (dim->type)
 	{
 	case WD_Auto:            
 	{
-		printf("fjdifjdifd");
-		return autoFn(pWidget, UI_GetWidget(pWidget->hParent));
+		if(pWidget->hFirstChild != NULL_HANDLE)
+		{
+			struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
+			return pChild->fnGetWidth(pChild, pWidget);
+		}
 	}
 	case WD_Pixels:          return dim->data;
 	case WD_StretchFraction:
 	{
 		float wFraction;
 		//EASSERT(pWidgetParent->width.type != WD_Auto);
-		struct UIWidget*  pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
+		struct UIWidget*  pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetWidthDim);
 		struct UIWidget* pActualWidgetParent = UI_GetWidget(pWidget->hParent);
-		GetTotalFractionAmongChildren(pActualWidgetParent, &wFraction, getter);
-		float parentW = UI_ResolveWidgetDimPxls(pResolvableWidgetParent, getter, autoFn);
+		GetTotalFractionAmongChildren(pActualWidgetParent, &wFraction, &GetWidgetWidthDim);
+		float parentW = UI_ResolveWidthDimPxls(pResolvableWidgetParent, &pResolvableWidgetParent->width);
 		return (dim->data / wFraction) * parentW;
 	}
 	case WD_Percentage:
 	{
-		struct UIWidget* pWidgetParent = FindResolveableDimensionAncestor(pWidget, getter);
-		float parentW = UI_ResolveWidgetDimPxls(pWidgetParent, getter, autoFn);
+		struct UIWidget* pWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetWidthDim);
+		float parentW = UI_ResolveWidthDimPxls(pWidgetParent, &pWidgetParent->width);
 		return dim->data * parentW;
 	}
 	default:
@@ -315,6 +324,42 @@ float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter
 	}
 	return dim->data;
 }
+
+float UI_ResolveHeightDimPxls(struct UIWidget* pWidget, const struct WidgetDim* dim)
+{
+	switch (dim->type)
+	{
+	case WD_Auto:            
+	{
+		if(pWidget->hFirstChild != NULL_HANDLE)
+		{
+			struct UIWidget* pChild = UI_GetWidget(pWidget->hFirstChild);
+			return pChild->fnGetHeight(pChild, pWidget);
+		}
+	}
+	case WD_Pixels:          return dim->data;
+	case WD_StretchFraction:
+	{
+		float wFraction;
+		//EASSERT(pWidgetParent->width.type != WD_Auto);
+		struct UIWidget*  pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetHeightDim);
+		struct UIWidget* pActualWidgetParent = UI_GetWidget(pWidget->hParent);
+		GetTotalFractionAmongChildren(pActualWidgetParent, &wFraction, &GetWidgetHeightDim);
+		float parentW = UI_ResolveHeightDimPxls(pResolvableWidgetParent, &pResolvableWidgetParent->height);
+		return (dim->data / wFraction) * parentW;
+	}
+	case WD_Percentage:
+	{
+		struct UIWidget* pWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetHeightDim);
+		float parentW = UI_ResolveHeightDimPxls(pWidgetParent, &pWidgetParent->height);
+		return dim->data * parentW;
+	}
+	default:
+		break;
+	}
+	return dim->data;
+}
+
 
 bool UI_ParseWidgetDockPoint(xmlNode* pInNode, struct UIWidget* outWidget)
 {

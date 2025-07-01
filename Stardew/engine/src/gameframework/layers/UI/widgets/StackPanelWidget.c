@@ -265,29 +265,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-	for (int i = 0; i < indentLvl; i++)
-	{
-		printfFn("\t");
-	}
-
-	struct StackPanelWidgetData* pData = pWidget->pImplementationData;
-	printfFn("StackPanel. orientation = %s, ", pData->orientation == SPO_Horizontal ? "Horizontal" : "Vertical");
-	UI_DebugPrintCommonWidgetInfo(pWidget, printfFn);
-	printfFn("\n");
-	HWidget child = pWidget->hFirstChild;
-	while (child != NULL_HWIDGET)
-	{
-		struct UIWidget* pChildWidget = UI_GetWidget(child);
-		if (pChildWidget->fnOnDebugPrint)
-		{
-			pChildWidget->fnOnDebugPrint(indentLvl + 1, pChildWidget, printfFn);
-		}
-		child = pChildWidget->hNext;
-	}
-}
-
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
@@ -305,7 +282,6 @@ static void MakeWidgetIntoStackPanel(HWidget hWidget, xmlNode* pXMLNode)
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct StackPanelWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct StackPanelWidgetData));

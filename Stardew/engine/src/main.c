@@ -208,9 +208,9 @@ int EngineStart(int argc, char** argv, GameInitFn init)
         while (accumulator > slice)
         {
             glfwPollEvents();
-            In_Poll();
             GF_InputGameFramework(&gInputContext);
             GF_UpdateGameFramework((float)delta);
+            In_EndFrame(&gInputContext);
             accumulator -= slice;
         }
 

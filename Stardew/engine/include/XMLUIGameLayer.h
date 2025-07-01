@@ -21,6 +21,7 @@ struct XMLUIGameLayerOptions
 typedef HWidget(*AddChildFn)(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 #define XML_UI_MAX_PATH 256
+#define MAX_FOCUSED_WIDGETS 16
 
 typedef struct XMLUIData
 {
@@ -32,6 +33,8 @@ typedef struct XMLUIData
 	VECTOR(struct WidgetVertex) pWidgetVertices;
 	HUIVertexBuffer hVertexBuffer;
 	int hViewModel; // reference to lua table
+	HWidget focusedWidgets[MAX_FOCUSED_WIDGETS];
+	int nFocusedWidgets;
 }XMLUIData;
 
 

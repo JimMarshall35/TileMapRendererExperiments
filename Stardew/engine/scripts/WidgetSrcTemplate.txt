@@ -1,6 +1,6 @@
 #include "<<WidgetName>>.h"
 #include "Widget.h"
-#include "xml.h"
+#include <libxml/tree.h>
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -46,6 +46,9 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 
 }
 
+static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
+{
+}
 
 <<ifdef bMouseDownCallback>>
 static void MouseButtonDownCallback(struct UIWidget* pWidget, float x, float y, int btn)
@@ -75,7 +78,8 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 <<endif >>
 
 
-static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+
+static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -89,6 +93,7 @@ static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, struct xml_node* pXMLN
 	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
+	pWidget->fnRecieveKeystroke = &RecieveKeystrokeCallback;
 	pWidget->pImplementationData = malloc(sizeof(struct <<WidgetDataStructName>>));
 
 <<ifdef bMouseDownCallback>>
@@ -114,7 +119,7 @@ static void MakeWidgetInto<<WidgetName>>(HWidget hWidget, struct xml_node* pXMLN
 	memset(pWidget->pImplementationData, 0, sizeof(struct <<WidgetDataStructName>>));
 }
 
-HWidget <<WidgetName>>New(HWidget hParent, struct xml_node* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget <<WidgetName>>New(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetInto<<WidgetName>>(hWidget, pXMLNode, pUILayerData);

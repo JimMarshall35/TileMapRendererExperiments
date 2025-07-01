@@ -59,12 +59,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-
-
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-}
-
 void* OnOutputVerts_3StripsHorizontal(
 	struct BackgroundBoxWidgetData* pBBoxData,
 	VECTOR(struct WidgetVertex) pOutVerts,
@@ -390,7 +384,6 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, xmlNode* pXMLNode
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct BackgroundBoxWidgetData));

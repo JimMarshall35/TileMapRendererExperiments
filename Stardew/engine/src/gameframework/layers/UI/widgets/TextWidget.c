@@ -39,22 +39,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-	struct TextWidgetData* pTextWidgetData = pWidget->pImplementationData;
-	for (int i = 0; i < indentLvl; i++)
-	{
-		printfFn("\t");
-	}
-	printfFn("Text. imageName = %s, font = %i, atlas = %i, ",
-		pTextWidgetData->content,
-		pTextWidgetData->font,
-		pTextWidgetData->atlas);
-	UI_DebugPrintCommonWidgetInfo(pWidget, printfFn);
-	printfFn("\n");
-
-}
-
 void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	//struct TextWidgetData* pData = pThisWidget->pImplementationData;
@@ -263,7 +247,6 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, xmlNode* pXMLNode, struct 
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct TextWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct TextWidgetData));

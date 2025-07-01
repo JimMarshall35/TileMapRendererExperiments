@@ -3,9 +3,10 @@
 #include "cJSON.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <GLFW/glfw3.h>
 #include "FileHelpers.h"
-
+#include "AssertLib.h"
 
 static int gJoystick = -1;
 
@@ -43,8 +44,114 @@ bool In_GetMouseButtonValue(InputContext* context, HMouseButtonBinding hBinding)
 	return context->buttonMappings.MouseButtonMappings.arr[hBinding].data.ButtonMapping.bCurrent;
 }
 
+static bool TextEntryAllowedKeystroke(int key)
+{
+	return 
+		(key >= GLFW_KEY_A && key <= GLFW_KEY_Z) ||
+		(key >= GLFW_KEY_0 && key <= GLFW_KEY_9) ||
+		key == GLFW_KEY_SPACE ||
+		key == GLFW_KEY_APOSTROPHE ||
+		key == GLFW_KEY_COMMA ||
+		key == GLFW_KEY_MINUS ||
+		key == GLFW_KEY_PERIOD ||
+		key == GLFW_KEY_SLASH ||
+		key == GLFW_KEY_SEMICOLON ||
+		key == GLFW_KEY_EQUAL ||
+		key == GLFW_KEY_RIGHT ||
+		key == GLFW_KEY_LEFT ||
+		key == GLFW_KEY_UP ||
+		key == GLFW_KEY_DOWN ||
+		key == GLFW_KEY_BACKSPACE;
+}
+
+static int Shifted(char c, bool capslock)
+{
+	// todo: do this properly for other keys besides 0-9
+	if(c >= GLFW_KEY_0 && c <= GLFW_KEY_9)
+	{
+		char LUT[10] =
+		{
+			')',
+			'!',
+			'"',
+			'$',//'£', // £ causes warning, multi character
+			'$',
+			'%',
+			'^',
+			'&',
+			'*',
+			'(',
+		};
+		return LUT[c - GLFW_KEY_0];
+	}
+	else if(c >= GLFW_KEY_A && c <= GLFW_KEY_Z)
+	{
+		if(capslock)
+		{
+			return tolower(c);	
+		}
+		else
+		{
+			return c;
+		}
+	}
+	else
+	{
+		return c;
+	}
+	
+}
+
+static void DoTextInput(InputContext* context, int key, int scancode, int action, int mods)
+{
+	if(key == GLFW_KEY_CAPS_LOCK)
+	{
+		switch(action)
+		{
+		case GLFW_PRESS:
+			EASSERT(!context->textInput.capslockModifier);
+			context->textInput.capslockModifier = true;
+			break;
+		case GLFW_RELEASE:
+			EASSERT(context->textInput.capslockModifier);
+			context->textInput.capslockModifier = false;
+			break;
+		}
+	}
+
+	int ascii = 0;
+	if(key == GLFW_KEY_LEFT_SHIFT)
+	{
+		switch(action)
+		{
+		case GLFW_PRESS:
+			EASSERT(!context->textInput.shiftModifier);
+			context->textInput.shiftModifier = true;
+			break;
+		case GLFW_RELEASE:
+			EASSERT(context->textInput.shiftModifier);
+			context->textInput.shiftModifier = false;
+			break;
+		}
+	}
+	if(context->textInput.shiftModifier)
+	{
+		ascii = Shifted((char)key, context->textInput.capslockModifier);
+	}
+	else if(!context->textInput.capslockModifier && (key >= GLFW_KEY_A && key <= GLFW_KEY_Z))
+	{
+		ascii = tolower(key);
+	}
+	else
+	{
+		ascii = key;
+	}
+	context->textInput.keystrokes[context->textInput.nKeystrokesThisFrame++] = ascii;
+}
+
 void In_RecieveKeyboardKey(InputContext* context, int key, int scancode, int action, int mods)
 {
+	DoTextInput(context, key, scancode, action, mods);
 	for (int i = 0; i < context->buttonMappings.KeyboardButtonMappings.size; i++)
 	{
 		InputMapping* pMapping = &context->buttonMappings.KeyboardButtonMappings.arr[i];
@@ -138,10 +245,10 @@ void In_SetControllerPresent(int controllerNo)
 	gJoystick = controllerNo;
 }
 
-void In_Poll()
+void In_EndFrame(InputContext* context)
 {
+	context->textInput.nKeystrokesThisFrame = 0;
 }
-
 
 typedef void(*SetButtonCodeCallback)(InputMapping*, int);
 

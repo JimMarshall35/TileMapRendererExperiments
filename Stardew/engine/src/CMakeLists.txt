@@ -22,6 +22,7 @@ gameframework/layers/UI/widgets/Widget.c
 gameframework/layers/UI/widgets/RadioButtonWidget.c
 gameframework/layers/UI/widgets/RadioGroupWidget.c
 gameframework/layers/UI/widgets/RootWidget.c
+gameframework/layers/UI/widgets/TextEntryWidget.c
 vendor/glad.c
 vendor/cJSON.c
 rendering/DrawContext.c

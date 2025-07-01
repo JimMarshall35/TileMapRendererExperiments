@@ -26,6 +26,7 @@
 #include "RadioGroupWidget.h"
 #include "SliderWidget.h"
 #include "CanvasWidget.h"
+#include "TextEntryWidget.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -46,7 +47,8 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"radioGroup",    &RadioGroupWidgetNew},     // done
 	{"radioButton",   &RadioButtonWidgetNew},    // done
 	{"slider",        &SliderWidgetNew},         // done
-	{"canvas",        &CanvasWidgetNew} 
+	{"canvas",        &CanvasWidgetNew},
+	{"textInput",     &TextEntryWidgetNew},
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
@@ -120,6 +122,28 @@ static void* BuildWidgetsHoverred(VECTOR(HWidget) outWidgets, HWidget hWidget, f
 	}
 	return outWidgets;
 
+}
+
+static void Unfocus(XMLUIData* pUIData)
+{
+	for(int i = 0; i < pUIData->nFocusedWidgets; i++)
+	{
+		struct UIWidget* pWidget = UI_GetWidget(pUIData->focusedWidgets[i]);
+		EASSERT(pWidget->bAcceptsFocus);
+		pWidget->bHasFocus = false;
+	}
+	pUIData->nFocusedWidgets = 0;
+}
+
+static bool DispatchWidgetMouseDown(struct WidgetMouseInfo* info, HWidget hWidget, XMLUIData* pUIData)
+{
+	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	if(pWidget->bAcceptsFocus)
+	{
+		pWidget->bHasFocus = true;
+		pUIData->focusedWidgets[pUIData->nFocusedWidgets++] = hWidget;
+	}
+	UI_SendWidgetMouseEvent(pWidget, WC_OnMouseDown, info);
 }
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
@@ -265,6 +289,9 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
 		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseLeave, &info);
 	}
+
+	Unfocus(pUIData);
+
 	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
 	{
 		HWidget hWidget = pWidgetsRemained[i];
@@ -272,7 +299,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		if (bSendLMouseDown)
 		{
 			EASSERT(!bSendLMouseUp);
-			UI_SendWidgetMouseEvent(pWidget, WC_OnMouseDown, &info);
+			DispatchWidgetMouseDown(&info, hWidget, pUIData);
 		}
 		if (bSendLMouseUp)
 		{
@@ -711,9 +738,6 @@ static void OnWindowSizeChanged(struct GameFrameworkLayer* pLayer, int newW, int
 
 	struct UIWidget* pWidget = UI_GetWidget(pData->rootWidget);
 	SetRootWidgetIsDirty(pData->rootWidget, true);
-
-	pWidget->fnOnDebugPrint(0, pWidget,&printf);
-
 }
 
 

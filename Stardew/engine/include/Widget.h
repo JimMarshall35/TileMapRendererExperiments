@@ -27,12 +27,13 @@ struct UIWidget;
 typedef float(*GetUIWidgetDimensionFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*LayoutChildrenFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*OnDestroyWidgetFn)(struct UIWidget* pWidget);
-typedef void(*OnDebugPrintFn)(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn);
 typedef void*(*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
 typedef void(*OnWidgetInitFn)(struct UIWidget* pWidget);
 typedef void(*OnBoundPropertyChangedFn)(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding);
 
 typedef struct WidgetDim* (*WidgetDimGetterFn)(struct UIWidget* pWidget);
+
+typedef void (*FocusedWidgetRecieveKeystrokeFn)(struct UIWidget* pWidget, int keystroke);
 
 struct WidgetDim* GetWidgetWidthDim(struct UIWidget* pWidget);
 struct WidgetDim* GetWidgetHeightDim(struct UIWidget* pWidget);
@@ -210,10 +211,10 @@ struct UIWidget
 	GetUIWidgetDimensionFn fnGetHeight;
 	LayoutChildrenFn fnLayoutChildren;
 	OnDestroyWidgetFn fnOnDestroy;
-	OnDebugPrintFn fnOnDebugPrint;
 	OutputWidgetVerticesFn fnOutputVertices;
 	OnBoundPropertyChangedFn fnOnBoundPropertyChanged;
 	OnWidgetInitFn fnOnWidgetInit; // called once whole widget tree is constructed
+	FocusedWidgetRecieveKeystrokeFn fnRecieveKeystroke;
 	float top;
 	float left;
 	WidgetDockPoint dockPoint;
@@ -228,6 +229,8 @@ struct UIWidget
 	float offsetY;
 	WidgetHorizontalAlignment horizontalAlignment;
 	WidgetVerticalAlignment verticalAlignment;
+	bool bAcceptsFocus;
+	bool bHasFocus;
 };
 
 
@@ -236,6 +239,7 @@ void UI_Init();
 
 void UI_DestroyWidget(HWidget widget);
 
+HWidget UI_GetScratchWiget();
 
 HWidget UI_NewBlankWidget();
 
@@ -257,7 +261,9 @@ void UI_ParseHorizontalAlignementAttribute(xmlChar* contents, enum WidgetHorizon
 
 void UI_ParseVerticalAlignementAttribute(xmlChar* contents, enum WidgetVerticalAlignment* outAlignment);
 
-float UI_ResolveWidgetDimPxls(struct UIWidget* pWidget, WidgetDimGetterFn getter, GetUIWidgetDimensionFn autoFn);
+float UI_ResolveWidthDimPxls(struct UIWidget* pWidget, const struct WidgetDim* dim);
+
+float UI_ResolveHeightDimPxls(struct UIWidget* pWidget, const struct WidgetDim* dim);
 
 bool UI_ParseWidgetDockPoint(xmlNode* pInNode, struct UIWidget* outWidget);
 

@@ -148,7 +148,6 @@ static void MakeWidgetIntoStatic(HWidget hWidget, xmlNode* pXMLNode, struct XMLU
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct StaticWidgetData));
 	struct StaticWidgetData* pWidgetData = pWidget->pImplementationData;

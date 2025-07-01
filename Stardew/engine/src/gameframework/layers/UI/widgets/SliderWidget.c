@@ -75,10 +75,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-}
-
 static void Populate3PanelRailQuads(float left, float top, struct WidgetQuad* pOutQuads, struct SliderData* pData)
 {
 	vec2 a2 = {
@@ -426,7 +422,6 @@ static void MakeWidgetIntoSliderWidget(HWidget hWidget, xmlNode* pXMLNode, struc
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct SliderData));

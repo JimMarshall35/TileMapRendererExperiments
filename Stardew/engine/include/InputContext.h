@@ -5,6 +5,13 @@
 #include <stdbool.h>
 #include "HandleDefs.h"
 
+#define KEYSTROKE_LEFT      263
+#define KEYSTROKE_RIGHT     262
+#define KEYSTROKE_UP        265
+#define KEYSTROKE_DOWN      264
+#define KEYSTROKE_BACKSPACE 259
+
+
 typedef enum
 {
 	Axis,
@@ -100,6 +107,15 @@ typedef struct
 	u64 ActiveMask;
 }InputMappingArray;
 
+#define MAX_KEYS_DOWN_PER_FRAME 256
+struct TextInputState
+{
+	int keystrokes[MAX_KEYS_DOWN_PER_FRAME];
+	int nKeystrokesThisFrame;
+	bool capslockModifier;
+	bool shiftModifier;
+};
+
 typedef struct
 {
 	/*InputMapping AxisMappings[MAX_MAPPINGS];
@@ -119,6 +135,7 @@ typedef struct
 		InputMappingArray MouseScroll;
 	}axisMappings;
 
+	struct TextInputState textInput;
 	int screenW, screenH;
 }InputContext;
 
@@ -128,7 +145,7 @@ void In_RecieveMouseButton(InputContext* context, int button, int action, int mo
 void In_FramebufferResize(InputContext* context, int width, int height);
 void In_RecieveScroll(InputContext* context, double xoffset, double yoffset);
 void In_SetControllerPresent(int controllerNo);
-void In_Poll();
+void In_EndFrame(InputContext* context);
 InputContext In_InitInputContext();
 
 HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* name);

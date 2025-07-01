@@ -114,10 +114,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-}
-
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
@@ -194,7 +190,6 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, xmlNode* pXMLNode, s
 	pWidget->fnGetWidth = &GetWidth;
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
-	pWidget->fnOnDebugPrint = &OnDebugPrint;
 	pWidget->fnOutputVertices = &OnOutputVerts;
 	pWidget->pImplementationData = malloc(sizeof(struct TextButtonWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct TextButtonWidgetData));
