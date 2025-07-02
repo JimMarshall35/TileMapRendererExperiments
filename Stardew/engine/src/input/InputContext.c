@@ -104,6 +104,12 @@ static int Shifted(char c, bool capslock)
 
 static void DoTextInput(InputContext* context, int key, int scancode, int action, int mods)
 {
+	if(action != GLFW_PRESS)
+	{
+		return;
+	}
+	int ascii = 0;
+
 	if(key == GLFW_KEY_CAPS_LOCK)
 	{
 		switch(action)
@@ -118,9 +124,7 @@ static void DoTextInput(InputContext* context, int key, int scancode, int action
 			break;
 		}
 	}
-
-	int ascii = 0;
-	if(key == GLFW_KEY_LEFT_SHIFT)
+	else if(key == GLFW_KEY_LEFT_SHIFT)
 	{
 		switch(action)
 		{
@@ -134,19 +138,23 @@ static void DoTextInput(InputContext* context, int key, int scancode, int action
 			break;
 		}
 	}
-	if(context->textInput.shiftModifier)
+	else if (action == GLFW_PRESS)
 	{
-		ascii = Shifted((char)key, context->textInput.capslockModifier);
+		if(context->textInput.shiftModifier)
+		{
+			ascii = Shifted((char)key, context->textInput.capslockModifier);
+		}
+		else if(!context->textInput.capslockModifier && (key >= GLFW_KEY_A && key <= GLFW_KEY_Z))
+		{
+			ascii = tolower(key);
+		}
+		else
+		{
+			ascii = key;
+		}
+		context->textInput.keystrokes[context->textInput.nKeystrokesThisFrame++] = ascii;
 	}
-	else if(!context->textInput.capslockModifier && (key >= GLFW_KEY_A && key <= GLFW_KEY_Z))
-	{
-		ascii = tolower(key);
-	}
-	else
-	{
-		ascii = key;
-	}
-	context->textInput.keystrokes[context->textInput.nKeystrokesThisFrame++] = ascii;
+	
 }
 
 void In_RecieveKeyboardKey(InputContext* context, int key, int scancode, int action, int mods)

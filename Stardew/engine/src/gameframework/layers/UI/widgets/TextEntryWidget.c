@@ -14,17 +14,18 @@ struct TextEntryWidgetData
 {
 	struct TextWidgetData textWidget;
 	struct CanvasData canvasWidget;
+	
 };
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
-	return UI_ResolveWidthDimPxls(pWidget, &pWidget->width);
+	return UI_ResolveWidthDimPxls(pWidget, &pWidget->width) + pWidget->padding.paddingLeft + pWidget->padding.paddingRight;
 }
 
 static float GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
 	struct TextEntryWidgetData* pData = (struct TextEntryWidgetData*)pWidget->pImplementationData;
-	return pData->textWidget.fSizePts * 1.33333333;
+	return pData->textWidget.fSizePts * 1.33333333 + pWidget->padding.paddingTop + pWidget->padding.paddingBottom;
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -49,6 +50,10 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	memcpy(fakeChild, pWidget, sizeof(struct UIWidget));
 	fakeChild->hNext = NULL_HANDLE;
 	fakeChild->fnOutputVertices = &FakeChildOutputVerts;
+	fakeChild->top += pWidget->padding.paddingTop;
+	fakeChild->left += pWidget->padding.paddingLeft;
+	memset(&fakeChild->padding, 0, sizeof(struct WidgetPadding));
+	
 	pWidget->hFirstChild = hFake;
 	pOutVerts = CanvasWidget_OnOutputVerts(pWidget, pOutVerts);
 	pWidget->hFirstChild = NULL_HANDLE;
@@ -62,6 +67,25 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 
 static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
 {
+	printf("%c\n",(char)keystroke);
+}
+
+static void AllocateStringContents(int maxStringLength, struct TextEntryWidgetData* pData)
+{
+	EASSERT(pData->textWidget.content);
+	char* newAlloc = malloc(maxStringLength + 1);
+	if(strlen(pData->textWidget.content) >= maxStringLength)
+	{
+		
+		memcpy(newAlloc, pData->textWidget.content, maxStringLength);
+		newAlloc[maxStringLength] = '\0';
+	}
+	else
+	{
+		strcpy(newAlloc, pData->textWidget.content);
+	}
+	free(pData->textWidget.content);
+	pData->textWidget.content = newAlloc;
 }
 
 static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)

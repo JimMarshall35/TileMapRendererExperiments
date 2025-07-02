@@ -135,15 +135,18 @@ static void Unfocus(XMLUIData* pUIData)
 	pUIData->nFocusedWidgets = 0;
 }
 
-static bool DispatchWidgetMouseDown(struct WidgetMouseInfo* info, HWidget hWidget, XMLUIData* pUIData)
+static bool SendMouseDownAndFocus(struct WidgetMouseInfo* info, HWidget hWidget, XMLUIData* pUIData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
+	bool rval = false;
 	if(pWidget->bAcceptsFocus)
 	{
+		rval = true;
 		pWidget->bHasFocus = true;
 		pUIData->focusedWidgets[pUIData->nFocusedWidgets++] = hWidget;
 	}
 	UI_SendWidgetMouseEvent(pWidget, WC_OnMouseDown, info);
+	return rval;
 }
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
@@ -290,8 +293,12 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseLeave, &info);
 	}
 
-	Unfocus(pUIData);
-
+	
+	bool bFocusChanged = false;
+	bool bWidgetsClicked = VectorSize(pWidgetsRemained) > 0 && bSendLMouseDown;
+	if(bWidgetsClicked)
+		Unfocus(pUIData);
+		
 	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
 	{
 		HWidget hWidget = pWidgetsRemained[i];
@@ -299,7 +306,10 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		if (bSendLMouseDown)
 		{
 			EASSERT(!bSendLMouseUp);
-			DispatchWidgetMouseDown(&info, hWidget, pUIData);
+			if(SendMouseDownAndFocus(&info, hWidget, pUIData))
+			{
+				bFocusChanged = true;
+			}
 		}
 		if (bSendLMouseUp)
 		{
@@ -307,6 +317,19 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 			UI_SendWidgetMouseEvent(pWidget, WC_OnMouseUp, &info);
 		}
 		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseMove, &info);
+	}
+
+	for(int i = 0; i < pUIData->nFocusedWidgets; i++)
+	{
+		HWidget hWidget = pUIData->focusedWidgets[i];
+		struct UIWidget* pWidget = UI_GetWidget(hWidget);
+		for(int j=0; j < ctx->textInput.nKeystrokesThisFrame; j++)
+		{
+			int keystroke = ctx->textInput.keystrokes[j];
+			if(pWidget->fnRecieveKeystroke)
+				pWidget->fnRecieveKeystroke(pWidget, keystroke);
+		}
+		
 	}
 }
 

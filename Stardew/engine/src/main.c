@@ -225,7 +225,7 @@ int EngineStart(int argc, char** argv, GameInitFn init)
         if(onCount == numCounts)
         {
             onCount = 0;
-            printf("frame time: %f\n", 1.0 / (frameTimeTotal / (double)numCounts));
+            //printf("frame time: %f\n", 1.0 / (frameTimeTotal / (double)numCounts));
             frameTimeTotal = 0.0f;
         }
     }

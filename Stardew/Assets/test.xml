@@ -94,12 +94,13 @@
 						</stackpanel>
 					</canvas>
 					<!-- <backgroundbox width="0.25%" sprite="fantasy_9Panel" scaleX="1.0" scaleY="1.0" horizontalAlignment="left"> -->
-						<textInput font="default" colour="0,0,0,255" horizontalAlignment="right" width="0.25%">
+						<textInput font="default" colour="0,0,0,255" horizontalAlignment="right" width="0.25%" fontSize="32pts" paddingBottom="30">
 							Name..
 						</textInput>
 					<!-- </backgroundbox> -->
 				</stackpanel>
 			</backgroundbox>
+			
 		</stackpanel>
 	</screen>
 </UIroot>
