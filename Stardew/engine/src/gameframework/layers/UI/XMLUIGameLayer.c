@@ -66,7 +66,8 @@ AddChildFn LookupWidgetCtor(const char* widgetName)
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
-	
+	XMLUIData* pData = pLayer->userData;
+	TP_DoTimers(&pData->timerPool, deltaT);
 }
 
 static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
@@ -131,12 +132,17 @@ static void Unfocus(XMLUIData* pUIData)
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->focusedWidgets[i]);
 		EASSERT(pWidget->bAcceptsFocus);
 		pWidget->bHasFocus = false;
+		if(pWidget->cCallbacks.Callbacks[WC_OnLeaveFocus].callback.bActive)
+		{
+			pWidget->cCallbacks.Callbacks[WC_OnLeaveFocus].callback.focusChangeFn(pWidget);
+		}
 	}
 	pUIData->nFocusedWidgets = 0;
 }
 
 static bool SendMouseDownAndFocus(struct WidgetMouseInfo* info, HWidget hWidget, XMLUIData* pUIData)
 {
+	Unfocus(pUIData);
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	bool rval = false;
 	if(pWidget->bAcceptsFocus)
@@ -144,6 +150,10 @@ static bool SendMouseDownAndFocus(struct WidgetMouseInfo* info, HWidget hWidget,
 		rval = true;
 		pWidget->bHasFocus = true;
 		pUIData->focusedWidgets[pUIData->nFocusedWidgets++] = hWidget;
+		if(pWidget->cCallbacks.Callbacks[WC_OnGainFocus].callback.bActive)
+		{
+			pWidget->cCallbacks.Callbacks[WC_OnGainFocus].callback.focusChangeFn(pWidget);
+		}
 	}
 	UI_SendWidgetMouseEvent(pWidget, WC_OnMouseDown, info);
 	return rval;
@@ -296,8 +306,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	
 	bool bFocusChanged = false;
 	bool bWidgetsClicked = VectorSize(pWidgetsRemained) > 0 && bSendLMouseDown;
-	if(bWidgetsClicked)
-		Unfocus(pUIData);
+		
 		
 	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
 	{
@@ -309,6 +318,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 			if(SendMouseDownAndFocus(&info, hWidget, pUIData))
 			{
 				bFocusChanged = true;
+				
 			}
 		}
 		if (bSendLMouseUp)
@@ -340,6 +350,8 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 {
 	XMLUIData* pData = pLayer->userData;
 	pData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
+	pData->timerPool = TP_InitTimerPool(32);
+
 	if (!pData->bLoaded)
 	{
 		LoadUIData(pData, drawContext);
@@ -379,6 +391,7 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 	{
 		Sc_DeleteTableInReg(pData->hViewModel);
 	}
+	TP_DestroyTimerPool(&pData->timerPool);
 }
 
 void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)

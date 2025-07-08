@@ -6,7 +6,7 @@
 #include <cglm/cglm.h>
 struct DrawContext;
 
-typedef struct 
+typedef struct _AtlasSprite
 {
 	hAtlas atlas;
 	HImage srcImage;

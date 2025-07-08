@@ -27,6 +27,8 @@ typedef i32 HMouseButtonBinding;
 
 typedef i32 HKeyboardButtonBinding;
 
+typedef i32 HTimer;
+
 #define NULL_HANDLE -1
 
 

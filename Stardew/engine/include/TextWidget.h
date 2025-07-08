@@ -4,6 +4,8 @@
 #include "HandleDefs.h"
 #include "DynArray.h"
 
+typedef struct _AtlasSprite AtlasSprite;
+
 typedef struct _xmlNode xmlNode;
 
 struct TextWidgetData
@@ -27,5 +29,8 @@ HWidget TextWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUIL
 void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts);
 
 void TextWidget_Destroy(struct TextWidgetData* pData);
+
+// overlay a charcter at a given letter in the string
+void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(struct WidgetVertex) pOutVerts);
 
 #endif // ! TEXTWIDGET_H

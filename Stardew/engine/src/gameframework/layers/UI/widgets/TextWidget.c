@@ -79,6 +79,59 @@ void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* 
 	return pOutVerts;
 }
 
+void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(struct WidgetVertex) pOutVerts)
+{
+	//struct TextWidgetData* pData = pThisWidget->pImplementationData;
+	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
+	vec2 pen = { left + padding->paddingLeft, top + maxYBearing + padding->paddingTop };
+	size_t len = strlen(pData->content);
+	for (int i = 0; i <= len; i++)
+	{
+		char c = pData->content[i];
+		AtlasSprite* pAtlasSprite = Fo_GetCharSprite(pData->atlas, pData->font, c);
+		vec2 bearing = { 0,0 };
+		float advance = 0.0f;
+		vec2 output = { 0,0 };
+		vec2 bearingApplied = { 0,0 };
+
+		if (!pAtlasSprite)
+		{
+			printf("can't get atlas sprite, file TextWidget.c");
+			EASSERT(false);
+			return pOutVerts;
+		}
+
+		if(i == letterOverlay)
+		{
+			EVERIFY(Fo_TryGetCharBearing(pData->atlas, pData->font, charOverlay, bearing));
+		}
+		
+		bearing[1] *= -1.0f; // FT coordinate system for bearing has increasing Y as up, in our game coordinate system that is decreasing y 
+		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
+
+		
+
+
+		// topleft
+		glm_vec2_add(bearing, pen, output);
+
+		if(i == letterOverlay)
+		{
+			struct WidgetQuad quad;
+			AtlasSprite* pAtlasSpriteOverlay = Fo_GetCharSprite(pData->atlas, pData->font, charOverlay);
+			PopulateWidgetQuadWholeSprite(&quad, pAtlasSpriteOverlay);
+			SetWidgetQuadColour(&quad, pData->r, pData->g, pData->b, pData->a);
+			TranslateWidgetQuad(output, &quad);
+			pOutVerts = OutputWidgetQuad(pOutVerts, &quad);
+		}
+		
+		
+		pen[0] += advance;
+	}
+
+	return pOutVerts;
+}
+
 
 static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {

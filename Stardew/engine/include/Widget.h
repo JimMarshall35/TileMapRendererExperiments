@@ -127,12 +127,14 @@ enum WidgetCallbackTypes
 	WC_OnMouseMove,
 	WC_OnMouseDown,
 	WC_OnMouseUp,
+	WC_OnGainFocus,
+	WC_OnLeaveFocus,
 	WC_NUM
 };
 
 typedef void (*WidgetMousePosCallbackFn)(struct UIWidget* pWidget, float x, float y);
 typedef void (*WidgetMouseBtnCallbackFn)(struct UIWidget* pWidget, float x, float y, int btn);
-
+typedef void (*WidgetFocusChangeCallbackFn)(struct UIWidget* pWidget);
 
 /// <summary>
 /// this isn't some "hungarian notation" shit - the name refers to widget callbacks defined as C functions!
@@ -144,7 +146,7 @@ struct CWidgetMouseCallback
 	{
 		WidgetMousePosCallbackFn mousePosFn;
 		WidgetMouseBtnCallbackFn mouseBtnFn;
-		
+		WidgetFocusChangeCallbackFn focusChangeFn;
 		/*
 			here, check this out...
 			A random value we can check is zero to determine if the callback is set

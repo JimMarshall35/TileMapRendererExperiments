@@ -94,7 +94,7 @@
 						</stackpanel>
 					</canvas>
 					<!-- <backgroundbox width="0.25%" sprite="fantasy_9Panel" scaleX="1.0" scaleY="1.0" horizontalAlignment="left"> -->
-						<textInput font="default" colour="0,0,0,255" horizontalAlignment="right" width="0.25%" fontSize="32pts" paddingBottom="30">
+						<textInput font="default" colour="0,0,0,255" horizontalAlignment="right" width="0.25%" fontSize="32pts" paddingBottom="30" maxStringLength="16">
 							Name..
 						</textInput>
 					<!-- </backgroundbox> -->

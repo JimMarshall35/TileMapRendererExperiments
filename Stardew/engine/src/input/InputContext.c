@@ -64,12 +64,12 @@ static bool TextEntryAllowedKeystroke(int key)
 		key == GLFW_KEY_BACKSPACE;
 }
 
-static int Shifted(char c, bool capslock)
+static int Shifted(int c, bool capslock)
 {
 	// todo: do this properly for other keys besides 0-9
 	if(c >= GLFW_KEY_0 && c <= GLFW_KEY_9)
 	{
-		char LUT[10] =
+		int LUT[10] =
 		{
 			')',
 			'!',
@@ -104,10 +104,7 @@ static int Shifted(char c, bool capslock)
 
 static void DoTextInput(InputContext* context, int key, int scancode, int action, int mods)
 {
-	if(action != GLFW_PRESS)
-	{
-		return;
-	}
+
 	int ascii = 0;
 
 	if(key == GLFW_KEY_CAPS_LOCK)

@@ -6,7 +6,7 @@
 #include "Widget.h"
 #include "DrawContext.h"
 #include <libxml/tree.h>
- 
+#include "TimerPool.h"
 
 struct XMLUIData;
 struct GameFrameworkLayer;
@@ -35,6 +35,7 @@ typedef struct XMLUIData
 	int hViewModel; // reference to lua table
 	HWidget focusedWidgets[MAX_FOCUSED_WIDGETS];
 	int nFocusedWidgets;
+	struct SDTimerPool timerPool;
 }XMLUIData;
 
 

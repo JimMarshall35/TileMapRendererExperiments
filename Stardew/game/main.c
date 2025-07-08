@@ -9,9 +9,10 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct XMLUIGameLayerOptions options;
-    options.bLoadImmediately = true;
+    options.bLoadImmediately = false;
     options.xmlPath = "./Assets/test.xml";
     options.pDc = pDC;
+    testLayer.flags |= (EnableOnPush | EnableOnPop);
     printf("making xml ui layer\n");
     XMLUIGameLayer_Get(&testLayer, &options);
     printf("done\n");

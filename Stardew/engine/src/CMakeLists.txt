@@ -8,6 +8,7 @@ core/FloatingPointLib.c
 core/ObjectPool.c
 core/FileHelpers.c
 core/ImageFileRegstry.c
+core/TimerPool.c
 gameframework/GameFramework.c
 gameframework/layers/UI/XMLUIGameLayer.c
 gameframework/layers/UI/WidgetVertexOutputHelpers.c
