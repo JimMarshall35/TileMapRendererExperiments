@@ -55,6 +55,10 @@ static void* FakeChildOutputVerts(struct UIWidget* pWidget, VECTOR(struct Widget
 
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
+	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
+	pData->canvasWidget.bHSliderActive = false;
+	pData->canvasWidget.bVSliderActive = false;
+
 	HWidget hFake = UI_GetScratchWiget();
 	struct UIWidget* fakeChild = UI_GetWidget(hFake);
 
@@ -63,12 +67,12 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	fakeChild->fnOutputVertices = &FakeChildOutputVerts;
 	fakeChild->top += pWidget->padding.paddingTop;
 	fakeChild->left += pWidget->padding.paddingLeft;
+	fakeChild->dockPoint = WDP_BottomLeft;
 	memset(&fakeChild->padding, 0, sizeof(struct WidgetPadding));
-	
+	fakeChild->pImplementationData = &pData->textWidget;
 	pWidget->hFirstChild = hFake;
 	pOutVerts = CanvasWidget_OnOutputVerts(pWidget, pOutVerts);
 	pWidget->hFirstChild = NULL_HANDLE;
-	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 	
 	if(pData->bCaretBlinkState)
 		pOutVerts = TextWidget_OutputAtLetter(pWidget->left, pWidget->top, &pWidget->padding, &pData->textWidget, pData->caretChar, pData->cursorIndex, pOutVerts );
@@ -83,6 +87,10 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 
 static void DoBackspace(struct TextEntryWidgetData* pData)
 {
+	if(pData->currentStringLen == 0)
+	{
+		return;
+	}
 	// shift along starting with the char at cursorIndex
 	for(int i=pData->cursorIndex; i < pData->currentStringLen; i++)
 	{
@@ -94,6 +102,10 @@ static void DoBackspace(struct TextEntryWidgetData* pData)
 
 static void DoEnterChar(struct TextEntryWidgetData* pData, char c)
 {
+	if(pData->currentStringLen >= pData->maxStringLen)
+	{
+		return;
+	}
 	// shift along starting with the char at cursorIndex
 	pData->textWidget.content[pData->currentStringLen + 1] = '\0';
 	for(int i=pData->currentStringLen - 1; i >= pData->cursorIndex; i--)
@@ -108,6 +120,10 @@ static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
 {
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 
+	// if(pData->cursorIndex >= pData->maxStringLen )
+	// {
+	// 	return;
+	// }
 	switch(keystroke)
 	{
 	case KEYSTROKE_LEFT:
@@ -189,11 +205,12 @@ static void OnUnFocus(struct UIWidget* pWidget)
 
 static bool OnCaretBlinkTimerElapsed(struct SDTimer* pTimer)
 {
-	struct UIWidget* pWidget = UI_GetWidget((HWidget)pTimer->pUserData);
+	struct UIWidget* pWidget = UI_GetWidget((HWidget)(u64)pTimer->pUserData);
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 	pData->bCaretBlinkState = ! pData->bCaretBlinkState;
 	SetRootWidgetIsDirty(pData->pLayerData->rootWidget, true);
-
+	static int r = 0;
+	printf("val: %i\n", r);
 	return false;
 }
 
@@ -207,7 +224,7 @@ static void SetupCaretBlinkTimer(struct TextEntryWidgetData* pData, struct XMLUI
 		.total = 0.5,
 
 		.fnCallback = &OnCaretBlinkTimerElapsed,
-		.pUserData = (void*)hWidget
+		.pUserData = (void*)(u64)hWidget
 	};
 	pData->caretTimer = TP_GetTimer(&pUILayerData->timerPool, &timer);
 }
@@ -233,8 +250,11 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, st
 
 	memset(pWidget->pImplementationData, 0, sizeof(struct TextEntryWidgetData));
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
+	
 	pData->pLayerData = pUILayerData;
 	TextWidget_FromXML(&pData->textWidget, pXMLNode, pUILayerData);
+	pData->canvasWidget.bUseHSlider = false;
+	pData->canvasWidget.bUseVSlider = false;
 	xmlChar* attribute = NULL;
 	if(attribute = xmlGetProp(pXMLNode, "maxStringLength"))
 	{
@@ -247,6 +267,9 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, st
 	AllocateStringContents(pData->maxStringLen, pData);
 	pData->caretChar = 'I'; // todo: move to xml
 	SetupCaretBlinkTimer(pData, pUILayerData, hWidget);
+	HTimer hCaretTimer = pData->caretTimer;
+	pData->pLayerData->timerPool.pPool[hCaretTimer].bActive = false;
+	pData->bCaretBlinkState = false;
 }
 
 HWidget TextEntryWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)

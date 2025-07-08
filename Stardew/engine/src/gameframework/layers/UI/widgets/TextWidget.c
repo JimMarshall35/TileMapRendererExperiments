@@ -108,13 +108,14 @@ void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPaddin
 		
 		bearing[1] *= -1.0f; // FT coordinate system for bearing has increasing Y as up, in our game coordinate system that is decreasing y 
 		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
-
+		
 		
 
 
 		// topleft
 		glm_vec2_add(bearing, pen, output);
 
+		output[1] = top;
 		if(i == letterOverlay)
 		{
 			struct WidgetQuad quad;

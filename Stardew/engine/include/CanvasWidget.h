@@ -27,6 +27,9 @@ struct CanvasData
 
 	bool bHSliderActive;
 	bool bVSliderActive;
+
+	bool bUseHSlider;
+	bool bUseVSlider;
 };
 
 typedef struct _xmlNode xmlNode;

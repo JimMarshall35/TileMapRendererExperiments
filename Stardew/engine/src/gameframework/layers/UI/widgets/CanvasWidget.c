@@ -124,6 +124,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 
 static bool ContentExceedsSize(struct CanvasData* pCanvasData, struct UIWidget* pWidget, bool* pOutExceedsWidth, bool* pOutExceedsHeight)
 {
+	struct CanvasData* pData = pWidget->pImplementationData;
 	float w = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingRight + pWidget->padding.paddingLeft);
 	float h = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingTop + pWidget->padding.paddingBottom);
 	
@@ -147,19 +148,29 @@ void GetClipRegion(GeomRect rect, struct UIWidget* pWidget)
 
 static void SetSliderPositionAndDims(struct UIWidget* pWidget, struct CanvasData* pData)
 {
-	float canvasH = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent));
-	float canvasW = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent));
-	pData->sliderV.lengthPx = canvasH;
-	pData->sliderH.lengthPx = canvasW;
-	vec2 canvasTL = {
-		pWidget->left,
-		pWidget->top
-	};
-	pData->sliderHTopLeft[0] = canvasTL[0];
-	pData->sliderHTopLeft[1] = canvasTL[1] + (canvasH - SliderWidget_GetHeight(&pData->sliderH, &zeroPadding));
-
-	pData->sliderVTopLeft[0] = canvasTL[0] + (canvasW - SliderWidget_GetWidth(&pData->sliderV, &zeroPadding));
-	pData->sliderVTopLeft[1] = canvasTL[1];
+	if(pData->bUseHSlider || pData->bUseVSlider)
+	{
+		float canvasH = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent));
+		float canvasW = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent));
+		pData->sliderV.lengthPx = canvasH;
+		pData->sliderH.lengthPx = canvasW;
+		vec2 canvasTL = {
+			pWidget->left,
+			pWidget->top
+		};
+		if(pData->bUseHSlider)
+		{
+			pData->sliderHTopLeft[0] = canvasTL[0];
+			pData->sliderHTopLeft[1] = canvasTL[1] + (canvasH - SliderWidget_GetHeight(&pData->sliderH, &zeroPadding));
+		}
+		if(pData->bUseVSlider)
+		{
+			pData->sliderVTopLeft[0] = canvasTL[0] + (canvasW - SliderWidget_GetWidth(&pData->sliderV, &zeroPadding));
+			pData->sliderVTopLeft[1] = canvasTL[1];
+		}
+	}
+	
+	
 }
 
 static void SetSliderMinAndMax(struct UIWidget* pWidget, struct CanvasData* pCanvasData)
@@ -193,20 +204,23 @@ void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetV
 		GeomRect region;
 		GetClipRegion(region, pWidget);
 		SetClipRect(region);
-		SetSliderPositionAndDims(pWidget, pCanvasData);
-		pCanvasData->bVSliderActive = bExceedsH;
-		pCanvasData->bHSliderActive = bExceedsW;
+		if(pCanvasData->bUseVSlider || pCanvasData->bUseHSlider)
+		{
+			SetSliderPositionAndDims(pWidget, pCanvasData);
+		}
+		if(pCanvasData->bUseHSlider) pCanvasData->bHSliderActive = bExceedsW;
+		if(pCanvasData->bUseVSlider) pCanvasData->bVSliderActive = bExceedsH;
 	}
 
 	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 
 	UnsetClipRect();
 
-	if (bExceedsH)
+	if (pCanvasData->bUseVSlider && bExceedsH)
 	{
 		pOutVerts = SliderWidget_OnOutputVerts(pOutVerts, &pCanvasData->sliderV, pCanvasData->sliderVTopLeft[1], pCanvasData->sliderVTopLeft[0], &zeroPadding);
 	}
-	if (bExceedsW)
+	if (pCanvasData->bUseHSlider && bExceedsW)
 	{
 		pOutVerts = SliderWidget_OnOutputVerts(pOutVerts, &pCanvasData->sliderH, pCanvasData->sliderHTopLeft[1], pCanvasData->sliderHTopLeft[0], &zeroPadding);
 	}
@@ -222,7 +236,10 @@ static void OnWidgetInit(struct UIWidget* pWidget)
 	if (ContentExceedsSize(pCanvasData, pWidget, &bExceedsW, &bExceedsH))
 	{
 		// need to call this when the contents of the canvas change
-		SetSliderMinAndMax(pWidget, pCanvasData);
+		if(pCanvasData->bUseHSlider || pCanvasData->bUseVSlider)
+		{
+			SetSliderMinAndMax(pWidget, pCanvasData);
+		}		
 	}
 
 }
@@ -237,7 +254,7 @@ static void MouseButtonDownCallback(struct UIWidget* pWidget, float x, float y, 
 {
 	struct CanvasData* pCanvasData = pWidget->pImplementationData;
 	
-	if (pCanvasData->bHSliderActive)
+	if (pCanvasData->bUseHSlider && pCanvasData->bHSliderActive)
 	{
 		GeomRect hsliderRect =
 		{
@@ -252,7 +269,7 @@ static void MouseButtonDownCallback(struct UIWidget* pWidget, float x, float y, 
 			pCanvasData->sliderH.bMouseDown = true;
 		}
 	}
-	if (pCanvasData->bVSliderActive)
+	if (pCanvasData->bUseVSlider && pCanvasData->bVSliderActive)
 	{
 		GeomRect vsliderRect =
 		{
@@ -287,15 +304,15 @@ static void MouseLeaveCallback(struct UIWidget* pWidget, float x, float y)
 static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 {
 	struct CanvasData* pCanvasData = pWidget->pImplementationData;
-
-	if (pCanvasData->bHSliderActive)
+	
+	if (pCanvasData->bUseHSlider && pCanvasData->bHSliderActive)
 	{
 		if (pCanvasData->sliderH.bMouseDown)
 		{
 			SliderWudget_SetSliderPositionFromMouse(pWidget, &pCanvasData->sliderH, x, y, pCanvasData->sliderHTopLeft[1], pCanvasData->sliderHTopLeft[1], zeroPadding);
 		}
 	}
-	if (pCanvasData->bVSliderActive)
+	if (pCanvasData->bUseVSlider && pCanvasData->bVSliderActive)
 	{
 		if (pCanvasData->sliderV.bMouseDown)
 		{
@@ -335,8 +352,18 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, xmlNode* pXMLNode, struc
 	pWidget->pImplementationData = malloc(sizeof(struct CanvasData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct CanvasData));
 	struct CanvasData* pData = pWidget->pImplementationData;
-	SliderWidget_MakeDefaultSliderWidget(&pData->sliderH, pUILayerData, SO_Horizontal);
-	SliderWidget_MakeDefaultSliderWidget(&pData->sliderV, pUILayerData, SO_Vertical);
+
+	pData->bUseHSlider = true; // todo: move to xml
+	pData->bUseVSlider = true;
+	
+	if(pData->bUseHSlider)
+	{
+		SliderWidget_MakeDefaultSliderWidget(&pData->sliderH, pUILayerData, SO_Horizontal);
+	}
+	if(pData->bUseVSlider)
+	{
+		SliderWidget_MakeDefaultSliderWidget(&pData->sliderV, pUILayerData, SO_Vertical);
+	}
 
 }
 
