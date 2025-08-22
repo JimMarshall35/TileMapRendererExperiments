@@ -349,7 +349,6 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC);
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	XMLUIData* pData = pLayer->userData;
-	pData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
 	pData->timerPool = TP_InitTimerPool(32);
 
 	if (!pData->bLoaded)
@@ -796,6 +795,8 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 	pLayer->onWindowDimsChanged = &OnWindowSizeChanged;
 	pLayer->flags = 0;
 	pLayer->flags |= EnableDrawFn | EnableInputFn | EnableUpdateFn | EnableOnPop | EnableOnPush;
+	pUIData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
+
 	if (pOptions->bLoadImmediately)
 	{
 		LoadUIData(pUIData, pOptions->pDc);

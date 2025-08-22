@@ -23,6 +23,24 @@ typedef HWidget(*AddChildFn)(HWidget hParent, xmlNode* pXMLNode, struct XMLUIDat
 #define XML_UI_MAX_PATH 256
 #define MAX_FOCUSED_WIDGETS 16
 
+
+/*
+	its a "request" because if an ancenstor of the requesting widget 
+	also requests then the request is overruled
+*/
+struct WidgetChildrenChangeRequest
+{
+	/* Registry index of the viewmodel table the function will be called on */
+	int regIndex;
+
+	/* Function that will generate new children for the widget */
+	const char* funcName;
+
+	/* Widget that will have new children */
+	HWidget hWidget;
+};
+
+
 typedef struct XMLUIData
 {
 	HWidget rootWidget;
@@ -36,6 +54,7 @@ typedef struct XMLUIData
 	HWidget focusedWidgets[MAX_FOCUSED_WIDGETS];
 	int nFocusedWidgets;
 	struct SDTimerPool timerPool;
+	VECTOR(struct WidgetChildrenChangeRequest) pChildrenChangeRequests;
 }XMLUIData;
 
 

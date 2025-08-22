@@ -15,6 +15,18 @@ static lua_State* gL = NULL;
 
 static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const char* pChangedPropName)
 {
+	if(strcmp(pChangedPropName, "children") == 0)
+	{
+		// TODO: Make string library. Scratch memory pool cleared at end of each frame, small strings pools etc
+		char* pStr = malloc(strlen(pChangedPropName));
+		struct WidgetChildrenChangeRequest r = {
+			pUIData->hViewModel,
+			pStr,
+			hWidget
+		};
+		pUIData->pChildrenChangeRequests = VectorPush(&pUIData->pChildrenChangeRequests, &r);
+		return;	
+	}
 	while (hWidget != NULL_HWIDGET)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);

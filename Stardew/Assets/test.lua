@@ -1,6 +1,14 @@
 
 function GetTestViewModel()
 	return {
+		-- idea
+
+		Get_ListBoxItems = function(self)
+			return {
+				
+			}
+		end,
+		
 		-- random data members
 		newButtonPressed = false,
 		difficulty = 1,
