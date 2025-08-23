@@ -63,5 +63,21 @@ void Sc_DeleteTableInReg(int index);
 
 int Sc_Int();
 float Sc_Float();
+bool Sc_Bool();
+
+bool Sc_IsTable();
+bool Sc_IsNil();
+bool Sc_IsString();
+bool Sc_IsInteger();
+bool Sc_IsBool();
+bool Sc_IsNumber();
+
+
+void Sc_Pop();
+void Sc_TableGet(const char* key);
+void Sc_TableGetIndex(int index);
+int Sc_TableLen();
+
+bool Sc_StringCmp(const char* cmpTo);
 
 #endif

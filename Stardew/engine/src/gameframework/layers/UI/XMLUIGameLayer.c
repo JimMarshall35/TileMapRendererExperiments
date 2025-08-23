@@ -27,6 +27,7 @@
 #include "SliderWidget.h"
 #include "CanvasWidget.h"
 #include "TextEntryWidget.h"
+#include "DataNode.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -47,8 +48,8 @@ struct NameConstructorPair gNodeNameTable[] =
 	{"radioGroup",    &RadioGroupWidgetNew},     // done
 	{"radioButton",   &RadioButtonWidgetNew},    // done
 	{"slider",        &SliderWidgetNew},         // done
-	{"canvas",        &CanvasWidgetNew},
-	{"textInput",     &TextEntryWidgetNew},
+	{"canvas",        &CanvasWidgetNew},         // done
+	{"textInput",     &TextEntryWidgetNew},      // done
 };
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
@@ -63,11 +64,113 @@ AddChildFn LookupWidgetCtor(const char* widgetName)
 	return NULL;
 }
 
+static void FreeWidgetTree_internal(HWidget root, bool bFreeRoot)
+{
+	struct UIWidget* pWidget = UI_GetWidget(root);
+	if(!pWidget)
+	{
+		return;
+	}
+	
+	HWidget h = pWidget->hFirstChild;
+	while(h != NULL_HWIDGET)
+	{
+		HWidget oldH = h;
+		pWidget = UI_GetWidget(h);
+			
+		h = pWidget->hNext;
+		FreeWidgetTree_internal(oldH, true);
+	}
+	if(bFreeRoot)
+	{
+		UI_DestroyWidget(root);
+	}
+}
+
+static void FreeWidgetTree(HWidget root)
+{
+	FreeWidgetTree_internal(root, true);
+}
+
+static void FreeWidgetChildren(HWidget root)
+{
+	FreeWidgetTree_internal(root, false);
+}
+
+/*
+	add the TOS lua table as a child of hParent, and recurse throught children
+*/
+static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
+{
+	/*
+		Add the lua node and its children here:
+	*/
+	struct DataNode node;
+	DN_InitForLuaTableOnTopOfStack(&node);
+	Sc_TableGet("type");
+	size_t len = Sc_StackTopStringLen();
+	if(len)
+	{
+		char* pStr = malloc(len + 1);
+		Sc_StackTopStrCopy(pStr);
+		Sc_Pop();
+		/* look up ctor by name */
+
+		AddChildFn fn  = LookupWidgetCtor(pStr);
+		HWidget hNew = fn(hParent, &node, pData);
+		free(pStr);
+
+		struct UIWidget* pWiddget = UI_GetWidget(hNew);
+		pWiddget->scriptCallbacks.viewmodelTable = pData->hViewModel;
+
+		UI_AddChild(hParent, hNew);
+		Sc_TableGet("children");
+		for(int i=0; i<Sc_TableLen(); i++)
+		{
+			Sc_TableGetIndex(i);
+			if(Sc_IsTable())
+			{
+				AddLuaTableSubTree(pData, hNew);
+			}
+			Sc_Pop();
+		}
+		Sc_Pop();
+	}
+	else
+	{
+		printf("error: child node in children table is not a string or is empty\n");
+		Sc_Pop();
+	}
+}
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
 	XMLUIData* pData = pLayer->userData;
 	TP_DoTimers(&pData->timerPool, deltaT);
+	if(VectorSize(pData->pChildrenChangeRequests))
+	{
+		struct WidgetChildrenChangeRequest* pReq = &pData->pChildrenChangeRequests[0];
+		FreeWidgetChildren(pReq->hWidget);
+		Sc_CallFuncInRegTableEntryTable(pReq->regIndex, pReq->funcName, NULL, 0, 1);
+		if(Sc_IsTable())
+		{
+			for(int i=0; i<Sc_TableLen(); i++)
+			{
+				Sc_TableGetIndex(i);
+				if(Sc_IsTable())
+				{
+					AddLuaTableSubTree(pData, pReq->hWidget);
+				}
+
+				Sc_Pop();
+			}
+			Sc_Pop();
+		}
+		else
+		{
+			printf("error: function %s did not return a table\n", pReq->funcName);
+		}
+	}
 }
 
 static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
@@ -170,6 +273,8 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	static bool bLastLeftClick = false;
 	static bool bThisLeftClick = false;
 
+
+
 	if (!pWidgetsHovverred)
 	{
 		pWidgetsHovverred = NEW_VECTOR(HWidget);
@@ -203,6 +308,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	pWidgetsRemained = VectorClear(pWidgetsRemained);
 
 	XMLUIData* pUIData = pLayer->userData;
+	pUIData->pChildrenChangeRequests = VectorClear(pUIData->pChildrenChangeRequests);
 	float w, h;
 
 	if (gMouseX == NULL_HANDLE)
@@ -339,7 +445,6 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 			if(pWidget->fnRecieveKeystroke)
 				pWidget->fnRecieveKeystroke(pWidget, keystroke);
 		}
-		
 	}
 }
 
@@ -359,25 +464,6 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 	drawContext->SetCurrentAtlas(hAtlasTex);
 }
 
-static void FreeWidgetTree(HWidget root)
-{
-	struct UIWidget* pWidget = UI_GetWidget(root);
-	if(!pWidget)
-	{
-		return;
-	}
-	
-	HWidget h = pWidget->hFirstChild;
-	while(h != NULL_HWIDGET)
-	{
-		HWidget oldH = h;
-		pWidget = UI_GetWidget(h);
-			
-		h = pWidget->hNext;
-		FreeWidgetTree(oldH);
-	}
-	UI_DestroyWidget(root);
-}
 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
@@ -395,8 +481,10 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 
 void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 {
+	struct DataNode dataNode;
 	for (xmlNode* pChild = pNode->children; pChild; pChild = pChild->next)
 	{
+		DN_InitForXMLNode(&dataNode, pChild);
 		if (pChild->type != XML_ELEMENT_NODE)
 		{
 			continue;
@@ -408,7 +496,7 @@ void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 			printf("error occured\n");
 			return;
 		}
-		HWidget childWidget = pCtor(widget, pChild, pUIData);
+		HWidget childWidget = pCtor(widget, &dataNode, pUIData);
 
 		struct UIWidget* pWiddget = UI_GetWidget(childWidget);
 		pWiddget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;
@@ -796,7 +884,7 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 	pLayer->flags = 0;
 	pLayer->flags |= EnableDrawFn | EnableInputFn | EnableUpdateFn | EnableOnPop | EnableOnPush;
 	pUIData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
-
+	pUIData->pChildrenChangeRequests = NEW_VECTOR(struct WidgetChildrenChangeRequest);
 	if (pOptions->bLoadImmediately)
 	{
 		LoadUIData(pUIData, pOptions->pDc);

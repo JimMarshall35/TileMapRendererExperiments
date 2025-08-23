@@ -9,7 +9,7 @@
 #include "TextWidget.h"
 #include "StaticWidget.h"
 #include "RadioGroupWidget.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 
 #ifndef max
 #define max(a,b) (a>b?a:b)
@@ -35,8 +35,6 @@ struct RadioButtonData
 
 static float GetBtnW(struct RadioButtonData* pData)
 {
-	//printf("selected %i\n",pData->selectedRadioStatic.sprite);
-	//printf("unselected %i\n",pData->unSelectedRadioStatic.sprite);
 	AtlasSprite* pAtlasSprite = At_GetSprite(pData->bSelected ? pData->selectedRadioStatic.sprite : pData->unSelectedRadioStatic.sprite,
 		pData->bSelected ? pData->selectedRadioStatic.atlas : pData->unSelectedRadioStatic.atlas);
 	return pAtlasSprite->widthPx;
@@ -256,41 +254,37 @@ static void MakeDefaultRadioButtonData(struct RadioButtonData* pData, struct XML
 	pData->unSelectedRadioStatic.sprite = At_FindSprite(pData->unSelectedRadioStatic.imageName, pData->unSelectedRadioStatic.atlas);
 }
 
-static void RadioButtonWidget_MakeFromXML(xmlNode* pXMLNode, struct RadioButtonData* pData)
+static void RadioButtonWidget_MakeFromXML(struct DataNode* pDataNode, struct RadioButtonData* pData)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "btnPlacement"))
+	if(pDataNode->fnGetPropType(pDataNode, "btnPlacement") == DN_String)
 	{
-		if (strcmp(attribute, "Left") == 0)
+		if (pDataNode->fnStrCmp(pDataNode, "btnPlacement", "Left"))
 		{
 			pData->btnPlacementRelativeToText = RBP_Left;
 		}
-		else if (strcmp(attribute, "Right") == 0)
+		else if (pDataNode->fnStrCmp(pDataNode, "btnPlacement", "Right"))
 		{
 			pData->btnPlacementRelativeToText = RBP_Right;
 		}
-		else if (strcmp(attribute, "Above") == 0)
+		else if (pDataNode->fnStrCmp(pDataNode, "btnPlacement", "Above"))
 		{
 			pData->btnPlacementRelativeToText = RBP_Above;
 		}
-		else if (strcmp(attribute, "Below") == 0)
+		else if (pDataNode->fnStrCmp(pDataNode, "btnPlacement", "Below"))
 		{
 			pData->btnPlacementRelativeToText = RBP_Below;
 		}
 		else
 		{
-			printf("Invlaid RadioBtnPlacement val '%s' \n", attribute);
+			char* val = malloc(pDataNode->fnGetStrlen(pDataNode, "btnPlacement") + 1);
+			pDataNode->fnGetStrcpy(pDataNode, "btnPlacement", val);
+			printf("Invlaid RadioBtnPlacement val '%s' \n", val);
+			free(val);
 		}
-		xmlFree(attribute);
-	}
-	if(attribute = xmlGetProp(pXMLNode, "btnDistanceFromTxt"))
-	{
-		pData->buttonDistanceFromText = atof(attribute);
-		xmlFree(attribute);
 	}
 }
 
-static void MakeWidgetIntoRadioButtonWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoRadioButtonWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -322,16 +316,16 @@ static void MakeWidgetIntoRadioButtonWidget(HWidget hWidget, xmlNode* pXMLNode, 
 
 	MakeDefaultRadioButtonData(pData, pUILayerData);
 
-	StaticWidget_MakeFromXML(&pData->selectedRadioStatic, pXMLNode, pUILayerData);
-	StaticWidget_MakeFromXML(&pData->unSelectedRadioStatic, pXMLNode, pUILayerData);
-	TextWidget_FromXML(&pData->textWidgetData, pXMLNode, pUILayerData);
-	RadioButtonWidget_MakeFromXML(pXMLNode, pData);
+	StaticWidget_MakeFromXML(&pData->selectedRadioStatic, pDataNode, pUILayerData);
+	StaticWidget_MakeFromXML(&pData->unSelectedRadioStatic, pDataNode, pUILayerData);
+	TextWidget_FromXML(&pData->textWidgetData, pDataNode, pUILayerData);
+	RadioButtonWidget_MakeFromXML(pDataNode, pData);
 }
 
-HWidget RadioButtonWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget RadioButtonWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoRadioButtonWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoRadioButtonWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }
 

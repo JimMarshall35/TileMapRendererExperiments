@@ -1,6 +1,6 @@
 #include "TextEntryWidget.h"
 #include "Widget.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -121,10 +121,6 @@ static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
 {
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 
-	// if(pData->cursorIndex >= pData->maxStringLen )
-	// {
-	// 	return;
-	// }
 	switch(keystroke)
 	{
 	case KEYSTROKE_LEFT:
@@ -230,7 +226,7 @@ static void SetupCaretBlinkTimer(struct TextEntryWidgetData* pData, struct XMLUI
 	pData->caretTimer = TP_GetTimer(&pUILayerData->timerPool, &timer);
 }
 
-static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -253,13 +249,14 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, st
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 	
 	pData->pLayerData = pUILayerData;
-	TextWidget_FromXML(&pData->textWidget, pXMLNode, pUILayerData);
+	TextWidget_FromXML(&pData->textWidget, pDataNode, pUILayerData);
 	pData->canvasWidget.bUseHSlider = false;
 	pData->canvasWidget.bUseVSlider = false;
 	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "maxStringLength"))
+	
+	if(pDataNode->fnGetPropType(pDataNode, "maxStringLength") == DN_Int)
 	{
-		pData->maxStringLen = atoi(attribute);
+		pData->maxStringLen = pDataNode->fnGetInt(pDataNode, "maxStringLength");
 	}
 	else
 	{
@@ -273,9 +270,9 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, xmlNode* pXMLNode, st
 	pData->bCaretBlinkState = false;
 }
 
-HWidget TextEntryWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget TextEntryWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoTextEntryWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoTextEntryWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }

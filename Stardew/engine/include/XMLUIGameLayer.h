@@ -10,6 +10,7 @@
 
 struct XMLUIData;
 struct GameFrameworkLayer;
+struct DataNode;
 
 struct XMLUIGameLayerOptions
 {
@@ -18,7 +19,7 @@ struct XMLUIGameLayerOptions
 	bool bLoadImmediately; // eg, when XMLUIGameLayer_Get is called, do we load the xml file?
 };
 
-typedef HWidget(*AddChildFn)(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+typedef HWidget(*AddChildFn)(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData);
 
 #define XML_UI_MAX_PATH 256
 #define MAX_FOCUSED_WIDGETS 16

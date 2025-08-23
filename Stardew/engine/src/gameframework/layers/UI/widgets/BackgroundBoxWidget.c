@@ -6,8 +6,7 @@
 #include "WidgetVertexOutputHelpers.h"
 #include "AssertLib.h"
 #include "Scripting.h"
-#include <libxml/tree.h>
-
+#include "DataNode.h"
 
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -313,58 +312,53 @@ static void ParseBindingEspressionAttribute(char* pAttributeName, char* pAttribu
 	}
 }
 
-static void ParseLiteralBackgroundBoxData(struct BackgroundBoxWidgetData* pWidgetData, const char* attributeNameBuffer, const char* attributeContentBuffer)
+static void ParseLiteralBackgroundBoxData(struct BackgroundBoxWidgetData* pWidgetData, const char* attributeContentBuffer)
 {
-	if (strcmp(attributeNameBuffer, "sprite") == 0)
+	if (pWidgetData->imageName)
 	{
-		if (pWidgetData->imageName)
-		{
-			free(pWidgetData->imageName);
-			pWidgetData->imageName = NULL;
-		}
-		EASSERT(pWidgetData->imageName == NULL);
-		pWidgetData->imageName = malloc(strlen(attributeContentBuffer) + 1);
-		strcpy(pWidgetData->imageName, attributeContentBuffer);
-		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
+		free(pWidgetData->imageName);
+		pWidgetData->imageName = NULL;
 	}
-	else if (strcmp(attributeNameBuffer, "scaleX") == 0)
-	{
-		pWidgetData->scale.scaleX = atof(attributeContentBuffer);
-	}
-	else if (strcmp(attributeNameBuffer, "scaleY") == 0)
-	{
-		pWidgetData->scale.scaleY = atof(attributeContentBuffer);
-	}
+	EASSERT(pWidgetData->imageName == NULL);
+	pWidgetData->imageName = malloc(strlen(attributeContentBuffer) + 1);
+	strcpy(pWidgetData->imageName, attributeContentBuffer);
+	pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pWidgetData->atlas);
 }
 
-void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	pWidgetData->scale.scaleX = 1.0f;
 	pWidgetData->scale.scaleY = 1.0f;
 
 	pWidgetData->atlas = pUILayerData->atlas;
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "sprite"))
+	
+	if (pDataNode->fnGetPropType(pDataNode, "sprite") == DN_String)
 	{
-		if (UI_IsAttributeStringABindingExpression(attribute))
+		size_t len = pDataNode->fnGetStrlen(pDataNode, "sprite");
+		if(!len)
 		{
-			ParseBindingEspressionAttribute("sprite", attribute, pWidget, pWidgetData, pUILayerData);
+			printf("empty string");
+			return;
+		}
+		char* val = malloc(len + 1);
+		pDataNode->fnGetStrcpy(pDataNode, "sprite", val); 
+		if (UI_IsAttributeStringABindingExpression(val))
+		{
+			ParseBindingEspressionAttribute("sprite", val, pWidget, pWidgetData, pUILayerData);
 		}
 		else
 		{
-			ParseLiteralBackgroundBoxData(pWidgetData, "sprite", attribute);
+			ParseLiteralBackgroundBoxData(pWidgetData, val);
 		}
-		xmlFree(attribute);
+		free(val);
 	}
-	if(attribute = xmlGetProp(pXMLNode, "scaleX"))
+	if( pDataNode->fnGetPropType(pDataNode, "scaleX") == DN_Float)
 	{
-		ParseLiteralBackgroundBoxData(pWidgetData, "scaleX", attribute);
-		xmlFree(attribute);
+		pWidgetData->scale.scaleX = pDataNode->fnGetFloat(pDataNode, "scaleX");
 	}
-	if(attribute = xmlGetProp(pXMLNode, "scaleY"))
+	if( pDataNode->fnGetPropType(pDataNode, "scaleY") == DN_Float)
 	{
-		ParseLiteralBackgroundBoxData(pWidgetData, "scaleY", attribute);
-		xmlFree(attribute);
+		pWidgetData->scale.scaleY = pDataNode->fnGetFloat(pDataNode, "scaleY");
 	}
 	if (pWidgetData->imageName)
 	{
@@ -373,7 +367,7 @@ void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxW
 	}
 }
 
-static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -394,7 +388,7 @@ static void MakeWidgetIntoBackgroundBoxWidget(HWidget hWidget, xmlNode* pXMLNode
 	BackgroundBoxWidget_fromXML(pWidget, pWidgetData, pXMLNode, pUILayerData);
 }
 
-HWidget BackgroundBoxWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget BackgroundBoxWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoBackgroundBoxWidget(hWidget, pXMLNode, pUILayerData);

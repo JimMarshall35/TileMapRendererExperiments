@@ -4,10 +4,10 @@
 #include "HandleDefs.h"
 #include <stdbool.h>
 
-typedef struct _xmlNode xmlNode;
+struct DataNode;
 struct XMLUIData;
 
-HWidget RadioButtonWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget RadioButtonWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 void RadioButton_SetSelected(HWidget hRadioButton, bool bSelected);
 

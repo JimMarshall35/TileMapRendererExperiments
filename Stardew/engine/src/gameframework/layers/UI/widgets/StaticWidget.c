@@ -6,8 +6,7 @@
 #include "Atlas.h"
 #include "AssertLib.h"
 #include "WidgetVertexOutputHelpers.h"
-#include <libxml/tree.h>
-
+#include "DataNode.h"
 
 
 float StaticWidget_GetWidth(struct StaticWidgetData* pStaticData, struct WidgetPadding* pPadding)
@@ -55,29 +54,25 @@ void* StaticWidget_OnOutputVerts(struct StaticWidgetData* pStaticData, float lef
 	return pOutVerts;
 }
 
-void StaticWidget_MakeFromXML(struct StaticWidgetData* pWidgetData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+void StaticWidget_MakeFromXML(struct StaticWidgetData* pWidgetData, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "sprite"))
+	if(pDataNode->fnGetPropType(pDataNode, "sprite") == DN_String)
 	{
-		int len = strlen(attribute);
+		size_t len = pDataNode->fnGetStrlen(pDataNode, "sprite");
 		if (pWidgetData->imageName)
 		{
 			free(pWidgetData->imageName);
 		}
 		pWidgetData->imageName = malloc(len + 1);
-		strcpy(pWidgetData->imageName, attribute);
-		xmlFree(attribute);
+		pDataNode->fnGetStrcpy(pDataNode, "sprite", pWidgetData->imageName);
 	}
-	if(attribute = xmlGetProp(pXMLNode, "scaleX"))
+	if(pDataNode->fnGetPropType(pDataNode, "scaleX") == DN_Float)
 	{
-		pWidgetData->scale.scaleX = atof(attribute);
-		xmlFree(attribute);
+		pWidgetData->scale.scaleX = pDataNode->fnGetFloat(pDataNode, "scaleX");
 	}
-	if(attribute = xmlGetProp(pXMLNode, "scaleY"))
+	if(pDataNode->fnGetPropType(pDataNode, "scaleY") == DN_Float)
 	{
-		pWidgetData->scale.scaleY = atof(attribute);
-		xmlFree(attribute);
+		pWidgetData->scale.scaleY = pDataNode->fnGetFloat(pDataNode, "scaleY");
 	}
 	if (pWidgetData->imageName)
 	{
@@ -136,7 +131,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return pOutVerts;
 }
 
-static void MakeWidgetIntoStatic(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoStatic(HWidget hWidget, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
@@ -158,7 +153,7 @@ static void MakeWidgetIntoStatic(HWidget hWidget, xmlNode* pXMLNode, struct XMLU
 	StaticWidget_MakeFromXML(pWidgetData, pXMLNode, pUILayerData);
 }
 
-HWidget StaticWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget StaticWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
 	MakeWidgetIntoStatic(hWidget, pXMLNode, pUILayerData);

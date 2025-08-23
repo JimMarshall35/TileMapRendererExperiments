@@ -4,9 +4,9 @@
 #include "HandleDefs.h"
 
 struct XMLUIData;
-typedef struct _xmlNode xmlNode;
+struct DataNode;
 
-HWidget TextButtonWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget TextButtonWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 
 #endif // !TEXTBUTTONWIDGET_H

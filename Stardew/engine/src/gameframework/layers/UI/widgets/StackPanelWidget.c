@@ -3,19 +3,17 @@
 #include <stdlib.h>
 #include "AssertLib.h"
 #include <string.h>
-#include <libxml/tree.h>
+#include "DataNode.h"
 
-
-void StackPanel_PopulateDataFromXML(xmlNode* pXMLNode, struct StackPanelWidgetData* pData)
+void StackPanel_PopulateDataFromXML(struct DataNode* pNode, struct StackPanelWidgetData* pData)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "orientation"))
+	if(pNode->fnGetPropType(pNode, "orientation") == DN_String)
 	{
-		if (strcmp(attribute, "horizontal") == 0)
+		if(pNode->fnStrCmp(pNode, "orientation", "horizontal"))
 		{
 			pData->orientation = SPO_Horizontal;
 		}
-		else if (strcmp(attribute, "vertical") == 0)
+		else if (pNode->fnStrCmp(pNode, "orientation", "vertical"))
 		{
 			pData->orientation = SPO_Vertical;
 		}
@@ -143,8 +141,6 @@ void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParen
 
 	float top = pWidget->top + pWidget->padding.paddingTop;
 	float left = pWidget->left + pWidget->padding.paddingLeft;
-	//float w = GetWidth(pWidget, pParent);
-	//float h = GetHeight(pWidget, pParent);
 
 
 	switch (pStackPanelData->orientation)
@@ -271,7 +267,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 	return pOutVerts;
 }
 
-static void MakeWidgetIntoStackPanel(HWidget hWidget, xmlNode* pXMLNode)
+static void MakeWidgetIntoStackPanel(HWidget hWidget, struct DataNode* pNode)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -286,12 +282,12 @@ static void MakeWidgetIntoStackPanel(HWidget hWidget, xmlNode* pXMLNode)
 	pWidget->pImplementationData = malloc(sizeof(struct StackPanelWidgetData));
 	memset(pWidget->pImplementationData, 0, sizeof(struct StackPanelWidgetData));
 	struct StackPanelWidgetData* pData = pWidget->pImplementationData;
-	StackPanel_PopulateDataFromXML(pXMLNode, pData);
+	StackPanel_PopulateDataFromXML(pNode, pData);
 }
 
-HWidget StackPanelWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUIData)
+HWidget StackPanelWidgetNew(HWidget hParent, struct DataNode* pNode, struct XMLUIData* pUIData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoStackPanel(hWidget, pXMLNode);
+	MakeWidgetIntoStackPanel(hWidget, pNode);
 	return hWidget;
 }

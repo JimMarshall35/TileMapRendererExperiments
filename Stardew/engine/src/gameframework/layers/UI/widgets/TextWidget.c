@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "WidgetVertexOutputHelpers.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 
 void TextWidget_Destroy(struct TextWidgetData* pData)
 {
@@ -181,7 +181,7 @@ static void ParseSizeAttribute(char* inText, struct TextWidgetData* pOutWidgetDa
 	pOutWidgetData->fSizePts = val;
 }
 
-static bool IsWhitespaceChar(xmlChar character)
+static bool IsWhitespaceChar(char character)
 {
 	return 
 		character == ' '  ||
@@ -197,10 +197,10 @@ static bool IsWhitespaceChar(xmlChar character)
 	returns:
 		length after stripping start and end whitespace
 */
-static int GetWhitespaceStrippedLengthAndStart(xmlChar* inString, xmlChar** outStrippedStart)
+static int GetWhitespaceStrippedLengthAndStart(char* inString, char** outStrippedStart)
 {
-	xmlChar* strippedStart = inString;
-	xmlChar* strippedEnd = NULL;
+	char* strippedStart = inString;
+	char* strippedEnd = NULL;
 	
 	// find start ptr
 	while(IsWhitespaceChar(*strippedStart)) 
@@ -223,9 +223,9 @@ static int GetWhitespaceStrippedLengthAndStart(xmlChar* inString, xmlChar** outS
 	returns a string that is the input string with trailing and leading whitespace stripped.
 	Callers responsibility to free with free()
 */
-static char* GetWhitespaceStrippedString(xmlChar* inString)
+static char* GetWhitespaceStrippedString(char* inString)
 {
-	xmlChar* pStart = NULL;
+	char* pStart = NULL;
 	int strippedLen = GetWhitespaceStrippedLengthAndStart(inString, &pStart);
 	char* outStr = malloc(strippedLen + 1);
 	memcpy(outStr, pStart, strippedLen);
@@ -233,63 +233,74 @@ static char* GetWhitespaceStrippedString(xmlChar* inString)
 	return outStr;
 }
 
-void TextWidget_FromXML(struct TextWidgetData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+void TextWidget_FromXML(struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pData->atlas = pUILayerData->atlas;
-	char attribName[64];
-	char attribContent[64];
 	char* fontName = NULL;
-
-	memset(attribName, 0, 64);
-
-	xmlChar* content = xmlNodeGetContent(pXMLNode);
-	int len = strlen(content);
+	char* str = NULL;
+	size_t len = pXMLNode->fnGetContentStrlen(pXMLNode);
+	if(len)
+	{
+		str = malloc(len + 1);
+		pXMLNode->fnGetContentStrcpy(pXMLNode, str);
+	}
+	else
+	{
+		str = malloc(1);
+		str[0] = '\0';
+	}
 	if(pData->content)
 	{
 		free(pData->content);
 		pData->content = NULL;
 	}
-	pData->content = GetWhitespaceStrippedString(content);
+	pData->content = GetWhitespaceStrippedString(str);
 
-	xmlFree(content);
+	free(str);
 
 	bool bFontSet = false;
 	bool bFontSizeSet = false;
-
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "font"))
+	if(pXMLNode->fnGetPropType(pXMLNode, "font") == DN_String)
 	{
-		fontName = attribute;
+		size_t fontNameLen = pXMLNode->fnGetStrlen(pXMLNode, "font");
+		fontName = malloc(fontNameLen + 1);
+		pXMLNode->fnGetStrcpy(pXMLNode, "font", fontName);
 		bFontSet = true;
 	}
-	if(attribute = xmlGetProp(pXMLNode, "colour"))
+	if(pXMLNode->fnGetPropType(pXMLNode, "colour") == DN_String)
 	{
-		ParseColourAttribute(attribute, pData);
-		xmlFree(attribute);
+		size_t colourLen = pXMLNode->fnGetStrlen(pXMLNode, "colour");
+		char* colourStr = malloc(colourLen + 1);
+		pXMLNode->fnGetStrcpy(pXMLNode, "colour", colourStr);
+		ParseColourAttribute(colourStr, pData);
+		free(colourStr);
 	}
-	if(attribute = xmlGetProp(pXMLNode, "fontSize"))
+	if(pXMLNode->fnGetPropType(pXMLNode, "fontSize") == DN_String)
 	{
-		ParseSizeAttribute(attribute, pData);
+		size_t sizeLen = pXMLNode->fnGetStrlen(pXMLNode, "fontSize");
+		char* sizeStr = malloc(sizeLen + 1);
+		pXMLNode->fnGetStrcpy(pXMLNode, "fontSize", sizeStr);
+		ParseSizeAttribute(sizeStr, pData);
 		bFontSizeSet = true;
-		xmlFree(attribute);
+		free(sizeStr);
 	}
-
 	if (bFontSet && bFontSizeSet)
 	{
 		HFont font = Fo_FindFont(pUILayerData->atlas, fontName, pData->fSizePts);
 		if (font == NULL_HANDLE)
 		{
-			printf("font '%s' could not be found\n", attribContent);
+			printf("TextWidget_FromXML: can't find font %s size %f pts\n", fontName, pData->fSizePts);
+			EASSERT(false);
 		}
 		pData->font = font;
 	}
 	if(fontName)
 	{
-		xmlFree(fontName);
+		free(fontName);
 	}
 }
 
-static void MakeWidgetIntoTextWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoTextWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 
@@ -307,13 +318,13 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, xmlNode* pXMLNode, struct 
 
 	struct TextWidgetData* pData = pWidget->pImplementationData;
 
-	TextWidget_FromXML(pData, pXMLNode, pUILayerData);
+	TextWidget_FromXML(pData, pDataNode, pUILayerData);
 
 }
 
-HWidget TextWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget TextWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoTextWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoTextWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }

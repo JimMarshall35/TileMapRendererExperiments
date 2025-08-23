@@ -1,6 +1,6 @@
 #include "CanvasWidget.h"
 #include "Widget.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -321,7 +321,7 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 	}
 }
 
-static void MakeWidgetIntoCanvasWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -367,9 +367,9 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, xmlNode* pXMLNode, struc
 
 }
 
-HWidget CanvasWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget CanvasWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoCanvasWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoCanvasWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }

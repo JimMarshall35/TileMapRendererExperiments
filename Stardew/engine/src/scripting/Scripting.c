@@ -8,6 +8,7 @@
 #include "AssertLib.h"
 #include "XMLUIGameLayer.h"
 #include "RootWidget.h"
+#include "AssertLib.h"
 
 #define GAME_LUA_MINOR_VERSION 1
 
@@ -258,4 +259,69 @@ void Sc_ResetStack()
 void Sc_DeleteTableInReg(int index)
 {
 	luaL_unref(gL, LUA_REGISTRYINDEX, index);
+}
+
+bool Sc_IsTable()
+{
+	return lua_istable(gL, -1);
+}
+
+void Sc_Pop()
+{
+	lua_pop(gL, 1);
+}
+
+void Sc_TableGet(const char* key)
+{
+	EASSERT(Sc_IsTable());
+	lua_getfield(gL, -1, key);
+}
+
+void Sc_TableGetIndex(int index)
+{
+	EASSERT(Sc_IsTable());
+	lua_geti(gL, -1, index);
+}
+
+int Sc_TableLen()
+{
+	EASSERT(Sc_IsTable());
+	lua_len(gL, -1);
+}
+
+bool Sc_IsNil()
+{
+	return lua_isnil(gL, -1);	
+}
+
+bool Sc_IsString()
+{
+	return lua_isstring(gL, -1);
+}
+
+bool Sc_IsInteger()
+{
+	return lua_isinteger(gL, -1);
+}
+
+bool Sc_IsBool()
+{
+	return lua_isboolean(gL, -1);
+}
+
+bool Sc_IsNumber()
+{
+	return lua_isnumber(gL, -1);
+}
+
+bool Sc_Bool()
+{
+	return lua_toboolean(gL, -1) != 0;
+}
+
+bool Sc_StringCmp(const char* cmpTo)
+{
+	EASSERT(Sc_IsString());
+	const char* str = lua_tostring(gL, -1);
+	return strcmp(str, cmpTo) == 0;
 }

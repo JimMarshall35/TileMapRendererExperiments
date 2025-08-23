@@ -10,7 +10,7 @@
 #include "BackgroundBoxWidget.h"
 #include "RootWidget.h"
 #include "Scripting.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 
 enum ButtonType
 {
@@ -179,7 +179,7 @@ static void SetCMouseCallbacks(struct UIWidget* pWidget)
 	pWidget->cCallbacks.Callbacks[WC_OnMouseLeave].callback.mousePosFn = &MouseLeaveCallback;
 }
 
-static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -197,35 +197,33 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, xmlNode* pXMLNode, s
 	pData->RootWidget = pUILayerData->rootWidget;
 	pData->viewmodelRegIndex = pUILayerData->hViewModel;
 	MakeDefaultTextButtonWidgetData(pData, pUILayerData);
-	TextWidget_FromXML(&pData->textWidgetData, pXMLNode, pUILayerData);
-	BackgroundBoxWidget_fromXML(pWidget, &pData->backgroundBoxWidgetData, pXMLNode, pUILayerData);
+	TextWidget_FromXML(&pData->textWidgetData, pDataNode, pUILayerData);
+	BackgroundBoxWidget_fromXML(pWidget, &pData->backgroundBoxWidgetData, pDataNode, pUILayerData);
 	SetCMouseCallbacks(pWidget);
 
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "onPress"))
+	if(pDataNode->fnGetPropType(pDataNode, "onPress") == DN_String)
 	{
-		EASSERT(strlen(attribute) < MAX_SCRIPT_FUNCTION_NAME_SIZE);
-		strcpy(pData->onPressFunctionName, attribute);
+		size_t len = pDataNode->fnGetStrlen(pDataNode, "onPress");
+		EASSERT(len < MAX_SCRIPT_FUNCTION_NAME_SIZE);
+		pDataNode->fnGetStrcpy(pDataNode, "onPress", pData->onPressFunctionName);
 		pData->bLuaCallbackSet = true;
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pXMLNode, "btnType"))
+	if(pDataNode->fnGetPropType(pDataNode, "btnType") == DN_String)
 	{
-		if (strcmp(attribute, "OnRelease") == 0)
+		if (pDataNode->fnStrCmp(pDataNode, "btnType", "OnRelease"))
 		{
 			pData->type = BT_FireOnRelease;
 		}
-		else if (strcmp(attribute, "OnDown") == 0)
+		if (pDataNode->fnStrCmp(pDataNode, "btnType", "OnDown"))
 		{
 			pData->type = BT_FireOnDown;
 		}
-		xmlFree(attribute);
 	}
 }
 
-HWidget TextButtonWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget TextButtonWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoTextButtonWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoTextButtonWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }

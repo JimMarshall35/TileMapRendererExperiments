@@ -9,6 +9,7 @@ core/ObjectPool.c
 core/FileHelpers.c
 core/ImageFileRegstry.c
 core/TimerPool.c
+core/DataNode.c
 gameframework/GameFramework.c
 gameframework/layers/UI/XMLUIGameLayer.c
 gameframework/layers/UI/WidgetVertexOutputHelpers.c

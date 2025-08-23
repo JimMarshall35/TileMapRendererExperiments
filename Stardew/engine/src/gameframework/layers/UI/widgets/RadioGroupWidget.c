@@ -10,7 +10,7 @@
 #include "RadioButtonWidget.h"
 #include "RootWidget.h"
 #include "Scripting.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 
 struct RadioGroupData
 {
@@ -116,23 +116,31 @@ static void ParseBindingEspressionAttribute(char* attribName, char* attribConten
 	}
 }
 
-static void PopulateRadioGroupDataFromXML(struct UIWidget* pWidget, struct RadioGroupData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void PopulateRadioGroupDataFromXML(struct UIWidget* pWidget, struct RadioGroupData* pData, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "selectedChild"))
+	if (pDataNode->fnGetPropType(pDataNode, "selectedChild") == DN_String)
 	{
-		if (UI_IsAttributeStringABindingExpression(attribute))
+		size_t len = pDataNode->fnGetStrlen(pDataNode, "selectedChild");
+		if (!len)
 		{
-			ParseBindingEspressionAttribute("selectedChild", attribute, pWidget, pData, pUILayerData);
+			printf("empty string");
+			return;
+		}
+		char* val = malloc(len + 1);
+		pDataNode->fnGetStrcpy(pDataNode, "selectedChild", val);
+		if (UI_IsAttributeStringABindingExpression(val))
+		{
+			ParseBindingEspressionAttribute("selectedChild", val, pWidget, pData, pUILayerData);
 		}
 		else
 		{
-			pData->nSelectecedChild = atoi(attribute);
+			pData->nSelectecedChild = atoi(val);
 		}
+		free(val);
 	}
 }
 
-static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -164,14 +172,14 @@ static void MakeWidgetIntoRadioGroupWidget(HWidget hWidget, xmlNode* pXMLNode, s
 	struct RadioGroupData* pData = pWidget->pImplementationData;
 	pData->nSelectecedChild = 0;
 	pData->rootWidget = pUILayerData->rootWidget;
-	StackPanel_PopulateDataFromXML(pXMLNode, &pData->data);
-	PopulateRadioGroupDataFromXML(pWidget, pData, pXMLNode, pUILayerData);
+	StackPanel_PopulateDataFromXML(pDataNode, &pData->data);
+	PopulateRadioGroupDataFromXML(pWidget, pData, pDataNode, pUILayerData);
 }
 
-HWidget RadioGroupWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget RadioGroupWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoRadioGroupWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoRadioGroupWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }
 

@@ -13,10 +13,10 @@ struct BackgroundBoxWidgetData
 };
 
 struct XMLUIData;
-typedef struct _xmlNode xmlNode;
+struct DataNode;
 
-void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
-HWidget BackgroundBoxWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxWidgetData* pWidgetData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget BackgroundBoxWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 void* BackgroundBoxWidget_OutputVerts(
 	struct BackgroundBoxWidgetData* pBBoxData,
 	VECTOR(struct WidgetVertex) pOutVerts,

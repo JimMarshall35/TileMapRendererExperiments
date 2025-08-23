@@ -5,9 +5,9 @@
 
 struct XMLUIData;
 struct UIWidget;
-typedef struct _xmlNode xmlNode;
+struct DataNode;
 
-HWidget RadioGroupWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget RadioGroupWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 void RadioGroup_ChildSelected(HWidget hRadioGroup, struct UIWidget* pRadioButtonChild);
 
 

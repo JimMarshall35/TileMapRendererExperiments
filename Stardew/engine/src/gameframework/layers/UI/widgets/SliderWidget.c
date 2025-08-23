@@ -1,6 +1,6 @@
 #include "SliderWidget.h"
 #include "Widget.h"
-#include <libxml/tree.h>
+#include "DataNode.h"
 #include "XMLUIGameLayer.h"
 #include <string.h>
 #include <stdlib.h>
@@ -281,33 +281,32 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 }
 
 static void PopulateStaticInternal(
-	xmlNode* pXMLNode,
+	struct DataNode* pDataNode,
 	struct StaticWidgetData* pWidgetData,
 	struct XMLUIData* pUILayerData,
 	const char* spriteAttribName,
 	const char* scaleXAttribName,
 	const char* scaleYAttribName)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, spriteAttribName))
+	if(pDataNode->fnGetPropType(pDataNode, spriteAttribName) == DN_String)
 	{
+		size_t len = pDataNode->fnGetStrlen(pDataNode, spriteAttribName);
 		if (pWidgetData->imageName)
 		{
 			free(pWidgetData->imageName);
 		}
-		pWidgetData->imageName = malloc(strlen(attribute) + 1);
-		strcpy(pWidgetData->imageName, attribute);
+		pWidgetData->imageName = malloc(len + 1);
+		pDataNode->fnGetStrcpy(pDataNode, spriteAttribName, pWidgetData->imageName);
 		pWidgetData->sprite = At_FindSprite(pWidgetData->imageName, pUILayerData->atlas);
 		pWidgetData->atlas = pUILayerData->atlas;
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pXMLNode, scaleXAttribName))
+	if(pDataNode->fnGetPropType(pDataNode, scaleXAttribName) == DN_Float)
 	{
-		pWidgetData->scale.scaleX = atof(attribute);
+		pWidgetData->scale.scaleX = pDataNode->fnGetFloat(pDataNode, scaleXAttribName);
 	}
-	if(attribute = xmlGetProp(pXMLNode, scaleYAttribName))
+	if(pDataNode->fnGetPropType(pDataNode, scaleYAttribName) == DN_Float)
 	{
-		pWidgetData->scale.scaleY = atof(attribute);
+		pWidgetData->scale.scaleY = pDataNode->fnGetFloat(pDataNode, scaleYAttribName);
 	}
 }
 
@@ -324,7 +323,7 @@ static void ParseBindingEspressionAttribute(char* attribName, char* attribConten
 
 }
 
-static void MakeSliderFromXML(struct UIWidget* pWidget, struct SliderData* pData, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeSliderFromXML(struct UIWidget* pWidget, struct SliderData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	PopulateStaticInternal(pXMLNode, &pData->railStaticData, pUILayerData,
 		"railSprite",
@@ -334,31 +333,31 @@ static void MakeSliderFromXML(struct UIWidget* pWidget, struct SliderData* pData
 		"sliderSprite",
 		"sliderScaleX",
 		"sliderScaleY");
-
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pXMLNode, "orientation"))
+	if(pXMLNode->fnGetPropType(pXMLNode, "orientation") == DN_String)
 	{
-		if (strcmp(attribute, "horizontal") == 0)
+		if(pXMLNode->fnContentStrCmp(pXMLNode, "horizontal"))
 		{
 			pData->orientation = SO_Horizontal;
 		}
-		else if (strcmp(attribute, "vertical") == 0)
+		else if (pXMLNode->fnContentStrCmp(pXMLNode, "vertical"))
 		{
 			pData->orientation = SO_Vertical;
 		}
 		else
 		{
-			printf("invalid slider orientation %s\n", attribute);
+			printf("invalid slider orientation\n");
 		}
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pXMLNode, "val"))
+	if(pXMLNode->fnGetPropType(pXMLNode, "val") == DN_String)
 	{
+		size_t len = pXMLNode->fnGetStrlen(pXMLNode, "val");
+		char* attribute = malloc(len + 1);
+		pXMLNode->fnGetStrcpy(pXMLNode, "val", attribute);
 		if(UI_IsAttributeStringABindingExpression(attribute))
 		{
 			ParseBindingEspressionAttribute("val", attribute, pWidget, pData, pUILayerData);
 		}
-		xmlFree(attribute);
+		free(attribute);
 	}
 }
 
@@ -411,7 +410,7 @@ void SliderWidget_MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUI
 }
 
 
-static void MakeWidgetIntoSliderWidget(HWidget hWidget, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+static void MakeWidgetIntoSliderWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	pWidget->hNext = -1;
@@ -441,12 +440,12 @@ static void MakeWidgetIntoSliderWidget(HWidget hWidget, xmlNode* pXMLNode, struc
 	memset(pWidget->pImplementationData, 0, sizeof(struct SliderData));
 	SliderWidget_MakeDefaultSliderWidget(pWidget->pImplementationData, pUILayerData, SO_Horizontal);
 	struct SliderData* pData = pWidget->pImplementationData;
-	MakeSliderFromXML(pWidget, pData, pXMLNode, pUILayerData);
+	MakeSliderFromXML(pWidget, pData, pDataNode, pUILayerData);
 }
 
-HWidget SliderWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData)
+HWidget SliderWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	HWidget hWidget = UI_NewBlankWidget();
-	MakeWidgetIntoSliderWidget(hWidget, pXMLNode, pUILayerData);
+	MakeWidgetIntoSliderWidget(hWidget, pDataNode, pUILayerData);
 	return hWidget;
 }

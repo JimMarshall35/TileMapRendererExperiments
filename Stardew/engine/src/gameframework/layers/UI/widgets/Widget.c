@@ -521,6 +521,8 @@ void UI_WidgetCommonInit(xmlNode* pInNode, struct UIWidget* outWidget)
 	ParseWidgetAlignments(pInNode, outWidget);
 }
 
+
+
 static const char* GetDockingPointName(WidgetDockPoint dockingPoint)
 {
 	switch (dockingPoint)

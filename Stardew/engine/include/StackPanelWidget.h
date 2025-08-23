@@ -18,9 +18,11 @@ struct StackPanelWidgetData
 struct UIWidget;
 struct XMLUIData;
 
-HWidget StackPanelWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUIData);
+struct DataNode;
 
-void StackPanel_PopulateDataFromXML(xmlNode* pXMLNode, struct StackPanelWidgetData* pData);
+HWidget StackPanelWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUIData);
+
+void StackPanel_PopulateDataFromXML(struct DataNode* pXMLNode, struct StackPanelWidgetData* pData);
 float StackPanel_GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData);
 float StackPanel_GetHeight(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData);
 void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent, struct StackPanelWidgetData* pStackPanelData, float w, float h);

@@ -32,12 +32,12 @@ struct CanvasData
 	bool bUseVSlider;
 };
 
-typedef struct _xmlNode xmlNode;
+struct DataNode;
 struct XMLUIData;
 struct UIWidget;
 struct WidgetVertex;
 
-HWidget CanvasWidgetNew(HWidget hParent, xmlNode* pXMLNode, struct XMLUIData* pUILayerData);
+HWidget CanvasWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, struct WidgetVertex* pOutVerts);
 
 
