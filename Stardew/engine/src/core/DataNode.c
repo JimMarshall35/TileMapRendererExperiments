@@ -6,6 +6,19 @@
 #include <stdio.h>
 #include "AssertLib.h"
 
+static bool ContainsChar(const char* str, char c)
+{
+    while (*str)
+    {
+        if (*str == c)
+        {
+            return true;
+        }
+        str++;
+    }
+    return false;
+}
+
 static enum DNPropValType GetPropType_XMLNode(struct DataNode* pNode, const char* propName)
 {
     xmlNode* pXMLNode = (xmlNode*)pNode->pData;
@@ -20,19 +33,27 @@ static enum DNPropValType GetPropType_XMLNode(struct DataNode* pNode, const char
     // if it looks like true/false its a bool
     // otherwise its a string
     char* endPtr = NULL;
+
+    endPtr = NULL;
+    float floatVal = strtof((const char*)prop, &endPtr);
+    if (endPtr != (const char*)prop && *endPtr == '\0')
+    {
+        /* its a float if it has a . or an e in it, OK?! OK then... */
+        if(ContainsChar((const char*)prop, '.') || ContainsChar((const char*)prop, 'e'))
+        {
+            xmlFree(prop);
+            return DN_Float;
+        }
+    }
+
+    endPtr = NULL;
     long intVal = strtol((const char*)prop, &endPtr, 10);
     if (endPtr != (const char*)prop && *endPtr == '\0')
     {
         xmlFree(prop);
         return DN_Int;
     }
-    endPtr = NULL;
-    float floatVal = strtof((const char*)prop, &endPtr);
-    if (endPtr != (const char*)prop && *endPtr == '\0')
-    {
-        xmlFree(prop);
-        return DN_Float;
-    }
+    
     if (strcmp((const char*)prop, "true") == 0 || strcmp((const char*)prop, "false") == 0)
     {
         xmlFree(prop);

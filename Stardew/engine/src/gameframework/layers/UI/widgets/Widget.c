@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "Scripting.h"
 #include "AssertLib.h"
+#include "DataNode.h"
 
 OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 HWidget gScratchWidget = NULL_HANDLE; 
@@ -182,33 +183,27 @@ void UI_ParseWidgetDimsAttribute(const char* attributeContent, struct WidgetDim*
 	outWidgetDims->data = dimVal;
 }
 
-void UI_ParseWidgetPaddingAttributes(xmlNode* pInNode, struct WidgetPadding* outWidgetPadding)
+void UI_ParseWidgetPaddingAttributes(struct DataNode* pInNode, struct WidgetPadding* outWidgetPadding)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "paddingTop"))
+	if(pInNode->fnGetPropType(pInNode, "paddingTop") == DN_Float || pInNode->fnGetPropType(pInNode, "paddingTop") == DN_Int)
 	{
-		outWidgetPadding->paddingTop = (float)atof(attribute);
-		xmlFree(attribute);
+		outWidgetPadding->paddingTop = pInNode->fnGetFloat(pInNode, "paddingTop");
 	}
-	if(attribute = xmlGetProp(pInNode, "paddingBottom"))
+	if(pInNode->fnGetPropType(pInNode, "paddingBottom") == DN_Float || pInNode->fnGetPropType(pInNode, "paddingBottom") == DN_Int)
 	{
-		outWidgetPadding->paddingBottom = (float)atof(attribute);
-		xmlFree(attribute);
+		outWidgetPadding->paddingBottom = pInNode->fnGetFloat(pInNode, "paddingBottom");
 	}
-	if(attribute = xmlGetProp(pInNode, "paddingLeft"))
+	if(pInNode->fnGetPropType(pInNode, "paddingLeft") == DN_Float || pInNode->fnGetPropType(pInNode, "paddingLeft") == DN_Int)
 	{
-		outWidgetPadding->paddingLeft = (float)atof(attribute);
-		xmlFree(attribute);
+		outWidgetPadding->paddingLeft = pInNode->fnGetFloat(pInNode, "paddingLeft");
 	}
-	if(attribute = xmlGetProp(pInNode, "paddingRight"))
+	if(pInNode->fnGetPropType(pInNode, "paddingRight") == DN_Float || pInNode->fnGetPropType(pInNode, "paddingRight") == DN_Int)
 	{
-		outWidgetPadding->paddingRight = (float)atof(attribute);
-		xmlFree(attribute);
+		outWidgetPadding->paddingRight = pInNode->fnGetFloat(pInNode, "paddingRight");
 	}
-
 }
 
-void UI_ParseHorizontalAlignementAttribute(xmlChar* contents, enum WidgetHorizontalAlignment* outAlignment)
+void UI_ParseHorizontalAlignementAttribute(const char* contents, enum WidgetHorizontalAlignment* outAlignment)
 {
 	if (strcmp(contents, "left") == 0)
 	{
@@ -228,7 +223,7 @@ void UI_ParseHorizontalAlignementAttribute(xmlChar* contents, enum WidgetHorizon
 	}
 }
 
-void UI_ParseVerticalAlignementAttribute(xmlChar* contents, enum WidgetVerticalAlignment* outAlignment)
+void UI_ParseVerticalAlignementAttribute(const char* contents, enum WidgetVerticalAlignment* outAlignment)
 {
 	if (strcmp(contents, "top") == 0)
 	{
@@ -361,157 +356,136 @@ float UI_ResolveHeightDimPxls(struct UIWidget* pWidget, const struct WidgetDim* 
 }
 
 
-bool UI_ParseWidgetDockPoint(xmlNode* pInNode, struct UIWidget* outWidget)
+bool UI_ParseWidgetDockPoint(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "dockPoint"))
+	if(pInNode->fnGetPropType(pInNode, "dockPoint") == DN_String)
 	{
-		if (strcmp(attribute, "topLeft") == 0)
+		if (pInNode->fnStrCmp(pInNode, "dockPoint", "topLeft"))
 		{
 			outWidget->dockPoint = WDP_TopLeft;
 			return true;
 		}
-		else if (strcmp(attribute, "topMiddle") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "topMiddle"))
 		{
 			outWidget->dockPoint = WDP_TopMiddle;
 			return true;
 		}
-		else if (strcmp(attribute, "topRight") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "topRight"))
 		{
 			outWidget->dockPoint = WDP_TopRight;
 			return true;
 		}
-		else if (strcmp(attribute, "middleRight") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "middleRight"))
 		{
 			outWidget->dockPoint = WDP_MiddleRight;
 			return true;
 		}
-		else if (strcmp(attribute, "bottomRight") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "bottomRight"))
 		{
 			outWidget->dockPoint = WDP_BottomRight;
 			return true;
 		}
-		else if (strcmp(attribute, "bottomMiddle") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "bottomMiddle"))
 		{
 			outWidget->dockPoint = WDP_BottomMiddle;
 			return true;
 		}
-		else if (strcmp(attribute, "bottomLeft") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "bottomLeft"))
 		{
 			outWidget->dockPoint = WDP_BottomLeft;
 			return true;
 		}
-		else if (strcmp(attribute, "middleLeft") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "middleLeft"))
 		{
 			outWidget->dockPoint = WDP_MiddleLeft;
 			return true;
 		}
-		else if (strcmp(attribute, "centre") == 0)
+		else if (pInNode->fnStrCmp(pInNode, "dockPoint", "centre"))
 		{
 			outWidget->dockPoint = WDP_Centre;
 			return true;
 		}
-		xmlFree(attribute);
 	}
 	return false;
 }
 
-static void ParseLuaCallbacks(xmlNode* pInNode, struct UIWidget* outWidget)
+static void ParseLuaCallbacks(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "onMouseEnter"))
+	if(pInNode->fnGetPropType(pInNode, "onMouseEnter") == DN_String)
 	{
+		pInNode->fnGetStrcpy(pInNode, "onMouseEnter", outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].name);
 		outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].bActive = true;
-		strcpy(
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseEnter].name,
-			attribute
-		);
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pInNode, "onMouseLeave"))
+	if(pInNode->fnGetPropType(pInNode, "onMouseLeave") == DN_String)
 	{
+		pInNode->fnGetStrcpy(pInNode, "onMouseLeave", outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].name);
 		outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].bActive = true;
-		strcpy(
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseLeave].name,
-			attribute
-		);
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pInNode, "onMouseMove"))
+	if(pInNode->fnGetPropType(pInNode, "onMouseMove") == DN_String)
 	{
+		pInNode->fnGetStrcpy(pInNode, "onMouseMove", outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].name);
 		outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].bActive = true;
-		strcpy(
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseMove].name,
-			attribute
-		);
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pInNode, "onMouseDown"))
+	if(pInNode->fnGetPropType(pInNode, "onMouseDown") == DN_String)
 	{
+		pInNode->fnGetStrcpy(pInNode, "onMouseDown", outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].name);
 		outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].bActive = true;
-		strcpy(
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseDown].name,
-			attribute
-		);
-		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pInNode, "onMouseUp"))
+	if(pInNode->fnGetPropType(pInNode, "onMouseUp") == DN_String)
 	{
+		pInNode->fnGetStrcpy(pInNode, "onMouseUp", outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].name);
 		outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].bActive = true;
-		strcpy(
-			outWidget->scriptCallbacks.Callbacks[WC_OnMouseUp].name,
-			attribute
-		);
-		xmlFree(attribute);
 	}
 }
 
-static void ParseWidgetAlignments(xmlNode* pInNode, struct UIWidget* outWidget)
+static void ParseWidgetAlignments(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
 	outWidget->horizontalAlignment = WHA_Middle;
 	outWidget->verticalAlignment = WVA_Middle;
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "horizontalAlignment"))
+
+	if(pInNode->fnGetPropType(pInNode, "horizontalAlignment") == DN_String)
 	{
-		UI_ParseHorizontalAlignementAttribute(attribute, &outWidget->horizontalAlignment);
+		char buffer[64];
+		pInNode->fnGetStrcpy(pInNode, "horizontalAlignment", buffer);
+		UI_ParseHorizontalAlignementAttribute(buffer, &outWidget->horizontalAlignment);
 	}
-	if(attribute = xmlGetProp(pInNode, "verticalAlignment"))
+	if(pInNode->fnGetPropType(pInNode, "verticalAlignment") == DN_String)
 	{
-		UI_ParseVerticalAlignementAttribute(attribute, &outWidget->verticalAlignment);
+		char buffer[64];
+		pInNode->fnGetStrcpy(pInNode, "verticalAlignment", buffer);
+		UI_ParseVerticalAlignementAttribute(buffer, &outWidget->verticalAlignment);
 	}
 }
 
-static void ParseWidgetDims(xmlNode* pInNode, struct UIWidget* outWidget)
+static void ParseWidgetDims(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "width"))
+	if(pInNode->fnGetPropType(pInNode, "width") == DN_String)
 	{
-		UI_ParseWidgetDimsAttribute(attribute, &outWidget->width);
-		xmlFree(attribute);
+		char buffer[64];
+		pInNode->fnGetStrcpy(pInNode, "width", buffer);
+		UI_ParseWidgetDimsAttribute(buffer, &outWidget->width);
 	}
-	if(attribute = xmlGetProp(pInNode, "height"))
+	if(pInNode->fnGetPropType(pInNode, "height") == DN_String)
 	{
-		UI_ParseWidgetDimsAttribute(attribute, &outWidget->height);
-		xmlFree(attribute);
+		char buffer[64];
+		pInNode->fnGetStrcpy(pInNode, "height", buffer);
+		UI_ParseWidgetDimsAttribute(buffer, &outWidget->height);
 	}
 }
 
-static void ParseWidgetOffsets(xmlNode* pInNode, struct UIWidget* outWidget)
+static void ParseWidgetOffsets(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
-	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pInNode, "x"))
+	if(pInNode->fnGetPropType(pInNode, "x") == DN_Float)
 	{
-		outWidget->offsetX = atof(attribute);
-		xmlFree(attribute);
+		outWidget->offsetX = pInNode->fnGetFloat(pInNode, "x");
 	}
-	if(attribute = xmlGetProp(pInNode, "y"))
+	if(pInNode->fnGetPropType(pInNode, "y") == DN_Float)
 	{
-		outWidget->offsetY = atof(attribute);
-		xmlFree(attribute);
+		outWidget->offsetY = pInNode->fnGetFloat(pInNode, "y");
 	}
 }
 
-void UI_WidgetCommonInit(xmlNode* pInNode, struct UIWidget* outWidget)
+void UI_WidgetCommonInit(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
 	UI_ParseWidgetPaddingAttributes(pInNode, &outWidget->padding);
 	UI_ParseWidgetDockPoint(pInNode, outWidget);

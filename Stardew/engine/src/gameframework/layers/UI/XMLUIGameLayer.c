@@ -122,6 +122,7 @@ static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
 
 		struct UIWidget* pWiddget = UI_GetWidget(hNew);
 		pWiddget->scriptCallbacks.viewmodelTable = pData->hViewModel;
+		UI_WidgetCommonInit(&node, pWiddget);
 
 		UI_AddChild(hParent, hNew);
 		Sc_TableGet("children");
@@ -171,6 +172,11 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 			printf("error: function %s did not return a table\n", pReq->funcName);
 		}
 	}
+	for(int i=0; i<VectorSize(pData->pChildrenChangeRequests); i++)
+	{
+		free(pData->pChildrenChangeRequests[i].funcName);
+	}
+	VectorClear(pData->pChildrenChangeRequests);
 }
 
 static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
@@ -500,7 +506,7 @@ void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 
 		struct UIWidget* pWiddget = UI_GetWidget(childWidget);
 		pWiddget->scriptCallbacks.viewmodelTable = pUIData->hViewModel;
-		UI_WidgetCommonInit(pChild, pWiddget);
+		UI_WidgetCommonInit(&dataNode, pWiddget);
 
 		UI_AddChild(widget, childWidget);
 		
