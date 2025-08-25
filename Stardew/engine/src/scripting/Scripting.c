@@ -16,6 +16,8 @@ static lua_State* gL = NULL;
 
 static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const char* pChangedPropName)
 {
+	//printf("OnPropertyChangedInternal. pChangedPropName: %s\n", pChangedPropName);
+
 	while (hWidget != NULL_HWIDGET)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -24,16 +26,25 @@ static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const
 			struct WidgetPropertyBinding* pBinding = &pWidget->bindings[i];
 			if (strcmp(pBinding->name, pChangedPropName) == 0)
 			{
-				if(strcmp(pBinding->boundPropertyName, "children") == 0)
+				if(strcmp(pBinding->boundPropertyName, "childrenBinding") == 0)
 				{
+					printf("childrenBinding changed. pChangedPropName: %s\n", pChangedPropName);
 					char* pStr = malloc(strlen(pChangedPropName) + 1);
+					printf("malloc\n");
+
 					strcpy(pStr, pChangedPropName);
+					printf("pStr: %s\n", pStr);
+
 					struct WidgetChildrenChangeRequest r = {
 						pUIData->hViewModel,
 						pStr,
 						hWidget
 					};
-					pUIData->pChildrenChangeRequests = VectorPush(&pUIData->pChildrenChangeRequests, &r);
+					printf("pUIData->pChildrenChangeRequests: %p\n", pUIData->pChildrenChangeRequests);
+
+					pUIData->pChildrenChangeRequests = VectorPush(pUIData->pChildrenChangeRequests, &r);
+					printf("pushed request\n");
+
 				}
 				else if (pWidget->fnOnBoundPropertyChanged)
 				{
@@ -64,6 +75,7 @@ static int L_OnPropertyChanged(lua_State* L)
 	OnPropertyChangedInternal(pUIData, hWidget, pNameCpy);
 	free(pNameCpy);
 	SetRootWidgetIsDirty(pUIData->rootWidget, true);
+	return 0;
 }
 
 
@@ -222,6 +234,33 @@ void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void
 	printf("Sc_AddLightUserDataValueToTable done\n");
 }
 
+void Sc_DumpStack()
+{
+	int top = lua_gettop(gL);
+	for (int i = 1; i <= top; i++) 
+	{
+		printf("%d\t%s\t", i, luaL_typename(gL, i));
+		switch (lua_type(gL, i)) 
+		{
+		case LUA_TNUMBER:
+			printf("%g\n", lua_tonumber(gL, i));
+			break;
+		case LUA_TSTRING:
+			printf("%s\n", lua_tostring(gL, i));
+			break;
+		case LUA_TBOOLEAN:
+			printf("%s\n", (lua_toboolean(gL, i) ? "true" : "false"));
+			break;
+		case LUA_TNIL:
+			printf("%s\n", "nil");
+			break;
+		default:
+			printf("%p\n", lua_topointer(gL, i));
+			break;
+		}
+	}
+}
+
 int Sc_Int()
 {
 #if GAME_LUA_MINOR_VERSION >= 3
@@ -286,6 +325,9 @@ int Sc_TableLen()
 {
 	EASSERT(Sc_IsTable());
 	lua_len(gL, -1);
+	int i = Sc_Int();
+	Sc_Pop();
+	return i;
 }
 
 bool Sc_IsNil()

@@ -180,6 +180,7 @@ enum WidgetPropertyBindingType
 	WBT_Float,
 	WBT_String,
 	WBT_Bool,
+	WBT_WidgetTree
 };
 
 struct WidgetPropertyBinding

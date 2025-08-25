@@ -91,11 +91,12 @@ void UI_AddChild(HWidget hParent, HWidget hChild)
 	HWidget hLastWidget = hChild;
 	while (pLastChild->hNext != NULL_HWIDGET)
 	{
-		hLastWidget = pLastChild->hNext;
 		pLastChild = UI_GetWidget(pLastChild->hNext);
+		hLastWidget = pLastChild->hNext;
 	}
 	pLastChild->hNext = hChild;
 	pChild->hPrev = hLastWidget;
+	pChild->hNext = NULL_HWIDGET;
 
 }
 
@@ -125,10 +126,10 @@ void UI_DestroyWidget(HWidget widget)
 	}
 	if (widget >= 0 && widget < ObjectPoolCapacity(gWidgetPool))
 	{
+		gWidgetPool[widget].fnOnDestroy(&gWidgetPool[widget]);
 		HWidget child = gWidgetPool[widget].hFirstChild;
 		while (child != NULL_HWIDGET)
 		{
-			gWidgetPool[widget].fnOnDestroy(&gWidgetPool[widget]);
 			UI_DestroyWidget(child);
 			child = gWidgetPool[child].hNext;
 		}
@@ -493,6 +494,14 @@ void UI_WidgetCommonInit(struct DataNode* pInNode, struct UIWidget* outWidget)
 	ParseWidgetDims(pInNode, outWidget);
 	ParseWidgetOffsets(pInNode, outWidget);
 	ParseWidgetAlignments(pInNode, outWidget);
+
+	if(pInNode->fnGetPropType(pInNode, "childrenBinding") == DN_String)
+	{
+		struct WidgetPropertyBinding* pBinding = &outWidget->bindings[outWidget->numBindings++];
+		pBinding->type = WBT_WidgetTree;
+		pInNode->fnGetStrcpy(pInNode, "childrenBinding", pBinding->name);
+		strcpy(pBinding->boundPropertyName, "childrenBinding");
+	}
 }
 
 

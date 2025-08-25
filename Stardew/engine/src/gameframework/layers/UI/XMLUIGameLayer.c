@@ -67,6 +67,7 @@ AddChildFn LookupWidgetCtor(const char* widgetName)
 static void FreeWidgetTree_internal(HWidget root, bool bFreeRoot)
 {
 	struct UIWidget* pWidget = UI_GetWidget(root);
+	struct UIWidget* pWidgetRoot = pWidget;
 	if(!pWidget)
 	{
 		return;
@@ -81,10 +82,12 @@ static void FreeWidgetTree_internal(HWidget root, bool bFreeRoot)
 		h = pWidget->hNext;
 		FreeWidgetTree_internal(oldH, true);
 	}
+	pWidgetRoot->hFirstChild = NULL_HWIDGET;
 	if(bFreeRoot)
 	{
 		UI_DestroyWidget(root);
 	}
+
 }
 
 static void FreeWidgetTree(HWidget root)
@@ -121,12 +124,13 @@ static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
 		free(pStr);
 
 		struct UIWidget* pWiddget = UI_GetWidget(hNew);
-		pWiddget->scriptCallbacks.viewmodelTable = pData->hViewModel;
 		UI_WidgetCommonInit(&node, pWiddget);
+		pWiddget->hNext = NULL_HANDLE;
+		pWiddget->scriptCallbacks.viewmodelTable = pData->hViewModel;
 
 		UI_AddChild(hParent, hNew);
 		Sc_TableGet("children");
-		for(int i=0; i<Sc_TableLen(); i++)
+		for(int i=1; i<=Sc_TableLen(); i++)
 		{
 			Sc_TableGetIndex(i);
 			if(Sc_IsTable())
@@ -150,14 +154,18 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 	TP_DoTimers(&pData->timerPool, deltaT);
 	if(VectorSize(pData->pChildrenChangeRequests))
 	{
+		//printf("child change request\n");
 		struct WidgetChildrenChangeRequest* pReq = &pData->pChildrenChangeRequests[0];
+		//printf("freeing widget children\n");
 		FreeWidgetChildren(pReq->hWidget);
+		//printf("calling function %s\n", pReq->funcName);
 		Sc_CallFuncInRegTableEntryTable(pReq->regIndex, pReq->funcName, NULL, 0, 1);
 		if(Sc_IsTable())
 		{
-			for(int i=0; i<Sc_TableLen(); i++)
+			for(int i=1; i<=Sc_TableLen(); i++)
 			{
 				Sc_TableGetIndex(i);
+
 				if(Sc_IsTable())
 				{
 					AddLuaTableSubTree(pData, pReq->hWidget);
@@ -176,7 +184,8 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 	{
 		free(pData->pChildrenChangeRequests[i].funcName);
 	}
-	VectorClear(pData->pChildrenChangeRequests);
+	pData->pChildrenChangeRequests = VectorClear(pData->pChildrenChangeRequests);
+	Sc_ResetStack();
 }
 
 static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)

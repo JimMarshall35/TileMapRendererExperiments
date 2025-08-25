@@ -80,4 +80,6 @@ int Sc_TableLen();
 
 bool Sc_StringCmp(const char* cmpTo);
 
+void Sc_DumpStack();
+
 #endif
