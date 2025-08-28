@@ -15,14 +15,16 @@ struct TextWidgetData
 	float fSizePts;
 	hAtlas atlas;
 	float r, g, b, a;
+	HWidget rootWidget;
 };
 
 
 struct XMLUIData;
 struct WidgetPadding;
 struct WidgetVertex;
+struct UIWidget;
 
-void TextWidget_FromXML(struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
+void TextWidget_FromXML(struct UIWidget* pWidget, struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 HWidget TextWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 

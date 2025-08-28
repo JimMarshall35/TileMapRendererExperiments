@@ -105,24 +105,6 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void OnDebugPrint(int indentLvl, struct UIWidget* pWidget, PrintfFn printfFn)
-{
-
-	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
-	for (int i = 0; i < indentLvl; i++)
-	{
-		printfFn("\t");
-	}
-	printfFn("Static. imageName = %s, scaleX = %.2f, scaleY = %.2f, sprite = %i, atlas = %i, ",
-		pStaticData->imageName,
-		pStaticData->scale.scaleX,
-		pStaticData->scale.scaleY,
-		pStaticData->sprite,
-		pStaticData->atlas);
-	UI_DebugPrintCommonWidgetInfo(pWidget, printfFn);
-	printfFn("\n");
-}
-
 static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
 {
 	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;

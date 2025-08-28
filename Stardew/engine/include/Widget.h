@@ -36,6 +36,8 @@ typedef struct WidgetDim* (*WidgetDimGetterFn)(struct UIWidget* pWidget);
 
 typedef void (*FocusedWidgetRecieveKeystrokeFn)(struct UIWidget* pWidget, int keystroke);
 
+typedef void (*OnChildrenChangedFn)(struct UIWidget* pWidget);
+
 struct WidgetDim* GetWidgetWidthDim(struct UIWidget* pWidget);
 struct WidgetDim* GetWidgetHeightDim(struct UIWidget* pWidget);
 
@@ -219,6 +221,7 @@ struct UIWidget
 	OnBoundPropertyChangedFn fnOnBoundPropertyChanged;
 	OnWidgetInitFn fnOnWidgetInit; // called once whole widget tree is constructed
 	FocusedWidgetRecieveKeystrokeFn fnRecieveKeystroke;
+	OnChildrenChangedFn fnOnWidgetChildrenChangedFn;
 	float top;
 	float left;
 	WidgetDockPoint dockPoint;
@@ -361,5 +364,6 @@ char* UI_MakeBindingSetterFunctionName(const char* inBindingName);
 
 struct WidgetPropertyBinding* UI_FindBinding(struct UIWidget* pWidget, const char* bindingName);
 
+void UI_DefaultOnChildrenChanged(struct UIWidget* outWidget);
 
 #endif

@@ -12,6 +12,7 @@
 #include "InputContext.h"
 #include "RootWidget.h"
 #include "TimerPool.h"
+#include "Scripting.h"
 
 struct TextEntryWidgetData
 {
@@ -86,7 +87,7 @@ static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropert
 
 }
 
-static void DoBackspace(struct TextEntryWidgetData* pData)
+static void DoBackspace(struct TextEntryWidgetData* pData, struct UIWidget* pWidget)
 {
 	if(pData->currentStringLen == 0)
 	{
@@ -99,9 +100,19 @@ static void DoBackspace(struct TextEntryWidgetData* pData)
 	}
 	pData->cursorIndex--;
 	pData->textWidget.content[--pData->currentStringLen] = '\0';
+	struct WidgetPropertyBinding* pBinding = UI_FindBinding(pWidget, "content");
+	if (pBinding)
+	{
+		char* setterName = UI_MakeBindingSetterFunctionName(pBinding->name);
+		struct ScriptCallArgument arg;
+		arg.type = SCA_string;
+		arg.val.string = pData->textWidget.content;
+		Sc_CallFuncInRegTableEntryTable(pWidget->scriptCallbacks.viewmodelTable, setterName, &arg, 1, 0);
+		free(setterName);
+	}
 }
 
-static void DoEnterChar(struct TextEntryWidgetData* pData, char c)
+static void DoEnterChar(struct TextEntryWidgetData* pData, char c, struct UIWidget* pWidget)
 {
 	if(pData->currentStringLen >= pData->maxStringLen)
 	{
@@ -115,6 +126,17 @@ static void DoEnterChar(struct TextEntryWidgetData* pData, char c)
 	}
 	pData->textWidget.content[pData->cursorIndex++] = c;
 	pData->currentStringLen++;
+
+	struct WidgetPropertyBinding* pBinding = UI_FindBinding(pWidget, "content");
+	if (pBinding)
+	{
+		char* setterName = UI_MakeBindingSetterFunctionName(pBinding->name);
+		struct ScriptCallArgument arg;
+		arg.type = SCA_string;
+		arg.val.string = pData->textWidget.content;
+		Sc_CallFuncInRegTableEntryTable(pWidget->scriptCallbacks.viewmodelTable, setterName, &arg, 1, 0);
+		free(setterName);
+	}
 }
 
 static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
@@ -143,12 +165,12 @@ static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
 		{
 			if(pData->cursorIndex != 0)
 			{
-				DoBackspace(pData);
+				DoBackspace(pData, pWidget);
 			}
 		}
 		break;
 	default:
-		DoEnterChar(pData, (char)keystroke);
+		DoEnterChar(pData, (char)keystroke, pWidget);
 		printf("%c\n",(char)keystroke);
 		break;
 	}
@@ -249,7 +271,7 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, struct DataNode* pDat
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 	
 	pData->pLayerData = pUILayerData;
-	TextWidget_FromXML(&pData->textWidget, pDataNode, pUILayerData);
+	TextWidget_FromXML(pWidget, &pData->textWidget, pDataNode, pUILayerData);
 	pData->canvasWidget.bUseHSlider = false;
 	pData->canvasWidget.bUseVSlider = false;
 	xmlChar* attribute = NULL;

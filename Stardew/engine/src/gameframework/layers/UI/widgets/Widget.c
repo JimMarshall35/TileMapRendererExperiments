@@ -325,6 +325,11 @@ float UI_ResolveHeightDimPxls(struct UIWidget* pWidget, const struct WidgetDim* 
 {
 	switch (dim->type)
 	{
+	case	 WD_Stretch:
+	{
+		break;
+
+	}
 	case WD_Auto:            
 	{
 		if(pWidget->hFirstChild != NULL_HANDLE)
@@ -486,8 +491,22 @@ static void ParseWidgetOffsets(struct DataNode* pInNode, struct UIWidget* outWid
 	}
 }
 
+void UI_DefaultOnChildrenChanged(struct UIWidget* outWidget)
+{
+	if (outWidget->hParent)
+	{
+		struct UIWidget* pWidget = UI_GetWidget(outWidget->hParent);
+		if (pWidget->fnOnWidgetChildrenChangedFn)
+		{
+			pWidget->fnOnWidgetChildrenChangedFn(pWidget);
+		}
+	}
+}
+
 void UI_WidgetCommonInit(struct DataNode* pInNode, struct UIWidget* outWidget)
 {
+	if(!outWidget->fnOnWidgetChildrenChangedFn)
+		outWidget->fnOnWidgetChildrenChangedFn = UI_DefaultOnChildrenChanged;
 	UI_ParseWidgetPaddingAttributes(pInNode, &outWidget->padding);
 	UI_ParseWidgetDockPoint(pInNode, outWidget);
 	ParseLuaCallbacks(pInNode, outWidget);

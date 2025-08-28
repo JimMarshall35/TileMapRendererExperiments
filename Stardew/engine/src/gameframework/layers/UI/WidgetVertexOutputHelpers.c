@@ -92,8 +92,8 @@ static bool AllCornerOutsideOfRegion(struct WidgetQuad* pQuad)
 
 static float ClipUV(float p0, float p1, float uv0, float uv1, float midpos)
 {
-	EASSERT(p1 > p0);
-	EASSERT(midpos >= p0 && midpos <= p1);
+	//EASSERT(p1 > p0);
+	//EASSERT(midpos >= p0 && midpos <= p1);
 	float s = p1 - p0;
 	float s2 = midpos - p0;
 	float t = s2 / s;

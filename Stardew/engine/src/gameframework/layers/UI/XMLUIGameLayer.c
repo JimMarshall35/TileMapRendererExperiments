@@ -174,6 +174,14 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 				Sc_Pop();
 			}
 			Sc_Pop();
+			struct UIWidget* pWidget = UI_GetWidget(pReq->hWidget);
+			if (pWidget)
+			{
+				if (pWidget->fnOnWidgetChildrenChangedFn)
+				{
+					pWidget->fnOnWidgetChildrenChangedFn(pWidget);
+				}
+			}
 		}
 		else
 		{

@@ -128,7 +128,7 @@ static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex)
 		pWidget->left,
 		pWidget->top
 	);
-	pOutVerts = TextWidget_OutputVerts(pWidget->left, pWidget->top, &pWD->textPadding, pTextWidgetData, pOutVerts);
+	pOutVerts = TextWidget_OutputVerts(pWidget->left + pWidget->padding.paddingLeft, pWidget->top + pWidget->padding.paddingTop, &pWD->textPadding, pTextWidgetData, pOutVerts);
 	
 	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 	return pOutVerts;
@@ -197,7 +197,7 @@ static void MakeWidgetIntoTextButtonWidget(HWidget hWidget, struct DataNode* pDa
 	pData->RootWidget = pUILayerData->rootWidget;
 	pData->viewmodelRegIndex = pUILayerData->hViewModel;
 	MakeDefaultTextButtonWidgetData(pData, pUILayerData);
-	TextWidget_FromXML(&pData->textWidgetData, pDataNode, pUILayerData);
+	TextWidget_FromXML(pWidget, &pData->textWidgetData, pDataNode, pUILayerData);
 	BackgroundBoxWidget_fromXML(pWidget, &pData->backgroundBoxWidgetData, pDataNode, pUILayerData);
 	SetCMouseCallbacks(pWidget);
 

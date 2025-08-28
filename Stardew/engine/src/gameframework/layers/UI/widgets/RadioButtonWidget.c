@@ -318,7 +318,7 @@ static void MakeWidgetIntoRadioButtonWidget(HWidget hWidget, struct DataNode* pD
 
 	StaticWidget_MakeFromXML(&pData->selectedRadioStatic, pDataNode, pUILayerData);
 	StaticWidget_MakeFromXML(&pData->unSelectedRadioStatic, pDataNode, pUILayerData);
-	TextWidget_FromXML(&pData->textWidgetData, pDataNode, pUILayerData);
+	TextWidget_FromXML(pWidget, &pData->textWidgetData, pDataNode, pUILayerData);
 	RadioButtonWidget_MakeFromXML(pDataNode, pData);
 }
 

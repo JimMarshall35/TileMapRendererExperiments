@@ -109,6 +109,28 @@ static void SetScroll(struct CanvasData* pData)
 	}
 }
 
+static void SetSliderMinAndMax(struct UIWidget* pWidget, struct CanvasData* pCanvasData)
+{
+	float w = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingRight + pWidget->padding.paddingLeft);
+	float h = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingTop + pWidget->padding.paddingBottom);
+
+	float left = pWidget->left + pWidget->padding.paddingLeft;
+	float top = pWidget->top + pWidget->padding.paddingTop;
+	float amountAbove = top - pCanvasData->contentBB[1];
+	float amountBelow = pCanvasData->contentBB[3] - (top + h);
+	float amoutLeft = left - pCanvasData->contentBB[0];
+	float amountRight = pCanvasData->contentBB[2] - (left + w);
+
+	pCanvasData->sliderH.fMinVal = fabs(amoutLeft);
+	pCanvasData->sliderH.fMaxVal = -fabs(amountRight);
+
+	pCanvasData->sliderV.fMinVal = fabs(amountAbove);
+	pCanvasData->sliderV.fMaxVal = -fabs(amountBelow);
+
+	pCanvasData->sliderV.fVal = pCanvasData->sliderV.fMinVal;
+	pCanvasData->sliderH.fVal = pCanvasData->sliderH.fMinVal;
+}
+
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
 {
 	struct CanvasData* pData = pWidget->pImplementationData;
@@ -152,47 +174,25 @@ static void SetSliderPositionAndDims(struct UIWidget* pWidget, struct CanvasData
 	{
 		float canvasH = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent));
 		float canvasW = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent));
-		pData->sliderV.lengthPx = canvasH;
-		pData->sliderH.lengthPx = canvasW;
+		pData->sliderV.lengthPx = canvasH - (pWidget->padding.paddingTop + pWidget->padding.paddingBottom);
+		pData->sliderH.lengthPx = canvasW - (pWidget->padding.paddingLeft + pWidget->padding.paddingRight);
 		vec2 canvasTL = {
 			pWidget->left,
 			pWidget->top
 		};
 		if(pData->bUseHSlider)
 		{
-			pData->sliderHTopLeft[0] = canvasTL[0];
+			pData->sliderHTopLeft[0] = canvasTL[0] + pWidget->padding.paddingLeft;
 			pData->sliderHTopLeft[1] = canvasTL[1] + (canvasH - SliderWidget_GetHeight(&pData->sliderH, &zeroPadding));
 		}
 		if(pData->bUseVSlider)
 		{
 			pData->sliderVTopLeft[0] = canvasTL[0] + (canvasW - SliderWidget_GetWidth(&pData->sliderV, &zeroPadding));
-			pData->sliderVTopLeft[1] = canvasTL[1];
+			pData->sliderVTopLeft[1] = canvasTL[1] + pWidget->padding.paddingTop;
 		}
 	}
 	
 	
-}
-
-static void SetSliderMinAndMax(struct UIWidget* pWidget, struct CanvasData* pCanvasData)
-{
-	float w = pWidget->fnGetWidth(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingRight + pWidget->padding.paddingLeft);
-	float h = pWidget->fnGetHeight(pWidget, UI_GetWidget(pWidget->hParent)) - (pWidget->padding.paddingTop + pWidget->padding.paddingBottom);
-	
-	float left = pWidget->left + pWidget->padding.paddingLeft;
-	float top = pWidget->top + pWidget->padding.paddingTop;
-	float amountAbove = top - pCanvasData->contentBB[1];
-	float amountBelow = pCanvasData->contentBB[3] - (top + h);
-	float amoutLeft = left - pCanvasData->contentBB[0];
-	float amountRight = pCanvasData->contentBB[2] - (left + w);
-	
-	pCanvasData->sliderH.fMinVal = fabs(amoutLeft);
-	pCanvasData->sliderH.fMaxVal = -fabs(amountRight);
-
-	pCanvasData->sliderV.fMinVal = fabs(amountAbove);
-	pCanvasData->sliderV.fMaxVal = -fabs(amountBelow);
-
-	pCanvasData->sliderV.fVal = 0.0f;
-	pCanvasData->sliderH.fVal = 0.0f;
 }
 
 void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
@@ -321,6 +321,13 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 	}
 }
 
+static void OnChildrenChanged(struct UIWidget* pWidget)
+{
+	struct CanvasData* pData = pWidget->pImplementationData;
+	SetSliderMinAndMax(pWidget, pData);
+	UI_DefaultOnChildrenChanged(pWidget);
+}
+
 static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -335,7 +342,7 @@ static void MakeWidgetIntoCanvasWidget(HWidget hWidget, struct DataNode* pDataNo
 	pWidget->fnOutputVertices = &CanvasWidget_OnOutputVerts;
 	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->fnOnWidgetInit = &OnWidgetInit;
-
+	pWidget->fnOnWidgetChildrenChangedFn = &OnChildrenChanged;
 
 	pWidget->cCallbacks.Callbacks[WC_OnMouseDown].type = WC_OnMouseDown;
 	pWidget->cCallbacks.Callbacks[WC_OnMouseDown].callback.mouseBtnFn = &MouseButtonDownCallback;

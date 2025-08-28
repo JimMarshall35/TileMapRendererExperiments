@@ -7,6 +7,8 @@
 #include <string.h>
 #include "WidgetVertexOutputHelpers.h"
 #include "DataNode.h"
+#include "Scripting.h"
+#include "RootWidget.h"
 
 void TextWidget_Destroy(struct TextWidgetData* pData)
 {
@@ -233,7 +235,7 @@ static char* GetWhitespaceStrippedString(char* inString)
 	return outStr;
 }
 
-void TextWidget_FromXML(struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
+void TextWidget_FromXML(struct UIWidget* pWidget, struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData)
 {
 	pData->atlas = pUILayerData->atlas;
 	char* fontName = NULL;
@@ -255,8 +257,22 @@ void TextWidget_FromXML(struct TextWidgetData* pData, struct DataNode* pXMLNode,
 		pData->content = NULL;
 	}
 	pData->content = GetWhitespaceStrippedString(str);
+	if(UI_IsAttributeStringABindingExpression(pData->content))
+	{
+		char* p = NULL;
+		UI_AddStringPropertyBinding(
+			pWidget,
+			"content",
+			pData->content,
+			&p,
+			pUILayerData->hViewModel);
+		free(pData->content);
+		pData->content = p;
+	}
 
 	free(str);
+
+
 
 	bool bFontSet = false;
 	bool bFontSizeSet = false;
@@ -300,6 +316,26 @@ void TextWidget_FromXML(struct TextWidgetData* pData, struct DataNode* pXMLNode,
 	}
 }
 
+static void OnPropertyChanged(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding)
+{
+	struct TextWidgetData* pData = pThisWidget->pImplementationData;
+	if (strcmp(pBinding->boundPropertyName, "content") == 0)
+	{
+		char* fnName = UI_MakeBindingGetterFunctionName(pBinding->name);
+		Sc_CallFuncInRegTableEntryTable(pThisWidget->scriptCallbacks.viewmodelTable, fnName, NULL, 0, 1);
+		free(fnName);
+		if (pData->content)
+		{
+			free(pData->content);
+		}
+		pData->content = malloc(Sc_StackTopStringLen() + 1);
+		Sc_StackTopStrCopy(pData->content);
+		Sc_ResetStack();
+		SetRootWidgetIsDirty(pData->rootWidget, true);
+	}
+}
+
+
 static void MakeWidgetIntoTextWidget(HWidget hWidget, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)
 {
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
@@ -313,12 +349,14 @@ static void MakeWidgetIntoTextWidget(HWidget hWidget, struct DataNode* pDataNode
 	pWidget->fnLayoutChildren = &LayoutChildren;
 	pWidget->fnOnDestroy = &OnDestroy;
 	pWidget->fnOutputVertices = &OnOutputVerts;
+	pWidget->fnOnBoundPropertyChanged = &OnPropertyChanged;
 	pWidget->pImplementationData = malloc(sizeof(struct TextWidgetData));
+
 	memset(pWidget->pImplementationData, 0, sizeof(struct TextWidgetData));
 
 	struct TextWidgetData* pData = pWidget->pImplementationData;
-
-	TextWidget_FromXML(pData, pDataNode, pUILayerData);
+	pData->rootWidget = pUILayerData->rootWidget;
+	TextWidget_FromXML(pWidget, pData, pDataNode, pUILayerData);
 
 }
 
