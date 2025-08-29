@@ -3,10 +3,13 @@
 
 #include "HandleDefs.h"
 #include "DynArray.h"
+#include <stdbool.h>
 
 typedef struct _AtlasSprite AtlasSprite;
 
 struct DataNode;
+
+#define TEXT_WIDGET_DATA_LUA_CALLBACK_NAME_BUFFER_SIZE 32
 
 struct TextWidgetData
 {
@@ -16,6 +19,8 @@ struct TextWidgetData
 	hAtlas atlas;
 	float r, g, b, a;
 	HWidget rootWidget;
+	char onEnterPressLuaCallbackName[TEXT_WIDGET_DATA_LUA_CALLBACK_NAME_BUFFER_SIZE];
+	bool bEnterPressCallbackSet;
 };
 
 

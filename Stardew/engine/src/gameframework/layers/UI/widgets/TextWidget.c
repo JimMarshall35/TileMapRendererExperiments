@@ -300,6 +300,7 @@ void TextWidget_FromXML(struct UIWidget* pWidget, struct TextWidgetData* pData, 
 		bFontSizeSet = true;
 		free(sizeStr);
 	}
+	
 	if (bFontSet && bFontSizeSet)
 	{
 		HFont font = Fo_FindFont(pUILayerData->atlas, fontName, pData->fSizePts);

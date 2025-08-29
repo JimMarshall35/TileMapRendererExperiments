@@ -207,7 +207,6 @@ void StackPanel_LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParen
 			else
 			{
 				EASSERT(childWidth < w);
-				// TODO: move horizontal + vertical alignment directly into widget class, query here, centre alignment implemented currently
 				switch(pChild->horizontalAlignment)
 				{
 				case WHA_Left:

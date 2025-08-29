@@ -10,7 +10,7 @@
 #define KEYSTROKE_UP        265
 #define KEYSTROKE_DOWN      264
 #define KEYSTROKE_BACKSPACE 259
-
+#define KEYSTROKE_ENTER     257
 
 typedef enum
 {

@@ -268,6 +268,43 @@ static void GetTotalFractionAmongChildren(struct UIWidget* pWidgetParent, float*
 	}
 }
 
+typedef float(*GetWorHFn)(struct UIWidget* pW);
+
+float GetWidgetW(struct UIWidget* pW) { return pW->fnGetWidth(pW, UI_GetWidget(pW->hParent)); }
+float GetWidgetH(struct UIWidget* pW) { return pW->fnGetHeight(pW, UI_GetWidget(pW->hParent)); }
+
+static void GetTotalAmountAmongChildren(struct UIWidget* pWidgetParent, float* outV, GetWorHFn getWorH, WidgetDimGetterFn dimgetter)
+{
+	*outV = 0.0f;
+	HWidget hChild = pWidgetParent->hFirstChild;
+	int stretchCount = 0;
+	while (hChild != NULL_HWIDGET)
+	{
+		struct UIWidget* pChild = UI_GetWidget(hChild);
+		const struct WidgetDim* dim = dimgetter(pChild);
+		switch (dim->type)
+		{
+		case WD_Stretch:
+			stretchCount++;
+			if (stretchCount > 1)
+			{
+				EASSERT(false);// only one child can have a width or height of *
+			}
+			break;
+		case WD_Auto:
+		case WD_Pixels:
+			*outV += getWorH(pChild);
+			break;
+		default:
+			EASSERT(false); // only one child can have a width or height of *
+			break;
+		}
+
+		*outV += dim->data;
+		hChild = pChild->hNext;
+	}
+}
+
 struct UIWidget* FindResolveableDimensionAncestor(struct UIWidget* pWidgetParent, WidgetDimGetterFn getter)
 {
 	HWidget hParent = pWidgetParent->hParent;
@@ -290,6 +327,15 @@ float UI_ResolveWidthDimPxls(struct UIWidget* pWidget, const struct WidgetDim* d
 {
 	switch (dim->type)
 	{
+	case	 WD_Stretch:
+	{
+		struct UIWidget* pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetWidthDim);
+		struct UIWidget* pActualWidgetParent = UI_GetWidget(pWidget->hParent);
+		float amount = 0;
+		GetTotalAmountAmongChildren(pActualWidgetParent, &amount, &GetWidgetW, &GetWidgetWidthDim);
+		float parentW = UI_ResolveWidthDimPxls(pResolvableWidgetParent, &pResolvableWidgetParent->height);
+		return parentW - amount;
+	}
 	case WD_Auto:            
 	{
 		if(pWidget->hFirstChild != NULL_HANDLE)
@@ -327,8 +373,12 @@ float UI_ResolveHeightDimPxls(struct UIWidget* pWidget, const struct WidgetDim* 
 	{
 	case	 WD_Stretch:
 	{
-		break;
-
+		struct UIWidget* pResolvableWidgetParent = FindResolveableDimensionAncestor(pWidget, &GetWidgetHeightDim);
+		struct UIWidget* pActualWidgetParent = UI_GetWidget(pWidget->hParent);
+		float amount = 0;
+		GetTotalAmountAmongChildren(pActualWidgetParent, &amount, &GetWidgetH, &GetWidgetHeightDim);
+		float parentH = UI_ResolveHeightDimPxls(pResolvableWidgetParent, &pResolvableWidgetParent->height);
+		return parentH - amount;
 	}
 	case WD_Auto:            
 	{

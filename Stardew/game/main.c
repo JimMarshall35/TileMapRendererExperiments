@@ -10,7 +10,7 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct XMLUIGameLayerOptions options;
     options.bLoadImmediately = false;
-    options.xmlPath = "./Assets/test2.xml";
+    options.xmlPath = "./Assets/console.xml";
     options.pDc = pDC;
     testLayer.flags |= (EnableOnPush | EnableOnPop);
     printf("making xml ui layer\n");

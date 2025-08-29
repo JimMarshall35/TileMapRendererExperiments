@@ -121,14 +121,15 @@ static void SetSliderMinAndMax(struct UIWidget* pWidget, struct CanvasData* pCan
 	float amoutLeft = left - pCanvasData->contentBB[0];
 	float amountRight = pCanvasData->contentBB[2] - (left + w);
 
+
 	pCanvasData->sliderH.fMinVal = fabs(amoutLeft);
 	pCanvasData->sliderH.fMaxVal = -fabs(amountRight);
 
 	pCanvasData->sliderV.fMinVal = fabs(amountAbove);
 	pCanvasData->sliderV.fMaxVal = -fabs(amountBelow);
 
-	pCanvasData->sliderV.fVal = pCanvasData->sliderV.fMinVal;
-	pCanvasData->sliderH.fVal = pCanvasData->sliderH.fMinVal;
+	pCanvasData->sliderV.fVal = pCanvasData->sliderV.fMaxVal;
+	pCanvasData->sliderH.fVal = pCanvasData->sliderH.fMaxVal;
 }
 
 static void LayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -324,7 +325,9 @@ static void MouseMoveCallback(struct UIWidget* pWidget, float x, float y)
 static void OnChildrenChanged(struct UIWidget* pWidget)
 {
 	struct CanvasData* pData = pWidget->pImplementationData;
+	GetChildrenBoundingBox(pWidget, pData->contentBB, &pData->contentBB[2]);
 	SetSliderMinAndMax(pWidget, pData);
+	SetScroll(pData);
 	UI_DefaultOnChildrenChanged(pWidget);
 }
 

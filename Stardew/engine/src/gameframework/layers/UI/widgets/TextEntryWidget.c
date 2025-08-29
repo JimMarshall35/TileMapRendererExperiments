@@ -27,6 +27,9 @@ struct TextEntryWidgetData
 	char caretChar;
 	HTimer caretTimer;
 	bool bCaretBlinkState;
+	char onEnterPressLuaCallbackName[TEXT_WIDGET_DATA_LUA_CALLBACK_NAME_BUFFER_SIZE];
+	bool bEnterPressCallbackSet;
+	int viewmodelRegIndex;
 };
 
 static float GetWidth(struct UIWidget* pWidget, struct UIWidget* pParent)
@@ -169,6 +172,14 @@ static void RecieveKeystrokeCallback(struct UIWidget* pWidget, int keystroke)
 			}
 		}
 		break;
+	case KEYSTROKE_ENTER:
+		{
+			if (pData->bEnterPressCallbackSet)
+			{
+				Sc_CallFuncInRegTableEntryTable(pData->viewmodelRegIndex, pData->onEnterPressLuaCallbackName, NULL, 0, 0);
+			}
+		}
+		return;
 	default:
 		DoEnterChar(pData, (char)keystroke, pWidget);
 		printf("%c\n",(char)keystroke);
@@ -211,7 +222,6 @@ static void OnFocus(struct UIWidget* pWidget)
 	pData->bCaretBlinkState = true;
 	SetRootWidgetIsDirty(pData->pLayerData->rootWidget, true);
 }
-
 
 static void OnUnFocus(struct UIWidget* pWidget)
 {
@@ -284,12 +294,31 @@ static void MakeWidgetIntoTextEntryWidget(HWidget hWidget, struct DataNode* pDat
 	{
 		pData->maxStringLen = 16;
 	}
+
+	if (pDataNode->fnGetPropType(pDataNode, "onEnter") == DN_String)
+	{
+		int nameLen = pDataNode->fnGetStrlen(pDataNode, "onEnter");
+		if (nameLen <= TEXT_WIDGET_DATA_LUA_CALLBACK_NAME_BUFFER_SIZE)
+		{
+			pDataNode->fnGetStrcpy(pDataNode, "onEnter", pData->onEnterPressLuaCallbackName);
+			pData->bEnterPressCallbackSet = true;
+		}
+		else
+		{
+			char* errorMsgName = malloc(nameLen + 1);
+			pDataNode->fnGetStrcpy(pDataNode, "onEnter", errorMsgName);
+			printf("TextWidget: onEnter callback name '%s' too long. 31 chars max, name was %i\n", errorMsgName, nameLen);
+			free(errorMsgName);
+		}
+	}
+
 	AllocateStringContents(pData->maxStringLen, pData);
 	pData->caretChar = 'I'; // todo: move to xml
 	SetupCaretBlinkTimer(pData, pUILayerData, hWidget);
 	HTimer hCaretTimer = pData->caretTimer;
 	pData->pLayerData->timerPool.pPool[hCaretTimer].bActive = false;
 	pData->bCaretBlinkState = false;
+	pData->viewmodelRegIndex = pUILayerData->hViewModel;
 }
 
 HWidget TextEntryWidgetNew(HWidget hParent, struct DataNode* pDataNode, struct XMLUIData* pUILayerData)

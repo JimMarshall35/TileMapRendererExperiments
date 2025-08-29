@@ -14,24 +14,36 @@
 		<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_vertical_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderVertical"/>
 		<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color.png" top="0" left="0" width="96" height="16" name="defaultRailHorizontal"/>
 		<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderHorizontal"/>
-		<font source="./Assets/Starzy_Darzy_lowercase_letters.ttf" name="default" options="normal">
+		<font source="./Assets/ComicMono.ttf" name="default" options="normal">
 			<size type="pts" val="32"/>
 			<size type="pts" val="16"/>
 		</font>
 	</atlas>
-	<screen viewmodelFile="./Assets/test2.lua" viewmodelFunction="GetTestViewModel">
+	<screen viewmodelFile="./Assets/console.lua" viewmodelFunction="GetTestViewModel">
 		<stackpanel dockPoint="centre" orientation = "horizontal">
             <backgroundbox sprite="fantasy_9Panel" scaleX="3.0" scaleY="3.0">
-                <canvas width="1.0%" height="1.0%">
-					<stackpanel orientation="vertical" dockPoint="bottomLeft">
-						<canvas height="*"/>
-						<stackpanel orientation="vertical" dockPoint="bottomLeft" childrenBinding="stackpanelChildren">
-                    	</stackpanel>
-						<textInput font="default" colour="0,0,0,255" horizontalAlignment="left" paddingLeft="30" width="200px" fontSize="32pts" paddingBottom="30" maxStringLength="16">
+				<stackpanel orientation="vertical">
+					<canvas width="1.0%" height="*">
+						<stackpanel orientation="vertical" 
+									dockPoint="bottomLeft" 
+									paddingLeft="20" 
+									childrenBinding="stackpanelChildren">
+							
+						</stackpanel>                    
+					</canvas>
+					<textInput font="default" 
+							colour="0,0,0,255" 
+							paddingLeft="20" 
+							width="200px" 
+							fontSize="32pts" 
+							paddingBottom="20" 
+							maxStringLength="128" 
+							onEnter="onTextLineEnter" 
+							horizontalAlignment="left">
 							{entryLine}
-						</textInput>
-					</stackpanel>                    
-                </canvas>
+					</textInput>
+				</stackpanel>
+                
 			</backgroundbox>
 		</stackpanel>
 	</screen>
