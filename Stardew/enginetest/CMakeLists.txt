@@ -10,6 +10,7 @@ add_executable(
   ObjectPoolTests.cpp
   GameFrameworkTests.cpp
   SharedPtrTests.cpp
+  StringHashMapTests.cpp
   main.cpp
 )
 if(WIN32)

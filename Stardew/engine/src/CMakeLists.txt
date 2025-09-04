@@ -10,6 +10,7 @@ core/FileHelpers.c
 core/ImageFileRegstry.c
 core/TimerPool.c
 core/DataNode.c
+core/StringKeyHashMap.c
 gameframework/GameFramework.c
 gameframework/layers/UI/XMLUIGameLayer.c
 gameframework/layers/UI/WidgetVertexOutputHelpers.c
@@ -25,6 +26,7 @@ gameframework/layers/UI/widgets/RadioButtonWidget.c
 gameframework/layers/UI/widgets/RadioGroupWidget.c
 gameframework/layers/UI/widgets/RootWidget.c
 gameframework/layers/UI/widgets/TextEntryWidget.c
+gameframework/layers/Game2D/Game2DLayer.c
 vendor/glad.c
 vendor/cJSON.c
 rendering/DrawContext.c

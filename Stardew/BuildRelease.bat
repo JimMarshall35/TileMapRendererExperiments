@@ -4,4 +4,5 @@ cmake .. -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=generators\conan_tool
 cmake --build . --config Release
 robocopy "..\Assets" "game\Release\Assets" /E /XO
 robocopy "engine\src\Release" "game\Release" "StardewEngine.dll" /E /XO
+robocopy "engine\src\Release" "enginetest\Release" "StardewEngine.dll" /E /XO
 pause

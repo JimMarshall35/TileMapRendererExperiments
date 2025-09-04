@@ -5,4 +5,6 @@ cmake --build . --config Debug
 rem For debugging with visual studio they need to go here
 robocopy "..\Assets" "game\Assets" /E /XO
 robocopy "engine\src\Debug" "game\Debug" "StardewEngine.dll" /E /XO
+robocopy "engine\src\Debug" "enginetest\Debug" "StardewEngine.dll" /E /XO
+enginetest\Debug\StardewEngineTest.exe
 pause

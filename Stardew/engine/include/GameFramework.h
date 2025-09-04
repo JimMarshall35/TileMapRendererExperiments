@@ -30,6 +30,13 @@ typedef enum
 
 #define GF_ANYMASKMASK (MasksInput | MasksUpdate | MasksDraw)
 
+enum GameFrameworkLayerType
+{
+	GFT_Unknown,
+	GFT_UI,
+	GFT_Game2D,
+};
+
 struct GameFrameworkLayer
 {
 	UpdateFn update;
@@ -40,6 +47,7 @@ struct GameFrameworkLayer
 	OnWindowDimsChangedFn onWindowDimsChanged;
 	unsigned int flags;
 	void* userData; // this is the game freamework users responsiblity to alloc and free
+	enum GameFrameworkLayerType type;
 };
 
 void GF_InitGameFramework();
@@ -55,6 +63,10 @@ void GF_InputGameFramework(InputContext* context);
 void GF_DrawGameFramework(DrawContext* context);
 void GF_OnWindowDimsChanged(int newW, int newH);
 
+/*
+	Returns NULL if no layer below
+*/
+struct GameFrameworkLayer* GF_GetLayerBelow(struct GameFrameworkLayer* pLayer);
 
 #ifdef __cplusplus
 }

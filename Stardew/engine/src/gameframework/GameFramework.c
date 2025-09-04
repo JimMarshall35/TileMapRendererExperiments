@@ -2,6 +2,7 @@
 #include "InputContext.h"
 #include "DynArray.h"
 #include "DrawContext.h"
+#include "AssertLib.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -161,4 +162,21 @@ void GF_OnWindowDimsChanged(int newW, int newH)
 			gLayerStack[i].onWindowDimsChanged(&gLayerStack[i], newW, newH);
 		}
 	}
+}
+
+struct GameFrameworkLayer* GF_GetLayerBelow(struct GameFrameworkLayer* pLayer)
+{
+	EASSERT(VectorSize(gLayerStack) > 0);
+	EASSERT(pLayer != NULL);
+
+	struct GameFrameworkLayer* pLast = NULL;
+	for (int i = VectorSize(gLayerStack) -1; i >= 0; i--)
+	{
+		if (pLast == pLayer)
+		{
+			return &gLayerStack[i];
+		}
+		pLast = &gLayerStack[i];
+	}
+	return NULL;
 }
