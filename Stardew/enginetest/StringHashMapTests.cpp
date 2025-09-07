@@ -7,6 +7,10 @@
 #include <cstdlib>
 #include <cstdio>
 
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
+
 using namespace std;
 
 /*
@@ -259,3 +263,7 @@ TEST(HashMap, HashmapKeyIterator)
 
 	HashmapDeInit(&hashMap);
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif

@@ -110,3 +110,7 @@ void Ev_Init()
 	HashmapInit(&gEventMap, 16, sizeof(struct GameFrameworkEvent));
 }
 
+void* Ev_GetUserData(struct GameFrameworkEventListener* pListener)
+{
+	return pListener->userData;
+}

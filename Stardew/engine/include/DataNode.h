@@ -3,6 +3,9 @@
     which can come from either an xml node or from the lua table on the top of the 
     lua stack (global for now) 
 */
+#ifndef DATANODE_H
+#define DATANODE_H
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -59,3 +62,5 @@ struct DataNode
 
     void* pData; // xmlNode* or NULL for lua table on top of stack
 };
+
+#endif

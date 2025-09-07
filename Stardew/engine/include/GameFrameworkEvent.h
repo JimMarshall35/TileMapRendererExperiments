@@ -12,7 +12,10 @@ typedef void (*EventListenerFn)(void* pUserData, void* pEventData);
 
 struct GameFrameworkEventListener* Ev_SubscribeEvent(char* eventName, EventListenerFn listenerFn, void* pUser);
 bool Ev_UnsubscribeEvent(struct GameFrameworkEventListener* pListener);
+void* Ev_GetUserData(struct GameFrameworkEventListener* pListener);
 void Ev_FireEvent(char* eventName, void* eventArgs);
 void Ev_Init();
 
 #endif
+
+

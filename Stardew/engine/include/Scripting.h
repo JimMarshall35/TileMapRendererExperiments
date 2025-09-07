@@ -7,6 +7,14 @@
 
 #define MAX_SCRIPT_FUNCTION_NAME_SIZE 32
 
+struct ScriptCallArgument;
+
+struct LuaListenedEventArgs
+{
+	struct ScriptCallArgument* args;
+	int numArgs;
+};
+
 enum ScriptCallArgumentDataType
 {
 	SCA_nil, SCA_boolean, SCA_number, SCA_string, SCA_userdata, SCA_table, SCA_int
@@ -48,6 +56,8 @@ bool Sc_OpenFile(const char* path);
 int Sc_CallGlobalFuncReturningTableAndStoreResultInReg(const char* funcName, struct ScriptCallArgument* pArgs, int numArgs);
 
 void Sc_CallFuncInRegTableEntryTable(int regIndex, const char* funcName, struct ScriptCallArgument* pArgs, int numArgs, int numReturnVals);
+
+void Sc_CallFuncInRegTableEntry(int regIndex, struct ScriptCallArgument* pArgs, int numArgs, int numReturnVals, int selfRegIndex);
 
 void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void* userDataValue);
 

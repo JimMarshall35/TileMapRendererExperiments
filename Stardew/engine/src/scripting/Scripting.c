@@ -9,6 +9,8 @@
 #include "XMLUIGameLayer.h"
 #include "RootWidget.h"
 #include "AssertLib.h"
+#include "GameFrameworkEvent.h"
+#include "DataNode.h"
 
 #define GAME_LUA_MINOR_VERSION 1
 
@@ -58,6 +60,124 @@ static void OnPropertyChangedInternal(XMLUIData* pUIData, HWidget hWidget, const
 	}
 }
 
+struct LuaListenerUserData
+{
+	int regIndexFn;
+	int regIndexVmTable;
+	int numArgs;
+};
+
+static void LuaListenerFn(void* pUserData, void* pEventData)
+{
+	struct GameFrameworkEventListener* pListener = pUserData;
+	struct LuaListenerUserData* ud = Ev_GetUserData(pListener);
+	struct LuaListenedEventArgs* pArgs = pEventData;
+	Sc_CallFuncInRegTableEntry(ud->regIndexFn, pArgs->args, pArgs->numArgs, 0, ud->regIndexVmTable);
+}
+
+static int L_FireGameFrameworkEvent(lua_State* L)
+{
+	const char* eventName = NULL;
+	if(lua_isstring(L, -1))
+	{
+		const char* eventName = lua_tostring(L, -1);
+	}
+	else
+	{
+		printf("FireGameFrameworkEvent. First argument wrong type should be string\n");
+	}
+	if(lua_istable(L,-2))
+	{
+		lua_pop(gL, 1);
+		struct DataNode node;
+		DN_InitForLuaTableOnTopOfStack(&node);
+		// will this work? I don't know. Is L the same as gL? I hope so
+		Ev_FireEvent((char*)eventName, &node);
+		Sc_ResetStack();
+	}
+	else
+	{
+		printf("FireGameFrameworkEvent. 2nd argument wrong type should be table\n");
+	}
+	return 0;
+}
+
+static int L_UnSubscribeToGameFrameworkEvent(lua_State* L)
+{
+	if(lua_islightuserdata(L, -1))
+	{
+		struct GameFrameworkEventListener* pListener = lua_touserdata(L, -1);
+
+		struct LuaListenerUserData* ud = Ev_GetUserData(pListener);
+		luaL_unref(gL, LUA_REGISTRYINDEX, ud->regIndexFn);
+		luaL_unref(gL, LUA_REGISTRYINDEX, ud->regIndexVmTable);
+		free(ud);
+		EVERIFY(Ev_UnsubscribeEvent(pListener));
+		lua_settop(L, 0);
+		lua_pushboolean(L, true);
+		return 1;
+	}
+	else
+	{
+		printf("UnsubscribeFromGameFrameworkEvent - argument wrong type\n");
+		lua_settop(L, 0);
+		lua_pushboolean(L, false);
+		return 1;
+	}
+}
+
+static int L_SubscribeToGameFrameworkEvent(lua_State* L)
+{
+	// lua args:
+	// 	event name, self, listenerLuaFunction
+	int regIndexFn = 0;
+	int regIndexVm = 0;
+	struct LuaListenerUserData* ud = malloc(sizeof(struct LuaListenerUserData));
+	memset(ud, 0, sizeof(struct LuaListenerUserData));
+	
+	if (lua_isfunction(L, -1))
+	{
+		ud->regIndexFn = luaL_ref(L, LUA_REGISTRYINDEX);
+	}
+	else
+	{
+		printf("SubscribeGameFrameworkEvent arg 3 wrong type. Is type. Needs to be string\n");
+		lua_settop(L, 0);
+		lua_pushnil(L);
+		free(ud);
+		return 1;
+	}
+
+	if(lua_istable(L,-1))
+	{
+		ud->regIndexVmTable = luaL_ref(L, LUA_REGISTRYINDEX);
+	}
+	else
+	{
+		printf("SubscribeGameFrameworkEvent arg 3 wrong type. Is type. Needs to be string\n");
+		lua_settop(L, 0);
+		lua_pushnil(L);
+		free(ud);
+		return 1;
+	}
+
+	if (lua_isstring(L, -1))
+	{
+		struct GameFrameworkEventListener* pListener = Ev_SubscribeEvent((char*)lua_tostring(L, -1), &LuaListenerFn, ud);
+		lua_settop(L, 0);
+		lua_pushlightuserdata(L, pListener);
+		return 1;
+	}
+	else
+	{
+		printf("SubscribeGameFrameworkEvent arg 3 wrong type. Is type. Needs to be string\n");
+		lua_settop(L, 0);
+		lua_pushnil(L);
+		free(ud);
+		return 1;
+	}
+}
+
 static int L_OnPropertyChanged(lua_State* L)
 {
 	// args: (table) viewmodel, (string) propertyName
@@ -78,14 +198,21 @@ static int L_OnPropertyChanged(lua_State* L)
 	return 0;
 }
 
+static void Sc_RegisterCFunction(const char* name, int(*fn)(lua_State*))
+{
+	lua_pushcfunction(gL, fn);
+	lua_setglobal(gL, name);
+}
 
 void Sc_InitScripting()
 {
 	gL = luaL_newstate();
 	luaL_openlibs(gL); /* Load Lua libraries */
-	lua_pushcfunction(gL, &L_OnPropertyChanged);
-	lua_setglobal(gL, "OnPropertyChanged");
-
+	//lua_pushcfunction(gL, &L_OnPropertyChanged);
+	//lua_setglobal(gL, "OnPropertyChanged");
+	Sc_RegisterCFunction("OnPropertyChanged", &L_OnPropertyChanged);
+	Sc_RegisterCFunction("SubscribeGameFrameworkEvent", &L_SubscribeToGameFrameworkEvent);
+	Sc_RegisterCFunction("UnsubscribeGameFrameworkEvent", &L_UnSubscribeToGameFrameworkEvent);
 }
 
 void Sc_DeInitScripting()
@@ -216,6 +343,24 @@ void Sc_CallFuncInRegTableEntryTable(int regIndex, const char* funcName, struct 
 		printf("object at key '%s' not a function but type %s \n", funcName, GetTypeOnTopOfStack());
 	}
 	//lua_settop(gL, 0);
+}
+
+void Sc_CallFuncInRegTableEntry(int regIndex, struct ScriptCallArgument* pArgs, int numArgs, int numReturnVals, int selfRegIndex)
+{
+	lua_rawgeti(gL, LUA_REGISTRYINDEX, regIndex);
+	bool bIsFunc = lua_isfunction(gL, -1);
+	if (!bIsFunc)
+	{
+		printf("Sc_CallFuncInRegTableEntry. Reg table entry %i is not a function, but %s\n", regIndex, GetTypeOnTopOfStack());
+		lua_settop(gL, 0);
+		return ;
+	}
+	lua_rawgeti(gL, LUA_REGISTRYINDEX, selfRegIndex);
+
+	PushFunctionCallArgsOntoStack(pArgs, numArgs);
+	lua_pcall(gL, numArgs + 1, numReturnVals, 0);
+	lua_settop(gL, 0);
+	return ;
 }
 
 void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void* userDataValue)
