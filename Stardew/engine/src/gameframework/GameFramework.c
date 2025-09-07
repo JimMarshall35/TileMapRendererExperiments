@@ -3,6 +3,7 @@
 #include "DynArray.h"
 #include "DrawContext.h"
 #include "AssertLib.h"
+#include "GameFrameworkEvent.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,7 +28,7 @@ void GF_InitGameFramework()
 {
 	gLayerStack = NEW_VECTOR(struct GameFrameworkLayer);
 	gLayerChangeQueue = NEW_VECTOR(struct LayerChange);
-
+	Ev_Init();
 }
 
 void GF_DestroyGameFramework()

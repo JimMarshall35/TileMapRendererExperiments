@@ -30,7 +30,7 @@ void* HashmapSearch(struct HashMap* pMap, char* key);
 /// <param name="key"></param>
 /// <param name="pVal"></param>
 /// <returns> true if a new key and inserted, false if an existing key and value overwritten </returns>
-bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal);
+void* HashmapInsert(struct HashMap* pMap, char* key, void* pVal);
 bool HashmapDeleteItem(struct HashMap* pMap, char* key);
 void HashmapDeInit(struct HashMap* pMap);
 void HashmapPrintEntries(struct HashMap* pMap, const char* hashMapName);

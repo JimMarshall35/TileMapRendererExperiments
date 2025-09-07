@@ -219,7 +219,7 @@ void HashmapResize(struct HashMap* pMap)
 	pMap->pData = pNewAlloc;
 }
 
-bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
+void* HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 {
 	float newLoad = (float)(pMap->size + 1) / (float)pMap->capacity;
 	if(newLoad > pMap->fLoadFactor)
@@ -263,7 +263,7 @@ bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 	EASSERT(pNewKVP);
 	if (!bAdded)
 	{
-		return false;
+		return NULL;
 	}
 	if (!pMap->pHead)
 	{
@@ -277,7 +277,7 @@ bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 		pMap->pEnd = pNewKVP;
 	}
 	pMap->size++;
-	return true;
+	return pNewKVP + 1;
 }
 
 struct KVP* FindMoveableKey(struct KVP* pHole, struct HashMap* pMap)

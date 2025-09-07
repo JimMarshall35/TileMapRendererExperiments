@@ -12,6 +12,7 @@ core/TimerPool.c
 core/DataNode.c
 core/StringKeyHashMap.c
 gameframework/GameFramework.c
+gameframework/GameFrameworkEvent.c
 gameframework/layers/UI/XMLUIGameLayer.c
 gameframework/layers/UI/WidgetVertexOutputHelpers.c
 gameframework/layers/UI/widgets/SliderWidget.c

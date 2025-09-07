@@ -7,6 +7,7 @@ extern "C"{
 
 #include "InputContext.h"
 #include "DrawContext.h"
+
 struct GameFrameworkLayer;
 
 typedef void (*UpdateFn)(struct GameFrameworkLayer* pLayer, float deltaT);
@@ -49,6 +50,7 @@ struct GameFrameworkLayer
 	void* userData; // this is the game freamework users responsiblity to alloc and free
 	enum GameFrameworkLayerType type;
 };
+
 
 void GF_InitGameFramework();
 void GF_DestroyGameFramework();
