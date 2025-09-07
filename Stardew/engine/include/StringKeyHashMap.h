@@ -5,6 +5,9 @@
 extern "C" {
 #endif 
 
+
+#include <stdbool.h>
+
 struct HashMap
 {
 	int capacity;
@@ -19,14 +22,27 @@ struct HashMap
 void HashmapInit(struct HashMap* pMap, int capacity, int valSize);
 void HashmapInitWithLoadFactor(struct HashMap* pMap, int capacity, int valSize, float loadFactor);
 void* HashmapSearch(struct HashMap* pMap, char* key);
-void HashmapInsert(struct HashMap* pMap, char* key, void* pVal);
-void HashmapDeleteItem(struct HashMap* pMap, char* key);
-void HashMapDeInit(struct HashMap* pMap);
 
-struct KeyIterator;
+/// <summary>
+/// 
+/// </summary>
+/// <param name="pMap"></param>
+/// <param name="key"></param>
+/// <param name="pVal"></param>
+/// <returns> true if a new key and inserted, false if an existing key and value overwritten </returns>
+bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal);
+bool HashmapDeleteItem(struct HashMap* pMap, char* key);
+void HashmapDeInit(struct HashMap* pMap);
+void HashmapPrintEntries(struct HashMap* pMap, const char* hashMapName);
 
-struct KeyIterator GetKeyIterator(struct HashMap* pHashMap);
-char* NextHashmapKey(struct KeyIterator*);
+struct HashmapKeyIterator
+{
+	struct HashMap* pHashMap;
+	struct KVP* pOnKVP;
+};
+
+struct HashmapKeyIterator GetKeyIterator(struct HashMap* pHashMap);
+char* NextHashmapKey(struct HashmapKeyIterator*);
 
 #ifdef __cplusplus
 }

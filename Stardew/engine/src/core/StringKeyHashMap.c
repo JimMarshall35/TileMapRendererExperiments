@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 #include "AssertLib.h"
 
 #define STARDEW_HASHMAP_DEFAULT_LOAD_FACTOR 0.75f
@@ -27,8 +28,6 @@ unsigned int djb2(char* str)
 	return hash;
 }
 
-
-
 static void HashmapInitBase(struct HashMap* pMap, int capacity, int valSize)
 {
 	memset(pMap, 0, sizeof(struct HashMap));
@@ -52,9 +51,9 @@ void HashmapInitWithLoadFactor(struct HashMap* pMap, int capacity, int valSize, 
 	pMap->fLoadFactor = loadFactor;
 }
 
-static void* BucketAtIndex(struct HashMap* pMap, int i)
+static struct KVP* BucketAtIndex(struct HashMap* pMap, int i)
 {
-	return (char*)pMap->pData + i * (sizeof(struct KVP) + pMap->valueSize);
+	return (struct KVP*)((char*)pMap->pData + i * (sizeof(struct KVP) + pMap->valueSize));
 }
 
 static int NextIndex(struct HashMap* pMap, int i)
@@ -66,19 +65,35 @@ static int NextIndex(struct HashMap* pMap, int i)
 	return i;
 }
 
-void* HashmapSearch(struct HashMap* pMap, char* key)
+static int GetIndex(struct HashMap* pMap, struct KVP* pKVP)
+{
+	EASSERT((char*)pMap->pData <= (char*)pKVP);
+	int offset = (char*)pKVP - (char*)pMap->pData;
+	EASSERT(offset % (pMap->valueSize + sizeof(struct KVP)) == 0);
+	return offset / (pMap->valueSize + sizeof(struct KVP));
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="pMap"></param>
+/// <param name="key"></param>
+/// <param name="bReturnVal">
+/// if true, return the value, if false, return the KVP struct
+/// </param>
+/// <returns></returns>
+static void* HashmapSearchBase(struct HashMap* pMap, char* key, bool bReturnVal)
 {
 	unsigned int hash = djb2(key);
 	int index = hash % pMap->capacity;
 	/* linear probe */
-	void* pAt = BucketAtIndex(pMap, index);
-	struct KVP* pKVP = (struct KVP*)pAt;
+	struct KVP* pKVP = BucketAtIndex(pMap, index);
 
 	while (true)
 	{
 		if (pKVP->pKey && pKVP->keyHash == hash)
 		{
-			return pKVP + 1;
+			return bReturnVal ? pKVP + 1 : pKVP;
 		}
 		else if (pKVP->pKey) // pKey set == "there's something in this bucket"
 		{
@@ -92,6 +107,17 @@ void* HashmapSearch(struct HashMap* pMap, char* key)
 	}
 	return NULL;
 }
+
+void* HashmapSearch(struct HashMap* pMap, char* key)
+{
+	return HashmapSearchBase(pMap, key, true);
+}
+
+struct KVP* HashmapSearchKVP(struct HashMap* pMap, char* key)
+{
+	return (struct KVP*)HashmapSearchBase(pMap, key, false);
+}
+
 
 /// <summary>
 /// insert from the old allocation to the new
@@ -113,19 +139,21 @@ struct KVP* InsertKVPIntoNewAlloc(struct HashMap* pMap, struct KVP* pKVPsrc, cha
 	int index = hash % pMap->capacity;
 	void* pAt = pNewAlloc + index * (sizeof(struct KVP) + pMap->valueSize);
 	struct KVP* pKVP = (struct KVP*)pAt;
+
 	while (true)
 	{
 		if (pKVP->pKey && pKVP->keyHash != hash)
 		{
 			// occupied bucket
 			index = NextIndex(pMap, index);
-			pKVP = BucketAtIndex(pMap, index);
+			pKVP = (struct KVP*)((char*)pNewAlloc + index * (sizeof(struct KVP) + pMap->valueSize));
 		}
 		else
 		{
 			if (pKVP->pKey)
 			{
 				free(pKVP->pKey);
+				EASSERT(false);
 			}
 			memset(pKVP, 0, sizeof(struct KVP));
 			pKVP->keyHash = hash;
@@ -138,9 +166,27 @@ struct KVP* InsertKVPIntoNewAlloc(struct HashMap* pMap, struct KVP* pKVPsrc, cha
 	return pKVP;
 }
 
+void HashmapPrintEntries(struct HashMap* pMap, const char* hashMapName)
+{
+	printf("HASHMAP: '%s' current size: %i current capacity: %i\n\n", hashMapName, pMap->size, pMap->capacity);
+	struct KVP* pKVP = pMap->pHead;
+	while (pKVP)
+	{
+		EASSERT(pKVP->pKey);
+		printf("Key: %s hash: %u\n", pKVP->pKey, pKVP->keyHash);
+		pKVP = pKVP->pNext;
+	}
+	printf("\n");
+}
+
 void HashmapResize(struct HashMap* pMap)
 {
-	char* pNewAlloc = malloc(pMap->capacity * 2);
+	//printf("RESIZING: current size: %i current capacity: %i\n\n", pMap->size, pMap->capacity);
+	//PrintEntries(pMap);
+	//printf("\n");
+	int newAllocSize = (pMap->capacity * (pMap->valueSize + sizeof(struct KVP))) * 2;
+	char* pNewAlloc = malloc(newAllocSize);
+	memset(pNewAlloc, 0, newAllocSize);
 	pMap->capacity *= 2;
 	struct KVP* pKVP = pMap->pHead;
 	struct KVP* pNewHead = NULL;
@@ -161,6 +207,7 @@ void HashmapResize(struct HashMap* pMap)
 		}
 		EASSERT(pKVP->pKey);
 		free(pKVP->pKey);
+		pKVP = pKVP->pNext;
 	}
 	if (pNewHead && !pNewTail)
 	{
@@ -172,7 +219,7 @@ void HashmapResize(struct HashMap* pMap)
 	pMap->pData = pNewAlloc;
 }
 
-void HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
+bool HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 {
 	float newLoad = (float)(pMap->size + 1) / (float)pMap->capacity;
 	if(newLoad > pMap->fLoadFactor)
@@ -185,6 +232,7 @@ void HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 	void* pAt = (char*)pMap->pData + index * (sizeof(struct KVP) + pMap->valueSize);
 	struct KVP* pKVP = (struct KVP*)pAt;
 	struct KVP* pNewKVP = NULL;
+	bool bAdded = true;
 	while (true)
 	{
 		if (pKVP->pKey && pKVP->keyHash != hash)
@@ -197,18 +245,26 @@ void HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 		{
 			if (pKVP->pKey)
 			{
-				free(pKVP->pKey);
+				bAdded = false;
 			}
-			memset(pKVP, 0, sizeof(struct KVP));
-			pKVP->keyHash = hash;
-			pKVP->pKey = malloc(strlen(key) + 1);
-			strcpy(pKVP->pKey, key);
+			else
+			{
+				memset(pKVP, 0, sizeof(struct KVP));
+				pKVP->keyHash = hash;
+				pKVP->pKey = malloc(strlen(key) + 1);
+				strcpy(pKVP->pKey, key);
+			}
+			
 			memcpy(pKVP + 1, pVal, pMap->valueSize);
 			pNewKVP = pKVP;
 			break;
 		}
 	}
 	EASSERT(pNewKVP);
+	if (!bAdded)
+	{
+		return false;
+	}
 	if (!pMap->pHead)
 	{
 		pMap->pHead = pNewKVP;
@@ -221,36 +277,92 @@ void HashmapInsert(struct HashMap* pMap, char* key, void* pVal)
 		pMap->pEnd = pNewKVP;
 	}
 	pMap->size++;
+	return true;
 }
 
-void HashmapDeleteItem(struct HashMap* pMap, char* key)
+struct KVP* FindMoveableKey(struct KVP* pHole, struct HashMap* pMap)
 {
-	struct KVP* pFound = HashmapSearch(pMap, key);
+	int firstIndex = GetIndex(pMap, pHole);
+	int next = NextIndex(pMap, firstIndex);
+	struct KVP* pKVP = BucketAtIndex(pMap, next);
+	while (pKVP->pKey)
+	{
+		int hashIndex = pKVP->keyHash % pMap->capacity;
+		if (hashIndex <= firstIndex)
+		{
+			return pKVP;
+		}
+		next = NextIndex(pMap, next);
+		pKVP = BucketAtIndex(pMap, next);
+	}
+	
+	return NULL;
+}
+
+bool HashmapDeleteItem(struct HashMap* pMap, char* key)
+{
+	struct KVP* pFound = HashmapSearchKVP(pMap, key);
 	if (pFound)
 	{
+		if (pFound->pNext)
+		{
+			pFound->pNext->pPrev = pFound->pPrev;
+		}
+		if (pFound->pPrev)
+		{
+			pFound->pPrev->pNext = pFound->pNext;
+		}
+		if (pMap->pHead == pFound)
+		{
+			pMap->pHead = pFound->pNext;
+		}
+		if (pMap->pEnd == pFound)
+		{
+			pMap->pEnd = pFound->pPrev;
+		}
 		free(pFound->pKey);
-		pFound->pNext->pPrev = pFound->pPrev;
-		pFound->pPrev->pNext = pFound->pNext;
+		memset(pFound, 0, sizeof(struct KVP));
+		struct KVP* pMoveable = FindMoveableKey(pFound, pMap);
+		while (pMoveable)
+		{
+			if (pMoveable->pNext)
+			{
+				pMoveable->pNext->pPrev = pFound;
+			}
+			if (pMoveable->pPrev)
+			{
+				pMoveable->pPrev->pNext = pFound;
+			}
+			if (pMap->pEnd == pMoveable)
+			{
+				pMap->pEnd = pFound;
+			}
+			if (pMap->pHead == pMoveable)
+			{
+				pMap->pHead = pFound;
+			}
+			memcpy(pFound, pMoveable, sizeof(struct KVP) + pMap->valueSize);
+			memset(pMoveable, 0, sizeof(struct KVP) + pMap->valueSize);
+			pFound = pMoveable;
+			pMoveable = FindMoveableKey(pMoveable, pMap);
+		}
+		pMap->size--;
+		return true;
 	}
-	pMap->size--;
+	return false;
 }
 
-struct KeyIterator
-{
-	struct HashMap* pHashMap;
-	struct KVP* pOnKVP;
-};
 
-struct KeyIterator GetKeyIterator(struct HashMap* pHashMap)
+struct HashmapKeyIterator GetKeyIterator(struct HashMap* pHashMap)
 {
-	struct KeyIterator itr = {
+	struct HashmapKeyIterator itr = {
 		pHashMap,
 		pHashMap->pHead
 	};
 	return itr;
 }
 
-char* NextHashmapKey(struct KeyIterator* itr)
+char* NextHashmapKey(struct HashmapKeyIterator* itr)
 {
 	EASSERT(itr->pHashMap);
 	if (!itr->pOnKVP)
@@ -262,7 +374,7 @@ char* NextHashmapKey(struct KeyIterator* itr)
 	return r;
 }
 
-void HashMapDeInit(struct HashMap* pMap)
+void HashmapDeInit(struct HashMap* pMap)
 {
 	struct KVP* pKVP = pMap->pHead;
 	while (pKVP)
