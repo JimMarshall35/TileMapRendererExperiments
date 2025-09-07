@@ -188,6 +188,7 @@ TEST(HashMap, Fuzz)
 		else
 		{
 			printf("Delete failed, key '%s'\n", cases[randomNum].key.c_str());
+			ASSERT_TRUE(false);
 		}
 	}
 	ASSERT_EQ(cases.size(), hashMap.size);
