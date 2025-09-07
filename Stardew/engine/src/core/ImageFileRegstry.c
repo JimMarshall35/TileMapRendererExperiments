@@ -66,7 +66,7 @@ u8* IR_GetImageData(HImage img)
         {
             for (int i = 0; i < VectorSize(errors); i++)
             {
-                printf(errors->message);
+                printf("%s", errors->message);
                 free(errors->message);
             }
             DestoryVector(errors);

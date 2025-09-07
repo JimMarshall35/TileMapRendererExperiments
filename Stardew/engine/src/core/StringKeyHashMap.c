@@ -36,7 +36,7 @@ unsigned int djb2(char* str)
 	unsigned int hash = 5381;
 	int c;
 
-	while (c = *((unsigned char*)str)++)
+	while (c = *(unsigned char*)str++)
 	{
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 	}
