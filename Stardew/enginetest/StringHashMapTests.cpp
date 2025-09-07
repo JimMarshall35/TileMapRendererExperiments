@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <cstdio>
 
+bool gOverrideFuzzTestSeed = false;
+unsigned int gFuzzTestSeed = 0;
+
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
@@ -169,9 +172,19 @@ TEST(HashMap, Fuzz)
 	HashmapInit(&hashMap, 10, sizeof(int));
 	const int numInserts = 1024;
 	const int numDeletes = 256;
-	time_t seed = time(0);
+
+	unsigned int seed = 0;
+	if(gOverrideFuzzTestSeed)
+	{
+		seed = gFuzzTestSeed;
+	}
+	else
+	{
+		seed = (unsigned int)time(0);
+	}
+	
 	srand(seed);
-	printf("Seed: %lli\n", seed);
+	printf("Seed: %u\n Repeat test with the cmd line flag:\n--hashmap-fuzz-seed %u\n", seed, seed);
 	for (int i = 0; i < numInserts; i++)
 	{
 		int randomNum = rand() % 100000;
