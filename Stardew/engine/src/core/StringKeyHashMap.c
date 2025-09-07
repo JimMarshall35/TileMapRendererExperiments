@@ -19,6 +19,8 @@
 	An alternative delete would be to mark the deleted bucket as deleted, so that linear probes skip over it.
 	This would be faster but use more memory, with the deleted cells only usable when the hash map next resizes, effectively.
 
+	Will resize when load factor reaches a given threshold.
+
 */
 
 struct KVP
