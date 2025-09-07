@@ -55,9 +55,7 @@ struct GameFrameworkEventListener* Ev_SubscribeEvent(char* eventName, EventListe
 	{
 		struct GameFrameworkEvent ev;
 		memset(&ev, 0, sizeof(struct GameFrameworkEvent));
-		
 		pEvent = HashmapInsert(&gEventMap, eventName, &ev);
-
 	}
 	return AddListener(pEvent, listenerFn, pUser, eventName);
 }

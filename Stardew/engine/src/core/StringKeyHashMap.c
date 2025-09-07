@@ -7,6 +7,20 @@
 
 #define STARDEW_HASHMAP_DEFAULT_LOAD_FACTOR 0.75f
 
+/*
+
+	A hashmap with linear probing, strings as keys, that uses the djb2 hashing algorithm.
+	
+	Buckets (or KVP) contain the raw hash of the string key.
+
+	Delete implementation moves a bucket ahead of the "hole" who's hashed index refers to a bucket BEHIND the hole
+	into the "hole". This is then repeated for the new hole recursively (although not actually recursive).
+
+	An alternative delete would be to mark the deleted bucket as deleted, so that linear probes skip over it.
+	This would be faster but use more memory, with the deleted cells only usable when the hash map next resizes, effectively.
+
+*/
+
 struct KVP
 {
 	struct KVP* pNext;
@@ -118,7 +132,6 @@ struct KVP* HashmapSearchKVP(struct HashMap* pMap, char* key)
 	return (struct KVP*)HashmapSearchBase(pMap, key, false);
 }
 
-
 /// <summary>
 /// insert from the old allocation to the new
 /// </summary>
@@ -135,7 +148,7 @@ struct KVP* HashmapSearchKVP(struct HashMap* pMap, char* key)
 /// </returns>
 struct KVP* InsertKVPIntoNewAlloc(struct HashMap* pMap, struct KVP* pKVPsrc, char* pNewAlloc)
 {
-	unsigned int hash = djb2(pKVPsrc->pKey);
+	unsigned int hash = pKVPsrc->keyHash;
 	int index = hash % pMap->capacity;
 	void* pAt = pNewAlloc + index * (sizeof(struct KVP) + pMap->valueSize);
 	struct KVP* pKVP = (struct KVP*)pAt;
