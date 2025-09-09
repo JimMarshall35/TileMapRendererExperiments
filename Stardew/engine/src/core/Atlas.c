@@ -3,7 +3,7 @@
 #include "ImageFileRegstry.h"
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
+#include "AssertLib.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -550,7 +550,10 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 	}
 	size_t numSprites = VectorSize(pAtlas->sprites);
 	size_t numSpritesFromFonts = CountTotalSpritesInFonts(pAtlas);
-
+	if (numSprites + numSpritesFromFonts <= 0)
+	{
+		return NULL_HANDLE;
+	}
 	AtlasSprite* spritesCopy = malloc(sizeof(AtlasSprite) * (numSprites + numSpritesFromFonts));
 	if (spritesCopy)
 	{
@@ -600,7 +603,6 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 #define ATLAS_HANDLE_BOUNDS_CHECK_NO_RETURN(atlas)\
 {\
 bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
-assert(bAtlasHandleBoundsValid);\
 if(!bAtlasHandleBoundsValid){\
 	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
 	return;\
@@ -610,7 +612,6 @@ if(!bAtlasHandleBoundsValid){\
 #define ATLAS_HANDLE_BOUNDS_CHECK(atlas, rVal)\
 {\
 bool bAtlasHandleBoundsValid = atlas < VectorSize(gAtlases) && atlas >= 0;\
-assert(bAtlasHandleBoundsValid);\
 if(!bAtlasHandleBoundsValid){\
 	printf("function '%s' invalid bounds handle %i", __FUNCTION__, atlas);\
 	return rVal;\
@@ -621,7 +622,6 @@ if(!bAtlasHandleBoundsValid){\
 {\
 Atlas* pAtlas = &gAtlases[hAtlas];\
 bool bAtlasHandleBoundsValid = hFont < VectorSize(pAtlas->fonts) && hFont >= 0;\
-assert(bAtlasHandleBoundsValid);\
 if(!bAtlasHandleBoundsValid){\
 	printf("function '%s' invalid bounds font handle %i", __FUNCTION__, hFont);\
 	return rVal;\

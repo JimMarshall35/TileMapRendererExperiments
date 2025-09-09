@@ -7,6 +7,8 @@ robocopy "..\Assets" "game\Assets" /E /XO
 robocopy "engine\src\Debug" "game\Debug" "StardewEngine.dll" /E /XO
 robocopy "engine\src\Debug" "enginetest\Debug" "StardewEngine.dll" /E /XO
 robocopy "..\enginetest\data" "enginetest\Debug\data" /E /XO
+rem "Debugging in visual studio has the working directory path relative to the project folder by default"
+robocopy "..\enginetest\data" "enginetest\Debug" /E /XO
 cd enginetest\Debug
 StardewEngineTest.exe
 

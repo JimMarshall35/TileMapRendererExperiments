@@ -1,5 +1,8 @@
 #ifndef WIDGET_H
 #define WIDGET_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "ObjectPool.h"
 #include "HandleDefs.h"
@@ -20,7 +23,12 @@ struct WidgetVertex
 	float r, g, b, a;
 };
 
+#ifdef  __cplusplus
+typedef int(*PrintfFn)(const char* fmt, ...);
+
+#else
 typedef int(*PrintfFn)(const char* restrict fmt, ...);
+#endif //  __cplusplus
 
 
 struct UIWidget;
@@ -365,5 +373,9 @@ char* UI_MakeBindingSetterFunctionName(const char* inBindingName);
 struct WidgetPropertyBinding* UI_FindBinding(struct UIWidget* pWidget, const char* bindingName);
 
 void UI_DefaultOnChildrenChanged(struct UIWidget* outWidget);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

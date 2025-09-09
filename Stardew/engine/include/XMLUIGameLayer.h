@@ -1,5 +1,10 @@
 #ifndef XMLUI_GAME_LAYER_H
 #define XMLUI_GAME_LAYER_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include "HandleDefs.h"
 #include "DynArray.h"
@@ -62,5 +67,8 @@ typedef struct XMLUIData
 
 void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayerOptions* pOptions);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,5 +1,8 @@
 #ifndef DRAWCONTEXT_H
 #define DRAWCONTEXT_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "Atlas.h"
 #include "HandleDefs.h"
@@ -27,5 +30,10 @@ typedef struct DrawContext
 
 DrawContext Dr_InitDrawContext();
 void Dr_OnScreenDimsChange(DrawContext* pCtx, int newW, int newH);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

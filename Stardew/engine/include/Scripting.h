@@ -1,6 +1,10 @@
 #ifndef SCRIPTING_H
 #define SCRIPTING_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>
 #include <stdbool.h>
 #include "IntTypes.h"
@@ -93,5 +97,9 @@ int Sc_TableLen();
 bool Sc_StringCmp(const char* cmpTo);
 
 void Sc_DumpStack();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
