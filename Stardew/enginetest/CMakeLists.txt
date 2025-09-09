@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 find_package(GTest REQUIRED)
 
-enable_testing()
 
 add_executable(
   StardewEngineTest
@@ -44,7 +43,6 @@ target_link_libraries(
   PRIVATE
   GTest::gtest_main
 )
-gtest_discover_tests(StardewEngineTest)
 include(GoogleTest)
 endif()
 
