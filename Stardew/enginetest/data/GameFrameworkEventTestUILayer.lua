@@ -1,0 +1,5 @@
+function GetTestViewModel()
+	return {
+		
+	}
+end

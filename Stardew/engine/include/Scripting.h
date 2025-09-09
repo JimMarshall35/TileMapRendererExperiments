@@ -61,6 +61,8 @@ void Sc_CallFuncInRegTableEntry(int regIndex, struct ScriptCallArgument* pArgs, 
 
 void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void* userDataValue);
 
+bool Sc_FunctionPresentInTable(int regIndex, const char* funcName);
+
 size_t Sc_StackTopStringLen();
 void Sc_StackTopStrCopy(char* pOutString);
 void Sc_ResetStack();

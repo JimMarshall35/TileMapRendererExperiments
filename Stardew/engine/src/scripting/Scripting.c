@@ -376,7 +376,22 @@ void Sc_AddLightUserDataValueToTable(int regIndex, const char* userDataKey, void
 	lua_pushlightuserdata(gL, userDataValue);
 	lua_setfield(gL, -2, userDataKey);
 	lua_settop(gL, 0);
-	printf("Sc_AddLightUserDataValueToTable done\n");
+}
+
+bool Sc_FunctionPresentInTable(int regIndex, const char* funcName)
+{
+	lua_rawgeti(gL, LUA_REGISTRYINDEX, regIndex);
+	bool bIstable = lua_istable(gL, -1);
+	if (!bIstable)
+	{
+		printf("Sc_FunctionPresentInTable. Reg table entry %i is not a table, but %s\n", regIndex, GetTypeOnTopOfStack());
+		lua_settop(gL, 0);
+		return;
+	}
+	Sc_TableGet(funcName);
+	bool bPresent = !Sc_IsNil();
+	lua_settop(gL, 0);
+	return bPresent;
 }
 
 void Sc_DumpStack()
@@ -503,6 +518,11 @@ bool Sc_IsNumber()
 bool Sc_Bool()
 {
 	return lua_toboolean(gL, -1) != 0;
+}
+
+bool Sc_IsFunction()
+{
+	return lua_isfunction(gL, -1) != 0;
 }
 
 bool Sc_StringCmp(const char* cmpTo)

@@ -489,13 +489,20 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 	}
 	hTexture hAtlasTex = At_GetAtlasTexture(pData->atlas);
 	drawContext->SetCurrentAtlas(hAtlasTex);
+	if (Sc_FunctionPresentInTable(pData->hViewModel, "OnXMLUILayerPush"))
+	{
+		Sc_CallFuncInRegTableEntryTable(pData->hViewModel, "OnXMLUILayerPush", NULL, 0, 0);
+	}
 }
 
 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	XMLUIData* pData = pLayer->userData;
-
+	if (Sc_FunctionPresentInTable(pData->hViewModel, "OnXMLUILayerPop"))
+	{
+		Sc_CallFuncInRegTableEntryTable(pData->hViewModel, "OnXMLUILayerPop", NULL, 0, 0);
+	}
 	DestoryVector(pData->pWidgetVertices);
 	drawContext->DestroyVertexBuffer(pData->hVertexBuffer);
 	FreeWidgetTree(pData->rootWidget);
@@ -814,6 +821,7 @@ xmlNode* GetNthChild(xmlNode* node, unsigned int index)
 		}
 		pChild = pChild->next;
 	}
+	return NULL;
 }
 
 static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
@@ -922,4 +930,5 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 	{
 		LoadUIData(pUIData, pOptions->pDc);
 	}
+
 }
