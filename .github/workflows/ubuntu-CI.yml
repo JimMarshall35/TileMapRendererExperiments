@@ -35,4 +35,5 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: |
         cd Stardew/build/enginetest
+        ls
         ./StardewEngineTest
