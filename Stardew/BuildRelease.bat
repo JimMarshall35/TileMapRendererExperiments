@@ -5,4 +5,4 @@ cmake --build . --config Release
 robocopy "..\Assets" "game\Release\Assets" /E /XO
 robocopy "engine\src\Release" "game\Release" "StardewEngine.dll" /E /XO
 robocopy "engine\src\Release" "enginetest\Release" "StardewEngine.dll" /E /XO
-pause
+robocopy "..\enginetest\data" "enginetest\Release\data" /E /XO

@@ -11,8 +11,12 @@ add_executable(
   GameFrameworkTests.cpp
   SharedPtrTests.cpp
   StringHashMapTests.cpp
+  GameFrameworkEventTests.cpp
   main.cpp
 )
+
+set_property(TARGET StardewEngineTest PROPERTY CXX_STANDARD 17)
+
 if(WIN32)
 target_link_libraries(
   StardewEngineTest
