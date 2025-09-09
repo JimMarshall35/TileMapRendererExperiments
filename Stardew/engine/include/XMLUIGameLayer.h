@@ -1,6 +1,9 @@
 #ifndef XMLUI_GAME_LAYER_H
 #define XMLUI_GAME_LAYER_H
 
+#include <libxml/tree.h>
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,7 +13,6 @@ extern "C" {
 #include "DynArray.h"
 #include "Widget.h"
 #include "DrawContext.h"
-#include <libxml/tree.h>
 #include "TimerPool.h"
 
 struct XMLUIData;
