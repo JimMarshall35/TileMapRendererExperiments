@@ -28,62 +28,66 @@
 #include "CanvasWidget.h"
 #include "TextEntryWidget.h"
 #include "DataNode.h"
-
+#include "StringKeyHashMap.h"
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-struct NameConstructorPair
-{
-	const char* name;
-	AddChildFn pCtor;
-};
+static struct HashMap gNodeNameMap;
+static bool gInitialisedNodeNameMap = false;
 
-struct NameConstructorPair gNodeNameTable[] =
+
+static void InitializeNodeNameMap()
 {
-	{"stackpanel",    &StackPanelWidgetNew},     // done
-	{"static",        &StaticWidgetNew},         // done
-	{"text",          &TextWidgetNew},           // done
-	{"backgroundbox", &BackgroundBoxWidgetNew},  // done
-	{"textButton",    &TextButtonWidgetNew},     // done
-	{"radioGroup",    &RadioGroupWidgetNew},     // done
-	{"radioButton",   &RadioButtonWidgetNew},    // done
-	{"slider",        &SliderWidgetNew},         // done
-	{"canvas",        &CanvasWidgetNew},         // done
-	{"textInput",     &TextEntryWidgetNew},      // done
-};
+	HashmapInit(&gNodeNameMap, 20, sizeof(AddChildFn));
+
+	AddChildFn fn = &StackPanelWidgetNew;
+	HashmapInsert(&gNodeNameMap, "stackpanel", &fn);
+	fn = &StaticWidgetNew;
+	HashmapInsert(&gNodeNameMap, "static", &fn);
+	fn = &TextWidgetNew;
+	HashmapInsert(&gNodeNameMap, "text", &fn);
+	fn = &BackgroundBoxWidgetNew;
+	HashmapInsert(&gNodeNameMap, "backgroundbox", &fn);
+	fn = &TextButtonWidgetNew;
+	HashmapInsert(&gNodeNameMap, "textButton", &fn);
+	fn = &RadioGroupWidgetNew;
+	HashmapInsert(&gNodeNameMap, "radioGroup", &fn);
+	fn = &RadioButtonWidgetNew;
+	HashmapInsert(&gNodeNameMap, "radioButton", &fn);
+	fn = &SliderWidgetNew;
+	HashmapInsert(&gNodeNameMap, "slider", &fn);
+	fn = &CanvasWidgetNew;
+	HashmapInsert(&gNodeNameMap, "canvas", &fn);
+	fn = &TextEntryWidgetNew;
+	HashmapInsert(&gNodeNameMap, "textInput", &fn);
+}
+
 
 AddChildFn LookupWidgetCtor(const char* widgetName)
 {
-	for (int i = 0; sizeof(gNodeNameTable) / sizeof(struct NameConstructorPair); i++)
-	{
-		if (strcmp(widgetName, gNodeNameTable[i].name) == 0)
-		{
-			return gNodeNameTable[i].pCtor;
-		}
-	}
-	return NULL;
+	return *((AddChildFn*)HashmapSearch(&gNodeNameMap, widgetName));
 }
 
 static void FreeWidgetTree_internal(HWidget root, bool bFreeRoot)
 {
 	struct UIWidget* pWidget = UI_GetWidget(root);
 	struct UIWidget* pWidgetRoot = pWidget;
-	if(!pWidget)
+	if (!pWidget)
 	{
 		return;
 	}
-	
+
 	HWidget h = pWidget->hFirstChild;
-	while(h != NULL_HWIDGET)
+	while (h != NULL_HWIDGET)
 	{
 		HWidget oldH = h;
 		pWidget = UI_GetWidget(h);
-			
+
 		h = pWidget->hNext;
 		FreeWidgetTree_internal(oldH, true);
 	}
 	pWidgetRoot->hFirstChild = NULL_HWIDGET;
-	if(bFreeRoot)
+	if (bFreeRoot)
 	{
 		UI_DestroyWidget(root);
 	}
@@ -112,14 +116,14 @@ static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
 	DN_InitForLuaTableOnTopOfStack(&node);
 	Sc_TableGet("type");
 	size_t len = Sc_StackTopStringLen();
-	if(len)
+	if (len)
 	{
 		char* pStr = malloc(len + 1);
 		Sc_StackTopStrCopy(pStr);
 		Sc_Pop();
 		/* look up ctor by name */
 
-		AddChildFn fn  = LookupWidgetCtor(pStr);
+		AddChildFn fn = LookupWidgetCtor(pStr);
 		HWidget hNew = fn(hParent, &node, pData);
 		free(pStr);
 
@@ -130,10 +134,10 @@ static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
 
 		UI_AddChild(hParent, hNew);
 		Sc_TableGet("children");
-		for(int i=1; i<=Sc_TableLen(); i++)
+		for (int i = 1; i <= Sc_TableLen(); i++)
 		{
 			Sc_TableGetIndex(i);
-			if(Sc_IsTable())
+			if (Sc_IsTable())
 			{
 				AddLuaTableSubTree(pData, hNew);
 			}
@@ -152,7 +156,7 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
 	XMLUIData* pData = pLayer->userData;
 	TP_DoTimers(&pData->timerPool, deltaT);
-	if(VectorSize(pData->pChildrenChangeRequests))
+	if (VectorSize(pData->pChildrenChangeRequests))
 	{
 		//printf("child change request\n");
 		struct WidgetChildrenChangeRequest* pReq = &pData->pChildrenChangeRequests[0];
@@ -160,13 +164,13 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 		FreeWidgetChildren(pReq->hWidget);
 		//printf("calling function %s\n", pReq->funcName);
 		Sc_CallFuncInRegTableEntryTable(pReq->regIndex, pReq->funcName, NULL, 0, 1);
-		if(Sc_IsTable())
+		if (Sc_IsTable())
 		{
-			for(int i=1; i<=Sc_TableLen(); i++)
+			for (int i = 1; i <= Sc_TableLen(); i++)
 			{
 				Sc_TableGetIndex(i);
 
-				if(Sc_IsTable())
+				if (Sc_IsTable())
 				{
 					AddLuaTableSubTree(pData, pReq->hWidget);
 				}
@@ -188,7 +192,7 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 			printf("error: function %s did not return a table\n", pReq->funcName);
 		}
 	}
-	for(int i=0; i<VectorSize(pData->pChildrenChangeRequests); i++)
+	for (int i = 0; i < VectorSize(pData->pChildrenChangeRequests); i++)
 	{
 		free(pData->pChildrenChangeRequests[i].funcName);
 	}
@@ -237,7 +241,7 @@ static void* BuildWidgetsHoverred(VECTOR(HWidget) outWidgets, HWidget hWidget, f
 	if (Ge_PointInAABB(mouseX, mouseY, hitbox))
 	{
 		outWidgets = VectorPush(outWidgets, &hWidget);
-		
+
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
 		HWidget hChild = pWidget->hFirstChild;
 		while (hChild != NULL_HWIDGET)
@@ -253,12 +257,12 @@ static void* BuildWidgetsHoverred(VECTOR(HWidget) outWidgets, HWidget hWidget, f
 
 static void Unfocus(XMLUIData* pUIData)
 {
-	for(int i = 0; i < pUIData->nFocusedWidgets; i++)
+	for (int i = 0; i < pUIData->nFocusedWidgets; i++)
 	{
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->focusedWidgets[i]);
 		EASSERT(pWidget->bAcceptsFocus);
 		pWidget->bHasFocus = false;
-		if(pWidget->cCallbacks.Callbacks[WC_OnLeaveFocus].callback.bActive)
+		if (pWidget->cCallbacks.Callbacks[WC_OnLeaveFocus].callback.bActive)
 		{
 			pWidget->cCallbacks.Callbacks[WC_OnLeaveFocus].callback.focusChangeFn(pWidget);
 		}
@@ -271,12 +275,12 @@ static bool SendMouseDownAndFocus(struct WidgetMouseInfo* info, HWidget hWidget,
 	Unfocus(pUIData);
 	struct UIWidget* pWidget = UI_GetWidget(hWidget);
 	bool rval = false;
-	if(pWidget->bAcceptsFocus)
+	if (pWidget->bAcceptsFocus)
 	{
 		rval = true;
 		pWidget->bHasFocus = true;
 		pUIData->focusedWidgets[pUIData->nFocusedWidgets++] = hWidget;
-		if(pWidget->cCallbacks.Callbacks[WC_OnGainFocus].callback.bActive)
+		if (pWidget->cCallbacks.Callbacks[WC_OnGainFocus].callback.bActive)
 		{
 			pWidget->cCallbacks.Callbacks[WC_OnGainFocus].callback.focusChangeFn(pWidget);
 		}
@@ -402,7 +406,7 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		.y = mousePos[1],
 		.button = 0
 	};
-	
+
 	bool bSendLMouseDown = false;
 	bool bSendLMouseUp = false;
 	if (bThisLeftClick && !bLastLeftClick)
@@ -432,11 +436,11 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseLeave, &info);
 	}
 
-	
+
 	bool bFocusChanged = false;
 	bool bWidgetsClicked = VectorSize(pWidgetsRemained) > 0 && bSendLMouseDown;
-		
-		
+
+
 	for (int i = 0; i < VectorSize(pWidgetsRemained); i++)
 	{
 		HWidget hWidget = pWidgetsRemained[i];
@@ -444,10 +448,10 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		if (bSendLMouseDown)
 		{
 			EASSERT(!bSendLMouseUp);
-			if(SendMouseDownAndFocus(&info, hWidget, pUIData))
+			if (SendMouseDownAndFocus(&info, hWidget, pUIData))
 			{
 				bFocusChanged = true;
-				
+
 			}
 		}
 		if (bSendLMouseUp)
@@ -458,14 +462,14 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 		UI_SendWidgetMouseEvent(pWidget, WC_OnMouseMove, &info);
 	}
 
-	for(int i = 0; i < pUIData->nFocusedWidgets; i++)
+	for (int i = 0; i < pUIData->nFocusedWidgets; i++)
 	{
 		HWidget hWidget = pUIData->focusedWidgets[i];
 		struct UIWidget* pWidget = UI_GetWidget(hWidget);
-		for(int j=0; j < ctx->textInput.nKeystrokesThisFrame; j++)
+		for (int j = 0; j < ctx->textInput.nKeystrokesThisFrame; j++)
 		{
 			int keystroke = ctx->textInput.keystrokes[j];
-			if(pWidget->fnRecieveKeystroke)
+			if (pWidget->fnRecieveKeystroke)
 				pWidget->fnRecieveKeystroke(pWidget, keystroke);
 		}
 	}
@@ -491,7 +495,7 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	XMLUIData* pData = pLayer->userData;
-	
+
 	DestoryVector(pData->pWidgetVertices);
 	drawContext->DestroyVertexBuffer(pData->hVertexBuffer);
 	FreeWidgetTree(pData->rootWidget);
@@ -526,7 +530,7 @@ void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 		UI_WidgetCommonInit(&dataNode, pWiddget);
 
 		UI_AddChild(widget, childWidget);
-		
+
 		AddNodeChildren(childWidget, pChild, pUIData);
 	}
 }
@@ -548,35 +552,35 @@ static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 	xmlChar* spritePath = NULL;
 	xmlChar* spriteName = NULL;
 	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pChild, "source"))
+	if (attribute = xmlGetProp(pChild, "source"))
 	{
 		spritePath = attribute;
 		bPathSet = true;
 	}
-	if(attribute = xmlGetProp(pChild, "name"))
+	if (attribute = xmlGetProp(pChild, "name"))
 	{
 		spriteName = attribute;
 		bNameset = true;
 	}
-	if(attribute = xmlGetProp(pChild, "top"))
+	if (attribute = xmlGetProp(pChild, "top"))
 	{
 		top = atoi(attribute);
 		xmlFree(attribute);
 		bTopSet = true;
 	}
-	if(attribute = xmlGetProp(pChild, "left"))
+	if (attribute = xmlGetProp(pChild, "left"))
 	{
 		left = atoi(attribute);
 		xmlFree(attribute);
 		bLeftSet = true;
 	}
-	if(attribute = xmlGetProp(pChild, "width"))
+	if (attribute = xmlGetProp(pChild, "width"))
 	{
 		width = atoi(attribute);
 		xmlFree(attribute);
 		bWidthSet = true;
 	}
-	if(attribute = xmlGetProp(pChild, "height"))
+	if (attribute = xmlGetProp(pChild, "height"))
 	{
 		height = atoi(attribute);
 		xmlFree(attribute);
@@ -629,19 +633,19 @@ static void LoadAtlasFont(xmlNode* pChild)
 {
 	struct FontAtlasAdditionSpec faas;
 	memset(&faas, 0, sizeof(struct FontAtlasAdditionSpec));
-	
+
 	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pChild, "source"))
+	if (attribute = xmlGetProp(pChild, "source"))
 	{
 		strcpy(faas.path, attribute);
 		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pChild, "name"))
+	if (attribute = xmlGetProp(pChild, "name"))
 	{
 		strcpy(faas.name, attribute);
 		xmlFree(attribute);
 	}
-	if(attribute = xmlGetProp(pChild, "options"))
+	if (attribute = xmlGetProp(pChild, "options"))
 	{
 		if (strcmp(attribute, "normal") == 0)
 		{
@@ -667,15 +671,15 @@ static void LoadAtlasFont(xmlNode* pChild)
 		{
 			continue;
 		}
-		if(strcmp(pChildChild->name, "size") == 0)
+		if (strcmp(pChildChild->name, "size") == 0)
 		{
 			struct FontSize fs;
 			memset(&fs, 0, sizeof(struct FontSize));
 			bool bTypeSet = false;
 			bool bValSet = false;
-			if(attribute = xmlGetProp(pChildChild, "type"))
+			if (attribute = xmlGetProp(pChildChild, "type"))
 			{
-				if(strcmp(attribute, "pts") == 0)
+				if (strcmp(attribute, "pts") == 0)
 				{
 					fs.type = FOS_Pts;
 					bTypeSet = true;
@@ -712,11 +716,11 @@ void LoadAtlas(XMLUIData* pUIData, xmlNode* child0, DrawContext* pDC)
 	int onChild = 0;
 	for (xmlNode* pChild = child0->children; pChild; pChild = pChild->next)
 	{
-        if (pChild->type != XML_ELEMENT_NODE)
+		if (pChild->type != XML_ELEMENT_NODE)
 		{
 			continue;
 		}
-		
+
 		if (strcmp(pChild->name, "sprite") == 0)
 		{
 			LoadAtlasSprite(pChild, onChild);
@@ -738,12 +742,12 @@ static bool TryLoadViewModel(XMLUIData* pUIData, xmlNode* pScreenNode)
 	char* pFilePath = NULL;
 	char* pFnName = NULL;
 	xmlChar* attribute = NULL;
-	if(attribute = xmlGetProp(pScreenNode, "viewmodelFile"))
+	if (attribute = xmlGetProp(pScreenNode, "viewmodelFile"))
 	{
 		pFilePath = attribute;
 		bVMFileSet = true;
 	}
-	if(attribute = xmlGetProp(pScreenNode, "viewmodelFunction"))
+	if (attribute = xmlGetProp(pScreenNode, "viewmodelFunction"))
 	{
 		pFnName = attribute;
 		bVMFunctionSet = true;
@@ -764,11 +768,11 @@ static bool TryLoadViewModel(XMLUIData* pUIData, xmlNode* pScreenNode)
 		printf("TryLoadViewModel, either file or function (or both) not set. file: %i function name: %i\n", bVMFileSet, bVMFunctionSet);
 	}
 
-	if(pFnName)
+	if (pFnName)
 	{
 		xmlFree(pFnName);
 	}
-	if(pFilePath)
+	if (pFilePath)
 	{
 		xmlFree(pFilePath);
 	}
@@ -797,14 +801,14 @@ xmlNode* GetNthChild(xmlNode* node, unsigned int index)
 	int onChild = 0;
 	assert(xmlChildElementCount(node) > index);
 	xmlNode* pChild = xmlFirstElementChild(node);
-	while(pChild)
+	while (pChild)
 	{
 		if (pChild->type != XML_ELEMENT_NODE)
 		{
 			pChild = pChild->next;
 			continue;
 		}
-		if(onChild++ == index)
+		if (onChild++ == index)
 		{
 			return pChild;
 		}
@@ -817,6 +821,12 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 	assert(!pUIData->bLoaded);
 	pUIData->bLoaded = true;
 	xmlDoc* pXMLDoc = xmlReadFile(pUIData->xmlFilePath, NULL, 0);
+
+	if (!gInitialisedNodeNameMap)
+	{
+		gInitialisedNodeNameMap = true;
+		InitializeNodeNameMap();
+	}
 
 	char nodeNameArr[128];
 
@@ -833,10 +843,10 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		}
 		xmlNode* child0 = GetNthChild(root, 0);
 		xmlNode* child1 = GetNthChild(root, 1);
-		
+
 		bool bDoneAtlas = false;
 		bool bDoneScreen = false;
-		
+
 		if (strcmp(child0->name, "atlas") == 0)
 		{
 			bDoneAtlas = true;
@@ -874,7 +884,7 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 
 		pUIData->hVertexBuffer = pDC->NewUIVertexBuffer(2048);
 	}
-	
+
 }
 
 static void OnWindowSizeChanged(struct GameFrameworkLayer* pLayer, int newW, int newH)
@@ -892,9 +902,9 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 	pLayer->userData = malloc(sizeof(XMLUIData));
 	if (!pLayer->userData) { printf("XMLUIGameLayer_Get: no memory"); return; }
 	XMLUIData* pUIData = (XMLUIData*)pLayer->userData;
-	
+
 	memset(pLayer->userData, 0, sizeof(XMLUIData));
-	
+
 	strcpy(pUIData->xmlFilePath, pOptions->xmlPath);
 	pUIData->rootWidget = NewRootWidget();
 	RootWidget_OnWindowSizeChanged(pUIData->rootWidget, Mn_GetScreenWidth(), Mn_GetScreenHeight());
@@ -913,13 +923,3 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 		LoadUIData(pUIData, pOptions->pDc);
 	}
 }
-
-
-
-
-
-
-
-
-
-
