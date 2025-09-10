@@ -6,6 +6,9 @@
 #include "DrawContext.h"
 #include "GameFrameworkEvent.h"
 #include "DataNode.h"
+#include "lua.h"
+#include <lualib.h>
+#include <lauxlib.h>
 
 struct GameFrameworkEventListener* gOnUIPushListener = NULL;
 
@@ -19,8 +22,12 @@ void MockSetCurrentAtlasFn(hTexture atlas)
     
 }
 
+static bool bOnPushCalled = false;
+
 void OnGameUIPush(void* pUserData, void* pEventData)
 {
+    bOnPushCalled = true;
+
     struct DataNode* pNode = (struct DataNode*)pEventData;
     enum DNPropValType type = pNode->fnGetPropType(pNode, "prop");
     ASSERT_EQ(type, DN_String);
@@ -55,18 +62,33 @@ TEST(Events, FilePresent)
 	ASSERT_TRUE(std::filesystem::exists("data/GameFrameworkEventTestUILayer.xml"));
 }
 
-TEST(Events, GameToUI)
+
+bool bLuaTestCallbackCalled = false;
+int L_LuaTestCallback(lua_State* L)
 {
+    bLuaTestCallbackCalled = true;
+    
+    // todo: add tests here for the passed args
+
+    return 0;
+}
+
+TEST(Events, EventsIntegrationTest)
+{
+    // 1.) Setup environment
     DrawContext dc;
     memset(&dc, 0, sizeof(DrawContext));
     dc.NewUIVertexBuffer = &MockNewUIVertexBufferFn;
     dc.SetCurrentAtlas = &MockSetCurrentAtlasFn;
     Sc_InitScripting();
+    Sc_RegisterCFunction("TestCallback", &L_LuaTestCallback);
     UI_Init();
     GF_InitGameFramework();
-
-
+    
+    // 2.) subscribe to event "OnGameHUDPush"
     gOnUIPushListener = Ev_SubscribeEvent("OnGameHUDPush", &OnGameUIPush, NULL);
+    
+    // 3.) setup a layer to be pushed
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct XMLUIGameLayerOptions options;
@@ -76,6 +98,25 @@ TEST(Events, GameToUI)
     testLayer.flags |= (EnableOnPush | EnableOnPop);
     XMLUIGameLayer_Get(&testLayer, &options);
     GF_PushGameFrameworkLayer(&testLayer);
+    
+    // 4.) end the frame, actually pushing the layer. 
+    // The push will trigger a callback in the vm, which will fire the event  we subscribed to in 2.),
+    // as well as subscribe to another event, UpdateDisplayedInventory
     GF_EndFrame(&dc, NULL);
+    ASSERT_TRUE(bOnPushCalled);
+
+    // 5.) setup lua event call args
+    // todo: add args here and test in the callback
+    struct LuaListenedEventArgs args {0,0};
+    
+    // 6.) fire event listened to by the viewmodel
+    Ev_FireEvent("UpdateDisplayedInventory", &args);
+    ASSERT_EQ(bLuaTestCallbackCalled, true);
+
+    // 7.) cleanup - unsubscribe events
+    ASSERT_TRUE(Ev_UnsubscribeEvent(gOnUIPushListener));
+    GF_PopGameFrameworkLayer(); // this calls the lua unsubscribe function and the on pop callback - or should
+
+    // todo: add tests to verify unsubscription
     Sc_DeInitScripting();
 }

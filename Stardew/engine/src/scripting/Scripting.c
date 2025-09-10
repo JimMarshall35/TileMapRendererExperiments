@@ -69,8 +69,7 @@ struct LuaListenerUserData
 
 static void LuaListenerFn(void* pUserData, void* pEventData)
 {
-	struct GameFrameworkEventListener* pListener = pUserData;
-	struct LuaListenerUserData* ud = Ev_GetUserData(pListener);
+	struct LuaListenerUserData* ud = pUserData;
 	struct LuaListenedEventArgs* pArgs = pEventData;
 	Sc_CallFuncInRegTableEntry(ud->regIndexFn, pArgs->args, pArgs->numArgs, 0, ud->regIndexVmTable);
 }
@@ -198,7 +197,7 @@ static int L_OnPropertyChanged(lua_State* L)
 	return 0;
 }
 
-static void Sc_RegisterCFunction(const char* name, int(*fn)(lua_State*))
+void Sc_RegisterCFunction(const char* name, int(*fn)(lua_State*))
 {
 	lua_pushcfunction(gL, fn);
 	lua_setglobal(gL, name);

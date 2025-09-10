@@ -241,7 +241,6 @@ static enum DNPropValType GetPropType_Lua(struct DataNode* pNode, const char* pr
         return DN_String;
     }
     
-
     Sc_Pop();
     return DN_UNKNOWN;
 }

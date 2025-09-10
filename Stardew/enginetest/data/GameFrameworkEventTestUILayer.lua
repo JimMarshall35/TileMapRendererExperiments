@@ -1,16 +1,20 @@
 function GetTestViewModel()
 	return {
+		updateInventoryListener,
+		OnUpdateDisplayedInventory = function(self, args)
+			TestCallback(args)
+		end,
 		OnXMLUILayerPush = function(self)
+			self.updateInventoryListener = SubscribeGameFrameworkEvent("UpdateDisplayedInventory", self, self.OnUpdateDisplayedInventory)
 			FireGameFrameworkEvent({ 
 				prop="val",
 				intProp=42,
 				boolProp=false,
 				floatProp=32.5
 			}, "OnGameHUDPush")
-			print("LOLOLOLOLOLOLOLOLOLOLOOL HERE HERE HERE")
 		end,
 		OnXMLUILayerPop = function(self)
-			print("LOLOLOLOLOLOLOLOLOLOLOOL POP")
+			UnsubscribeGameFrameworkEvent(self.updateInventoryListener)
 		end
 	}
 end

@@ -98,6 +98,12 @@ bool Sc_StringCmp(const char* cmpTo);
 
 void Sc_DumpStack();
 
+/*
+	I only intend this to be used for unit testing, and in any games linking to the engine
+*/
+typedef struct lua_State lua_State;
+void Sc_RegisterCFunction(const char* name, int(*fn)(lua_State*));
+
 #ifdef __cplusplus
 }
 #endif
