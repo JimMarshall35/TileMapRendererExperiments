@@ -230,11 +230,17 @@ static enum DNPropValType GetPropType_Lua(struct DataNode* pNode, const char* pr
         Sc_Pop();
         return DN_Bool;
     }
+    else if (Sc_IsNumber())
+    {
+        Sc_Pop();
+        return DN_Float;
+    }
     else if (Sc_IsString())
     {
         Sc_Pop();
         return DN_String;
     }
+    
 
     Sc_Pop();
     return DN_UNKNOWN;

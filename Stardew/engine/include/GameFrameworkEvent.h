@@ -1,6 +1,11 @@
 #ifndef GAMEFRAMEWORKEVENT_H
 #define GAMEFRAMEWORKEVENT_H
+
 #include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 	Event system used for sending messages between game layers.
@@ -15,6 +20,10 @@ bool Ev_UnsubscribeEvent(struct GameFrameworkEventListener* pListener);
 void* Ev_GetUserData(struct GameFrameworkEventListener* pListener);
 void Ev_FireEvent(char* eventName, void* eventArgs);
 void Ev_Init();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

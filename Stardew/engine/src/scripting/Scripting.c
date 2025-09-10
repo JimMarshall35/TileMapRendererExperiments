@@ -80,7 +80,7 @@ static int L_FireGameFrameworkEvent(lua_State* L)
 	const char* eventName = NULL;
 	if(lua_isstring(L, -1))
 	{
-		const char* eventName = lua_tostring(L, -1);
+		eventName = lua_tostring(L, -1);
 	}
 	else
 	{
@@ -213,6 +213,7 @@ void Sc_InitScripting()
 	Sc_RegisterCFunction("OnPropertyChanged", &L_OnPropertyChanged);
 	Sc_RegisterCFunction("SubscribeGameFrameworkEvent", &L_SubscribeToGameFrameworkEvent);
 	Sc_RegisterCFunction("UnsubscribeGameFrameworkEvent", &L_UnSubscribeToGameFrameworkEvent);
+	Sc_RegisterCFunction("FireGameFrameworkEvent", &L_FireGameFrameworkEvent);
 }
 
 void Sc_DeInitScripting()
