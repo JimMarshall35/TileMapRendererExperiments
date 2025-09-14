@@ -211,9 +211,11 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
                     f.write(struct.pack("I", layer["x"]))
                     f.write(struct.pack("I", layer["y"]))
                     if args.rle:
+                        f.write(struct.pack("I", 1))     # enum value to signify RLE
                         # RUN LENGTH ENCODED TILES
                         write_rle(f, layer["data"], atlas, tilesets)
                     else:
+                        f.write(struct.pack("I", 2))     # enum value to signify uncompressed
                         # UNCOMPRESSED TILES
                         write_uncompressed(f, layer["data"], atlas, tilesets)
 

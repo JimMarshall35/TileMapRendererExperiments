@@ -31,8 +31,8 @@ extern "c" {
 	void BS_SerializeBool(bool val, struct BinarySerializer* pSerializer);
 	void BS_SerializeFloat(float val, struct BinarySerializer* pSerializer);
 	void BS_SerializeDouble(double val, struct BinarySerializer* pSerializer);
-	void BS_SerializeString(char* val, struct BinarySerializer* pSerializer);
-	void BS_SerializeBytes(char* val, u32 len, struct BinarySerializer* pSerializer);
+	void BS_SerializeString(const char* val, struct BinarySerializer* pSerializer);
+	void BS_SerializeBytes(const char* val, u32 len, struct BinarySerializer* pSerializer);
 
 
 	void BS_DeSerializeI64(i64* val, struct BinarySerializer* pSerializer);

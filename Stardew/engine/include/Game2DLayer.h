@@ -43,21 +43,14 @@ struct GameLayer2DData
 {
 	hAtlas hAtlas;
 	struct TileMap tilemap;
+	bool bLoaded;
 };
 
 struct Game2DLayerOptions
 {
 	const char* atlasFilePath;
 	
-	/*
-		One file can contain several layers, but multiple files can be loaded.
-		Each file is an array of layers, and when multiple files are loaded together,
-		the layers stack up into the tilemap in order:
-		
-		totalLayers = numLayersInFile1 + numLayersInFile2 + numLayersInFile3 ...
-	*/
-	const char** tilemapFilePaths;
-	int numTilemapFiles;
+	const char* tilemapFilePath;
 	
 	/*
 		Each entity file is an array of entities.
@@ -69,8 +62,10 @@ struct Game2DLayerOptions
 };
 
 struct GameFrameworkLayer;
+struct DrawContext;
+typedef struct DrawContext DrawContext;
 
-void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions);
+void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions, DrawContext* pDC);
 
 #ifdef __cplusplus
 }
