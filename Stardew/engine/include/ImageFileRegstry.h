@@ -33,7 +33,7 @@ const struct ImageFile* IR_GetImageFile(HImage img);
 
 bool IR_LoadImageSync(HImage hImage, VECTOR(struct ImageLoadError) outErrors);
 
-void IR_InitImageRegistry();
+void IR_InitImageRegistry(const char* jsonPath);
 
 void IR_DestroyImageRegistry();
 

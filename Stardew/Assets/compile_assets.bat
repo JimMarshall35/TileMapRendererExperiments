@@ -1,0 +1,1 @@
+python ../engine/scripts/ConvertTiled.py ./out_rle --rle true -m Farm.json House.json RoadToTown.json -a ../engine/scripts/AtlasTool.exe

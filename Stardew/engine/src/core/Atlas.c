@@ -609,10 +609,10 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		pAtlas->texture = pDC->UploadTexture(pAtlas->atlasBytes, CHANNELS_PER_PIXEL, w, h);
 	}
 
-	struct BinarySerializer serializer;
+	/*struct BinarySerializer serializer;
 	BS_CreateForSave("out.atlas", &serializer);
 	At_SerializeAtlas(&serializer, &gCurrentAtlasIndex, pDC);
-	BS_Finish(&serializer);
+	BS_Finish(&serializer);*/
 
 	return gCurrentAtlasIndex;
 }

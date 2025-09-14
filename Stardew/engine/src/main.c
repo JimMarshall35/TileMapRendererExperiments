@@ -182,7 +182,7 @@ int EngineStart(int argc, char** argv, GameInitFn init)
     GF_InitGameFramework();
     printf("done\n");
     printf("initialising image registry\n");
-    IR_InitImageRegistry();
+    IR_InitImageRegistry(NULL);
     printf("done\n");
     printf("initialising atlas\n");
     At_Init();

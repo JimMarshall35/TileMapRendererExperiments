@@ -4,9 +4,12 @@ cmake .. -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=generators\conan_tool
 cmake --build . --config Debug
 rem For debugging with visual studio they need to go here
 robocopy "..\Assets" "game\Assets" /E /XO
+robocopy "..\Assets" "atlastool\Assets" /E /XO
 robocopy "engine\src\Debug" "game\Debug" "StardewEngine.dll" /E /XO
 robocopy "engine\src\Debug" "enginetest\Debug" "StardewEngine.dll" /E /XO
+robocopy "engine\src\Debug" "atlastool\Debug" "StardewEngine.dll" /E /XO
 robocopy "..\enginetest\data" "enginetest\Debug\data" /E /XO
+
 rem "Debugging in visual studio has the working directory path relative to the project folder by default"
 robocopy "..\enginetest\data" "enginetest\Debug" /E /XO
 cd enginetest\Debug

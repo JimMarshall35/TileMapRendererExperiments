@@ -116,11 +116,15 @@ bool IR_LoadImageSync(HImage hImage, VECTOR(struct ImageLoadError) outErrors)
     return true;
 }
 
-void IR_InitImageRegistry()
+void IR_InitImageRegistry(const char* jsonPath)
 {
     gImageFiles = NEW_VECTOR(struct ImageFile);
     int size = 0;
-    char* data = LoadFile("./Assets/ImageFiles.json", &size);
+    char* data = jsonPath;
+    if (jsonPath == NULL)
+    {
+        data = LoadFile("./Assets/ImageFiles.json", &size);
+    }
     
     if (!data)
     {

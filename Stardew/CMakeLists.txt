@@ -4,6 +4,8 @@ project(WarFarmer)
 add_subdirectory(engine)
 add_subdirectory(game)
 add_subdirectory(enginetest)
+add_subdirectory(atlastool)
 
 target_link_libraries(WarFarmer PUBLIC StardewEngine)
 target_link_libraries(StardewEngineTest PUBLIC StardewEngine)
+target_link_libraries(AtlasTool PUBLIC StardewEngine)

@@ -6,5 +6,7 @@ robocopy "..\Assets" "game\Release\Assets" /E /XO
 robocopy "engine\src\Release" "game\Release" "StardewEngine.dll" /E /XO
 robocopy "engine\src\Release" "enginetest\Release" "StardewEngine.dll" /E /XO
 robocopy "..\enginetest\data" "enginetest\Release\data" /E /XO
+robocopy "atlastool\Release" "../engine/scripts" "AtlasTool.exe" /E /XO
+robocopy "engine\src\Release" "../engine/scripts" "StardewEngine.dll" /E /XO
 rem // This handles the exit code (`ErrorLevel`) returned by `robocopy` properly: (needed for CI)
 if ErrorLevel 8 (exit /B 1) else (exit /B 0)
