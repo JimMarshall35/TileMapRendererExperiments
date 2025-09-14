@@ -1,0 +1,108 @@
+<atlas>
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="128" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="129" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="2" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="130" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="256" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="11" left="352" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="12" left="384" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="160" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="161" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="34" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="162" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="168" left="256" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="43" left="352" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="300" left="384" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="44" left="384" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="192" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="64" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="194" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="65" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="66" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="69" left="160" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="70" left="192" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="193" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="200" left="256" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="75" left="352" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="332" left="384" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="224" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="97" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="226" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="96" left="0" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="98" left="64" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Exterior Tiles.png" top="225" left="32" width="32" height="32" name="Exterior Tiles" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="127" left="992" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="0" left="0" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="792" left="768" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="793" left="800" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="794" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="411" left="864" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="412" left="896" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="282" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="413" left="928" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="159" left="992" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="824" left="768" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="825" left="800" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="826" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="443" left="864" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="444" left="896" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="441" left="800" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="314" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="445" left="928" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="63" left="992" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="319" left="992" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="856" left="768" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="217" left="800" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="858" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="218" left="832" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="857" left="800" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="476" left="896" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="475" left="864" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="347" left="864" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="348" left="896" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="477" left="928" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="349" left="928" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="95" left="992" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="352" left="0" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="353" left="32" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="354" left="64" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="355" left="96" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="356" left="128" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="357" left="160" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="364" left="384" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="365" left="416" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="366" left="448" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="379" left="864" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="380" left="896" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Terrain and Outside.png" top="381" left="928" width="32" height="32" name="Terrain and Outside" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="914" left="576" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="19" left="608" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="20" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="281" left="800" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="34" left="64" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="938" left="320" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="939" left="352" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="940" left="384" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="51" left="608" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="948" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="52" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="313" left="800" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="315" left="864" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="66" left="64" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="970" left="320" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="971" left="352" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="972" left="384" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="978" left="576" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="979" left="608" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="980" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="83" left="608" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="84" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="212" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="213" left="672" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="1003" left="352" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="882" left="576" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="883" left="608" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="884" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="244" left="640" width="32" height="32" name="Interior" />
+    <sprite source="Image/LPC Submissions/Interior.png" top="245" left="672" width="32" height="32" name="Interior" />
+   </atlas>

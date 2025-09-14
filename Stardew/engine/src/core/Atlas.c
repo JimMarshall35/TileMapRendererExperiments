@@ -12,11 +12,15 @@
 #include "DrawContext.h"
 #include "SharedPtr.h"
 #include "FloatingPointLib.h"
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+#include "BinarySerializer.h"
 
 FT_Library  gFTLib;
 static int gSpriteId = 1;
 
-struct AtlasSpriteData
+struct AtlasSpriteFontData
 {
 	vec2 bearing;
 	vec2 advance;
@@ -24,7 +28,7 @@ struct AtlasSpriteData
 
 struct AtlasFont
 {
-	struct AtlasSpriteData spriteData[256];
+	struct AtlasSpriteFontData spriteData[256];
 	AtlasSprite sprites[256];
 	char name[MAX_FONT_NAME_SIZE];
 	SHARED_PTR(FT_Face) pFTFace;
@@ -39,7 +43,6 @@ typedef struct
 	int atlasHeight;
 	hTexture texture;
 	VECTOR(AtlasSprite) sprites;
-	VECTOR(HImage) images;
 	VECTOR(struct AtlasFont) fonts;
 }Atlas;
 
@@ -53,15 +56,21 @@ Atlas* GetCurrentAtlas()
 
 Atlas* AqcuireAtlas()
 {
+	if (gAtlases == NULL)
+	{
+		gAtlases = NEW_VECTOR(Atlas);
+	}
 	for (int i = 0; i < VectorSize(gAtlases); i++)
 	{
 		if (!gAtlases[i].bActive)
 		{
+			gCurrentAtlasIndex = i;
 			return &gAtlases[i];
 		}
 	}
 	Atlas atlas;
 	gAtlases = VectorPush(gAtlases, &atlas);
+	gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
 	return VectorTop(gAtlases);
 }
 
@@ -89,11 +98,10 @@ void At_BeginAtlas()
 	atlas->atlasHeight = 0;
 	atlas->atlasWidth = 0;
 	atlas->sprites = NEW_VECTOR(AtlasSprite);
-	atlas->images = NEW_VECTOR(HImage);
 	atlas->fonts = NEW_VECTOR(struct AtlasFont);
 	atlas->texture = NULL_HANDLE;
 	//gAtlases = VectorPush(gAtlases, &atlas);
-	gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
+	//gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
 }
 
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int widthPx, int heightPx, const char* name)
@@ -164,7 +172,7 @@ static size_t CountAvailableChars(struct AtlasFont* pFont)
 	size_t count = 0;
 	for (int i = 0; i < 256; i++)
 	{
-		if (pFont->sprites[i].individualTileBytes)
+		if (pFont->sprites[i].bSet)
 		{
 			++count;
 		}
@@ -264,9 +272,10 @@ HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec)
 			pSprite->widthPx = (*face)->glyph->bitmap.width;
 			pSprite->heightPx = (*face)->glyph->bitmap.rows;
 			pSprite->individualTileBytes = FTBitmapToNestableBitmap(&(*face)->glyph->bitmap);
+			pSprite->bSet = true;
 			pSprite->id = gSpriteId++;
 			
-			struct AtlasSpriteData* pSpriteData = &font.spriteData[j];
+			struct AtlasSpriteFontData* pSpriteData = &font.spriteData[j];
 			pSpriteData->bearing[0] = (*face)->glyph->bitmap_left;
 			pSpriteData->bearing[1] = (*face)->glyph->bitmap_top;
 			pSpriteData->advance[0] = (float)((*face)->glyph->advance.x >> 6);
@@ -478,7 +487,7 @@ void CopyNestedPositions(Atlas* pAtlasDest, AtlasSprite* spritesCopySrc, int spr
 
 static bool IsCharLoaded(struct AtlasFont* pFont, char c)
 {
-	return pFont->sprites[c].individualTileBytes != NULL;
+	return pFont->sprites[c].bSet;
 }
 
 
@@ -532,7 +541,7 @@ static void WriteFontSprites(Atlas* pAtlas, AtlasSprite* outFontSprites)
 		for (int j = 0; j < 256; j++)
 		{
 			AtlasSprite* pSrc = &pAtlas->fonts[i].sprites[j];
-			if (pSrc->individualTileBytes)
+			if (pSrc->bSet)
 			{
 				*outFontSprites = *pSrc;
 				++outFontSprites;
@@ -576,6 +585,8 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		{
 			AtlasSprite* pSprite = &pAtlas->sprites[i];
 			BlitAtlasSprite(pAtlasBytes, w, pSprite);
+			free(pSprite->individualTileBytes);
+			pSprite->individualTileBytes = NULL;
 		}
 
 		for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
@@ -584,6 +595,8 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 			{
 				AtlasSprite* pSprite = &pAtlas->fonts[i].sprites[j];
 				BlitAtlasSprite(pAtlasBytes, w, pSprite);
+				free(pSprite->individualTileBytes);
+				pSprite->individualTileBytes = NULL;
 			}
 		}
 		pAtlas->atlasBytes = pAtlasBytes;
@@ -595,6 +608,12 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		//stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
 		pAtlas->texture = pDC->UploadTexture(pAtlas->atlasBytes, CHANNELS_PER_PIXEL, w, h);
 	}
+
+	struct BinarySerializer serializer;
+	BS_CreateForSave("out.atlas", &serializer);
+	At_SerializeAtlas(&serializer, &gCurrentAtlasIndex, pDC);
+	BS_Finish(&serializer);
+
 	return gCurrentAtlasIndex;
 }
 
@@ -641,10 +660,12 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 		if (pSprite->name)
 		{
 			free(pSprite->name);
+			pSprite->name = NULL;
 		}
 		if (pSprite->individualTileBytes)
 		{
 			free(pSprite->individualTileBytes);
+			pSprite->individualTileBytes = NULL;
 		}
 	}
 
@@ -659,17 +680,18 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 			if (pSprite->name)
 			{
 				free(pSprite->name);
+				pSprite->name = NULL;
 			}
 			if (pSprite->individualTileBytes)
 			{
 				free(pSprite->individualTileBytes);
+				pSprite->individualTileBytes = NULL;
 			}
 		}
 	}
 
 
 	DestoryVector(gAtlases[atlas].sprites);
-	DestoryVector(gAtlases[atlas].images);
 	DestoryVector(gAtlases[atlas].fonts);
 	free(gAtlases[atlas].atlasBytes);
 }
@@ -705,6 +727,373 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 	ATLAS_HANDLE_BOUNDS_CHECK(atlas, NULL_HANDLE);
 	Atlas* pAtlas = &gAtlases[atlas];
 	return pAtlas->texture;
+}
+
+static void LoadAtlasSprite(xmlNode* pChild, int onChild)
+{
+	bool bNameset = false;
+	bool bPathSet = false;
+	bool bTopSet = false;
+	bool bLeftSet = false;
+	bool bWidthSet = false;
+	bool bHeightSet = false;
+	bool bAllSet = true;
+	int top = 0;
+	int left = 0;
+	int width = 0;
+	int height = 0;
+
+	xmlChar* spritePath = NULL;
+	xmlChar* spriteName = NULL;
+	xmlChar* attribute = NULL;
+	if (attribute = xmlGetProp(pChild, "source"))
+	{
+		spritePath = attribute;
+		bPathSet = true;
+	}
+	if (attribute = xmlGetProp(pChild, "name"))
+	{
+		spriteName = attribute;
+		bNameset = true;
+	}
+	if (attribute = xmlGetProp(pChild, "top"))
+	{
+		top = atoi(attribute);
+		xmlFree(attribute);
+		bTopSet = true;
+	}
+	if (attribute = xmlGetProp(pChild, "left"))
+	{
+		left = atoi(attribute);
+		xmlFree(attribute);
+		bLeftSet = true;
+	}
+	if (attribute = xmlGetProp(pChild, "width"))
+	{
+		width = atoi(attribute);
+		xmlFree(attribute);
+		bWidthSet = true;
+	}
+	if (attribute = xmlGetProp(pChild, "height"))
+	{
+		height = atoi(attribute);
+		xmlFree(attribute);
+		bHeightSet = true;
+	}
+	if (!bPathSet)
+	{
+		printf("%s atlas child %i path not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bNameset)
+	{
+		printf("%s atlas child %i name not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bTopSet)
+	{
+		printf("%s atlas child %i top not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bLeftSet)
+	{
+		printf("%s atlas child %i left not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bWidthSet)
+	{
+		printf("%s atlas child %i top not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (!bHeightSet)
+	{
+		printf("%s atlas child %i left not set\n", __FUNCTION__, onChild);
+		bAllSet = false;
+	}
+	if (bAllSet)
+	{
+		printf("adding sprite %s\n", spritePath);
+		At_AddSprite(spritePath, top, left, width, height, spriteName);
+		EASSERT(spritePath);
+		EASSERT(spriteName);
+		xmlFree(spritePath);
+		xmlFree(spriteName);
+
+		printf("done\n");
+	}
+}
+
+static void LoadAtlasFont(xmlNode* pChild)
+{
+	struct FontAtlasAdditionSpec faas;
+	memset(&faas, 0, sizeof(struct FontAtlasAdditionSpec));
+
+	xmlChar* attribute = NULL;
+	if (attribute = xmlGetProp(pChild, "source"))
+	{
+		strcpy(faas.path, attribute);
+		xmlFree(attribute);
+	}
+	if (attribute = xmlGetProp(pChild, "name"))
+	{
+		strcpy(faas.name, attribute);
+		xmlFree(attribute);
+	}
+	if (attribute = xmlGetProp(pChild, "options"))
+	{
+		if (strcmp(attribute, "normal") == 0)
+		{
+			faas.fontOptions = FS_Normal;
+		}
+		else if (strcmp(attribute, "italic"))
+		{
+			faas.fontOptions = FS_Italic;
+		}
+		else if (strcmp(attribute, "bold") == 0)
+		{
+			faas.fontOptions = FS_Bold;
+		}
+		else if (strcmp(attribute, "underline") == 0)
+		{
+			faas.fontOptions = FS_Underline;
+		}
+		xmlFree(attribute);
+	}
+	for (xmlNode* pChildChild = pChild->children; pChildChild; pChildChild = pChildChild->next)
+	{
+		if (pChildChild->type != XML_ELEMENT_NODE)
+		{
+			continue;
+		}
+		if (strcmp(pChildChild->name, "size") == 0)
+		{
+			struct FontSize fs;
+			memset(&fs, 0, sizeof(struct FontSize));
+			bool bTypeSet = false;
+			bool bValSet = false;
+			if (attribute = xmlGetProp(pChildChild, "type"))
+			{
+				if (strcmp(attribute, "pts") == 0)
+				{
+					fs.type = FOS_Pts;
+					bTypeSet = true;
+				}
+				else if (strcmp(attribute, "pxls") == 0)
+				{
+					fs.type = FOS_Pixels;
+					bTypeSet = true;
+				}
+				xmlFree(attribute);
+			}
+			if (attribute = xmlGetProp(pChildChild, "val"))
+			{
+				fs.val = atof(attribute);
+				xmlFree(attribute);
+				bValSet = true;
+			}
+			if (bValSet && bTypeSet)
+			{
+				faas.fontSizes[faas.numFontSizes++] = fs;
+			}
+		}
+	}
+	printf("adding font %s\n", faas.path);
+	At_AddFont(&faas);
+	printf("done\n");
+}
+
+hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
+{
+	printf("loading atlas\n");
+	xmlChar* attribute = NULL;
+	if (attribute = xmlGetProp(child0, "binary"))
+	{
+		struct BinarySerializer serializer;
+		BS_CreateForLoad(attribute, &serializer);
+		hAtlas newAtlas = -1;
+		At_SerializeAtlas(&serializer, &newAtlas, pDC);
+		BS_Finish(&serializer);
+		return newAtlas;
+	}
+
+	At_BeginAtlas();
+
+	int onChild = 0;
+	for (xmlNode* pChild = child0->children; pChild; pChild = pChild->next)
+	{
+		if (pChild->type != XML_ELEMENT_NODE)
+		{
+			continue;
+		}
+
+		if (strcmp(pChild->name, "sprite") == 0)
+		{
+			LoadAtlasSprite(pChild, onChild);
+		}
+		else if (strcmp(pChild->name, "font") == 0)
+		{
+			LoadAtlasFont(pChild);
+		}
+		onChild++;
+	}
+	return At_EndAtlas(pDC);
+}
+
+static void SerializeAtlasSprite(const AtlasSprite* pSprite, struct BinarySerializer* pSerializer)
+{
+	EASSERT(pSerializer->bSaving);
+	BS_SerializeString(pSprite->name, pSerializer);
+	BS_SerializeI32(pSprite->srcImageTopLeftXPx, pSerializer);
+	BS_SerializeI32(pSprite->srcImageTopLeftYPx, pSerializer);
+	BS_SerializeI32(pSprite->widthPx, pSerializer);
+	BS_SerializeI32(pSprite->heightPx, pSerializer);
+	BS_SerializeI32(pSprite->atlasTopLeftXPx, pSerializer);
+	BS_SerializeI32(pSprite->atlasTopLeftYPx, pSerializer);
+	BS_SerializeFloat(pSprite->topLeftUV_U, pSerializer);
+	BS_SerializeFloat(pSprite->topLeftUV_V, pSerializer);
+	BS_SerializeFloat(pSprite->bottomRightUV_U, pSerializer);
+	BS_SerializeFloat(pSprite->bottomRightUV_V, pSerializer);
+	BS_SerializeBool(pSprite->bSet, pSerializer);
+	BS_SerializeI32(pSprite->id, pSerializer);
+}
+
+static void SerializeAtlasFont(const struct AtlasFont* pFont, struct BinarySerializer* pSerializer)
+{
+	BS_SerializeBytes(pFont->spriteData, sizeof(struct AtlasSpriteFontData) * 256, pSerializer);
+	for (int i = 0; i < 256; i++)
+	{
+		SerializeAtlasSprite(&pFont->sprites[i], pSerializer);
+	}
+	BS_SerializeBytes(pFont->name, strlen(pFont->name), pSerializer);
+	BS_SerializeFloat(pFont->fSizePts, pSerializer);
+}
+
+static void DeserializeAtlasSpriteV1(AtlasSprite* pSprite, struct BinarySerializer* pSerializer)
+{
+	EASSERT(!pSerializer->bSaving);
+	BS_DeSerializeString(&pSprite->name, pSerializer);
+	BS_DeSerializeI32(&pSprite->srcImageTopLeftXPx, pSerializer);
+	BS_DeSerializeI32(&pSprite->srcImageTopLeftYPx, pSerializer);
+	BS_DeSerializeI32(&pSprite->widthPx, pSerializer);
+	BS_DeSerializeI32(&pSprite->heightPx, pSerializer);
+	BS_DeSerializeI32(&pSprite->atlasTopLeftXPx, pSerializer);
+	BS_DeSerializeI32(&pSprite->atlasTopLeftYPx, pSerializer);
+	BS_DeSerializeFloat(&pSprite->topLeftUV_U, pSerializer);
+	BS_DeSerializeFloat(&pSprite->topLeftUV_V, pSerializer);
+	BS_DeSerializeFloat(&pSprite->bottomRightUV_U, pSerializer);
+	BS_DeSerializeFloat(&pSprite->bottomRightUV_V, pSerializer);
+	BS_DeSerializeBool(&pSprite->bSet, pSerializer);
+	BS_DeSerializeI32(&pSprite->id, pSerializer);
+}
+
+static DeserializeAtlasFontV1(struct AtlasFont* pFont, struct BinarySerializer* pSerializer)
+{
+	u32 size = 0;
+	BS_DeSerializeU32(&size, pSerializer);
+	EASSERT(size == sizeof(struct AtlasSpriteFontData) * 256);
+	BS_BytesRead(pSerializer, sizeof(struct AtlasSpriteFontData) * 256, (char*)pFont->spriteData);
+	for (int i = 0; i < 256; i++)
+	{
+		DeserializeAtlasSpriteV1(&pFont->sprites[i], pSerializer);
+	}
+	BS_DeSerializeU32(&size, pSerializer);
+	BS_BytesRead(pSerializer, size, pFont->name);
+	pFont->name[size] = '\0';
+	BS_DeSerializeFloat(&pFont->fSizePts, pSerializer);
+}
+
+static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct DrawContext* pDC)
+{
+	EASSERT(!pSerializer->bSaving);
+	Atlas* pAtlas = AqcuireAtlas();
+	
+	pAtlas->atlasBytes = NULL;
+	pAtlas->atlasHeight = 0;
+	pAtlas->atlasWidth = 0;
+	pAtlas->sprites = NEW_VECTOR(AtlasSprite);
+	pAtlas->fonts = NEW_VECTOR(struct AtlasFont);
+	pAtlas->texture = NULL_HANDLE;
+
+	// width and height
+	BS_DeSerializeI32(&pAtlas->atlasHeight, pSerializer);
+	BS_DeSerializeI32(&pAtlas->atlasWidth, pSerializer);
+
+	// sprites
+	u32 numSprites = 0;
+	BS_DeSerializeU32(&numSprites, pSerializer);
+	pAtlas->sprites = VectorResize(pAtlas->sprites, numSprites);
+	for (int i = 0; i < numSprites; i++)
+	{
+		AtlasSprite sprite;
+		DeserializeAtlasSpriteV1(&sprite, pSerializer);
+		pAtlas->sprites = VectorPush(pAtlas->sprites, &sprite);
+	}
+
+	// fonts
+	u32 numFonts = 0;
+	BS_DeSerializeU32(&numFonts, pSerializer);
+	pAtlas->fonts = VectorResize(pAtlas->fonts, numFonts);
+	for (int i = 0; i < numFonts; i++)
+	{
+		static struct AtlasFont font;
+		DeserializeAtlasFontV1(&font, pSerializer);
+		pAtlas->fonts = VectorPush(pAtlas->fonts, &font);
+	}
+
+	u32 size = 0;
+	BS_DeSerializeU32(&size, pSerializer);
+	pAtlas->atlasBytes = malloc(size);
+	memset(pAtlas->atlasBytes, 0, size);
+	BS_BytesRead(pSerializer, size, pAtlas->atlasBytes);
+
+	pAtlas->texture = pDC->UploadTexture(pAtlas->atlasBytes, 4, pAtlas->atlasWidth, pAtlas->atlasHeight);
+	return gCurrentAtlasIndex;
+
+}
+
+void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, struct DrawContext* pDC)
+{
+	
+	if (pSerializer->bSaving)
+	{
+		ATLAS_HANDLE_BOUNDS_CHECK_NO_RETURN(*atlas);
+		Atlas* pAtlas = &gAtlases[*atlas];
+		// File version: 1
+		BS_SerializeU32(1, pSerializer);
+	
+		// width and height
+		BS_SerializeI32(pAtlas->atlasHeight, pSerializer);
+		BS_SerializeI32(pAtlas->atlasWidth, pSerializer);
+		
+		// sprites
+		BS_SerializeU32(VectorSize(pAtlas->sprites), pSerializer);
+		for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
+		{
+			SerializeAtlasSprite(&pAtlas->sprites[i], pSerializer);
+		}
+
+		// fonts
+		BS_SerializeU32(VectorSize(pAtlas->fonts), pSerializer);
+		for (int i = 0; i < VectorSize(pAtlas->fonts); i++)
+		{
+			SerializeAtlasFont(&pAtlas->fonts[i], pSerializer);
+		}
+
+		BS_SerializeBytes(pAtlas->atlasBytes, pAtlas->atlasWidth * pAtlas->atlasHeight * 4, pSerializer);
+	}
+	else
+	{
+		u32 version = 0;
+		BS_DeSerializeU32(&version, pSerializer);
+		switch (version)
+		{
+		case 1:
+			*atlas = DeserializeAtlasV1(pSerializer, pDC);
+			break;
+		default:
+			printf("Unknown atlas binary file version number %ui\n", version);
+		}
+	}
 }
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts)
@@ -776,7 +1165,7 @@ float Fo_StringHeight(hAtlas hAtlas, HFont hFont, const char* stringVal)
 		{
 			continue;
 		}
-		struct AtlasSpriteData* pData = &pFont->spriteData[c];
+		struct AtlasSpriteFontData* pData = &pFont->spriteData[c];
 		AtlasSprite* pSprite = &pFont->sprites[c];
 
 		if (pData->bearing[1] > maxAboveBaseline)
@@ -833,7 +1222,7 @@ bool Fo_TryGetCharBearing(hAtlas hAtlas, HFont hFont, char c, vec2 outBearing)
 	ATLAS_HANDLE_BOUNDS_CHECK(hAtlas, false);
 	FONT_HANDLE_BOUNDS_CHECK(hAtlas, hFont, false);
 
-	if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].individualTileBytes)
+	if (!gAtlases[hAtlas].fonts[hFont].sprites[(u8)c].bSet)
 	{
 		return false;
 	}

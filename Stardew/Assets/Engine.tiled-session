@@ -269,13 +269,33 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 2414.6666666666665,
-                "y": 651.9999999999999
+                "x": -477.33333333333326,
+                "y": 430.66666666666674
             }
+        },
+        "House.json": {
+            "scale": 1.9445312499999998,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 192.33427079148254,
+                "y": 48.34069907593414
+            }
+        },
+        "Interior 2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Outside Objects.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "RoadToTown.json": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 440,
+                "y": 383
+            }
         },
         "Soil.json": {
             "scaleInDock": 1,
@@ -307,15 +327,15 @@
     },
     "last.exportedFilePath": "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/json",
     "last.externalTilesetPath": "C:/Users/User1/source/repos/TileMapRendererExperiments/Engine/Assets",
-    "last.imagePath": "C:/Users/User1/source/repos/TileMapRendererExperiments/Engine/Assets/Image/LPC Submissions",
+    "last.imagePath": "C:/Users/User1/source/repos/TileMapRendererExperiments/Stardew/Assets/Image/LPC Submissions",
     "map.fixedSize": true,
-    "map.height": 100,
+    "map.height": 12,
     "map.lastUsedExportFilter": "JSON map files (*.json)",
     "map.lastUsedFormat": "json",
     "map.orientation": 1,
     "map.tileHeight": 32,
     "map.tileWidth": 32,
-    "map.width": 100,
+    "map.width": 12,
     "openFiles": [
         "Farm.json"
     ],
@@ -323,6 +343,8 @@
     "property.type": "string",
     "recentFiles": [
         "Farm.json",
+        "Interior 2.json",
+        "RoadToTown.json",
         "Outside Objects.json",
         "Exterior Tiles.json",
         "Terrain and Outside.json",
@@ -331,9 +353,7 @@
         "soil.json",
         "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/room_builder.json",
         "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/lvl1_test5.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/interior_test.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/interior_objects.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/interior_bank.json"
+        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/interior_test.json"
     ],
     "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "JSON tileset files (*.json)",

@@ -4,7 +4,11 @@
 #include "IntTypes.h"
 #include "HandleDefs.h"
 #include <cglm/cglm.h>
+#include <stdbool.h>
+
 struct DrawContext;
+typedef struct _xmlNode xmlNode;
+struct BinarySerializer;
 
 typedef struct _AtlasSprite
 {
@@ -25,6 +29,7 @@ typedef struct _AtlasSprite
 	float bottomRightUV_V;
 
 	u8* individualTileBytes;
+	bool bSet;
 
 	int id;
 }AtlasSprite;
@@ -70,6 +75,16 @@ hSprite At_FindSprite(const char* name, hAtlas atlas);
 AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas);
 hTexture At_GetAtlasTexture(hAtlas atlas);
 float At_PixelsToPts(float val);
+hAtlas At_LoadAtlas(xmlNode* child0, struct DrawContext* pDC);
+
+/// <param name="pSerializer">
+/// binary serialzier to load or save
+/// </param>
+/// <param name="atlas">
+/// If loading, point to an unititialized handle to output the new handle
+/// If saving point to the handle of the atlas you want to save
+/// </param>
+void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, struct DrawContext* pDC);
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);
