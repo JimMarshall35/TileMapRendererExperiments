@@ -199,6 +199,7 @@ static void CreateUIShader()
 static void CreateShaders()
 {
 	CreateUIShader();
+	CreateShader(worldspaceVert, worldspaceFrag, &gUIShader);
 };
 
 static HUIVertexBuffer NewUIVertexBuffer(int size)
