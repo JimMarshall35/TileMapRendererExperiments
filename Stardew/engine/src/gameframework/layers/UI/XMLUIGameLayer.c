@@ -206,7 +206,7 @@ static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
 	struct UIWidget* pRootWidget = UI_GetWidget(pData->rootWidget);
 	pRootWidget->fnLayoutChildren(pRootWidget, NULL);
 	pData->pWidgetVertices = pRootWidget->fnOutputVertices(pRootWidget, pData->pWidgetVertices);
-	dc->UIVertexBufferData(pData->hVertexBuffer, pData->pWidgetVertices, sizeof(struct WidgetVertex) * VectorSize(pData->pWidgetVertices));
+	dc->UIVertexBufferData(pData->hVertexBuffer, pData->pWidgetVertices, VectorSize(pData->pWidgetVertices));
 	SetRootWidgetIsDirty(pData->rootWidget, false);
 }
 
@@ -732,7 +732,7 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 	pLayer->onWindowDimsChanged = &OnWindowSizeChanged;
 	pLayer->flags = 0;
 	pLayer->flags |= EnableDrawFn | EnableInputFn | EnableUpdateFn | EnableOnPop | EnableOnPush;
-	pUIData->pWidgetVertices = NEW_VECTOR(struct WidgetVertex);
+	pUIData->pWidgetVertices = NEW_VECTOR(WidgetVertex);
 	pUIData->pChildrenChangeRequests = NEW_VECTOR(struct WidgetChildrenChangeRequest);
 	if (pOptions->bLoadImmediately)
 	{

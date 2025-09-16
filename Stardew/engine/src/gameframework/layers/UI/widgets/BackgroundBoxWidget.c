@@ -69,7 +69,7 @@ void* OnOutputVerts_3StripsHorizontal(
 {
 	AtlasSprite* pAtlasSprite = At_GetSprite(pBBoxData->sprite, pBBoxData->atlas);
 	const struct WidgetScale* pScale = &pBBoxData->scale;
-	struct WidgetQuad quads[3]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
+	WidgetQuad quads[3]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
 	float height = (float)pAtlasSprite->heightPx;
 	float widthOver3 = (float)pAtlasSprite->widthPx / 3.0f;
 	float widgetWidth = totalWidth - padding->paddingLeft - padding->paddingRight;//GetWidth(pWidget, NULL) - pWidget->padding.paddingLeft - pWidget->padding.paddingRight;
@@ -164,7 +164,7 @@ void* BackgroundBoxWidget_OutputVerts(
 
 
 	*/
-	struct WidgetQuad quads[9]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
+	WidgetQuad quads[9]; // in row first order, ie topleft, topmcentre, topright, middleleft, middlecentre, ect...
 	float widthOver3 = (float)pAtlasSprite->widthPx / 3.0f;
 	float heightOver3 = (float)pAtlasSprite->heightPx / 3.0f;
 	vec2 tl, br;

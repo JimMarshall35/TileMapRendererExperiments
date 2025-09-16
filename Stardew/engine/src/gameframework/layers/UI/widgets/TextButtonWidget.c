@@ -114,7 +114,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	struct TextButtonWidgetData* pWD = pWidget->pImplementationData;
 	struct TextWidgetData* pTextWidgetData = &pWD->textWidgetData;

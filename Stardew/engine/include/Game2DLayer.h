@@ -10,9 +10,12 @@ extern "C" {
 #include "HandleDefs.h"
 #include "cglm/cglm.h"
 
+
 // the real type of this should be hSprite ie u32 but i want to save memory so u16 it is - that 
 // should be enough for anyone - just store the tiles in the first 16 bits worth of indexes
 typedef u16 TileIndex; 
+typedef u32 VertIndexT;
+
 
 struct Transform2D
 {
@@ -23,10 +26,11 @@ struct Transform2D
 };
 
 struct TilemapRenderData;
+struct TilemapLayerRenderData;
 
 struct TileMapLayer
 {
-	struct TilemapRenderData* pRenderData;
+	struct TilemapLayerRenderData* pRenderData;
 	struct Transform2D transform;
 	int widthTiles;
 	int heightTiles;
@@ -37,6 +41,7 @@ struct TileMap
 {
 	VECTOR(struct TileMapLayer) layers;
 	char* dataFilePath;
+	struct TilemapRenderData* pRenderData;
 };
 
 struct GameLayer2DData
@@ -44,6 +49,13 @@ struct GameLayer2DData
 	hAtlas hAtlas;
 	struct TileMap tilemap;
 	bool bLoaded;
+
+
+	struct Transform2D camera;
+
+	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
+	VECTOR(VertIndexT) pWorldspaceIndices;
+	H2DWorldspaceVertexBuffer vertexBuffer;
 };
 
 struct Game2DLayerOptions

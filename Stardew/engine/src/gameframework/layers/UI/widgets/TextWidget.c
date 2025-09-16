@@ -66,7 +66,7 @@ void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* 
 		EVERIFY(Fo_TryGetCharBearing(pData->atlas, pData->font, c, bearing));
 		bearing[1] *= -1.0f; // FT coordinate system for bearing has increasing Y as up, in our game coordinate system that is decreasing y 
 		EVERIFY(Fo_TryGetCharAdvance(pData->atlas, pData->font, c, &advance));
-		struct WidgetQuad quad;
+		WidgetQuad quad;
 		PopulateWidgetQuadWholeSprite(&quad, pAtlasSprite);
 		SetWidgetQuadColour(&quad, pData->r, pData->g, pData->b, pData->a);
 
@@ -120,7 +120,7 @@ void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPaddin
 		output[1] = top;
 		if(i == letterOverlay)
 		{
-			struct WidgetQuad quad;
+			WidgetQuad quad;
 			AtlasSprite* pAtlasSpriteOverlay = Fo_GetCharSprite(pData->atlas, pData->font, charOverlay);
 			PopulateWidgetQuadWholeSprite(&quad, pAtlasSpriteOverlay);
 			SetWidgetQuadColour(&quad, pData->r, pData->g, pData->b, pData->a);

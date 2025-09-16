@@ -5,6 +5,7 @@
 #include "Scripting.h"
 #include "AssertLib.h"
 #include "DataNode.h"
+#include "DrawContext.h"
 
 OBJECT_POOL(struct UIWidget) gWidgetPool = NULL;
 HWidget gScratchWidget = NULL_HANDLE; 
@@ -603,7 +604,7 @@ void UI_DebugPrintCommonWidgetInfo(const struct UIWidget* inWidget, PrintfFn pPr
 		GetDockingPointName(inWidget->dockPoint));
 }
 
-void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	HWidget child = pWidget->hFirstChild;
 	while (child != NULL_HWIDGET)

@@ -67,6 +67,7 @@ struct FontAtlasAdditionSpec
 
 void At_Init();
 void At_BeginAtlas();
+
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topRightYPx, int widthPx, int heightPx, const char* name);
 HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec);
 hAtlas At_EndAtlas(struct DrawContext* pDC);
@@ -85,6 +86,9 @@ hAtlas At_LoadAtlas(xmlNode* child0, struct DrawContext* pDC);
 /// If saving point to the handle of the atlas you want to save
 /// </param>
 void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, struct DrawContext* pDC);
+
+void At_BeginTileset();
+void At_EndTileset();
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);

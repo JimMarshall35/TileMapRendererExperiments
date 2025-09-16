@@ -75,7 +75,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void Populate3PanelRailQuads(float left, float top, struct WidgetQuad* pOutQuads, struct SliderData* pData)
+static void Populate3PanelRailQuads(float left, float top, WidgetQuad* pOutQuads, struct SliderData* pData)
 {
 	vec2 a2 = {
 		left,
@@ -146,7 +146,7 @@ static void Populate3PanelRailQuads(float left, float top, struct WidgetQuad* pO
 	}
 }
 
-static void PopulateSliderQuad(float left, float top, struct WidgetQuad* pOutQuad, struct SliderData* pData)
+static void PopulateSliderQuad(float left, float top, WidgetQuad* pOutQuad, struct SliderData* pData)
 {
 	//EASSERT(pData->fVal >= pData->fMinVal && pData->fVal <= pData->fMaxVal);
 	AtlasSprite* pSprite = At_GetSprite(pData->sliderStaticData.sprite, pData->sliderStaticData.atlas);
@@ -185,9 +185,9 @@ static void PopulateSliderQuad(float left, float top, struct WidgetQuad* pOutQua
 	}
 }
 
-void* SliderWidget_OnOutputVerts(VECTOR(struct WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding)
+void* SliderWidget_OnOutputVerts(VECTOR(WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding)
 {
-	struct WidgetQuad rail[4];
+	WidgetQuad rail[4];
 	top = top + pPadding->paddingTop;
 	left = left + pPadding->paddingLeft;
 	Populate3PanelRailQuads(left, top, rail, pData);
@@ -195,7 +195,7 @@ void* SliderWidget_OnOutputVerts(VECTOR(struct WidgetVertex) pOutVerts, struct S
 	return OutputWidgetQuads(pOutVerts, rail, 4);
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	struct SliderData* pData = pWidget->pImplementationData;
 	return SliderWidget_OnOutputVerts(pOutVerts, pData, pWidget->top, pWidget->left, &pWidget->padding);

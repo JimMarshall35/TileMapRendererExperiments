@@ -44,6 +44,8 @@ typedef struct
 	hTexture texture;
 	VECTOR(AtlasSprite) sprites;
 	VECTOR(struct AtlasFont) fonts;
+	int tilesetIndexBegin;
+	int tilesetIndexEnd;
 }Atlas;
 
 static VECTOR(Atlas) gAtlases = NULL;
@@ -920,8 +922,15 @@ hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
 		{
 			continue;
 		}
-
-		if (strcmp(pChild->name, "sprite") == 0)
+		if (strcmp(pChild->name, "begintileset"))
+		{
+			At_BeginTileset();
+		}
+		else if (strcmp(pChild->name, "endtileset"))
+		{
+			At_EndTileset();
+		}
+		else if (strcmp(pChild->name, "sprite") == 0)
 		{
 			LoadAtlasSprite(pChild, onChild);
 		}
@@ -1013,6 +1022,10 @@ static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct Dr
 	BS_DeSerializeI32(&pAtlas->atlasHeight, pSerializer);
 	BS_DeSerializeI32(&pAtlas->atlasWidth, pSerializer);
 
+	// tileset begin and end
+	BS_DeSerializeI32(&pAtlas->tilesetIndexBegin, pSerializer);
+	BS_DeSerializeI32(&pAtlas->tilesetIndexEnd, pSerializer);
+
 	// sprites
 	u32 numSprites = 0;
 	BS_DeSerializeU32(&numSprites, pSerializer);
@@ -1060,6 +1073,10 @@ void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, stru
 		BS_SerializeI32(pAtlas->atlasHeight, pSerializer);
 		BS_SerializeI32(pAtlas->atlasWidth, pSerializer);
 		
+		// tileset begin and end
+		BS_SerializeI32(pAtlas->tilesetIndexBegin, pSerializer);
+		BS_SerializeI32(pAtlas->tilesetIndexEnd, pSerializer);
+
 		// sprites
 		BS_SerializeU32(VectorSize(pAtlas->sprites), pSerializer);
 		for (int i = 0; i < VectorSize(pAtlas->sprites); i++)
@@ -1238,3 +1255,16 @@ bool Fo_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
 	*outAdvance = gAtlases[hAtlas].fonts[hFont].spriteData[(u8)c].advance[0];
 	return true;
 }
+
+void At_BeginTileset()
+{
+	Atlas* pAtlas = GetCurrentAtlas();
+	pAtlas->tilesetIndexBegin = VectorSize(pAtlas->sprites);
+}
+
+void At_EndTileset()
+{
+	Atlas* pAtlas = GetCurrentAtlas();
+	pAtlas->tilesetIndexEnd = VectorSize(pAtlas->sprites);
+}
+

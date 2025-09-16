@@ -36,13 +36,13 @@ void StaticWidget_Destroy(struct StaticWidgetData* pStaticData)
 	free(pStaticData->imageName);
 }
 
-void* StaticWidget_OnOutputVerts(struct StaticWidgetData* pStaticData, float left, float top, struct WidgetPadding* pPadding, VECTOR(struct WidgetVertex) pOutVerts)
+void* StaticWidget_OnOutputVerts(struct StaticWidgetData* pStaticData, float left, float top, struct WidgetPadding* pPadding, VECTOR(WidgetVertex) pOutVerts)
 {
 	AtlasSprite* pSprite = At_GetSprite(pStaticData->sprite, pStaticData->atlas);
 	float width = pSprite->widthPx;
 	float height = pSprite->heightPx;
 
-	struct WidgetQuad quad;
+	WidgetQuad quad;
 	vec2 translate = {
 		left + pPadding->paddingLeft,
 		top + pPadding->paddingTop
@@ -105,7 +105,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	struct StaticWidgetData* pStaticData = pWidget->pImplementationData;
 	pOutVerts = StaticWidget_OnOutputVerts(pStaticData, pWidget->left, pWidget->top, &pWidget->padding, pOutVerts);

@@ -1,4 +1,5 @@
 <atlas>
+    <begintileset />
     <sprite source="./Assets/Image/LPC Submissions/Exterior Tiles.png" top="128" left="0" width="32" height="32" name="Exterior Tiles_0" />
     <sprite source="./Assets/Image/LPC Submissions/Exterior Tiles.png" top="129" left="32" width="32" height="32" name="Exterior Tiles_1" />
     <sprite source="./Assets/Image/LPC Submissions/Exterior Tiles.png" top="2" left="64" width="32" height="32" name="Exterior Tiles_2" />
@@ -105,4 +106,5 @@
     <sprite source="./Assets/Image/LPC Submissions/Interior.png" top="884" left="640" width="32" height="32" name="Interior_103" />
     <sprite source="./Assets/Image/LPC Submissions/Interior.png" top="244" left="640" width="32" height="32" name="Interior_104" />
     <sprite source="./Assets/Image/LPC Submissions/Interior.png" top="245" left="672" width="32" height="32" name="Interior_105" />
+    <endtileset />
    </atlas>

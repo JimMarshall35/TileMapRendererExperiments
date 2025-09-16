@@ -13,23 +13,22 @@ typedef enum
 	VT_NUM
 }WidgetQuadVertexLocation;
 
-struct WidgetQuad
-{
-	struct WidgetVertex v[4];
-};
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
+struct Vert2DColourTextureQuad;
+typedef struct Vert2DColourTextureQuad WidgetQuad;
 
 
-
-void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt);
-void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR);
-void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad);
-void* OutputWidgetQuads(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad, int num);
-void TranslateWidgetQuad(vec2 vector, struct WidgetQuad* pOutQuad);
-void SizeWidgetQuad(vec2 size, struct WidgetQuad* pOutQuad);
-float WidgetQuadWidth(const struct WidgetQuad* pInQuad);
-float WidgetQuadHeight(const struct WidgetQuad* pInQuad);
-void ScaleWidgetQuad(float scaleX, float scaleY, struct WidgetQuad* pOutQuad);
-void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a);
+void PopulateWidgetQuadWholeSprite(WidgetQuad* pQuad, AtlasSprite* pSprt);
+void PopulateWidgetQuad(WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR);
+void* OutputWidgetQuad(VECTOR(WidgetVertex) pOutVerts, const WidgetQuad* pQuad);
+void* OutputWidgetQuads(VECTOR(WidgetVertex) pOutVerts, const WidgetQuad* pQuad, int num);
+void TranslateWidgetQuad(vec2 vector, WidgetQuad* pOutQuad);
+void SizeWidgetQuad(vec2 size, WidgetQuad* pOutQuad);
+float WidgetQuadWidth(const WidgetQuad* pInQuad);
+float WidgetQuadHeight(const WidgetQuad* pInQuad);
+void ScaleWidgetQuad(float scaleX, float scaleY, WidgetQuad* pOutQuad);
+void SetWidgetQuadColour(WidgetQuad* pQuad, float r, float g, float b, float a);
 
 // clip any polys on output to be within this region
 void SetClipRect(GeomRect clipRect);

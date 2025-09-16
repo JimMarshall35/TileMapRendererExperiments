@@ -17,7 +17,11 @@ typedef i32 hSprite;
 
 typedef i32 hTexture;
 
+typedef i32 HWorldspaceVertexBuffer;
+
 typedef i32 HUIVertexBuffer;
+
+typedef i32 H2DWorldspaceVertexBuffer;
 
 typedef i32 HFont;
 

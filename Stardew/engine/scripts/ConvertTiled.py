@@ -84,9 +84,11 @@ class Atlas:
         counter = 0
         top = ET.Element("atlas")
         tree = ET.ElementTree(top)
+        ET.SubElement(top, "begintileset", {})
         for s in self.sprites:
             ET.SubElement(top, "sprite", s.get_attributes(counter))
             counter += 1
+        ET.SubElement(top, "endtileset", {})
         ET.indent(tree, space=" ", level=3)
         with open(outPath, "wb") as f:
             f.write(ET.tostring(top))

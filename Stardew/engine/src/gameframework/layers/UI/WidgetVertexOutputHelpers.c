@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "AssertLib.h"
+#include "DrawContext.h"
 
 static bool bClipRegionSet = false;
 GeomRect gClipRect = { 0,0,0,0 };
 
-void SetWidgetQuadColour(struct WidgetQuad* pQuad, float r, float g, float b, float a)
+void SetWidgetQuadColour(WidgetQuad* pQuad, float r, float g, float b, float a)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -28,14 +29,14 @@ void UnsetClipRect()
 	bClipRegionSet = false;
 }
 
-void PopulateWidgetQuadWholeSprite(struct WidgetQuad* pQuad, AtlasSprite* pSprt)
+void PopulateWidgetQuadWholeSprite(WidgetQuad* pQuad, AtlasSprite* pSprt)
 {
 	vec2 tl = { 0,0 };
 	vec2 br = { pSprt->widthPx, pSprt->heightPx };
 	PopulateWidgetQuad(pQuad, pSprt, tl, br);
 }
 
-void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR)
+void PopulateWidgetQuad(WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSpriteTL, vec2 subSpriteBR)
 {
 	float subSpriteHeight = subSpriteBR[1] - subSpriteTL[1];
 	float subSpriteWidth = subSpriteBR[0] - subSpriteTL[0];
@@ -77,7 +78,7 @@ void PopulateWidgetQuad(struct WidgetQuad* pQuad, AtlasSprite* pSprt, vec2 subSp
 
 }
 
-static bool AllCornerOutsideOfRegion(struct WidgetQuad* pQuad)
+static bool AllCornerOutsideOfRegion(WidgetQuad* pQuad)
 {
 	int count = 0;
 	for (int i = 0; i < VT_NUM; i++)
@@ -101,7 +102,7 @@ static float ClipUV(float p0, float p1, float uv0, float uv1, float midpos)
 	return uv0 + (us)*t;
 }
 
-static bool ClipQuad(struct WidgetQuad* pQuad)
+static bool ClipQuad(WidgetQuad* pQuad)
 {
 	if (AllCornerOutsideOfRegion(pQuad))
 	{
@@ -112,7 +113,7 @@ static bool ClipQuad(struct WidgetQuad* pQuad)
 	}
 	for (int i = 0; i < VT_NUM; i++)
 	{
-		struct WidgetVertex* pVert = &pQuad->v[i];
+		WidgetVertex* pVert = &pQuad->v[i];
 		if (pVert->x < gClipRect[0])
 		{
 			EASSERT(i == VL_TL || i == VL_BL);
@@ -141,10 +142,10 @@ static bool ClipQuad(struct WidgetQuad* pQuad)
 	return true;
 }
 
-void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad)
+void* OutputWidgetQuad(VECTOR(WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad)
 {
-	struct WidgetQuad cpy;
-	memcpy(&cpy, pQuad, sizeof(struct WidgetQuad));
+	WidgetQuad cpy;
+	memcpy(&cpy, pQuad, sizeof(WidgetQuad));
 
 	if (bClipRegionSet)
 	{
@@ -171,7 +172,7 @@ void* OutputWidgetQuad(VECTOR(struct WidgetVertex) pOutVerts, const struct Widge
 	return pOutVerts;
 }
 
-void* OutputWidgetQuads(VECTOR(struct WidgetVertex) pOutVerts, const struct WidgetQuad* pQuads, int num)
+void* OutputWidgetQuads(VECTOR(WidgetVertex) pOutVerts, const WidgetQuad* pQuads, int num)
 {
 	for (int i = 0; i < num; i++)
 	{
@@ -181,7 +182,7 @@ void* OutputWidgetQuads(VECTOR(struct WidgetVertex) pOutVerts, const struct Widg
 }
 
 
-void TranslateWidgetQuad(vec2 vector, struct WidgetQuad* pOutQuad)
+void TranslateWidgetQuad(vec2 vector, WidgetQuad* pOutQuad)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -191,7 +192,7 @@ void TranslateWidgetQuad(vec2 vector, struct WidgetQuad* pOutQuad)
 }
 
 // keeps TL where it is and sets a new size, expanding to the right and downwards
-void SizeWidgetQuad(vec2 size, struct WidgetQuad* pOutQuad)
+void SizeWidgetQuad(vec2 size, WidgetQuad* pOutQuad)
 {
 	pOutQuad->v[VL_TR].x = pOutQuad->v[VL_TL].x + size[0];
 	pOutQuad->v[VL_BR].x = pOutQuad->v[VL_BL].x + size[0];
@@ -200,17 +201,17 @@ void SizeWidgetQuad(vec2 size, struct WidgetQuad* pOutQuad)
 	pOutQuad->v[VL_BR].y = pOutQuad->v[VL_TR].y + size[1];
 }
 
-float WidgetQuadWidth(const struct WidgetQuad* pInQuad)
+float WidgetQuadWidth(const WidgetQuad* pInQuad)
 {
 	return pInQuad->v[VL_TR].x - pInQuad->v[VL_TL].x;
 }
 
-float WidgetQuadHeight(const struct WidgetQuad* pInQuad)
+float WidgetQuadHeight(const WidgetQuad* pInQuad)
 {
 	return pInQuad->v[VL_BR].y - pInQuad->v[VL_TR].y;
 }
 
-void ScaleWidgetQuad(float scaleX, float scaleY, struct WidgetQuad* pOutQuad)
+void ScaleWidgetQuad(float scaleX, float scaleY, WidgetQuad* pOutQuad)
 {
 	float w = WidgetQuadWidth(pOutQuad);
 	float h = WidgetQuadHeight(pOutQuad);

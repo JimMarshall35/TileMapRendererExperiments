@@ -7,6 +7,7 @@
 #include "DynArray.h"
 #include "AssertLib.h"
 #include "PlatformDefs.h"
+#include "Game2DLayer.h"
 
 const char* uiVert =
 #if GAME_GL_API_TYPE == GAME_GL_API_TYPE_CORE
@@ -69,12 +70,49 @@ const char* uiFrag =
 #endif
 ;
 
+const char* worldspaceVert =
+"#version 300 es\n"
+"in vec2 aPos;\n"
+"in vec2 aUv;\n"
+"out vec2 UV;\n"
+"uniform mat4 vp;\n"
+"void main()\n"
+"{\n"
+	"gl_Position = vp * vec4(aPos, 0.0, 1.0);\n"
+	"UV = aUv;\n"
+"}\n"
+;
+
+const char* worldspaceFrag =
+"#version 300 es\n"
+"precision mediump float;\n"
+"out vec4 FragColor;\n"
+"in vec2 UV;\n"
+
+"uniform sampler2D ourTexture;\n"
+
+"void main()\n"
+"{\n"
+	"FragColor = texture(ourTexture, UV);\n"
+"}\n"
+;
+
 //
 //const char* tilemapVert = 
 //"#version 330 core\n"
 
+struct IndexedVertexBuffer
+{
+	GLuint vao;
+	GLuint vbo;
+	GLuint ebo;
+	int capacity;
+	int eboCapacity;
 
-struct UIVertexBuffer
+};
+
+
+struct VertexBuffer
 {
 	GLuint vao;
 	GLuint vbo;
@@ -105,10 +143,13 @@ struct Shader
 
 struct Shader gUIShader = {0,0,0};
 
+struct Shader gWorldspace2DShader = { 0,0,0 };
+
 mat4 gScreenspaceOrtho;
 
-OBJECT_POOL(struct UIVertexBuffer) gVertexBuffersPool = NULL;
+OBJECT_POOL(struct VertexBuffer) gVertexBuffersPool = NULL;
 
+OBJECT_POOL(struct IndexedVertexBuffer) gIndexedVertexBuffersPool = NULL;
 
 static bool OpenGlGPULoadTexture(const unsigned char* data, unsigned int width, unsigned int height, unsigned int* id)
 {
@@ -152,72 +193,72 @@ static void TestShaderStatus(GLuint shader, enum ShaderType type)
 	}
 }
 
-static void UIVertexBufferData(HUIVertexBuffer hBuf, void* src, size_t size)
+static void UIVertexBufferData(HUIVertexBuffer hBuf, WidgetVertex* src, size_t size)
 {
-	struct UIVertexBuffer* pBuf = &gVertexBuffersPool[hBuf];
+	struct VertexBuffer* pBuf = &gVertexBuffersPool[hBuf];
 
 	glBindBuffer(GL_ARRAY_BUFFER, pBuf->vbo);
-	if (size > pBuf->capacity)
+	if (size * sizeof(WidgetVertex) > pBuf->capacity)
 	{
-		glBufferData(GL_ARRAY_BUFFER, size, src, GL_DYNAMIC_DRAW);
-		pBuf->capacity = size;
+		glBufferData(GL_ARRAY_BUFFER, size * sizeof(WidgetVertex), src, GL_DYNAMIC_DRAW);
+		pBuf->capacity = size * sizeof(WidgetVertex);
 	}
 	else
 	{
-		glBufferSubData(GL_ARRAY_BUFFER, 0, size, src);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size * sizeof(WidgetVertex), src);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-static void CreateUIShader()
+static void CreateShader(const char* vert, const char* frag, struct Shader* pShader)
 {
 	int success = GL_FALSE;
 
-	gUIShader.vert = glCreateShader(GL_VERTEX_SHADER);
-	const char* v = uiVert;
-	const char* f = uiFrag;
+	pShader->vert = glCreateShader(GL_VERTEX_SHADER);
+	const char* v = vert;
+	const char* f = frag;
 
 
-	glShaderSource(gUIShader.vert, 1, (const char**)&v, 0);
-	glCompileShader(gUIShader.vert);
-	TestShaderStatus(gUIShader.vert, ST_Vertex);
+	glShaderSource(pShader->vert, 1, (const char**)&v, 0);
+	glCompileShader(pShader->vert);
+	TestShaderStatus(pShader->vert, ST_Vertex);
 
-	gUIShader.frag = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(gUIShader.frag, 1, (const char**)&f, 0);
-	glCompileShader(gUIShader.frag);
-	TestShaderStatus(gUIShader.frag, ST_Fragment);
+	pShader->frag = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(pShader->frag, 1, (const char**)&f, 0);
+	glCompileShader(pShader->frag);
+	TestShaderStatus(pShader->frag, ST_Fragment);
 
-	gUIShader.program = glCreateProgram();
-	glAttachShader(gUIShader.program, gUIShader.vert);
-	glAttachShader(gUIShader.program, gUIShader.frag);
-	glLinkProgram(gUIShader.program);
+	pShader->program = glCreateProgram();
+	glAttachShader(pShader->program, pShader->vert);
+	glAttachShader(pShader->program, pShader->frag);
+	glLinkProgram(pShader->program);
 
-	TestShaderStatus(gUIShader.program, ST_Program);
+	TestShaderStatus(pShader->program, ST_Program);
 
 }
 
 static void CreateShaders()
 {
-	CreateUIShader();
-	CreateShader(worldspaceVert, worldspaceFrag, &gUIShader);
+	CreateShader(uiVert, uiFrag, &gUIShader);
+	CreateShader(worldspaceVert, worldspaceFrag, &gWorldspace2DShader);
 };
 
 static HUIVertexBuffer NewUIVertexBuffer(int size)
 {
 	HUIVertexBuffer buf = -1;
 	GetObjectPoolIndex(gVertexBuffersPool, &buf);
-	struct UIVertexBuffer* pBuf = &gVertexBuffersPool[buf];
+	struct VertexBuffer* pBuf = &gVertexBuffersPool[buf];
 	pBuf->capacity = 0;
 	glGenVertexArrays(1, &pBuf->vao);
 	glBindVertexArray(pBuf->vao);
 
 	glGenBuffers(1, &pBuf->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, pBuf->vbo);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(WidgetVertex), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)(sizeof(float) * 2));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(WidgetVertex), (void*)(sizeof(float) * 2));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(struct WidgetVertex), (void*)(sizeof(float) * 4));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(WidgetVertex), (void*)(sizeof(float) * 4));
 	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -227,23 +268,21 @@ static HUIVertexBuffer NewUIVertexBuffer(int size)
 
 static void DrawUIVertexBuffer(HUIVertexBuffer hBuf, size_t vertexCount)
 {
-	const struct UIVertexBuffer* vertexBuffer = &gVertexBuffersPool[hBuf];
+	const struct VertexBuffer* vertexBuffer = &gVertexBuffersPool[hBuf];
 
 	glUseProgram(gUIShader.program);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->vbo);
 	glBindVertexArray(vertexBuffer->vao);
-
 	
 	unsigned int projectionViewUniform = glGetUniformLocation(gUIShader.program, "screenToClipMatrix");
 	glUniformMatrix4fv(projectionViewUniform, 1, false, &gScreenspaceOrtho[0][0]);
-
 
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
 static void DestroyUIVertexBuffer(HUIVertexBuffer hBuf)
 {
-	const struct UIVertexBuffer* vertexBuffer = &gVertexBuffersPool[hBuf];
+	const struct VertexBuffer* vertexBuffer = &gVertexBuffersPool[hBuf];
 	glDeleteBuffers(1, &vertexBuffer->vbo);
 	glDeleteVertexArrays(1, &vertexBuffer->vao);
 }
@@ -267,6 +306,81 @@ static void DestroyTexture(hTexture tex)
 	glDeleteTextures(1, &tex);
 }
 
+
+static HWorldspaceVertexBuffer NewWorldspaceVertexBuffer(int size)
+{
+	HWorldspaceVertexBuffer buf = -1;
+	GetObjectPoolIndex(gIndexedVertexBuffersPool, &buf);
+	struct IndexedVertexBuffer* pBuf = &gIndexedVertexBuffersPool[buf];
+	pBuf->capacity = 0;
+	glGenVertexArrays(1, &pBuf->vao);
+	glBindVertexArray(pBuf->vao);
+
+	glGenBuffers(1, &pBuf->ebo);
+	glGenBuffers(1, &pBuf->vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuf->ebo);
+	glBindBuffer(GL_ARRAY_BUFFER, pBuf->vbo);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Worldspace2DVert), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Worldspace2DVert), (void*)(sizeof(float) * 2));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	return buf;
+}
+
+void WorldspaceVertexBufferData(HUIVertexBuffer hBuf, Worldspace2DVert* src, size_t size, VertIndexT* indices, u32 numIndices)
+{
+	struct IndexedVertexBuffer* pBuf = &gIndexedVertexBuffersPool[hBuf];
+
+	glBindBuffer(GL_ARRAY_BUFFER, pBuf->vbo);
+	if (size * sizeof(Worldspace2DVert) > pBuf->capacity)
+	{
+		glBufferData(GL_ARRAY_BUFFER, size * sizeof(Worldspace2DVert), src, GL_DYNAMIC_DRAW);
+		pBuf->capacity = size;
+	}
+	else
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size * sizeof(Worldspace2DVert), src);
+	}
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuf->ebo);
+	if (numIndices * sizeof(VertIndexT) > pBuf->eboCapacity)
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
+		pBuf->eboCapacity = numIndices * sizeof(VertIndexT);
+	}
+	else
+	{
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size * sizeof(VertIndexT), indices);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void DrawWorldspaceVertexBuffer(H2DWorldspaceVertexBuffer hBuf, size_t indexCount, mat4 view)
+{
+	const struct IndexedVertexBuffer* vertexBuffer = &gIndexedVertexBuffersPool[hBuf];
+	glUseProgram(gWorldspace2DShader.program);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer->ebo);
+	glBindVertexArray(vertexBuffer->vao);
+	unsigned int projectionViewUniform = glGetUniformLocation(gWorldspace2DShader.program, "vp");
+	mat4 m;
+	glm_mat4_mul(view, &gScreenspaceOrtho[0][0], m);
+	glUniformMatrix4fv(projectionViewUniform, 1, false, &m[0][0]);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)0);
+}
+
+void DestroyWorldspaceVertexBuffer(H2DWorldspaceVertexBuffer hBuf)
+{
+	const struct IndexedVertexBuffer* vertexBuffer = &gIndexedVertexBuffersPool[hBuf];
+	glDeleteBuffers(1, &vertexBuffer->vbo);
+	glDeleteBuffers(1, &vertexBuffer->ebo);
+	glDeleteVertexArrays(1, &vertexBuffer->vao);
+}
+
 DrawContext Dr_InitDrawContext()
 {
 	DrawContext d;
@@ -275,9 +389,17 @@ DrawContext Dr_InitDrawContext()
 	d.DrawUIVertexBuffer = &DrawUIVertexBuffer;
 	d.NewUIVertexBuffer = &NewUIVertexBuffer;
 	d.UIVertexBufferData = &UIVertexBufferData;
+
 	d.SetCurrentAtlas = &SetCurrentAtlas;
 	d.UploadTexture = &UploadTexture;
-	gVertexBuffersPool = NEW_OBJECT_POOL(struct UIVertexBuffer, 256);
+
+	d.NewWorldspaceVertBuffer = &NewWorldspaceVertexBuffer;
+	d.WorldspaceVertexBufferData = &WorldspaceVertexBufferData;
+	d.DrawWorldspaceVertexBuffer = &DrawWorldspaceVertexBuffer;
+	d.DestroyWorldspaceVertexBuffer = &DestroyWorldspaceVertexBuffer;
+
+	gVertexBuffersPool = NEW_OBJECT_POOL(struct VertexBuffer, 256);
+	gIndexedVertexBuffersPool = NEW_OBJECT_POOL(struct IndexedVertexBuffer, 256);
 	glm_mat4_identity(gScreenspaceOrtho);
 	CreateShaders();
 	return d;

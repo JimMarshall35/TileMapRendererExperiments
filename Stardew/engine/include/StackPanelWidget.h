@@ -4,6 +4,9 @@
 
 typedef struct _xmlNode xmlNode;
 
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
+
 typedef enum
 {
 	SPO_Horizontal,

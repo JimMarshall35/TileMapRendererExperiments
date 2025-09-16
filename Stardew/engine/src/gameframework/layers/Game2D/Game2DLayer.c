@@ -6,6 +6,8 @@
 #include "BinarySerializer.h"
 #include "DrawContext.h"
 #include "AssertLib.h"
+#include "DynArray.h"
+#include <cglm/cglm.h>
 
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
 {
@@ -54,7 +56,7 @@ static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS
 	}
 }
 
-static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath)
+static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath, DrawContext* pDC, hAtlas atlas)
 {
 	pTileMap->layers = NEW_VECTOR(struct TileMapLayer);
 	struct BinarySerializer bs;
@@ -74,6 +76,59 @@ static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath)
 	BS_Finish(&bs);
 }
 
+static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
+{
+
+}
+
+static void OutputTilemapVertices(
+	struct TileMap* pData, 
+	struct Transform2D* pCam, 
+	VECTOR(struct Worldspace2DVert)* outVerts,
+	VECTOR(struct VertIndexT)* outIndices)
+{
+	VECTOR(struct Worldspace2DVert) verts = *outVerts;
+	VECTOR(struct VertIndexT) inds = *outIndices;
+	// TODO: implement here
+	// 1.) Get first and last row and column based on the camera and ortho matrix
+	// 2.) Output vertices and indices for these in model space
+	*outVerts = verts;
+	*outIndices = inds;
+}
+
+static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
+{
+	struct GameLayer2DData* pData = pLayer->userData;
+	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
+	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
+	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices);
+	context->WorldspaceVertexBufferData(pData->vertexBuffer, pData->pWorldspaceVertices, VectorSize(pData->pWorldspaceVertices), pData->pWorldspaceIndices, VectorSize(pData->pWorldspaceIndices));
+	mat4 view;
+	glm_mat4_identity(view);
+	// TODO: set here based on camera
+	context->DrawWorldspaceVertexBuffer(pData->vertexBuffer, VectorSize(pData->pWorldspaceIndices), view);
+}
+
+static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
+{
+
+}
+
+static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
+{
+
+}
+
+static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
+{
+	
+}
+
+static void OnWindowDimsChange(struct GameFrameworkLayer* pLayer, int newW, int newH)
+{
+
+}
+
 void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions, DrawContext* pDC)
 {
 	pLayer->userData = malloc(sizeof(struct GameLayer2DData));
@@ -86,7 +141,16 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	BS_CreateForLoad(pOptions->atlasFilePath, &bs);
 	At_SerializeAtlas(&bs, &pData->hAtlas, pDC);
 	BS_Finish(&bs);
-	memset(&bs, 0, sizeof(struct BinarySerializer));
 
+	pLayer->update = &Update;
+	pLayer->draw = &Draw;
+	pLayer->input = &Input;
+	pLayer->onPush = &OnPush;
+	pLayer->onWindowDimsChanged = &OnWindowDimsChange;
 
+	pData->vertexBuffer = pDC->NewWorldspaceVertBuffer(256);
+	pData->pWorldspaceVertices = NEW_VECTOR(Worldspace2DVert);
+	pData->pWorldspaceIndices = NEW_VECTOR(VertIndexT);
+
+	LoadTilemap(&pData->tilemap, pOptions->tilemapFilePath, pDC, pData->hAtlas);
 }

@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include "StaticWidget.h"
 
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
+
 enum SliderOrientation
 {
 	SO_Vertical,
@@ -31,7 +34,7 @@ void SliderWidget_MakeDefaultSliderWidget(struct SliderData* pData, struct XMLUI
 
 HWidget SliderWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
-void* SliderWidget_OnOutputVerts(VECTOR(struct WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding);
+void* SliderWidget_OnOutputVerts(VECTOR(WidgetVertex) pOutVerts, struct SliderData* pData, float top, float left, struct WidgetPadding* pPadding);
 
 void SliderWudget_SetSliderPositionFromMouse(struct UIWidget* pWidget, struct SliderData* pData, float x, float y, float top, float left, struct WidgetPadding padding);
 

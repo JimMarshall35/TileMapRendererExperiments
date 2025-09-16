@@ -44,7 +44,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	pOutVerts = UI_Helper_OnOutputVerts(pWidget, pOutVerts);
 	return pOutVerts;

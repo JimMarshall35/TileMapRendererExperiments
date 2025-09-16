@@ -16,12 +16,6 @@ struct WidgetPropertyBinding;
 struct DataNode;
 
 
-struct WidgetVertex
-{
-	float x, y;
-	float u, v;
-	float r, g, b, a;
-};
 
 #ifdef  __cplusplus
 typedef int(*PrintfFn)(const char* fmt, ...);
@@ -30,13 +24,15 @@ typedef int(*PrintfFn)(const char* fmt, ...);
 typedef int(*PrintfFn)(const char* restrict fmt, ...);
 #endif //  __cplusplus
 
-
-struct UIWidget;
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
+struct Vert2DColourTextureQuad;
+typedef struct Vert2DColourTextureQuad WidgetQuad;
 
 typedef float(*GetUIWidgetDimensionFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*LayoutChildrenFn)(struct UIWidget* pWidget, struct UIWidget* pParent);
 typedef void(*OnDestroyWidgetFn)(struct UIWidget* pWidget);
-typedef void*(*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts);
+typedef void*(*OutputWidgetVerticesFn)(struct UIWidget* pThisWidget, VECTOR(WidgetVertex) pOutVerts);
 typedef void(*OnWidgetInitFn)(struct UIWidget* pWidget);
 typedef void(*OnBoundPropertyChangedFn)(struct UIWidget* pThisWidget, struct WidgetPropertyBinding* pBinding);
 
@@ -289,7 +285,7 @@ void UI_WidgetCommonInit(struct DataNode* pInNode, struct UIWidget* outWidget);
 /// <param name="pPrintfFn"></param>
 void UI_DebugPrintCommonWidgetInfo(const struct UIWidget* inWidget, PrintfFn pPrintfFn);
 
-void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts);
+void* UI_Helper_OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts);
 
 void UI_Helper_OnLayoutChildren(struct UIWidget* pWidget, struct UIWidget* pParent);
 
