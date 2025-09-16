@@ -44,8 +44,8 @@ typedef struct
 	hTexture texture;
 	VECTOR(AtlasSprite) sprites;
 	VECTOR(struct AtlasFont) fonts;
-	int tilesetIndexBegin;
-	int tilesetIndexEnd;
+	int tilesetIndexBegin;  // inclusive
+	int tilesetIndexEnd;    // exclusive
 }Atlas;
 
 static VECTOR(Atlas) gAtlases = NULL;
@@ -85,7 +85,6 @@ void At_Init()
 		printf("Error initialising freetype!!!\n");
 		return;
 	}
-
 }
 
 void At_BeginAtlas()
@@ -94,7 +93,6 @@ void At_BeginAtlas()
 	{
 		gAtlases = NEW_VECTOR(Atlas);
 	}
-	VectorData* pData = VectorData_DEBUG(gAtlases);
 	Atlas* atlas = AqcuireAtlas();
 	atlas->atlasBytes = NULL;
 	atlas->atlasHeight = 0;
@@ -102,13 +100,12 @@ void At_BeginAtlas()
 	atlas->sprites = NEW_VECTOR(AtlasSprite);
 	atlas->fonts = NEW_VECTOR(struct AtlasFont);
 	atlas->texture = NULL_HANDLE;
-	//gAtlases = VectorPush(gAtlases, &atlas);
-	//gCurrentAtlasIndex = VectorSize(gAtlases) - 1;
+	atlas->tilesetIndexBegin = -1;
+	atlas->tilesetIndexEnd = -1;
 }
 
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topLeftYPx, int widthPx, int heightPx, const char* name)
 {
-
 	HImage img = IR_LookupHandleByPath(imgPath);
 	Atlas* pAtlas = GetCurrentAtlas();
 	if (!pAtlas || img == NULL_HIMAGE)
@@ -941,6 +938,13 @@ hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
 		onChild++;
 	}
 	return At_EndAtlas(pDC);
+}
+
+hSprite At_TilemapIndexToSprite(hAtlas atlas, TileIndex tileIndex)
+{
+	Atlas* pAtlas = &gAtlases[atlas];
+	EASSERT((tileIndex - 1) + pAtlas->tilesetIndexBegin < pAtlas->tilesetIndexEnd);
+	return (tileIndex - 1) + pAtlas->tilesetIndexBegin;
 }
 
 static void SerializeAtlasSprite(const AtlasSprite* pSprite, struct BinarySerializer* pSerializer)

@@ -13,8 +13,6 @@ extern "C" {
 
 // the real type of this should be hSprite ie u32 but i want to save memory so u16 it is - that 
 // should be enough for anyone - just store the tiles in the first 16 bits worth of indexes
-typedef u16 TileIndex; 
-typedef u32 VertIndexT;
 
 
 struct Transform2D

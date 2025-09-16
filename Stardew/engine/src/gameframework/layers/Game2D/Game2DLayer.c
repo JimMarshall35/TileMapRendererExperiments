@@ -81,17 +81,122 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 
 }
 
+void OutputSpriteVertices(
+	AtlasSprite* pSprite,
+	VECTOR(Worldspace2DVert)* pOutVert,
+	VECTOR(VertIndexT)* pOutInd,
+	VertIndexT* pNextIndex,
+	int col,
+	int row
+)
+{
+	VECTOR(Worldspace2DVert) outVert = *pOutVert;
+	VECTOR(VertIndexT) outInd = *pOutInd;
+
+	VertIndexT base = *pNextIndex;
+	*pNextIndex += 4;
+	vec2 dims = {
+		pSprite->widthPx,
+		pSprite->heightPx
+	};
+	vec2 topLeft = {
+		col * pSprite->widthPx,
+		row * pSprite->heightPx
+	};
+	vec2 bottomRight;
+	glm_ivec2_add(topLeft, dims, bottomRight);
+
+	vec2 topRight = {
+		topLeft[0] + pSprite->widthPx,
+		topLeft[1]
+	};
+
+	vec2 bottomLeft = {
+		topLeft[0],
+		topLeft[1] + pSprite->heightPx
+	};
+	Worldspace2DVert vert = {
+		topLeft[0], topLeft[1],
+		pSprite->topLeftUV_U, pSprite->topLeftUV_V
+	};
+
+	// top left
+	VertIndexT tl = base;
+	outVert = VectorPush(outVert, &vert);
+	
+	vert.x = topRight[0]; 
+	vert.y = topRight[1];
+	vert.u = pSprite->bottomRightUV_U;
+	vert.v = pSprite->topLeftUV_V;
+	
+	// top right
+	VertIndexT tr = base + 1;
+	outVert = VectorPush(outVert, &vert);
+
+	vert.x = bottomLeft[0];
+	vert.y = bottomLeft[1];
+	vert.u = pSprite->topLeftUV_U;
+	vert.v = pSprite->bottomRightUV_V;
+
+	// bottom left
+	VertIndexT bl = base + 2;
+	outVert = VectorPush(outVert, &vert);
+
+	vert.x = bottomRight[0];
+	vert.y = bottomRight[1];
+	vert.u = pSprite->bottomRightUV_U;
+	vert.v = pSprite->bottomRightUV_V;
+
+	// bottom right
+	VertIndexT br = base + 3;
+	outVert = VectorPush(outVert, &vert);
+
+	outInd = VectorPush(outInd, tl);
+	outInd = VectorPush(outInd, tr);
+	outInd = VectorPush(outInd, bl);
+	outInd = VectorPush(outInd, tr);
+	outInd = VectorPush(outInd, br);
+	outInd = VectorPush(outInd, bl);
+
+	*pOutVert = outVert;
+	*pOutInd = outInd;
+}
+
+static void OutputTilemapLayerVertices(
+	hAtlas atlas, struct TileMapLayer* pLayer, VECTOR(Worldspace2DVert) outVerts, VECTOR(VertIndexT) outInds, VertIndexT* pNextIndex
+)
+{
+	for (int row = 0; row < pLayer->heightTiles; row++)
+	{
+		for (int col = 0; col < pLayer->widthTiles; col++)
+		{
+			TileIndex tile = pLayer->Tiles[row * pLayer->widthTiles + col];
+			hSprite sprite = At_TilemapIndexToSprite(atlas, tile);
+			AtlasSprite* pSprite = At_GetSprite(sprite, atlas);
+			OutputSpriteVertices(pSprite, outVerts, outInds, pNextIndex, col, row);
+		}
+	}
+}
+
 static void OutputTilemapVertices(
 	struct TileMap* pData, 
 	struct Transform2D* pCam, 
-	VECTOR(struct Worldspace2DVert)* outVerts,
-	VECTOR(struct VertIndexT)* outIndices)
+	VECTOR(Worldspace2DVert)* outVerts,
+	VECTOR(VertIndexT)* outIndices,
+	struct GameLayer2DData* pLayerData
+)
 {
-	VECTOR(struct Worldspace2DVert) verts = *outVerts;
-	VECTOR(struct VertIndexT) inds = *outIndices;
+	VECTOR(Worldspace2DVert) verts = *outVerts;
+	VECTOR(VertIndexT) inds = *outIndices;
 	// TODO: implement here
 	// 1.) Get first and last row and column based on the camera and ortho matrix
 	// 2.) Output vertices and indices for these in model space
+	VertIndexT nextIndexVal = 0;
+	for (int i = 0; i < VectorSize(pData->layers); i++)
+	{
+		OutputTilemapLayerVertices(pLayerData->hAtlas, pData->layers + i, &verts, &inds, &nextIndexVal);
+	}
+
 	*outVerts = verts;
 	*outIndices = inds;
 }
@@ -101,7 +206,7 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	struct GameLayer2DData* pData = pLayer->userData;
 	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
 	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
-	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices);
+	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pLayer);
 	context->WorldspaceVertexBufferData(pData->vertexBuffer, pData->pWorldspaceVertices, VectorSize(pData->pWorldspaceVertices), pData->pWorldspaceIndices, VectorSize(pData->pWorldspaceIndices));
 	mat4 view;
 	glm_mat4_identity(view);

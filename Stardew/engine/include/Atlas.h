@@ -78,6 +78,8 @@ hTexture At_GetAtlasTexture(hAtlas atlas);
 float At_PixelsToPts(float val);
 hAtlas At_LoadAtlas(xmlNode* child0, struct DrawContext* pDC);
 
+hSprite At_TilemapIndexToSprite(hAtlas atlas, TileIndex tileIndex);
+
 /// <param name="pSerializer">
 /// binary serialzier to load or save
 /// </param>
