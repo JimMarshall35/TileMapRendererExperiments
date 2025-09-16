@@ -26,18 +26,19 @@ struct TextWidgetData
 
 struct XMLUIData;
 struct WidgetPadding;
-struct WidgetVertex;
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
 struct UIWidget;
 
 void TextWidget_FromXML(struct UIWidget* pWidget, struct TextWidgetData* pData, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
 HWidget TextWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 
-void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts);
+void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(WidgetVertex) pOutVerts);
 
 void TextWidget_Destroy(struct TextWidgetData* pData);
 
 // overlay a charcter at a given letter in the string
-void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(struct WidgetVertex) pOutVerts);
+void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(WidgetVertex) pOutVerts);
 
 #endif // ! TEXTWIDGET_H

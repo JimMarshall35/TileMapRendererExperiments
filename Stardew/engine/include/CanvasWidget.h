@@ -35,10 +35,11 @@ struct CanvasData
 struct DataNode;
 struct XMLUIData;
 struct UIWidget;
-struct WidgetVertex;
+struct Vert2DColourTexture;
+typedef struct Vert2DColourTexture WidgetVertex;
 
 HWidget CanvasWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
-void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, struct WidgetVertex* pOutVerts);
+void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, WidgetVertex* pOutVerts);
 
 
 #endif // !CANVASWIDGET_H
