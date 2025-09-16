@@ -19,7 +19,7 @@ void BackgroundBoxWidget_fromXML(struct UIWidget* pWidget, struct BackgroundBoxW
 HWidget BackgroundBoxWidgetNew(HWidget hParent, struct DataNode* pXMLNode, struct XMLUIData* pUILayerData);
 void* BackgroundBoxWidget_OutputVerts(
 	struct BackgroundBoxWidgetData* pBBoxData,
-	VECTOR(struct WidgetVertex) pOutVerts,
+	VECTOR(WidgetVertex) pOutVerts,
 	float totalWidth,
 	float totalHeight,
 	const struct WidgetPadding* padding,
