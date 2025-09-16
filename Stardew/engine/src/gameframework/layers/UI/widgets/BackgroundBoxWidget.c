@@ -60,7 +60,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 
 void* OnOutputVerts_3StripsHorizontal(
 	struct BackgroundBoxWidgetData* pBBoxData,
-	VECTOR(struct WidgetVertex) pOutVerts,
+	VECTOR(WidgetVertex) pOutVerts,
 	float totalWidth,
 	float totalHeight,
 	const struct WidgetPadding* padding,
@@ -119,7 +119,7 @@ void* OnOutputVerts_3StripsHorizontal(
 
 void* OnOutputVerts_3StripsVertical(
 	struct BackgroundBoxWidgetData* pBBoxData,
-	VECTOR(struct WidgetVertex) pOutVerts,
+	VECTOR(WidgetVertex) pOutVerts,
 	float totalWidth,
 	float totalHeight,
 	const struct WidgetPadding* padding,
@@ -131,7 +131,7 @@ void* OnOutputVerts_3StripsVertical(
 
 void* BackgroundBoxWidget_OutputVerts(
 	struct BackgroundBoxWidgetData* pBBoxData,
-	VECTOR(struct WidgetVertex) pOutVerts,
+	VECTOR(WidgetVertex) pOutVerts,
 	float totalWidth,
 	float totalHeight,
 	const struct WidgetPadding* padding,
@@ -258,7 +258,7 @@ void* BackgroundBoxWidget_OutputVerts(
 	return pOutVerts;
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	float totalW = GetWidth(pWidget, NULL);
 	float totalH = GetHeight(pWidget, NULL);

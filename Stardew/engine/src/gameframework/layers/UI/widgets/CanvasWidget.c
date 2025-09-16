@@ -196,7 +196,7 @@ static void SetSliderPositionAndDims(struct UIWidget* pWidget, struct CanvasData
 	
 }
 
-void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+void* CanvasWidget_OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	struct CanvasData* pCanvasData = pWidget->pImplementationData;
 	bool bExceedsW, bExceedsH;

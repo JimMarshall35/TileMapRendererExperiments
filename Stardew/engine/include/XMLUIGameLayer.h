@@ -56,7 +56,7 @@ typedef struct XMLUIData
 	const char* xmlData;
 	bool bLoaded;
 	hAtlas atlas;
-	VECTOR(struct WidgetVertex) pWidgetVertices;
+	VECTOR(WidgetVertex) pWidgetVertices;
 	HUIVertexBuffer hVertexBuffer;
 	int hViewModel; // reference to lua table
 	HWidget focusedWidgets[MAX_FOCUSED_WIDGETS];

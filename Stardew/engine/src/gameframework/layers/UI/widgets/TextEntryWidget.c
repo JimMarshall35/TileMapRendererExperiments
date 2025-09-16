@@ -53,12 +53,12 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pWidget->pImplementationData);
 }
 
-static void* FakeChildOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* FakeChildOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	return TextWidget_OutputVerts(pWidget->left, pWidget->top, &pWidget->padding, pWidget->pImplementationData, pOutVerts);
 }
 
-static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	struct TextEntryWidgetData* pData = pWidget->pImplementationData;
 	pData->canvasWidget.bHSliderActive = false;

@@ -41,7 +41,7 @@ static void OnDestroy(struct UIWidget* pWidget)
 	free(pData);
 }
 
-void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(struct WidgetVertex) pOutVerts)
+void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, VECTOR(WidgetVertex) pOutVerts)
 {
 	//struct TextWidgetData* pData = pThisWidget->pImplementationData;
 	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
@@ -81,7 +81,7 @@ void* TextWidget_OutputVerts(float left, float top, const struct WidgetPadding* 
 	return pOutVerts;
 }
 
-void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(struct WidgetVertex) pOutVerts)
+void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPadding* padding, struct TextWidgetData* pData, char charOverlay, int letterOverlay, VECTOR(WidgetVertex) pOutVerts)
 {
 	//struct TextWidgetData* pData = pThisWidget->pImplementationData;
 	float maxYBearing = Fo_GetMaxYBearing(pData->atlas, pData->font, pData->content);
@@ -136,7 +136,7 @@ void* TextWidget_OutputAtLetter(float left, float top, const struct WidgetPaddin
 }
 
 
-static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(struct WidgetVertex) pOutVerts)
+static void* OnOutputVerts(struct UIWidget* pThisWidget, VECTOR(WidgetVertex) pOutVerts)
 {
 	pOutVerts = TextWidget_OutputVerts(pThisWidget->left, pThisWidget->top, &pThisWidget->padding, pThisWidget->pImplementationData, pOutVerts);
 	pOutVerts = UI_Helper_OnOutputVerts(pThisWidget, pOutVerts);
