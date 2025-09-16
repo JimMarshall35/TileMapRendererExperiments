@@ -142,7 +142,7 @@ static bool ClipQuad(WidgetQuad* pQuad)
 	return true;
 }
 
-void* OutputWidgetQuad(VECTOR(WidgetVertex) pOutVerts, const struct WidgetQuad* pQuad)
+void* OutputWidgetQuad(VECTOR(WidgetVertex) pOutVerts, const WidgetQuad* pQuad)
 {
 	WidgetQuad cpy;
 	memcpy(&cpy, pQuad, sizeof(WidgetQuad));
