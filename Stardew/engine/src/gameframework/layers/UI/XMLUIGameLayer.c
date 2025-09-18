@@ -230,9 +230,9 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 	dc->DrawUIVertexBuffer(pData->hVertexBuffer, size);
 }
 
-static HMouseAxisBinding gMouseX = NULL_HANDLE;
-static HMouseAxisBinding gMouseY = NULL_HANDLE;
-static HMouseButtonBinding gMouseBtnLeft = NULL_HANDLE;
+static struct AxisBinding gMouseX = { UnknownAxis, NULL_HANDLE };
+static struct AxisBinding gMouseY = { UnknownAxis, NULL_HANDLE };
+static struct ButtonBinding gMouseBtnLeft = { UnknownButton, NULL_HANDLE };
 
 static void* BuildWidgetsHoverred(VECTOR(HWidget) outWidgets, HWidget hWidget, float mouseX, float mouseY)
 {
@@ -338,22 +338,22 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* ctx)
 	pUIData->pChildrenChangeRequests = VectorClear(pUIData->pChildrenChangeRequests);
 	float w, h;
 
-	if (gMouseX == NULL_HANDLE)
+	if (gMouseX.index == NULL_HANDLE)
 	{
-		gMouseX = In_FindMouseAxisMapping(ctx, "CursorPosX");
+		gMouseX = In_FindAxisMapping(ctx, "CursorPosX");
 	}
-	if (gMouseY == NULL_HANDLE)
+	if (gMouseY.index == NULL_HANDLE)
 	{
-		gMouseY = In_FindMouseAxisMapping(ctx, "CursorPosY");
+		gMouseY = In_FindAxisMapping(ctx, "CursorPosY");
 	}
-	if (gMouseBtnLeft == NULL_HANDLE)
+	if (gMouseBtnLeft.index == NULL_HANDLE)
 	{
-		gMouseBtnLeft = In_FindMouseBtnMapping(ctx, "select");
+		gMouseBtnLeft = In_FindButtonMapping(ctx, "select");
 	}
 
-	bThisLeftClick = In_GetMouseButtonValue(ctx, gMouseBtnLeft);
+	bThisLeftClick = In_GetButtonValue(ctx, gMouseBtnLeft);
 
-	vec2 mousePos = { In_GetMouseAxisValue(ctx, gMouseX), In_GetMouseAxisValue(ctx, gMouseY) };
+	vec2 mousePos = { In_GetAxisValue(ctx, gMouseX), In_GetAxisValue(ctx, gMouseY) };
 
 
 	pWidgetsHovverred = BuildWidgetsHoverred(pWidgetsHovverred, pUIData->rootWidget, mousePos[0], mousePos[1]);

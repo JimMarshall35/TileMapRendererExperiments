@@ -10,7 +10,7 @@
 
 static int gJoystick = -1;
 
-HMouseButtonBinding In_FindMouseBtnMapping(InputContext* context, const char* name)
+int In_FindMouseButtonMapping(InputContext* context, const char* name)
 {
 	for (int i = 0; i < context->buttonMappings.MouseButtonMappings.size; i++)
 	{
@@ -22,7 +22,43 @@ HMouseButtonBinding In_FindMouseBtnMapping(InputContext* context, const char* na
 	return NULL_HANDLE;
 }
 
-HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* name)
+int In_FindKeyboardButtonMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->buttonMappings.KeyboardButtonMappings.size; i++)
+	{
+		if (strcmp(context->buttonMappings.KeyboardButtonMappings.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+int In_FindGamepadButtonMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->buttonMappings.GamepadMappings.size; i++)
+	{
+		if (strcmp(context->buttonMappings.GamepadMappings.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+int In_FindMouseScrollButtonMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->buttonMappings.MouseScrollButtonMappings.size; i++)
+	{
+		if (strcmp(context->buttonMappings.MouseScrollButtonMappings.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+int In_FindMouseAxisMapping(InputContext* context, const char* name)
 {
 	for (int i = 0; i < context->axisMappings.Mouse.size; i++)
 	{
@@ -32,6 +68,120 @@ HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* nam
 		}
 	}
 	return NULL_HANDLE;
+}
+
+int In_FindControllerAxisMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->axisMappings.Controller.size; i++)
+	{
+		if (strcmp(context->axisMappings.Controller.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+int In_FindMouseScrollAxisMapping(InputContext* context, const char* name)
+{
+	for (int i = 0; i < context->axisMappings.MouseScroll.size; i++)
+	{
+		if (strcmp(context->axisMappings.MouseScroll.arr[i].name, name) == 0)
+		{
+			return i;
+		}
+	}
+	return NULL_HANDLE;
+}
+
+
+struct AxisBinding In_FindAxisMapping(InputContext* context, const char* name)
+{
+	int handle = In_FindMouseAxisMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct AxisBinding b = { MouseAxis, handle };
+		return b;
+	}
+	handle = In_FindControllerAxisMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct AxisBinding b = { GamePadAxis, handle };
+		return b;
+	}
+	handle = In_FindMouseScrollAxisMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct AxisBinding b = { MouseScrollAxis, handle };
+		return b;
+	}
+	struct AxisBinding b = { UnknownAxis, NULL_HANDLE };
+	return b;
+}
+
+struct ButtonBinding In_FindButtonMapping(InputContext* context, const char* name)
+{
+	int handle = In_FindMouseButtonMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct ButtonBinding b = { MouseButton, handle };
+		return b;
+	}
+	handle = In_FindGamepadButtonMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct ButtonBinding b = { GamepadButton, handle };
+		return b;
+	}
+	handle = In_FindKeyboardButtonMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct ButtonBinding b = { KeyboardButton, handle };
+		return b;
+	}
+	handle = In_FindMouseScrollButtonMapping(context, name);
+	if (handle != NULL_HANDLE)
+	{
+		struct ButtonBinding b = { MouseScrollButton, handle };
+		return b;
+	}
+	struct ButtonBinding b = { UnknownButton, NULL_HANDLE };
+	return b;
+}
+
+float In_GetAxisValue(InputContext* context, struct AxisBinding binding)
+{
+	EASSERT(binding.index > -1);
+	EASSERT(binding.type != UnknownAxis);
+	switch (binding.type)
+	{
+	case MouseAxis:
+		return context->axisMappings.Mouse.arr[binding.index].data.axisMapping.fCurrent;
+		break;
+	case GamePadAxis:
+		return context->axisMappings.Controller.arr[binding.index].data.axisMapping.fCurrent;
+	case MouseScrollAxis:
+		return context->axisMappings.MouseScroll.arr[binding.index].data.axisMapping.fCurrent;
+	}
+	return 0.0f;
+}
+
+bool In_GetButtonValue(InputContext* context, struct ButtonBinding binding)
+{
+	EASSERT(binding.index > -1);
+	EASSERT(binding.type != UnknownButton);
+	switch (binding.type)
+	{
+	case MouseButton:
+		return context->buttonMappings.MouseButtonMappings.arr[binding.index].data.ButtonMapping.bCurrent;
+	case KeyboardButton:
+		return context->buttonMappings.KeyboardButtonMappings.arr[binding.index].data.ButtonMapping.bCurrent;
+	case GamepadButton:
+		return context->buttonMappings.GamepadMappings.arr[binding.index].data.ButtonMapping.bCurrent;
+	case MouseScrollButton:
+		return context->buttonMappings.MouseScrollButtonMappings.arr[binding.index].data.ButtonMapping.bCurrent;
+	}
+	return false;
 }
 
 float In_GetMouseAxisValue(InputContext* context, HMouseAxisBinding hBinding)
@@ -243,6 +393,36 @@ void In_RecieveScroll(InputContext* context, double xoffset, double yoffset)
 			}
 		}
 	}
+	for (int i = 0; i < context->buttonMappings.MouseScrollButtonMappings.size; i++)
+	{
+		InputMapping* pMapping = &context->buttonMappings.MouseScrollButtonMappings.arr[i];
+		if (context->axisMappings.MouseScroll.ActiveMask & (1 << i))
+		{
+			switch (pMapping->data.ButtonMapping.data.mouseScrollButton.axis)
+			{
+			case Axis_X:
+				if (pMapping->data.ButtonMapping.data.mouseScrollButton.dir == Axis_Pos && xoffset > 0)
+				{
+					pMapping->data.ButtonMapping.bCurrent = true;
+				}
+				if (xoffset < 0)
+				{
+					pMapping->data.ButtonMapping.bCurrent = true;
+				}
+				break;
+			case Axis_Y:
+				if (pMapping->data.ButtonMapping.data.mouseScrollButton.dir == Axis_Pos && yoffset > 0)
+				{
+					pMapping->data.ButtonMapping.bCurrent = true;
+				}
+				if (yoffset < 0)
+				{
+					pMapping->data.ButtonMapping.bCurrent = true;
+				}
+				break;
+			}
+		}
+	}
 }
 
 void In_SetControllerPresent(int controllerNo)
@@ -253,6 +433,16 @@ void In_SetControllerPresent(int controllerNo)
 void In_EndFrame(InputContext* context)
 {
 	context->textInput.nKeystrokesThisFrame = 0;
+
+	/*
+		Reset these - mappings where the mouse scroll wheel is behaving as a button.
+		Unlike other buttons this one isn't pressed and released, its an instantaneous event that should be handled once
+	*/
+	for (int i = 0; i < context->buttonMappings.MouseScrollButtonMappings.size; i++)
+	{
+		InputMapping* pMapping = &context->buttonMappings.MouseScrollButtonMappings.arr[i];
+		pMapping->data.ButtonMapping.bCurrent = false;
+	}
 }
 
 typedef void(*SetButtonCodeCallback)(InputMapping*, int);
@@ -280,6 +470,33 @@ static void AddChildButtonStructs(cJSON* parent, InputMappingArray* outMappings,
 static void SetKeyboardCode(InputMapping* mapping, int code) { mapping->data.ButtonMapping.data.keyboard.keyboadCode = code; }
 static void SetMouseBtnCode(InputMapping* mapping, int code) { mapping->data.ButtonMapping.data.mouseBtn.button = code; }
 static void SetGamepadBtnCode(InputMapping* mapping, int code) { mapping->data.ButtonMapping.data.gamepadBtn.button = code; }
+
+static void SetMouseScrollBtnCode(InputMapping* mapping, int code) 
+{
+	/*
+		X Axis + : 3
+		X Axis - : 1
+		Y Axis + : 2
+		Y Axis - : 0
+	*/
+	if (code & 1)
+	{
+		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_X;
+	}
+	else
+	{
+		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_Y;
+	}
+
+	if (code & 2)
+	{
+		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_Pos;
+	}
+	else
+	{
+		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_Neg;
+	}
+}
 
 static void AddMouseAxisMappingsStructs(cJSON* parent, InputContext* ctx)
 {
@@ -430,6 +647,11 @@ InputContext In_InitInputContext()
 	ERROR(mouseBtn, "mouseBtn");
 	cJSON* mouseBtnMap = mouseBtn->child;
 	AddChildButtonStructs(mouseBtnMap, &ctx.buttonMappings.MouseButtonMappings, &SetMouseBtnCode, MouseButton);
+
+	cJSON* mouseScrollBtn = cJSON_GetObjectItem(buttons, "MouseScroll");
+	ERROR(mouseScrollBtn, "MouseScroll");
+	cJSON* mouseScrollBtnMap = mouseScrollBtn->child;
+	AddChildButtonStructs(mouseScrollBtnMap, &ctx.buttonMappings.MouseScrollButtonMappings, &SetMouseScrollBtnCode, MouseScrollButton);
 	
 	cJSON* gamepadBtn = cJSON_GetObjectItem(buttons, "GamePad");
 	ERROR(gamepadBtn, "GamePad");

@@ -22,14 +22,17 @@ typedef enum
 {
 	MouseButton,
 	KeyboardButton,
-	GamepadButton
+	GamepadButton,
+	MouseScrollButton,
+	UnknownButton
 }ButtonSubType;
 
 typedef enum
 {
 	MouseAxis,
 	GamePadAxis,
-	MouseScrollAxis
+	MouseScrollAxis,
+	UnknownAxis
 }AxisSubType;
 
 typedef enum
@@ -45,7 +48,14 @@ typedef enum
 	Axis_X,
 	Axis_Y
 } WhichAxis;
-typedef struct
+
+typedef enum
+{
+	Axis_Pos,
+	Axis_Neg
+} WhichDirection;
+
+typedef struct InputMapping
 {
 	InputMappingType type;
 	char* name;
@@ -69,6 +79,11 @@ typedef struct
 				{
 					int button;
 				}gamepadBtn;
+				struct
+				{
+					WhichAxis axis;
+					WhichDirection dir;
+				}mouseScrollButton;
 			}data;
 			// in future, game pad for example
 		}ButtonMapping;
@@ -125,6 +140,7 @@ typedef struct
 		InputMappingArray MouseButtonMappings;
 		InputMappingArray KeyboardButtonMappings;
 		InputMappingArray GamepadMappings;
+		InputMappingArray MouseScrollButtonMappings;
 	}buttonMappings;
 
 	struct
@@ -139,18 +155,41 @@ typedef struct
 	int screenW, screenH;
 }InputContext;
 
+/*
+	Called by the glfw callbacks
+*/
 void In_RecieveKeyboardKey(InputContext* context, int key, int scancode, int action, int mods);
 void In_RecieveMouseMove(InputContext* context, double xposIn, double yposIn);
 void In_RecieveMouseButton(InputContext* context, int button, int action, int mods);
 void In_FramebufferResize(InputContext* context, int width, int height);
 void In_RecieveScroll(InputContext* context, double xoffset, double yoffset);
 void In_SetControllerPresent(int controllerNo);
+
+/*
+	Called by the game framework
+*/
 void In_EndFrame(InputContext* context);
 InputContext In_InitInputContext();
 
-HMouseAxisBinding In_FindMouseAxisMapping(InputContext* context, const char* name);
-HMouseButtonBinding In_FindMouseBtnMapping(InputContext* context, const char* name);
-float In_GetMouseAxisValue(InputContext* context, HMouseAxisBinding hBinding);
-bool In_GetMouseButtonValue(InputContext* context, HMouseButtonBinding hBinding);
+/*
+	Called by game code and/or "game layer" level code
+*/
+
+struct AxisBinding
+{
+	AxisSubType type;
+	int index;
+};
+struct ButtonBinding
+{
+	ButtonSubType type;
+	int index;
+};
+
+struct AxisBinding In_FindAxisMapping(InputContext* context, const char* name);
+struct ButtonBinding In_FindButtonMapping(InputContext* context, const char* name);
+
+float In_GetAxisValue(InputContext* context, struct AxisBinding binding);
+bool In_GetButtonValue(InputContext* context, struct ButtonBinding binding);
 
 #endif // !INPUTCONTEXT_H

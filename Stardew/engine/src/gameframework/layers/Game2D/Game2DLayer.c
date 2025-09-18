@@ -229,12 +229,27 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
 {
+	
+}
 
+static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
+{
+	struct BinarySerializer bs;
+	memset(&bs, 0, sizeof(struct BinarySerializer));
+	BS_CreateForLoad(pData->atlasFilePath, &bs);
+	At_SerializeAtlas(&bs, &pData->hAtlas, pDC);
+	BS_Finish(&bs);
+	LoadTilemap(&pData->tilemap, pData->tilemapFilePath, pDC, pData->hAtlas);
+	pData->bLoaded = true;
 }
 
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
-
+	struct GameLayer2DData* pData = pLayer->userData;
+	if (!pData->bLoaded)
+	{
+		LoadLayerAssets(pData, drawContext);
+	}
 }
 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
@@ -254,11 +269,10 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	struct GameLayer2DData* pData = pLayer->userData;
 	pData->tilemap.layers = NEW_VECTOR(struct TileMapLayer);
 
-	struct BinarySerializer bs;
-	memset(&bs, 0, sizeof(struct BinarySerializer));
-	BS_CreateForLoad(pOptions->atlasFilePath, &bs);
-	At_SerializeAtlas(&bs, &pData->hAtlas, pDC);
-	BS_Finish(&bs);
+	EASSERT(strlen(pData->tilemapFilePath) < 128);
+	EASSERT(strlen(pData->atlasFilePath) < 128);
+	strcpy(pData->tilemapFilePath, pOptions->tilemapFilePath);
+	strcpy(pData->atlasFilePath, pOptions->atlasFilePath);
 
 	pLayer->update = &Update;
 	pLayer->draw = &Draw;
@@ -270,5 +284,8 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	pData->pWorldspaceVertices = NEW_VECTOR(Worldspace2DVert);
 	pData->pWorldspaceIndices = NEW_VECTOR(VertIndexT);
 
-	LoadTilemap(&pData->tilemap, pOptions->tilemapFilePath, pDC, pData->hAtlas);
+	if (pOptions->loadImmediatly)
+	{
+		LoadLayerAssets(pData, pDC);
+	}
 }

@@ -1,5 +1,5 @@
 #ifndef H_GAME2DLAYER
-#define XMLUI_GAME_LAYER_H
+#define H_GAME2DLAYER
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,6 +10,9 @@ extern "C" {
 #include "HandleDefs.h"
 #include "cglm/cglm.h"
 
+#define MAX_GAME_LAYER_ASSET_FILE_PATH_LEN 128
+
+typedef struct InputMapping InputMapping;
 
 // the real type of this should be hSprite ie u32 but i want to save memory so u16 it is - that 
 // should be enough for anyone - just store the tiles in the first 16 bits worth of indexes
@@ -32,7 +35,8 @@ struct TileMapLayer
 	struct Transform2D transform;
 	int widthTiles;
 	int heightTiles;
-	TileIndex* Tiles; 
+	TileIndex* Tiles;
+	
 };
 
 struct TileMap
@@ -40,6 +44,7 @@ struct TileMap
 	VECTOR(struct TileMapLayer) layers;
 	char* dataFilePath;
 	struct TilemapRenderData* pRenderData;
+
 };
 
 struct GameLayer2DData
@@ -48,16 +53,32 @@ struct GameLayer2DData
 	struct TileMap tilemap;
 	bool bLoaded;
 
+	/*
+		When in this mode the game is paused and you have
+		a different set of controls to freely move the camera around,
+		in future I might add editing
+	*/
+	bool bFreeLookMode;
 
 	struct Transform2D camera;
 
 	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
 	VECTOR(VertIndexT) pWorldspaceIndices;
 	H2DWorldspaceVertexBuffer vertexBuffer;
+
+	char atlasFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
+	char tilemapFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
 };
 
 struct Game2DLayerOptions
 {
+	/* 
+		if true, the data for the layer will load immediately,
+		as soon as Game2DLayer_Get is called, if false it will
+		load when the layer is pushed.
+	*/
+	bool loadImmediatly;
+
 	const char* atlasFilePath;
 	
 	const char* tilemapFilePath;

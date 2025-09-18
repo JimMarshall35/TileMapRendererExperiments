@@ -13,6 +13,10 @@
 			{ "nextTool" : 69 },
 			{ "prevTool" : 81 }
 		],
+		"MouseScroll" : [
+			{ "zoomIn" : 2 },
+			{ "zoomIn" : 0 }
+		],
 		"GamePad" : [
 
 		]

@@ -1,0 +1,19 @@
+<atlas>
+	<sprite source="./Assets/Image/kenney_ui-pack-scifi/PNG/Green/Default/bar_round_gloss_large.png" top="0" left="0" width="96" height="24" name="bar_round_gloss_large"/>
+	<sprite source="./Assets/Image/kenney_ui-pack-scifi/PNG/Green/Default/bar_round_gloss_large_square.png" top="0" left="0" width="24" height="24" name="bar_round_gloss_large_square"/>
+	<sprite source="./Assets/Image/kenney_ui-pack-scifi/PNG/Extra/Default/button_square.png" top="0" left="0" width="64" height="64" name="button_square"/>
+	<sprite source="./Assets/Image/kenney_ui-pack-scifi/PNG/Extra/Default/button_square_depth.png" top="0" left="0" width="64" height="64" name="button_square_depth"/>
+	<sprite source="./Assets/Image/example.png" top="0" left="0" width="32" height="32" name="fantasy_9Panel"/>
+	<sprite source="./Assets/Image/2D_Bright_buttons/White/whiteNormal.png" top="0" left="0" width="64" height="64" name="defaultButton"/>
+	<sprite source="./Assets/Image/2D_Bright_buttons/White/whiteDown.png" top="0" left="0" width="64" height="64" name="defaultPressedButton"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/check_round_grey.png" top="0" left="0" width="32" height="32" name="radioUnchecked"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/check_round_round_circle.png" top="0" left="0" width="32" height="32" name="radioChecked"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_vertical_color.png" top="0" left="0" width="16" height="96" name="defaultRailVertical"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_vertical_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderVertical"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color.png" top="0" left="0" width="96" height="16" name="defaultRailHorizontal"/>
+	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderHorizontal"/>
+	<font source="./Assets/Starzy_Darzy_lowercase_letters.ttf" name="default" options="normal">
+		<size type="pts" val="32"/>
+		<size type="pts" val="16"/>
+	</font>
+</atlas>
