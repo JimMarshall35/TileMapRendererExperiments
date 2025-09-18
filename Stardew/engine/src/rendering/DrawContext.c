@@ -313,6 +313,7 @@ static HWorldspaceVertexBuffer NewWorldspaceVertexBuffer(int size)
 	GetObjectPoolIndex(gIndexedVertexBuffersPool, &buf);
 	struct IndexedVertexBuffer* pBuf = &gIndexedVertexBuffersPool[buf];
 	pBuf->capacity = 0;
+	pBuf->eboCapacity = 0;
 	glGenVertexArrays(1, &pBuf->vao);
 	glBindVertexArray(pBuf->vao);
 

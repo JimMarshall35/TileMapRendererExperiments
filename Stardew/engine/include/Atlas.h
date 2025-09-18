@@ -89,8 +89,8 @@ hSprite At_TilemapIndexToSprite(hAtlas atlas, TileIndex tileIndex);
 /// </param>
 void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, struct DrawContext* pDC);
 
-void At_BeginTileset();
-void At_EndTileset();
+void At_BeginTileset(int beginI);
+void At_EndTileset(int endI);
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "GameFramework.h"
 #include <string.h>
+#include "Game2DLayer.h"
 #include "XMLUIGameLayer.h"
 #include "DynArray.h"
 
@@ -8,7 +9,7 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
 {
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
-    struct XMLUIGameLayerOptions options;
+    /*struct XMLUIGameLayerOptions options;
     options.bLoadImmediately = false;
     options.xmlPath = "./Assets/test.xml";
     options.pDc = pDC;
@@ -16,7 +17,13 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     printf("making xml ui layer\n");
     XMLUIGameLayer_Get(&testLayer, &options);
     printf("done\n");
-    printf("pushing framework layer\n");
+    printf("pushing framework layer\n");*/
+    struct Game2DLayerOptions options;
+    memset(&options, 0, sizeof(struct Game2DLayerOptions));
+    options.atlasFilePath = "./Assets/out/main.atlas";
+    options.tilemapFilePath = "./Assets/out/House.tilemap";
+    Game2DLayer_Get(&testLayer, &options, pDC);
+    testLayer.flags |= (EnableOnPop | EnableOnPush | EnableUpdateFn | EnableDrawFn | EnableInputFn);
     GF_PushGameFrameworkLayer(&testLayer);
     printf("done\n");
 }

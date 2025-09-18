@@ -912,20 +912,25 @@ hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
 
 	At_BeginAtlas();
 
+	// todo: add proper error handling
+	if (attribute = xmlGetProp(child0, "tilesetStart"))
+	{
+		int i = atoi(attribute);
+		At_BeginTileset(i);
+	}
+	if (attribute = xmlGetProp(child0, "tilesetEnd"))
+	{
+		int i = atoi(attribute);
+		At_EndTileset(i);
+	}
+
+
 	int onChild = 0;
 	for (xmlNode* pChild = child0->children; pChild; pChild = pChild->next)
 	{
 		if (pChild->type != XML_ELEMENT_NODE)
 		{
 			continue;
-		}
-		if (strcmp(pChild->name, "begintileset"))
-		{
-			At_BeginTileset();
-		}
-		else if (strcmp(pChild->name, "endtileset"))
-		{
-			At_EndTileset();
 		}
 		else if (strcmp(pChild->name, "sprite") == 0)
 		{
@@ -1260,15 +1265,18 @@ bool Fo_TryGetCharAdvance(hAtlas hAtlas, HFont hFont, char c, float* outAdvance)
 	return true;
 }
 
-void At_BeginTileset()
+void At_BeginTileset(int beginI)
 {
 	Atlas* pAtlas = GetCurrentAtlas();
-	pAtlas->tilesetIndexBegin = VectorSize(pAtlas->sprites);
+	pAtlas->tilesetIndexBegin = beginI;
+	printf("beginning tileset %i\n", pAtlas->tilesetIndexBegin);
 }
 
-void At_EndTileset()
+void At_EndTileset(int endI)
 {
 	Atlas* pAtlas = GetCurrentAtlas();
-	pAtlas->tilesetIndexEnd = VectorSize(pAtlas->sprites);
+	pAtlas->tilesetIndexEnd = endI;
+	printf("ending tileset %i\n", pAtlas->tilesetIndexBegin);
+
 }
 

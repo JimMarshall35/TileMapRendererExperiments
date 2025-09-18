@@ -104,7 +104,7 @@ void OutputSpriteVertices(
 		row * pSprite->heightPx
 	};
 	vec2 bottomRight;
-	glm_ivec2_add(topLeft, dims, bottomRight);
+	glm_vec2_add(topLeft, dims, bottomRight);
 
 	vec2 topRight = {
 		topLeft[0] + pSprite->widthPx,
@@ -151,31 +151,44 @@ void OutputSpriteVertices(
 	VertIndexT br = base + 3;
 	outVert = VectorPush(outVert, &vert);
 
-	outInd = VectorPush(outInd, tl);
-	outInd = VectorPush(outInd, tr);
-	outInd = VectorPush(outInd, bl);
-	outInd = VectorPush(outInd, tr);
-	outInd = VectorPush(outInd, br);
-	outInd = VectorPush(outInd, bl);
+	outInd = VectorPush(outInd, &tl);
+	outInd = VectorPush(outInd, &tr);
+	outInd = VectorPush(outInd, &bl);
+	outInd = VectorPush(outInd, &tr);
+	outInd = VectorPush(outInd, &br);
+	outInd = VectorPush(outInd, &bl);
 
 	*pOutVert = outVert;
 	*pOutInd = outInd;
 }
 
 static void OutputTilemapLayerVertices(
-	hAtlas atlas, struct TileMapLayer* pLayer, VECTOR(Worldspace2DVert) outVerts, VECTOR(VertIndexT) outInds, VertIndexT* pNextIndex
+	hAtlas atlas,
+	struct TileMapLayer* pLayer,
+	VECTOR(Worldspace2DVert)* outVerts,
+	VECTOR(VertIndexT)* outInds,
+	VertIndexT* pNextIndex
 )
 {
+	VECTOR(Worldspace2DVert) outVert = *outVerts;
+	VECTOR(VertIndexT) outInd = *outInds;
+
 	for (int row = 0; row < pLayer->heightTiles; row++)
 	{
 		for (int col = 0; col < pLayer->widthTiles; col++)
 		{
 			TileIndex tile = pLayer->Tiles[row * pLayer->widthTiles + col];
+			if (tile == 0)
+			{
+				continue;
+			}
 			hSprite sprite = At_TilemapIndexToSprite(atlas, tile);
 			AtlasSprite* pSprite = At_GetSprite(sprite, atlas);
-			OutputSpriteVertices(pSprite, outVerts, outInds, pNextIndex, col, row);
+			OutputSpriteVertices(pSprite, &outVert, &outInd, pNextIndex, col, row);
 		}
 	}
+	*outVerts = outVert;
+	*outInds = outInd;
 }
 
 static void OutputTilemapVertices(
@@ -206,7 +219,7 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	struct GameLayer2DData* pData = pLayer->userData;
 	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
 	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
-	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pLayer);
+	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData);
 	context->WorldspaceVertexBufferData(pData->vertexBuffer, pData->pWorldspaceVertices, VectorSize(pData->pWorldspaceVertices), pData->pWorldspaceIndices, VectorSize(pData->pWorldspaceIndices));
 	mat4 view;
 	glm_mat4_identity(view);

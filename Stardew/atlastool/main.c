@@ -53,6 +53,7 @@ int ParseArgs(int argc, char** argv)
 	{
 		args.outPath = defaultOutPath;
 	}
+	return 0;
 #else
 #endif
 	

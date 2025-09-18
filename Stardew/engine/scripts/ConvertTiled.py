@@ -66,8 +66,8 @@ class AtlasSprite:
     def get_attributes(self, counter):
         return {
             "source" : "./Assets/" + self.path,
-            "top" : str(int(self.top)),
-            "left" : str(int(self.left)),
+            "top" : str(int(self.left)),          # NOTE: This is wrong, here, but creates a map that renders properly in the engine at the moment
+            "left" : str(int(self.top)),          # URGENT TODO NEXT: Figure out where this is crossed over so these can be put into the correct order here
             "width" : str(int(self.width)),
             "height" : str(int(self.height)),
             "name" : f"{self.name}_{counter}"
@@ -84,11 +84,11 @@ class Atlas:
         counter = 0
         top = ET.Element("atlas")
         tree = ET.ElementTree(top)
-        ET.SubElement(top, "begintileset", {})
+        top.set("tilesetStart",f"{counter}")
         for s in self.sprites:
             ET.SubElement(top, "sprite", s.get_attributes(counter))
             counter += 1
-        ET.SubElement(top, "endtileset", {})
+        top.set("tilesetEnd",f"{counter}")
         ET.indent(tree, space=" ", level=3)
         with open(outPath, "wb") as f:
             f.write(ET.tostring(top))
@@ -105,9 +105,13 @@ class Atlas:
                 columns = j["columns"]
                 name = j["name"]
                 image = j["image"]
+                print(f"HERE {j}")
+                print()
+                print()
+                print()
                 for index in self.originalNormalizedIndexes[key]:
-                    l = margin + (((index - 1) % columns) * tileWidth  + spacing)
-                    t = margin + (((index - 1) / columns) * tileHeight + spacing)
+                    l = ((index - 1) % columns) * tileWidth  + spacing + margin
+                    t = ((index - 1) // columns) * tileHeight + spacing + margin
                     if not key in self.lut:
                         self.lut[key] = dict()
                     self.lut[key][index] = len(self.sprites) + 1
