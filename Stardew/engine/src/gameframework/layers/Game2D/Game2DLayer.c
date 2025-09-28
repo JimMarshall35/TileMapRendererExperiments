@@ -8,6 +8,16 @@
 #include "AssertLib.h"
 #include "DynArray.h"
 #include <cglm/cglm.h>
+#include "GameFrameworkEvent.h"
+#include "Scripting.h"
+#include "XMLUIGameLayer.h"
+
+#define FREE_LOOK_ZOOM_IN_BINDING_NAME "zoomIn"
+#define FREE_LOOK_ZOOM_OUT_BINDING_NAME "zoomOut"
+#define FREE_LOOK_XPOS_BINDING_NAME "moveRight"
+#define FREE_LOOK_XNEG_BINDING_NAME "moveLeft"
+#define FREE_LOOK_YPOS_BINDING_NAME "moveDown"
+#define FREE_LOOK_YNEG_BINDING_NAME "moveUp"
 
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
 {
@@ -76,9 +86,24 @@ static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath, D
 	BS_Finish(&bs);
 }
 
+static void PublishDebugMessage(struct GameLayer2DData* pData)
+{
+	sprintf(pData->debugMsg, "Cam: x:%.2f y:%.2f zoom:%.2f",
+		pData->camera.position[0], pData->camera.position[1], pData->camera.scale[0]);
+	struct ScriptCallArgument arg;
+	arg.type = SCA_string;
+	arg.val.string = pData->debugMsg;
+	struct LuaListenedEventArgs args = { .numArgs = 1, .args = &arg };
+	Ev_FireEvent("DebugMessage", &args);
+}
+
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
-
+	struct GameLayer2DData* pData = pLayer->userData;
+	if (pData->bDebugLayerAttatched)
+	{
+		PublishDebugMessage(pData);
+	}
 }
 
 void OutputSpriteVertices(
@@ -95,23 +120,23 @@ void OutputSpriteVertices(
 
 	VertIndexT base = *pNextIndex;
 	*pNextIndex += 4;
-	vec2 dims = {
+	ivec2 dims = {
 		pSprite->widthPx,
 		pSprite->heightPx
 	};
-	vec2 topLeft = {
+	ivec2 topLeft = {
 		col * pSprite->widthPx,
 		row * pSprite->heightPx
 	};
-	vec2 bottomRight;
-	glm_vec2_add(topLeft, dims, bottomRight);
+	ivec2 bottomRight;
+	glm_ivec2_add(topLeft, dims, bottomRight);
 
-	vec2 topRight = {
+	ivec2 topRight = {
 		topLeft[0] + pSprite->widthPx,
 		topLeft[1]
 	};
 
-	vec2 bottomLeft = {
+	ivec2 bottomLeft = {
 		topLeft[0],
 		topLeft[1] + pSprite->heightPx
 	};
@@ -217,6 +242,7 @@ static void OutputTilemapVertices(
 static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
+	At_SetCurrent(pData->hAtlas, context);
 	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
 	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
 	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData);
@@ -224,12 +250,74 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	mat4 view;
 	glm_mat4_identity(view);
 	// TODO: set here based on camera
+	vec3 translate = {
+		pData->camera.position[0],
+		pData->camera.position[1],
+		0.0f
+	};
+	vec3 scale = {
+		pData->camera.scale[0],
+		pData->camera.scale[1],
+		1.0f
+	};
+
+	glm_scale(view, scale);
+	glm_translate(view, translate);
+
 	context->DrawWorldspaceVertexBuffer(pData->vertexBuffer, VectorSize(pData->pWorldspaceIndices), view);
 }
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
 {
-	
+	struct GameLayer2DData* pData = pLayer->userData;
+
+	const float FREE_LOOK_ZOOM_FACTOR = 0.99;
+	const float FREE_LOOK_MOVEMENT_SPEED = 0.3;
+	bool bZoomIn = In_GetButtonValue(context, pData->freeLookZoomInBinding);
+	bool bZoomOut = In_GetButtonValue(context, pData->freeLookZoomOutBinding);
+	bool bXPos = In_GetButtonValue(context, pData->freeLookZoomMoveXPosBinding);
+	bool bXNeg = In_GetButtonValue(context, pData->freeLookZoomMoveXNegBinding);
+
+	bool bYPos = In_GetButtonValue(context, pData->freeLookZoomMoveYPosBinding);
+	bool bYNeg = In_GetButtonValue(context, pData->freeLookZoomMoveYNegBinding);
+
+	vec2 movementVector = { 0,0 };
+	if (bXPos)
+	{
+		vec2 dir = { 1,0 };
+		glm_vec2_add(movementVector, dir, movementVector);
+	}
+	if (bXNeg)
+	{
+		vec2 dir = { -1,0 };
+		glm_vec2_add(movementVector, dir, movementVector);
+	}
+	if (bYPos)
+	{
+		vec2 dir = { 0,-1 };
+		glm_vec2_add(movementVector, dir, movementVector);
+	}
+	if (bYNeg)
+	{
+		vec2 dir = { 0,1 };
+		glm_vec2_add(movementVector, dir, movementVector);
+	}
+	glm_vec2_normalize(movementVector);
+	movementVector[0] = movementVector[0] * FREE_LOOK_MOVEMENT_SPEED;
+	movementVector[1] = movementVector[1] * FREE_LOOK_MOVEMENT_SPEED;
+
+	glm_vec2_add(movementVector, pData->camera.position, pData->camera.position);
+
+	if (bZoomOut)//bZoomIn)
+	{
+		pData->camera.scale[0] *= 0.9f;
+		pData->camera.scale[1] *= 0.9f;
+	}
+	if (bZoomIn)//bZoomOut)
+	{
+		pData->camera.scale[0] *= 1.1f;
+		pData->camera.scale[1] *= 1.1f;
+	}
 }
 
 static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
@@ -243,23 +331,60 @@ static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
 	pData->bLoaded = true;
 }
 
+static void BindFreeLookControls(InputContext* inputContext, struct GameLayer2DData* pData)
+{
+	pData->freeLookZoomInBinding = In_FindButtonMapping(inputContext, FREE_LOOK_ZOOM_IN_BINDING_NAME);
+	pData->freeLookZoomOutBinding = In_FindButtonMapping(inputContext, FREE_LOOK_ZOOM_OUT_BINDING_NAME);
+	pData->freeLookZoomMoveXPosBinding = In_FindButtonMapping(inputContext, FREE_LOOK_XPOS_BINDING_NAME);
+	pData->freeLookZoomMoveXNegBinding = In_FindButtonMapping(inputContext, FREE_LOOK_XNEG_BINDING_NAME);
+	pData->freeLookZoomMoveYPosBinding = In_FindButtonMapping(inputContext, FREE_LOOK_YPOS_BINDING_NAME);
+	pData->freeLookZoomMoveYNegBinding = In_FindButtonMapping(inputContext, FREE_LOOK_YNEG_BINDING_NAME);
+
+	In_ActivateButtonBinding(pData->freeLookZoomInBinding, &pData->freeLookInputsMask);
+	In_ActivateButtonBinding(pData->freeLookZoomOutBinding, &pData->freeLookInputsMask);
+	In_ActivateButtonBinding(pData->freeLookZoomMoveXPosBinding, &pData->freeLookInputsMask);
+	In_ActivateButtonBinding(pData->freeLookZoomMoveXNegBinding, &pData->freeLookInputsMask);
+	In_ActivateButtonBinding(pData->freeLookZoomMoveYPosBinding, &pData->freeLookInputsMask);
+	In_ActivateButtonBinding(pData->freeLookZoomMoveYNegBinding, &pData->freeLookInputsMask);
+
+}
+
+static void ActivateFreeLookMode(InputContext* inputContext, struct GameLayer2DData* pData)
+{
+	In_SetMask(&pData->freeLookInputsMask, inputContext);
+}
+
+static void OnDebugLayerPushed(void* pUserData, void* pEventData)
+{
+	struct GameLayer2DData* pData = pUserData;
+	pData->bDebugLayerAttatched = true;
+}
+
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
+	BindFreeLookControls(inputContext, pData);
+	ActivateFreeLookMode(inputContext, pData);
 	if (!pData->bLoaded)
 	{
 		LoadLayerAssets(pData, drawContext);
 	}
+	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
+	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
 
 static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
-	
+	struct GameLayer2DData* pData = pLayer->userData;
+	EASSERT(pData->pDebugListener);
+	Ev_UnsubscribeEvent(pData->pDebugListener);
 }
 
 static void OnWindowDimsChange(struct GameFrameworkLayer* pLayer, int newW, int newH)
 {
-
+	struct GameLayer2DData* pData = pLayer->userData;
+	pData->windowW = newW;
+	pData->windowH = newH;
 }
 
 void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions, DrawContext* pDC)
@@ -280,9 +405,15 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	pLayer->onPush = &OnPush;
 	pLayer->onWindowDimsChanged = &OnWindowDimsChange;
 
+	pData->camera.scale[0] = 1;
+	pData->camera.scale[1] = 1;
+
 	pData->vertexBuffer = pDC->NewWorldspaceVertBuffer(256);
 	pData->pWorldspaceVertices = NEW_VECTOR(Worldspace2DVert);
 	pData->pWorldspaceIndices = NEW_VECTOR(VertIndexT);
+
+	pData->windowH = pDC->screenHeight;
+	pData->windowW = pDC->screenWidth;
 
 	if (pOptions->loadImmediatly)
 	{

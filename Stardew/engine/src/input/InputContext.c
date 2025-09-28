@@ -396,7 +396,7 @@ void In_RecieveScroll(InputContext* context, double xoffset, double yoffset)
 	for (int i = 0; i < context->buttonMappings.MouseScrollButtonMappings.size; i++)
 	{
 		InputMapping* pMapping = &context->buttonMappings.MouseScrollButtonMappings.arr[i];
-		if (context->axisMappings.MouseScroll.ActiveMask & (1 << i))
+		if (context->buttonMappings.MouseScrollButtonMappings.ActiveMask & (1 << i))
 		{
 			switch (pMapping->data.ButtonMapping.data.mouseScrollButton.axis)
 			{
@@ -490,11 +490,11 @@ static void SetMouseScrollBtnCode(InputMapping* mapping, int code)
 
 	if (code & 2)
 	{
-		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_Pos;
+		mapping->data.ButtonMapping.data.mouseScrollButton.dir = Axis_Pos;
 	}
 	else
 	{
-		mapping->data.ButtonMapping.data.mouseScrollButton.axis = Axis_Neg;
+		mapping->data.ButtonMapping.data.mouseScrollButton.dir = Axis_Neg;
 	}
 }
 
@@ -688,3 +688,66 @@ InputContext In_InitInputContext()
 
 #undef ERROR
 }
+
+
+void In_GetMask(struct ActiveInputBindingsMask* pOutMask, InputContext* pCtx)
+{
+	pOutMask->MouseButtonMappings = pCtx->buttonMappings.MouseButtonMappings.ActiveMask;
+	pOutMask->KeyboardButtonMappings = pCtx->buttonMappings.KeyboardButtonMappings.ActiveMask;
+	pOutMask->GamepadButtonMappings = pCtx->buttonMappings.GamepadMappings.ActiveMask;
+	pOutMask->MouseScrollButtonMappings = pCtx->buttonMappings.MouseScrollButtonMappings.ActiveMask;
+
+	pOutMask->MouseAxisMappings = pCtx->axisMappings.Mouse.ActiveMask;
+	pOutMask->ControllerAxisMappings = pCtx->axisMappings.Controller.ActiveMask;
+	pOutMask->MouseScrollAxisMappings = pCtx->axisMappings.MouseScroll.ActiveMask;
+}
+
+void In_SetMask(struct ActiveInputBindingsMask* mask, InputContext* pCtx)
+{
+	pCtx->buttonMappings.MouseButtonMappings.ActiveMask = mask->MouseButtonMappings;
+	pCtx->buttonMappings.KeyboardButtonMappings.ActiveMask = mask->KeyboardButtonMappings;
+	pCtx->buttonMappings.GamepadMappings.ActiveMask = mask->GamepadButtonMappings;
+	pCtx->buttonMappings.MouseScrollButtonMappings.ActiveMask = mask->MouseScrollButtonMappings;
+
+	pCtx->axisMappings.Mouse.ActiveMask = mask->MouseAxisMappings;
+	pCtx->axisMappings.Controller.ActiveMask = mask->ControllerAxisMappings;
+	pCtx->axisMappings.MouseScroll.ActiveMask = mask->MouseScrollAxisMappings;
+}
+
+void In_ActivateButtonBinding(struct ButtonBinding binding, struct ActiveInputBindingsMask* pMask)
+{
+	EASSERT(binding.index <= 63);
+	switch (binding.type)
+	{
+	case MouseButton:
+		pMask->MouseButtonMappings |= (1 << binding.index);
+		break;
+	case KeyboardButton:
+		pMask->KeyboardButtonMappings |= (1 << binding.index);
+		break;
+	case GamepadButton:
+		pMask->GamepadButtonMappings |= (1 << binding.index);
+		break;
+	case MouseScrollButton:
+		pMask->MouseScrollButtonMappings |= (1 << binding.index);
+		break;
+	}
+}
+
+void In_ActivateAxisBinding(struct AxisBinding binding, struct ActiveInputBindingsMask* pMask)
+{
+	EASSERT(binding.index <= 63);
+	switch (binding.type)
+	{
+	case MouseAxis:
+		pMask->MouseAxisMappings |= (1 << binding.index);
+		break;
+	case GamePadAxis:
+		pMask->ControllerAxisMappings |= (1 << binding.index);
+		break;
+	case MouseScrollAxis:
+		pMask->MouseScrollAxisMappings |= (1 << binding.index);
+		break;
+	}
+}
+

@@ -76,6 +76,13 @@ Atlas* AqcuireAtlas()
 	return VectorTop(gAtlases);
 }
 
+void At_SetCurrent(hAtlas atlas, DrawContext* pDC)
+{
+	gCurrentAtlasIndex = atlas;
+	Atlas* pAtlas = &gAtlases[atlas];
+	pDC->SetCurrentAtlas(pAtlas->texture);
+}
+
 void At_Init()
 {
 	FT_Error error = FT_Init_FreeType(&gFTLib);

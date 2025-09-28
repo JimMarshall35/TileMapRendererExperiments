@@ -7,7 +7,7 @@
 
 void GameInit(InputContext* pIC, DrawContext* pDC)
 {
-    struct GameFrameworkLayer testLayer;
+    /*struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct XMLUIGameLayerOptions options;
     options.bLoadImmediately = false;
@@ -18,15 +18,17 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     XMLUIGameLayer_Get(&testLayer, &options);
     printf("done\n");
     printf("pushing framework layer\n");
-    GF_PushGameFrameworkLayer(&testLayer);
-    /*struct Game2DLayerOptions options;
+    GF_PushGameFrameworkLayer(&testLayer);*/
+    struct GameFrameworkLayer testLayer;
+    memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
+    struct Game2DLayerOptions options;
     memset(&options, 0, sizeof(struct Game2DLayerOptions));
     options.atlasFilePath = "./Assets/out/main.atlas";
     options.tilemapFilePath = "./Assets/out/House.tilemap";
     Game2DLayer_Get(&testLayer, &options, pDC);
     testLayer.flags |= (EnableOnPop | EnableOnPush | EnableUpdateFn | EnableDrawFn | EnableInputFn);
     GF_PushGameFrameworkLayer(&testLayer);
-    printf("done\n");*/
+    printf("done\n");
 }
 
 int main(int argc, char** argv)

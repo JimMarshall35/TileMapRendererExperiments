@@ -1,0 +1,9 @@
+<UIroot>
+	<atlas binary="./Assets/ui_atlas.atlas">
+	</atlas>
+	<screen viewmodelFile="./Assets/debug_overlay.lua" viewmodelFunction="GetDebugOverlayViewModel">
+		<stackpanel dockPoint="topLeft" orientation="vertical">
+				<text font="default" colour="0,0,0,255" fontSize="32pts">{DebugString}</text>
+		</stackpanel>
+	</screen>
+</UIroot>

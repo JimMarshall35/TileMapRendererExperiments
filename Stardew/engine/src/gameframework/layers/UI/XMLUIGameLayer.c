@@ -29,6 +29,7 @@
 #include "TextEntryWidget.h"
 #include "DataNode.h"
 #include "StringKeyHashMap.h"
+#include "GameFrameworkEvent.h"
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -121,7 +122,6 @@ static void AddLuaTableSubTree(XMLUIData* pData, HWidget hParent)
 		char* pStr = malloc(len + 1);
 		Sc_StackTopStrCopy(pStr);
 		Sc_Pop();
-		/* look up ctor by name */
 
 		AddChildFn fn = LookupWidgetCtor(pStr);
 		HWidget hNew = fn(hParent, &node, pData);
@@ -158,11 +158,8 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 	TP_DoTimers(&pData->timerPool, deltaT);
 	if (VectorSize(pData->pChildrenChangeRequests))
 	{
-		//printf("child change request\n");
 		struct WidgetChildrenChangeRequest* pReq = &pData->pChildrenChangeRequests[0];
-		//printf("freeing widget children\n");
 		FreeWidgetChildren(pReq->hWidget);
-		//printf("calling function %s\n", pReq->funcName);
 		Sc_CallFuncInRegTableEntryTable(pReq->regIndex, pReq->funcName, NULL, 0, 1);
 		if (Sc_IsTable())
 		{
@@ -213,6 +210,7 @@ static void UpdateRootWidget(XMLUIData* pData, DrawContext* dc)
 static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 {
 	XMLUIData* pData = pLayer->userData;
+	At_SetCurrent(pData->atlas, dc);
 	struct UIWidget* pRootWidget = UI_GetWidget(pData->rootWidget);
 	if (!pRootWidget)
 	{
@@ -225,7 +223,6 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* dc)
 		UpdateRootWidget(pData, dc);
 	}
 	int size = VectorSize(pData->pWidgetVertices);
-	//printf("%i\n", size);
 
 	dc->DrawUIVertexBuffer(pData->hVertexBuffer, size);
 }
@@ -546,7 +543,7 @@ void AddNodeChildren(HWidget widget, xmlNode* pNode, XMLUIData* pUIData)
 
 void LoadAtlas(XMLUIData* pUIData, xmlNode* child0, DrawContext* pDC)
 {
-	At_LoadAtlas(child0, pDC);
+	pUIData->atlas = At_LoadAtlas(child0, pDC);
 }
 
 static bool TryLoadViewModel(XMLUIData* pUIData, xmlNode* pScreenNode)
@@ -690,7 +687,7 @@ static void LoadUIData(XMLUIData* pUIData, DrawContext* pDC)
 		{
 			printf("%s ui xml file doesn't have both screen and atlas components\n", __FUNCTION__);
 		}
-		//xml_document_free(pXMLDoc, true);
+
 		xmlFreeDoc(pXMLDoc);
 
 		struct UIWidget* pWidget = UI_GetWidget(pUIData->rootWidget);
@@ -739,4 +736,21 @@ void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayer
 		LoadUIData(pUIData, pOptions->pDc);
 	}
 
+}
+
+
+void XMLUI_PushGameFrameworkLayer(const char* xmlPath)
+{
+	struct GameFrameworkLayer testLayer;
+	memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
+	struct XMLUIGameLayerOptions options;
+	options.bLoadImmediately = false;
+	options.xmlPath = xmlPath;
+	options.pDc = NULL;
+	testLayer.flags |= (EnableOnPush | EnableOnPop);
+	printf("making xml ui layer\n");
+	XMLUIGameLayer_Get(&testLayer, &options);
+	printf("done\n");
+	printf("pushing framework layer\n");
+	GF_PushGameFrameworkLayer(&testLayer);
 }

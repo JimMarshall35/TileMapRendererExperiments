@@ -69,6 +69,8 @@ typedef struct XMLUIData
 
 void XMLUIGameLayer_Get(struct GameFrameworkLayer* pLayer, struct XMLUIGameLayerOptions* pOptions);
 
+void XMLUI_PushGameFrameworkLayer(const char* xmlPath);
+
 #ifdef __cplusplus
 }
 #endif

@@ -56,7 +56,7 @@ const char* uiFrag =
 "}\n"
 #elif GAME_GL_API_TYPE == GAME_GL_API_TYPE_ES
 "#version 300 es\n"
-"precision mediump float;\n"
+"precision highp float;\n"
 "out vec4 FragColor;\n"
 "in vec4 Colour;\n"
 "in vec2 UV;\n"
@@ -369,7 +369,7 @@ void DrawWorldspaceVertexBuffer(H2DWorldspaceVertexBuffer hBuf, size_t indexCoun
 	glBindVertexArray(vertexBuffer->vao);
 	unsigned int projectionViewUniform = glGetUniformLocation(gWorldspace2DShader.program, "vp");
 	mat4 m;
-	glm_mat4_mul(view, &gScreenspaceOrtho[0][0], m);
+	glm_mat4_mul(&gScreenspaceOrtho[0][0], view, m);
 	glUniformMatrix4fv(projectionViewUniform, 1, false, &m[0][0]);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)0);
 }

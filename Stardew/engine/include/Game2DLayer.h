@@ -9,10 +9,13 @@ extern "C" {
 #include "DynArray.h"
 #include "HandleDefs.h"
 #include "cglm/cglm.h"
+#include "InputContext.h"
 
 #define MAX_GAME_LAYER_ASSET_FILE_PATH_LEN 128
 
 typedef struct InputMapping InputMapping;
+
+struct GameFrameworkEventListener;
 
 // the real type of this should be hSprite ie u32 but i want to save memory so u16 it is - that 
 // should be enough for anyone - just store the tiles in the first 16 bits worth of indexes
@@ -36,7 +39,7 @@ struct TileMapLayer
 	int widthTiles;
 	int heightTiles;
 	TileIndex* Tiles;
-	
+
 };
 
 struct TileMap
@@ -44,7 +47,6 @@ struct TileMap
 	VECTOR(struct TileMapLayer) layers;
 	char* dataFilePath;
 	struct TilemapRenderData* pRenderData;
-
 };
 
 struct GameLayer2DData
@@ -62,12 +64,30 @@ struct GameLayer2DData
 
 	struct Transform2D camera;
 
+	struct ButtonBinding freeLookZoomInBinding;
+	struct ButtonBinding freeLookZoomOutBinding;
+
+	struct ButtonBinding freeLookZoomMoveXPosBinding;
+	struct ButtonBinding freeLookZoomMoveXNegBinding;
+
+	struct ButtonBinding freeLookZoomMoveYPosBinding;
+	struct ButtonBinding freeLookZoomMoveYNegBinding;
+
+	struct ActiveInputBindingsMask freeLookInputsMask;
+
 	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
 	VECTOR(VertIndexT) pWorldspaceIndices;
 	H2DWorldspaceVertexBuffer vertexBuffer;
 
 	char atlasFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
 	char tilemapFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
+
+	bool bDebugLayerAttatched;
+	char debugMsg[256];
+	struct GameFrameworkEventListener* pDebugListener;
+
+	int windowW;
+	int windowH;
 };
 
 struct Game2DLayerOptions

@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 struct DrawContext;
+typedef struct DrawContext DrawContext;
 typedef struct _xmlNode xmlNode;
 struct BinarySerializer;
 
@@ -91,6 +92,8 @@ void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, stru
 
 void At_BeginTileset(int beginI);
 void At_EndTileset(int endI);
+
+void At_SetCurrent(hAtlas atlas, DrawContext* pDC);
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);

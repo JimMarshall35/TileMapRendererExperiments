@@ -6,16 +6,16 @@
 		],
 		"Keyboard" : [
 			{ "moveUp" : 87 }, 
-			{ "moveLeft" : 65 }, 
+			{ "moveLeft" : 68 }, 
 			{ "moveDown" : 83 }, 
-			{ "moveRight" : 68 },
+			{ "moveRight" : 65 },
 			{ "useTool" : 32 },
 			{ "nextTool" : 69 },
 			{ "prevTool" : 81 }
 		],
 		"MouseScroll" : [
 			{ "zoomIn" : 2 },
-			{ "zoomIn" : 0 }
+			{ "zoomOut" : 0 }
 		],
 		"GamePad" : [
 

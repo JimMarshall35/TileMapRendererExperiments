@@ -180,6 +180,7 @@ struct AxisBinding
 	AxisSubType type;
 	int index;
 };
+
 struct ButtonBinding
 {
 	ButtonSubType type;
@@ -191,5 +192,23 @@ struct ButtonBinding In_FindButtonMapping(InputContext* context, const char* nam
 
 float In_GetAxisValue(InputContext* context, struct AxisBinding binding);
 bool In_GetButtonValue(InputContext* context, struct ButtonBinding binding);
+
+
+struct ActiveInputBindingsMask
+{
+	u64 MouseButtonMappings;
+	u64 KeyboardButtonMappings;
+	u64 GamepadButtonMappings;
+	u64 MouseScrollButtonMappings;
+
+	u64 MouseAxisMappings;
+	u64 ControllerAxisMappings;
+	u64 MouseScrollAxisMappings;
+};
+
+void In_GetMask(struct ActiveInputBindingsMask* pOutMask, InputContext* pCtx);
+void In_SetMask(struct ActiveInputBindingsMask* mask, InputContext* pCtx);
+void In_ActivateButtonBinding(struct ButtonBinding binding, struct ActiveInputBindingsMask* pMask);
+void In_ActivateAxisBinding(struct AxisBinding binding, struct ActiveInputBindingsMask* pMask);
 
 #endif // !INPUTCONTEXT_H
