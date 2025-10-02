@@ -72,12 +72,23 @@ void At_BeginAtlas();
 hSprite At_AddSprite(const char* imgPath, int topLeftXPx, int topRightYPx, int widthPx, int heightPx, const char* name);
 HFont At_AddFont(const struct FontAtlasAdditionSpec* pFontSpec);
 hAtlas At_EndAtlas(struct DrawContext* pDC);
+
+struct EndAtlasOptions
+{
+	int initialAtlasWidth;
+	int initialAtlasHeight;
+	char* outDebugBitmapPath;
+	bool bUseBiggestSpriteForInitialAtlasSize;
+};
+
+hAtlas At_EndAtlasEx(struct DrawContext* pDC, struct EndAtlasOptions* pOptions);
 void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC);
 hSprite At_FindSprite(const char* name, hAtlas atlas);
 AtlasSprite* At_GetSprite(hSprite sprite, hAtlas atlas);
 hTexture At_GetAtlasTexture(hAtlas atlas);
 float At_PixelsToPts(float val);
 hAtlas At_LoadAtlas(xmlNode* child0, struct DrawContext* pDC);
+hAtlas At_LoadAtlasEx(xmlNode* child0, struct DrawContext* pDC, struct EndAtlasOptions* pOptions);
 
 hSprite At_TilemapIndexToSprite(hAtlas atlas, TileIndex tileIndex);
 

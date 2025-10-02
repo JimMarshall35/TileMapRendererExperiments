@@ -22,7 +22,9 @@ def do_cmd_args():
     parser.add_argument("outputDir", type=str, help="the output directory")
     parser.add_argument("-A", "--assets_folder", default="./Assets")
     parser.add_argument("-r", "--rle", type=bool, default=False)
-
+    parser.add_argument("-bmp", "--atlasBmp", type=str, default=None, help="Optional atlas debug bitmap output path")
+    parser.add_argument("-iw", "--atlasIW", type=int, default=512, help="Atlas initial width.")
+    parser.add_argument("-ih", "--atlasIH", type=int, default=512, help="Atlas initial height.")
     args = parser.parse_args()
     return args
 
@@ -126,7 +128,11 @@ class Atlas:
 def run_atlas_tool(path, xmlPath, args):
     binPath = os.path.join(os.path.abspath(args.outputDir), "main.atlas")
     print(binPath)
-    result = subprocess.run([os.path.abspath(path), xmlPath, "-o", binPath], capture_output=True, cwd=os. getcwd(), shell=True)
+    argsList = [os.path.abspath(path), xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
+    if args.atlasBmp:
+        argsList.append("-bmp")
+        argsList.append(args.atlasBmp)
+    result = subprocess.run(argsList, capture_output=True, cwd=os. getcwd(), shell=True)
     print(f"Running Atlas Tool...\n")
     print(f"Std Out:\n{result.stdout.decode("utf-8")}\n")
     print(f"Std Err:\n{result.stderr.decode("utf-8")}\n")

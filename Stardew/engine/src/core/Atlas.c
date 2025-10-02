@@ -7,7 +7,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #include "DrawContext.h"
 #include "SharedPtr.h"
@@ -19,6 +19,8 @@
 
 FT_Library  gFTLib;
 static int gSpriteId = 1;
+
+#define ATLAS_SPRITE_BORDER_PXLS 1
 
 struct AtlasSpriteFontData
 {
@@ -346,7 +348,8 @@ VECTOR(struct AtlasRect) AddNewFreeSpace(VECTOR(struct AtlasRect) outFreeSpace, 
 
 bool FitsInRect(const AtlasSprite* sprite, const struct AtlasRect* rect)
 {
-	return sprite->widthPx <= rect->w && sprite->heightPx <= rect->h;
+	return sprite->widthPx <= (rect->w - (ATLAS_SPRITE_BORDER_PXLS * 2)) && 
+		sprite->heightPx <= (rect->h - (ATLAS_SPRITE_BORDER_PXLS * 2));
 }
 
 int FindFittingFreeSpace(const AtlasSprite* sprite, VECTOR(struct AtlasRect) freeSpace)
@@ -372,6 +375,13 @@ static int Left(const struct AtlasRect* pRect)   { return pRect->x; }
 static int Right(const struct AtlasRect* pRect)  { return pRect->x + pRect->w; }
 
 
+int FreeSpaceSortFunc(const void* a, const void* b)
+{
+	struct AtlasRect* pA = a;
+	struct AtlasRect* pB = b;
+	return pA->w * pA->h > pB->w * pB->h;
+}
+
 static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSprite* pSprite, VECTOR(struct AtlasRect) freeSpace)
 {
 	size_t sizeofFreespace = VectorSize(freeSpace);
@@ -381,44 +391,84 @@ static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSpri
 		struct AtlasRect* rct = &freeSpace[index];
 		rct->bTaken = true;
 
+		/*
+		     we need to split the remaining space into two rectangles and push them into
+			 the free space list like so:
+
+			 <-------- rct->w ------->
+			  _______________________
+			 | sprite |  region 1    |
+			 |________|______________|
+			 |                       |    rect->h
+			 |     region 2          |
+			 |_______________________|
+		
+		*/
+
 		pSprite->atlasTopLeftXPx = rct->x;
 		pSprite->atlasTopLeftYPx = rct->y;
-		int newRightX = rct->x + pSprite->widthPx;
+		int newRightX = rct->x + pSprite->widthPx + (2 * ATLAS_SPRITE_BORDER_PXLS);
 		int newRightY = rct->y;
-		int newW = rct->w - pSprite->widthPx;
-		int newH = rct->h;
-		struct AtlasRect newRectTR = { newW, newH, newRightX, newRightY, false };
-		newRightX = rct->x;
-		newRightY = rct->y + pSprite->heightPx;
-		newW = pSprite->widthPx;
-		newH = rct->h - pSprite->heightPx;
-		struct AtlasRect newRectTR2 = { newW, newH, newRightX, newRightY, false };
+		int newW = rct->w - (pSprite->widthPx + (2 * ATLAS_SPRITE_BORDER_PXLS));
+		int newH = pSprite->heightPx + (2 * ATLAS_SPRITE_BORDER_PXLS);
+		struct AtlasRect region1 = { newW, newH, newRightX, newRightY, false };
 
-		if (newRectTR.w > 0 && newRectTR.h > 0)
+		newRightX = rct->x;
+		newRightY = rct->y + (pSprite->heightPx + (2 * ATLAS_SPRITE_BORDER_PXLS));
+		newW = rct->w;
+		newH = rct->h - (pSprite->heightPx + (2 * ATLAS_SPRITE_BORDER_PXLS));
+		struct AtlasRect region2 = { newW, newH, newRightX, newRightY, false };
+
+		if (region1.w * region1.h > 1e-4)
 		{
-			freeSpace = VectorPush(freeSpace, &newRectTR);
+			freeSpace = VectorPush(freeSpace, &region1);
 		}
-		if (newRectTR2.w > 0 && newRectTR2.h > 0)
+		if (region2.w * region2.h > 1e-4)
 		{
-			freeSpace = VectorPush(freeSpace, &newRectTR2);
+			freeSpace = VectorPush(freeSpace, &region2);
 		}
 		return freeSpace;
 	}
 	else
 	{
 		freeSpace = AddNewFreeSpace(freeSpace, outW, outH);
+		//freeSpace = MergeNewFreeSpace(freeSpace);
+		// sort from small to big
+		qsort(freeSpace, VectorSize(freeSpace), sizeof(struct AtlasRect), &FreeSpaceSortFunc);
 		return NestSingleSprite(outW, outH, pSprite, freeSpace);
 	}
 }
 
-static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestToShortest, int numSprites)
+static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestToShortest, int numSprites, struct EndAtlasOptions* pOptions)
 {
 	
 	VECTOR(struct AtlasRect) freeSpace = NEW_VECTOR(struct AtlasRect);
-	int tallestHeight = sortedSpritesTallestToShortest->heightPx;
-	int currentW = sortedSpritesTallestToShortest[0].widthPx;
-	int currentH = sortedSpritesTallestToShortest[0].heightPx;
+
 	
+	int tallestHeight = sortedSpritesTallestToShortest->heightPx;
+
+	int currentW = 1;
+	int currentH = 1;
+	if (pOptions->bUseBiggestSpriteForInitialAtlasSize)
+	{
+		currentW = sortedSpritesTallestToShortest[0].widthPx + ATLAS_SPRITE_BORDER_PXLS;
+		currentH = sortedSpritesTallestToShortest[0].heightPx + ATLAS_SPRITE_BORDER_PXLS;
+	}
+	else
+	{
+		currentW = pOptions->initialAtlasWidth;
+		currentH = pOptions->initialAtlasHeight;
+	}
+	
+	
+	struct AtlasRect r = {
+		.w = currentW,
+		.h = currentH,
+		.x = 0,
+		.y = 0,
+		.bTaken = false
+	};
+	freeSpace = VectorPush(freeSpace, &r);
 
 	for (int i = 1; i < numSprites; i++)
 	{
@@ -432,19 +482,47 @@ static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestT
 	*outH = currentH;
 }
 
+
 void BlitAtlasSprite(u8* dst, size_t dstWidthPx, AtlasSprite* pSprite)
 {
-	size_t startPx = pSprite->atlasTopLeftYPx * (dstWidthPx * CHANNELS_PER_PIXEL) + pSprite->atlasTopLeftXPx * CHANNELS_PER_PIXEL;
+	size_t startPx = 
+		pSprite->atlasTopLeftYPx * (dstWidthPx * CHANNELS_PER_PIXEL) + 
+		pSprite->atlasTopLeftXPx * CHANNELS_PER_PIXEL;
+
 	const u8* readPtr = pSprite->individualTileBytes;
 	u8* writePtr = &dst[startPx];
 	size_t lineBytes = pSprite->widthPx * CHANNELS_PER_PIXEL;
+
+	/* top border */
+	writePtr += CHANNELS_PER_PIXEL;
+	memcpy(writePtr, readPtr, lineBytes);
+	writePtr -= CHANNELS_PER_PIXEL;
+	writePtr += dstWidthPx * CHANNELS_PER_PIXEL;
+
 	for (int i = 0; i < pSprite->heightPx; i++)
 	{
+		u8* pStart = writePtr;
+		/* left border */
+		memcpy(writePtr, readPtr, CHANNELS_PER_PIXEL);
+		writePtr += CHANNELS_PER_PIXEL;
+
+		/* middle */
 		memcpy(writePtr, readPtr, lineBytes);
+		writePtr += lineBytes;
+
+		/* right border */
+		memcpy(writePtr, (readPtr + lineBytes) - CHANNELS_PER_PIXEL, CHANNELS_PER_PIXEL);
+		
+		writePtr = pStart;
 		writePtr += dstWidthPx * CHANNELS_PER_PIXEL;
 		readPtr += lineBytes;
 	}
+
+	/* bottom border */
+	writePtr += CHANNELS_PER_PIXEL;
+	memcpy(writePtr, readPtr - lineBytes, lineBytes);
 }
+
 
 void CopyNestedPositions(Atlas* pAtlasDest, AtlasSprite* spritesCopySrc, int spritesCopySrcSize)
 {
@@ -556,7 +634,24 @@ static void WriteFontSprites(Atlas* pAtlas, AtlasSprite* outFontSprites)
 	}
 }
 
+static struct EndAtlasOptions* GetDefaultAtlasOptions()
+{
+	static struct EndAtlasOptions opt =
+	{
+		.initialAtlasWidth = 512,
+		.initialAtlasHeight = 512,
+		.outDebugBitmapPath = NULL,
+		.bUseBiggestSpriteForInitialAtlasSize = false
+	};
+	return &opt;
+}
+
 hAtlas At_EndAtlas(struct DrawContext* pDC)
+{
+	At_EndAtlasEx(pDC, GetDefaultAtlasOptions());
+}
+
+hAtlas At_EndAtlasEx(struct DrawContext* pDC, struct EndAtlasOptions* pOptions)
 {
 	Atlas* pAtlas = GetCurrentAtlas();
 	if (!pAtlas)
@@ -578,7 +673,7 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 
 		qsort(spritesCopy, numSprites + numSpritesFromFonts, sizeof(AtlasSprite), &SortFunc);
 		int w, h;
-		NestSprites(&w, &h, spritesCopy, numSprites + numSpritesFromFonts);
+		NestSprites(&w, &h, spritesCopy, numSprites + numSpritesFromFonts, pOptions);
 
 		CopyNestedPositions(pAtlas, spritesCopy, numSprites + numSpritesFromFonts);
 		free(spritesCopy);
@@ -591,6 +686,11 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 		{
 			AtlasSprite* pSprite = &pAtlas->sprites[i];
 			BlitAtlasSprite(pAtlasBytes, w, pSprite);
+
+			/* increment topleft position to skip the border */
+			pSprite->atlasTopLeftXPx += ATLAS_SPRITE_BORDER_PXLS;
+			pSprite->atlasTopLeftYPx += ATLAS_SPRITE_BORDER_PXLS;
+
 			free(pSprite->individualTileBytes);
 			pSprite->individualTileBytes = NULL;
 		}
@@ -601,6 +701,11 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 			{
 				AtlasSprite* pSprite = &pAtlas->fonts[i].sprites[j];
 				BlitAtlasSprite(pAtlasBytes, w, pSprite);
+
+				/* increment topleft position to skip the border */
+				pSprite->atlasTopLeftXPx += ATLAS_SPRITE_BORDER_PXLS;
+				pSprite->atlasTopLeftYPx += ATLAS_SPRITE_BORDER_PXLS;
+
 				free(pSprite->individualTileBytes);
 				pSprite->individualTileBytes = NULL;
 			}
@@ -611,7 +716,11 @@ hAtlas At_EndAtlas(struct DrawContext* pDC)
 
 		CalculateAtlasUVs(pAtlas);
 
-		//stbi_write_bmp("testing123.bmp", w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
+		if (pOptions->outDebugBitmapPath)
+		{
+			stbi_write_bmp(pOptions->outDebugBitmapPath, w, h, CHANNELS_PER_PIXEL, pAtlasBytes);
+		}
+		
 		pAtlas->texture = pDC->UploadTexture(pAtlas->atlasBytes, CHANNELS_PER_PIXEL, w, h);
 	}
 
@@ -905,6 +1014,11 @@ static void LoadAtlasFont(xmlNode* pChild)
 
 hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
 {
+	At_LoadAtlasEx(child0, pDC, GetDefaultAtlasOptions());
+}
+
+hAtlas At_LoadAtlasEx(xmlNode* child0, DrawContext* pDC, struct EndAtlasOptions* pOptions)
+{
 	printf("loading atlas\n");
 	xmlChar* attribute = NULL;
 	if (attribute = xmlGetProp(child0, "binary"))
@@ -949,7 +1063,7 @@ hAtlas At_LoadAtlas(xmlNode* child0, DrawContext* pDC)
 		}
 		onChild++;
 	}
-	return At_EndAtlas(pDC);
+	return At_EndAtlasEx(pDC, pOptions);
 }
 
 hSprite At_TilemapIndexToSprite(hAtlas atlas, TileIndex tileIndex)
@@ -979,7 +1093,7 @@ static void SerializeAtlasSprite(const AtlasSprite* pSprite, struct BinarySerial
 
 static void SerializeAtlasFont(const struct AtlasFont* pFont, struct BinarySerializer* pSerializer)
 {
-	BS_SerializeBytes(pFont->spriteData, sizeof(struct AtlasSpriteFontData) * 256, pSerializer);
+	BS_SerializeBytes((const char*)pFont->spriteData, sizeof(struct AtlasSpriteFontData) * 256, pSerializer);
 	for (int i = 0; i < 256; i++)
 	{
 		SerializeAtlasSprite(&pFont->sprites[i], pSerializer);
