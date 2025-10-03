@@ -35,7 +35,6 @@ void PrintHelpMsg()
 
 int ParseArgs(int argc, char** argv)
 {
-#ifdef WIN32
 	memset(&args, 0, sizeof(struct Args));
 	if (argc < 2)
 	{
@@ -77,9 +76,6 @@ int ParseArgs(int argc, char** argv)
 		args.outPath = defaultOutPath;
 	}
 	return 0;
-#else
-#endif
-	
 }
 
 static hTexture UploadTextureMock(void* src, int channels, int pxWidth, int pxHeight)

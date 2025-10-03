@@ -103,6 +103,7 @@ void At_BeginAtlas()
 		gAtlases = NEW_VECTOR(Atlas);
 	}
 	Atlas* atlas = AqcuireAtlas();
+	atlas->bActive = true;
 	atlas->atlasBytes = NULL;
 	atlas->atlasHeight = 0;
 	atlas->atlasWidth = 0;
@@ -1147,6 +1148,7 @@ static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct Dr
 	pAtlas->sprites = NEW_VECTOR(AtlasSprite);
 	pAtlas->fonts = NEW_VECTOR(struct AtlasFont);
 	pAtlas->texture = NULL_HANDLE;
+	pAtlas->bActive = true;
 
 	// width and height
 	BS_DeSerializeI32(&pAtlas->atlasHeight, pSerializer);

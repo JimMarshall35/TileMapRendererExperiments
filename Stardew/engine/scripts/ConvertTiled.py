@@ -5,6 +5,8 @@ import typing
 import os
 import subprocess
 import struct
+import platform
+
 
 TILEMAP_FILE_VERSION = 1
 
@@ -128,7 +130,12 @@ class Atlas:
 def run_atlas_tool(path, xmlPath, args):
     binPath = os.path.join(os.path.abspath(args.outputDir), "main.atlas")
     print(binPath)
-    argsList = [os.path.abspath(path), xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
+    argsList = None
+    if platform.system() == "Windows":
+        argsList = [os.path.abspath(path), xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
+    elif platform.system() == "Linux":
+        argsList = [xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
+    print(argsList)
     if args.atlasBmp:
         argsList.append("-bmp")
         argsList.append(args.atlasBmp)
