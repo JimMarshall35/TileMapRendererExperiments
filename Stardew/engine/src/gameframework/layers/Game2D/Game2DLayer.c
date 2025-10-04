@@ -24,8 +24,12 @@ static void GetViewportWorldspaceTLBR(vec2 outTL, vec2 outBR, struct Transform2D
 	outTL[0] = pCam->position[0];
 	outTL[1] = pCam->position[1];
 
+	outTL[0] = -outTL[0];
+	outTL[1] = -outTL[1];
+
 	outBR[0] = outTL[0] + windowW / pCam->scale[0];
 	outBR[1] = outTL[1] + windowW / pCam->scale[0];
+
 }
 
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
@@ -106,7 +110,7 @@ static void PublishDebugMessage(struct GameLayer2DData* pData)
 	GetViewportWorldspaceTLBR(tl, br, &pData->camera, pData->windowW, pData->windowH);
 	sprintf(pData->debugMsg, "Cam: x:%.2f y:%.2f zoom:%.2f tlx:%.2f tly:%.2f brx:%.2f bry:%.2f",
 		pData->camera.position[0], pData->camera.position[1], pData->camera.scale[0],
-		-tl[0], -tl[1],
+		tl[0], tl[1],
 		br[0], br[1]
 	);
 	struct ScriptCallArgument arg;
@@ -219,11 +223,26 @@ static void OutputTilemapLayerVertices(
 	VECTOR(Worldspace2DVert) outVert = *outVerts;
 	VECTOR(VertIndexT) outInd = *outInds;
 
-	//int startRow = ((int)viewportTL[0]) / pLayer->;
+	/*
+		Only draw those tiles that are in the viewport:
+		TODO: make this work for layers that are transformed
+	*/
 
-	for (int row = 0; row < pLayer->heightTiles; row++)
+	int startCol = ((int)viewportTL[0]) / pLayer->tileWidthPx;
+	startCol = startCol < 0 ? 0 : startCol;
+	int endCol = ((int)viewportBR[0]) / pLayer->tileWidthPx;
+	endCol++;
+	endCol = endCol > pLayer->widthTiles ? pLayer->widthTiles : endCol;
+
+
+	int startRow = ((int)viewportTL[1]) / pLayer->tileHeightPx;
+	startRow = startRow < 0 ? 0 : startRow;
+	int endRow = ((int)viewportBR[1]) / pLayer->tileHeightPx;
+	endRow = endRow > pLayer->heightTiles ? pLayer->heightTiles : endRow;
+
+	for (int row = startRow; row < endRow; row++)
 	{
-		for (int col = 0; col < pLayer->widthTiles; col++)
+		for (int col = startCol; col < endCol; col++)
 		{
 			TileIndex tile = pLayer->Tiles[row * pLayer->widthTiles + col];
 			if (tile == 0)
