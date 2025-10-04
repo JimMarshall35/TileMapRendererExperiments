@@ -19,6 +19,15 @@
 #define FREE_LOOK_YPOS_BINDING_NAME "moveDown"
 #define FREE_LOOK_YNEG_BINDING_NAME "moveUp"
 
+static void GetViewportWorldspaceTLBR(vec2 outTL, vec2 outBR, struct Transform2D* pCam, int windowW, int windowH)
+{
+	outTL[0] = pCam->position[0];
+	outTL[1] = pCam->position[1];
+
+	outBR[0] = outTL[0] + windowW / pCam->scale[0];
+	outBR[1] = outTL[1] + windowW / pCam->scale[0];
+}
+
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
 {
 	int allocSize = pLayer->heightTiles * pLayer->widthTiles * sizeof(TileIndex);
@@ -88,8 +97,13 @@ static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath, D
 
 static void PublishDebugMessage(struct GameLayer2DData* pData)
 {
-	sprintf(pData->debugMsg, "Cam: x:%.2f y:%.2f zoom:%.2f",
-		pData->camera.position[0], pData->camera.position[1], pData->camera.scale[0]);
+	vec2 tl, br;
+	GetViewportWorldspaceTLBR(tl, br, &pData->camera, pData->windowW, pData->windowH);
+	sprintf(pData->debugMsg, "Cam: x:%.2f y:%.2f zoom:%.2f tlx:%.2f tly:%.2f brx:%.2f bry:%.2f",
+		pData->camera.position[0], pData->camera.position[1], pData->camera.scale[0],
+		-tl[0], -tl[1],
+		br[0], br[1]
+	);
 	struct ScriptCallArgument arg;
 	arg.type = SCA_string;
 	arg.val.string = pData->debugMsg;

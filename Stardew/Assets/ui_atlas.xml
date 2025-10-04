@@ -13,7 +13,7 @@
 	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color.png" top="0" left="0" width="96" height="16" name="defaultRailHorizontal"/>
 	<sprite source="./Assets/Image/kenney_ui-pack/PNG/Grey/Default/slide_horizontal_color_section.png" top="0" left="0" width="16" height="16" name="defaultSliderHorizontal"/>
 	<font source="./Assets/Starzy_Darzy_lowercase_letters.ttf" name="default" options="normal">
-		<size type="pts" val="32"/>
 		<size type="pts" val="16"/>
+		<size type="pts" val="32"/>
 	</font>
 </atlas>

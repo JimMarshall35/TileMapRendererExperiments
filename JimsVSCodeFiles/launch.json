@@ -53,6 +53,31 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(gdb) Launch Atlas Tool",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Stardew/build/atlastool/AtlasTool",
+            "args": ["./Assets/out/atlas.xml", "-o", "out.atlas", "-bmp", "Atlas.bmp"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/Stardew",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description":  "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
