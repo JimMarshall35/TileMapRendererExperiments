@@ -74,6 +74,11 @@ struct GameLayer2DData
 	struct ButtonBinding freeLookZoomMoveYPosBinding;
 	struct ButtonBinding freeLookZoomMoveYNegBinding;
 
+	struct ButtonBinding freeLookSelectButtonBinding;
+
+	struct AxisBinding freeLookCursorXAxisBinding;
+	struct AxisBinding freeLookCursorYAxisBinding;
+
 	struct ActiveInputBindingsMask freeLookInputsMask;
 
 	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
