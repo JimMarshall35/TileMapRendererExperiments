@@ -36,10 +36,11 @@ struct TileMapLayer
 {
 	struct TilemapLayerRenderData* pRenderData;
 	struct Transform2D transform;
+	int tileWidthPx;
+	int tileHeightPx;
 	int widthTiles;
 	int heightTiles;
 	TileIndex* Tiles;
-
 };
 
 struct TileMap

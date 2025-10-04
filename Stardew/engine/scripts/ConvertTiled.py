@@ -85,14 +85,18 @@ class Atlas:
         assert normalized_index in self.lut[path]
         return self.lut[path][normalized_index]
     def output_atlas_xml_file(self, outPath):
+        print(f"outputting atlas xml file. The engine can load this directly or you can use the Atlas tool to convert it into a binary file.\n This script will try to invoke the atlas tool if its path is passed with the flag -a")
         counter = 0
         top = ET.Element("atlas")
         tree = ET.ElementTree(top)
         top.set("tilesetStart",f"{counter}")
+        print(f"tilesetStart: {counter}")
         for s in self.sprites:
             ET.SubElement(top, "sprite", s.get_attributes(counter))
             counter += 1
         top.set("tilesetEnd",f"{counter}")
+        print(f"tilesetEnd: {counter}")
+        print(f"Num Sprites: {len(self.sprites)}")
         ET.indent(tree, space=" ", level=3)
         with open(outPath, "wb") as f:
             f.write(ET.tostring(top))
@@ -109,10 +113,6 @@ class Atlas:
                 columns = j["columns"]
                 name = j["name"]
                 image = j["image"]
-                print(f"HERE {j}")
-                print()
-                print()
-                print()
                 for index in self.originalNormalizedIndexes[key]:
                     l = ((index - 1) % columns) * tileWidth  + spacing + margin
                     t = ((index - 1) // columns) * tileHeight + spacing + margin
@@ -129,18 +129,18 @@ class Atlas:
 
 def run_atlas_tool(path, xmlPath, args):
     binPath = os.path.join(os.path.abspath(args.outputDir), "main.atlas")
-    print(binPath)
     argsList = None
     if platform.system() == "Windows":
         argsList = [os.path.abspath(path), xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
     elif platform.system() == "Linux":
-        argsList = [xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)]
-    print(argsList)
+        argsList = [xmlPath, "-o", binPath, "-iw", str(args.atlasIW), "-ih", str(args.atlasIH)] 
     if args.atlasBmp:
         argsList.append("-bmp")
         argsList.append(args.atlasBmp)
     result = subprocess.run(argsList, capture_output=True, cwd=os. getcwd(), shell=True)
     print(f"Running Atlas Tool...\n")
+    print(binPath)
+    print(argsList)
     print(f"Std Out:\n{result.stdout.decode("utf-8")}\n")
     print(f"Std Err:\n{result.stderr.decode("utf-8")}\n")
 
@@ -191,13 +191,36 @@ def build_runs(file, data : list[int], atlas : Atlas, tilesets) -> list[Run]:
     runs.append(Run(file, 0, 0))
     return runs
 
+def get_tile_layer_tile_dims(data, atlas, tilesets):
+    lastW = -1
+    lastH = -1
+    for i in data:
+        ts = find_tileset(i, tilesets)
+        if ts:
+            norm = get_normalized_index(i, ts)
+            converted = atlas.get_atlas_index(norm, ts["source"])
+            if lastW == -1:
+                assert lastH == -1
+                if converted > 0 and converted < len(atlas.sprites):
+                    lastH = atlas.sprites[converted].height
+                    lastW = atlas.sprites[converted].width
+            elif converted > 0 and converted < len(atlas.sprites):
+                assert lastH == atlas.sprites[converted].height
+                assert lastW == atlas.sprites[converted].width
+                lastH = atlas.sprites[converted].height
+                lastW = atlas.sprites[converted].width
+        else:
+            pass
+            #assert False
+    return lastW, lastH
+
+
 def write_rle(f, data, atlas, tilesets):
     runs = build_runs(f, data, atlas, tilesets)
     for r in runs:
         r.write()
 
 def write_uncompressed(f, data, atlas, tilesets):
-    print(tilesets)
     for i in data:
         ts = find_tileset(i, tilesets)
         if ts:
@@ -208,10 +231,11 @@ def write_uncompressed(f, data, atlas, tilesets):
         f.write(struct.pack("H", converted))
 
 def build_tilemap_binaries(args, parsed_tile_maps, atlas):
+    print("outputting tilemap binary files...")
     for p in parsed_tile_maps:
         newFileName = p["srcPath"].replace(".json", ".tilemap")
         newFileName = os.path.basename(newFileName)
-        print(f"NEW NAME '{newFileName}'")
+        print(f"NEW FILE NAME '{newFileName}'")
         binaryPath = os.path.join(os.path.abspath(args.outputDir), newFileName)
         tilesets = p["tilesets"]
         tilesets = sorted(tilesets, key=lambda tileset: tileset["firstgid"])   # sort by age
@@ -222,21 +246,29 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
             # NUM LAYERS
             num_tilemap_layers = count_tilemap_layers(p["layers"])
             f.write(struct.pack("I", num_tilemap_layers))
+            layerNum = 0
             for layer in p["layers"]:
                 if "data" in layer:
+                    data = layer["data"]
+                    tw, th = get_tile_layer_tile_dims(data, atlas, tilesets)
+                    print(f"LAYER {str(layerNum)} TILE WIDTH: {tw} TILE HEIGHT: {th} WIDTH: {layer["width"]} TILES, HEIGHT {layer["height"]} TILES.")
+                    layerNum += 1
                     # INT FIELDS FOR LAYER
                     f.write(struct.pack("I", layer["width"]))
                     f.write(struct.pack("I", layer["height"]))
                     f.write(struct.pack("I", layer["x"]))
                     f.write(struct.pack("I", layer["y"]))
+                    f.write(struct.pack("I", tw if tw > 0 else 0))
+                    f.write(struct.pack("I", th if th > 0 else 0))
                     if args.rle:
                         f.write(struct.pack("I", 1))     # enum value to signify RLE
                         # RUN LENGTH ENCODED TILES
-                        write_rle(f, layer["data"], atlas, tilesets)
+                        write_rle(f, data, atlas, tilesets)
                     else:
                         f.write(struct.pack("I", 2))     # enum value to signify uncompressed
                         # UNCOMPRESSED TILES
-                        write_uncompressed(f, layer["data"], atlas, tilesets)
+                        write_uncompressed(f, data, atlas, tilesets)
+    print("\n\n")
 
 def convert_tile_maps(args):
     "convert tile map files to a set of three files, an atlas xml file, an game objects xml file, and a tilemap binary file"
@@ -248,7 +280,6 @@ def convert_tile_maps(args):
             parsed_tile_maps.append(tm)
 
     used : dict[str, set[int]] = get_tiles_used_per_tileset(parsed_tile_maps)
-    print(used)
     atlas = Atlas(used, args)
     atlasXMLPath = os.path.join(os.path.abspath(args.outputDir), "atlas.xml")
     atlas.output_atlas_xml_file(atlasXMLPath)

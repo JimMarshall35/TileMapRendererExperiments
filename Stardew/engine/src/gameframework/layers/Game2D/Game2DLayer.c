@@ -49,16 +49,21 @@ static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS
 	for (int i = 0; i < numLayers; i++)
 	{
 		struct TileMapLayer layer;
-		u32 width, height, x, y, compression;
+		u32 width, height, x, y, compression, tw, th;
 		BS_DeSerializeU32(&width, pBS);
 		BS_DeSerializeU32(&height, pBS);
 		BS_DeSerializeU32(&x, pBS);
 		BS_DeSerializeU32(&y, pBS);
+		BS_DeSerializeU32(&tw, pBS);
+		BS_DeSerializeU32(&th, pBS);
 		BS_DeSerializeU32(&compression, pBS);
 		layer.widthTiles = width;
 		layer.heightTiles = height;
 		layer.transform.position[0] = x;
 		layer.transform.position[1] = y;
+		layer.tileWidthPx = tw;
+		layer.tileHeightPx = th;
+
 		switch (compression)
 		{
 		case 1:         // RLE
@@ -206,11 +211,15 @@ static void OutputTilemapLayerVertices(
 	struct TileMapLayer* pLayer,
 	VECTOR(Worldspace2DVert)* outVerts,
 	VECTOR(VertIndexT)* outInds,
-	VertIndexT* pNextIndex
+	VertIndexT* pNextIndex,
+	vec2 viewportTL,
+	vec2 viewportBR
 )
 {
 	VECTOR(Worldspace2DVert) outVert = *outVerts;
 	VECTOR(VertIndexT) outInd = *outInds;
+
+	//int startRow = ((int)viewportTL[0]) / pLayer->;
 
 	for (int row = 0; row < pLayer->heightTiles; row++)
 	{
@@ -226,6 +235,7 @@ static void OutputTilemapLayerVertices(
 			OutputSpriteVertices(pSprite, &outVert, &outInd, pNextIndex, col, row);
 		}
 	}
+
 	*outVerts = outVert;
 	*outInds = outInd;
 }
@@ -240,13 +250,14 @@ static void OutputTilemapVertices(
 {
 	VECTOR(Worldspace2DVert) verts = *outVerts;
 	VECTOR(VertIndexT) inds = *outIndices;
-	// TODO: implement here
-	// 1.) Get first and last row and column based on the camera and ortho matrix
-	// 2.) Output vertices and indices for these in model space
+	
+	vec2 tl, br;
+	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
+
 	VertIndexT nextIndexVal = 0;
 	for (int i = 0; i < VectorSize(pData->layers); i++)
 	{
-		OutputTilemapLayerVertices(pLayerData->hAtlas, pData->layers + i, &verts, &inds, &nextIndexVal);
+		OutputTilemapLayerVertices(pLayerData->hAtlas, pData->layers + i, &verts, &inds, &nextIndexVal, tl, br);
 	}
 
 	*outVerts = verts;
