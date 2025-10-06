@@ -16,6 +16,7 @@
 #include <libxml/tree.h>
 
 #include "BinarySerializer.h"
+#include "BitField2D.h"
 
 FT_Library  gFTLib;
 static int gSpriteId = 1;
@@ -375,6 +376,128 @@ static int Bottom(const struct AtlasRect* pRect) { return pRect->y + pRect->h; }
 static int Left(const struct AtlasRect* pRect)   { return pRect->x; }
 static int Right(const struct AtlasRect* pRect)  { return pRect->x + pRect->w; }
 
+struct FreeSpaceRun
+{
+	int atlasRectI;
+	int x,y,length;
+};
+ 
+struct FreeSpaceRun* FindRunInPrevRow(VECTOR(struct FreeSpaceRun) prevRow, struct FreeSpaceRun* pRun)
+{
+	for(int i = 0; i < VectorSize(prevRow); i++)
+	{
+		if(prevRow[i].length == pRun->length && prevRow[i].x == pRun->x)
+		{
+			return &prevRow[i];
+		}
+	}
+	return NULL;
+}
+
+#define MERGE_FREE_SPACES
+
+struct AtlasRect* MergeFreeSpace(struct AtlasRect* pFreeSpace, struct Bitfield2D* pBF, int w, int h)
+{
+	// bitmap based free space merging
+
+
+	// 1.) set the bits where the free space is in the 2d bitfield
+	for(int i=0; i<VectorSize(pFreeSpace); i++)
+	{
+		struct AtlasRect* pRect = &pFreeSpace[i];
+		if(!pRect->bTaken)
+			Bf2D_SetBitfieldRegion(pBF, pRect->x, pRect->y, pRect->w, pRect->h);
+	}
+
+	// 2.) iterate row by row, for each run in the row either:
+	//      - extend the rect associated with a run in the previous row that matches its width and position by one pixel and associate the rect with this new run
+	//      - add a new free space rect and associate it with this run
+	// different alternatives exist, if there's a run that's bigger than one on the previous row we could extend the previous row and create a new rect from the remainder
+	VECTOR(struct AtlasRect) newFreeSpace = NEW_VECTOR(struct AtlasRect);
+	
+	VECTOR(struct FreeSpaceRun) runs[2];
+	runs[0] = NEW_VECTOR(struct FreeSpaceRun);
+	runs[0] = VectorResize(runs[0], pFreeSpace);
+	runs[1] = NEW_VECTOR(struct FreeSpaceRun);
+	runs[1] = VectorResize(runs[1], pFreeSpace);
+
+	runs[0] = VectorClear(runs[0]);
+	runs[1] = VectorClear(runs[1]);
+
+	int onRun = 0;
+	int prevRow = 1;
+
+	for(int row = 0; row < h; row++)
+	{
+
+		runs[onRun] = VectorClear(runs[onRun]);
+		bool bDoingRun = false;
+
+		// generate runs
+		for(int col = 0; col < w; col++)
+		{
+			if(Bf2D_IsBitSet(pBF, col, row))
+			{
+				if(bDoingRun)
+				{
+					((struct FreeSpaceRun*)VectorTop(runs[onRun]))->length++;
+				}
+				else
+				{
+					struct FreeSpaceRun fsr;
+					fsr.x = col;
+					fsr.y = row;
+					fsr.length = 1;
+					runs[onRun] = VectorPush(runs[onRun], &fsr);
+					bDoingRun = true;
+				}
+			}
+			else
+			{
+				bDoingRun = false;
+			}
+		}
+
+		// for each run, either add a new free space rect or extend an existing one
+		for(int i = 0; i < VectorSize(runs[onRun]); i++)
+		{
+			struct FreeSpaceRun* pInPrevRow = FindRunInPrevRow(runs[onRun ? 0 : 1], &runs[onRun][i]);
+			if(pInPrevRow)
+			{
+				newFreeSpace[pInPrevRow->atlasRectI].h++;
+				runs[onRun][i].atlasRectI = pInPrevRow->atlasRectI;
+			}
+			else
+			{
+				// add new free space
+				struct AtlasRect r =
+				{
+					.w = runs[onRun][i].length,
+					.h = 1,
+					.x = runs[onRun][i].x,
+					.y = runs[onRun][i].y,
+					.bTaken = false
+				};
+				newFreeSpace = VectorPush(newFreeSpace, &r);
+				runs[onRun][i].atlasRectI = VectorSize(newFreeSpace) - 1;
+			}
+		}
+
+		// flip runs
+		prevRow = onRun;
+		onRun = onRun ? 0 : 1;
+	}
+	DestoryVector(runs[0]);
+	DestoryVector(runs[1]);
+	int sz = VectorSize(newFreeSpace);
+	printf("%i\n", sz);
+	for(int i=0; i<sz; i++)
+	{
+		printf("x: %i y: %i w: %i h: %i taken: %i\n", newFreeSpace[i].x, newFreeSpace[i].y, newFreeSpace[i].w, newFreeSpace[i].h, newFreeSpace[i].bTaken);
+	}
+	return newFreeSpace;
+}
+
 
 int FreeSpaceSortFunc(const void* a, const void* b)
 {
@@ -383,7 +506,7 @@ int FreeSpaceSortFunc(const void* a, const void* b)
 	return pA->w * pA->h > pB->w * pB->h;
 }
 
-static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSprite* pSprite, VECTOR(struct AtlasRect) freeSpace)
+static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSprite* pSprite, VECTOR(struct AtlasRect) freeSpace, struct Bitfield2D* pBF)
 {
 	size_t sizeofFreespace = VectorSize(freeSpace);
 	int index = FindFittingFreeSpace(pSprite, freeSpace);
@@ -428,15 +551,33 @@ static VECTOR(struct AtlasRect) NestSingleSprite(int* outW, int* outH, AtlasSpri
 		{
 			freeSpace = VectorPush(freeSpace, &region2);
 		}
+#ifdef MERGE_FREE_SPACES
+		Bf2D_ClearBitField(pBF);
+		void* prevFreeSpace = freeSpace;
+		freeSpace = MergeFreeSpace(freeSpace, pBF, *outW, *outH);
+		DestoryVector(prevFreeSpace);
+#endif
 		return freeSpace;
 	}
 	else
 	{
+		printf("resizing...\n");
+		int sz = VectorSize(freeSpace);
+		printf("%i\n", sz);
+		for(int i=0; i<sz; i++)
+		{
+			printf("x: %i y: %i w: %i h: %i taken: %i\n", freeSpace[i].x, freeSpace[i].y, freeSpace[i].w, freeSpace[i].h, freeSpace[i].bTaken);
+		}
 		freeSpace = AddNewFreeSpace(freeSpace, outW, outH);
-		//freeSpace = MergeNewFreeSpace(freeSpace);
+#ifdef MERGE_FREE_SPACES
+		Bf2D_ResizeAndClearBitField(pBF, *outW, *outH);
+		void* prevFreeSpace = freeSpace;
+		freeSpace = MergeFreeSpace(freeSpace, pBF, *outW, *outH);
+		DestoryVector(prevFreeSpace);
+#endif
 		// sort from small to big
 		qsort(freeSpace, VectorSize(freeSpace), sizeof(struct AtlasRect), &FreeSpaceSortFunc);
-		return NestSingleSprite(outW, outH, pSprite, freeSpace);
+		return NestSingleSprite(outW, outH, pSprite, freeSpace, pBF);
 	}
 }
 
@@ -469,15 +610,19 @@ static void NestSprites(int* outW, int* outH, AtlasSprite* sortedSpritesTallestT
 		.y = 0,
 		.bTaken = false
 	};
+	
+	/* used to merge free space blocks */
+	struct Bitfield2D* pBitField = Bf2D_NewBitField(currentW, currentH);
+
 	freeSpace = VectorPush(freeSpace, &r);
 
-	for (int i = 1; i < numSprites; i++)
+	for (int i = 0; i < numSprites; i++)
 	{
 		bool bFitInEmptySpace = false;
 		AtlasSprite* pSprt = &sortedSpritesTallestToShortest[i];
-		freeSpace = NestSingleSprite(&currentW, &currentH, pSprt, freeSpace);
+		freeSpace = NestSingleSprite(&currentW, &currentH, pSprt, freeSpace, pBitField);
 	}
-
+	Bf2D_FreeBitField(pBitField);
 	DestoryVector(freeSpace);
 	*outW = currentW;
 	*outH = currentH;

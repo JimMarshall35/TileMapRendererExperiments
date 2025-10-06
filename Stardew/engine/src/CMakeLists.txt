@@ -12,6 +12,7 @@ core/ImageFileRegstry.c
 core/TimerPool.c
 core/DataNode.c
 core/StringKeyHashMap.c
+core/Bitfield2D.c
 gameframework/GameFramework.c
 gameframework/GameFrameworkEvent.c
 gameframework/layers/UI/XMLUIGameLayer.c
