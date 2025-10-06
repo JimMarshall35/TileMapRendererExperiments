@@ -405,7 +405,7 @@ void In_RecieveScroll(InputContext* context, double xoffset, double yoffset)
 				{
 					pMapping->data.ButtonMapping.bCurrent = true;
 				}
-				if (xoffset < 0)
+				if (pMapping->data.ButtonMapping.data.mouseScrollButton.dir == Axis_Neg && xoffset < 0)
 				{
 					pMapping->data.ButtonMapping.bCurrent = true;
 				}
@@ -415,7 +415,7 @@ void In_RecieveScroll(InputContext* context, double xoffset, double yoffset)
 				{
 					pMapping->data.ButtonMapping.bCurrent = true;
 				}
-				if (yoffset < 0)
+				if (pMapping->data.ButtonMapping.data.mouseScrollButton.dir == Axis_Neg && yoffset < 0)
 				{
 					pMapping->data.ButtonMapping.bCurrent = true;
 				}

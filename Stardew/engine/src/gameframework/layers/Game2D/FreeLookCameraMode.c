@@ -57,15 +57,15 @@ void FreeLookMode2DInput(struct GameFrameworkLayer* pLayer, InputContext* contex
 
 	glm_vec2_add(movementVector, pData->camera.position, pData->camera.position);
 
-	if (bZoomOut)//bZoomIn)
+	if (bZoomOut)
 	{
-		pData->camera.scale[0] *= 0.9f;
-		pData->camera.scale[1] *= 0.9f;
+		pData->camera.scale[0] -= 0.1f;
+		pData->camera.scale[1] -= 0.1f;
 	}
-	if (bZoomIn)//bZoomOut)
+	if (bZoomIn)
 	{
-		pData->camera.scale[0] *= 1.1f;
-		pData->camera.scale[1] *= 1.1f;
+		pData->camera.scale[0] += 0.1f;
+		pData->camera.scale[1] += 0.1f;
 	}
 
 	// move around with mouse
