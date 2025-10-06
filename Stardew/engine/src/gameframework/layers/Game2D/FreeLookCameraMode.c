@@ -63,13 +63,15 @@ void FreeLookMode2DInput(struct GameFrameworkLayer* pLayer, InputContext* contex
 	{
 		pData->camera.scale[0] -= 0.1f;
 		pData->camera.scale[1] -= 0.1f;
+        CenterCameraAt(camcenter[0], camcenter[1], &pData->camera, pData->windowW, pData->windowH);
 	}
 	if (bZoomIn)
 	{
 		pData->camera.scale[0] += 0.1f;
 		pData->camera.scale[1] += 0.1f;
+        CenterCameraAt(camcenter[0], camcenter[1], &pData->camera, pData->windowW, pData->windowH);
 	}
-    CenterCameraAt(camcenter[0], camcenter[1], &pData->camera, pData->windowW, pData->windowH);
+    
 
 	// move around with mouse
 	bool bSelectVal = In_GetButtonValue(context, pData->freeLookCtrls.freeLookSelectButtonBinding);
