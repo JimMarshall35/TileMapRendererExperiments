@@ -57,6 +57,8 @@ void FreeLookMode2DInput(struct GameFrameworkLayer* pLayer, InputContext* contex
 
 	glm_vec2_add(movementVector, pData->camera.position, pData->camera.position);
 
+    vec2 camcenter;
+    GetCamWorldspaceCenter(&pData->camera, pData->windowW, pData->windowH, camcenter);
 	if (bZoomOut)
 	{
 		pData->camera.scale[0] -= 0.1f;
@@ -67,6 +69,7 @@ void FreeLookMode2DInput(struct GameFrameworkLayer* pLayer, InputContext* contex
 		pData->camera.scale[0] += 0.1f;
 		pData->camera.scale[1] += 0.1f;
 	}
+    CenterCameraAt(camcenter[0], camcenter[1], &pData->camera, pData->windowW, pData->windowH);
 
 	// move around with mouse
 	bool bSelectVal = In_GetButtonValue(context, pData->freeLookCtrls.freeLookSelectButtonBinding);
