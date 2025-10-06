@@ -10,6 +10,7 @@ extern "C" {
 #include "HandleDefs.h"
 #include "cglm/cglm.h"
 #include "InputContext.h"
+#include "FreeLookCameraMode.h"
 
 #define MAX_GAME_LAYER_ASSET_FILE_PATH_LEN 128
 
@@ -65,21 +66,7 @@ struct GameLayer2DData
 
 	struct Transform2D camera;
 
-	struct ButtonBinding freeLookZoomInBinding;
-	struct ButtonBinding freeLookZoomOutBinding;
-
-	struct ButtonBinding freeLookZoomMoveXPosBinding;
-	struct ButtonBinding freeLookZoomMoveXNegBinding;
-
-	struct ButtonBinding freeLookZoomMoveYPosBinding;
-	struct ButtonBinding freeLookZoomMoveYNegBinding;
-
-	struct ButtonBinding freeLookSelectButtonBinding;
-
-	struct AxisBinding freeLookCursorXAxisBinding;
-	struct AxisBinding freeLookCursorYAxisBinding;
-
-	struct ActiveInputBindingsMask freeLookInputsMask;
+	struct FreeLookCameraModeControls freeLookCtrls;
 
 	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
 	VECTOR(VertIndexT) pWorldspaceIndices;

@@ -11,31 +11,8 @@
 #include "GameFrameworkEvent.h"
 #include "Scripting.h"
 #include "XMLUIGameLayer.h"
+#include "FreeLookCameraMode.h"
 
-#define FREE_LOOK_ZOOM_IN_BINDING_NAME "zoomIn"
-#define FREE_LOOK_ZOOM_OUT_BINDING_NAME "zoomOut"
-#define FREE_LOOK_XPOS_BINDING_NAME "moveRight"
-#define FREE_LOOK_XNEG_BINDING_NAME "moveLeft"
-#define FREE_LOOK_YPOS_BINDING_NAME "moveDown"
-#define FREE_LOOK_YNEG_BINDING_NAME "moveUp"
-#define FREE_LOOK_CURSOR_X_BINDING_NAME "CursorPosX"
-#define FREE_LOOK_CURSOR_Y_BINDING_NAME "CursorPosY"
-#define FREE_LOOK_CURSOR_SELECT_BINDING_NAME "select"
-
-float gDebugWSX = 0;
-float gDebugWSY = 0;
-static void GetViewportWorldspaceTLBR(vec2 outTL, vec2 outBR, struct Transform2D* pCam, int windowW, int windowH)
-{
-	outTL[0] = pCam->position[0];
-	outTL[1] = pCam->position[1];
-
-	outTL[0] = -outTL[0];
-	outTL[1] = -outTL[1];
-
-	outBR[0] = outTL[0] + windowW / pCam->scale[0];
-	outBR[1] = outTL[1] + windowH / pCam->scale[0];
-
-}
 
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
 {
@@ -48,7 +25,6 @@ static void LoadTilesRLEV1(struct TileMapLayer* pTileMap, struct BinarySerialize
 {
 	EASSERT(false);
 }
-
 
 static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS)
 {
@@ -317,137 +293,13 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	context->DrawWorldspaceVertexBuffer(pData->vertexBuffer, VectorSize(pData->pWorldspaceIndices), view);
 }
 
-static void CenterCameraAt(float worldspaceX, float worldspaceY, struct Transform2D* pCam, int winWidth, int winHeight)
-{
-	vec2 tl, br;
-	GetViewportWorldspaceTLBR(tl, br, pCam, winWidth, winHeight);
-	pCam->position[0] = -(worldspaceX - (br[0] - tl[0]) / 2.0f);
-	pCam->position[1] = -(worldspaceY - (br[1] - tl[1]) / 2.0f);
-}
-
-static void GetCamWorldspaceCenter(struct Transform2D* pCam, int winWidth, int winHeight, vec2 outCenter)
-{
-	vec2 tl, br;
-	vec2 add;
-	GetViewportWorldspaceTLBR(tl, br, pCam, winWidth, winHeight);
-	add[0] = (br[0] - tl[0]) / 2.0f;
-	add[1] = (br[1] - tl[1]) / 2.0f;
-	glm_vec2_add(tl, add, outCenter);
-}
-
-static void GetWorldspacePos(int screenPosX, int screenPosY, int screenW, int screenH, struct Transform2D* pCam, vec2 outWorldspace)
-{
-	vec2 tl, br;
-	GetViewportWorldspaceTLBR(tl, br, pCam, screenW, screenH);
-	float fX = (float)screenPosX / (float)screenW;
-	float fY = (float)screenPosY / (float)screenH;
-	outWorldspace[0] = tl[0] + fX * (br[0] - tl[0]);
-	outWorldspace[1] = tl[1] + fY * (br[1] - tl[1]);
-}
-
-static void ScreenSpaceToWorldSpaceTransVector(vec2 screenSpaceTranslateVector, int screenW, int screenH, struct Transform2D* pCam, vec2 outWorldspace)
-{
-	vec2 tl, br;
-	GetViewportWorldspaceTLBR(tl, br, pCam, screenW, screenH);
-	vec2 norm = {
-		screenSpaceTranslateVector[0] / screenW,
-		screenSpaceTranslateVector[1] / screenH
-	};
-	outWorldspace[0] = norm[0] * (br[0] - tl[0]);
-	outWorldspace[1] = norm[1] * (br[1] - tl[1]);
-}
-
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
-
-	const float FREE_LOOK_ZOOM_FACTOR = 0.99;
-	const float FREE_LOOK_MOVEMENT_SPEED = 0.3;
-	bool bZoomIn = In_GetButtonValue(context, pData->freeLookZoomInBinding);
-	bool bZoomOut = In_GetButtonValue(context, pData->freeLookZoomOutBinding);
-	bool bXPos = In_GetButtonValue(context, pData->freeLookZoomMoveXPosBinding);
-	bool bXNeg = In_GetButtonValue(context, pData->freeLookZoomMoveXNegBinding);
-
-	bool bYPos = In_GetButtonValue(context, pData->freeLookZoomMoveYPosBinding);
-	bool bYNeg = In_GetButtonValue(context, pData->freeLookZoomMoveYNegBinding);
-
-	vec2 movementVector = { 0,0 };
-	if (bXPos)
+	if (pData->bDebugLayerAttatched)
 	{
-		vec2 dir = { 1,0 };
-		glm_vec2_add(movementVector, dir, movementVector);
+		FreeLookMode2DInput(pLayer, context);
 	}
-	if (bXNeg)
-	{
-		vec2 dir = { -1,0 };
-		glm_vec2_add(movementVector, dir, movementVector);
-	}
-	if (bYPos)
-	{
-		vec2 dir = { 0,-1 };
-		glm_vec2_add(movementVector, dir, movementVector);
-	}
-	if (bYNeg)
-	{
-		vec2 dir = { 0,1 };
-		glm_vec2_add(movementVector, dir, movementVector);
-	}
-	glm_vec2_normalize(movementVector);
-	movementVector[0] = movementVector[0] * FREE_LOOK_MOVEMENT_SPEED;
-	movementVector[1] = movementVector[1] * FREE_LOOK_MOVEMENT_SPEED;
-
-	glm_vec2_add(movementVector, pData->camera.position, pData->camera.position);
-
-	if (bZoomOut)//bZoomIn)
-	{
-		pData->camera.scale[0] *= 0.9f;
-		pData->camera.scale[1] *= 0.9f;
-	}
-	if (bZoomIn)//bZoomOut)
-	{
-		pData->camera.scale[0] *= 1.1f;
-		pData->camera.scale[1] *= 1.1f;
-	}
-
-	// move around with mouse
-	bool bSelectVal = In_GetButtonValue(context, pData->freeLookSelectButtonBinding);
-	static bool bLastSelect = false;
-	static ivec2 dragAnchorScreenSpace;
-	static vec2 dragAnchorWorldSpace;
-	if(bSelectVal && !bLastSelect)
-	{
-		//press 
-		int screenX = In_GetAxisValue(context, pData->freeLookCursorXAxisBinding);
-		int screenY = In_GetAxisValue(context, pData->freeLookCursorYAxisBinding);
-		GetWorldspacePos(screenX, screenY, pData->windowW, pData->windowH, &pData->camera, dragAnchorWorldSpace);
-		gDebugWSX = dragAnchorWorldSpace[0];
-		gDebugWSY = dragAnchorWorldSpace[1];
-		dragAnchorScreenSpace[0] = screenX;
-		dragAnchorScreenSpace[1] = screenY;
-		//CenterCameraAt(gDebugWSX, gDebugWSY, &pData->camera, pData->windowW, pData->windowH); // to test
-		GetCamWorldspaceCenter(&pData->camera, pData->windowW, pData->windowH, dragAnchorWorldSpace);
-	}
-	if(bSelectVal)
-	{
-		// drag	
-		ivec2 ss;
-		ivec2 sstrans;
-		vec2 sstransf;
-		vec2 wstrans;
-		vec2 camCenter;
-		ss[0] = In_GetAxisValue(context, pData->freeLookCursorXAxisBinding);
-		ss[1] = In_GetAxisValue(context, pData->freeLookCursorYAxisBinding);
-		glm_ivec2_sub(ss, dragAnchorScreenSpace, sstrans);
-		sstransf[0] = (float)sstrans[0];
-		sstransf[1] = (float)sstrans[1];
-		ScreenSpaceToWorldSpaceTransVector(sstransf, pData->windowW, pData->windowH, &pData->camera, wstrans);
-		glm_vec2_scale(wstrans, -1.0f, wstrans);
-		glm_vec2_add(dragAnchorWorldSpace, wstrans, camCenter);
-		CenterCameraAt(camCenter[0], camCenter[1], &pData->camera, pData->windowW, pData->windowH); // to test
-
-	}
-
-	bLastSelect = bSelectVal;
 }
 
 static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
@@ -461,33 +313,10 @@ static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
 	pData->bLoaded = true;
 }
 
-static void BindFreeLookControls(InputContext* inputContext, struct GameLayer2DData* pData)
-{
-	pData->freeLookZoomInBinding = In_FindButtonMapping(inputContext, FREE_LOOK_ZOOM_IN_BINDING_NAME);
-	pData->freeLookZoomOutBinding = In_FindButtonMapping(inputContext, FREE_LOOK_ZOOM_OUT_BINDING_NAME);
-	pData->freeLookZoomMoveXPosBinding = In_FindButtonMapping(inputContext, FREE_LOOK_XPOS_BINDING_NAME);
-	pData->freeLookZoomMoveXNegBinding = In_FindButtonMapping(inputContext, FREE_LOOK_XNEG_BINDING_NAME);
-	pData->freeLookZoomMoveYPosBinding = In_FindButtonMapping(inputContext, FREE_LOOK_YPOS_BINDING_NAME);
-	pData->freeLookZoomMoveYNegBinding = In_FindButtonMapping(inputContext, FREE_LOOK_YNEG_BINDING_NAME);
-
-	pData->freeLookCursorXAxisBinding = In_FindAxisMapping(inputContext, FREE_LOOK_CURSOR_X_BINDING_NAME);
-	pData->freeLookCursorYAxisBinding = In_FindAxisMapping(inputContext, FREE_LOOK_CURSOR_Y_BINDING_NAME);
-	pData->freeLookSelectButtonBinding = In_FindButtonMapping(inputContext, FREE_LOOK_CURSOR_SELECT_BINDING_NAME);
-
-	In_ActivateButtonBinding(pData->freeLookZoomInBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookZoomOutBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookZoomMoveXPosBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookZoomMoveXNegBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookZoomMoveYPosBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookZoomMoveYNegBinding, &pData->freeLookInputsMask);
-	In_ActivateButtonBinding(pData->freeLookSelectButtonBinding, &pData->freeLookInputsMask);
-	In_ActivateAxisBinding(pData->freeLookCursorXAxisBinding, &pData->freeLookInputsMask);
-	In_ActivateAxisBinding(pData->freeLookCursorYAxisBinding, &pData->freeLookInputsMask);
-}
 
 static void ActivateFreeLookMode(InputContext* inputContext, struct GameLayer2DData* pData)
 {
-	In_SetMask(&pData->freeLookInputsMask, inputContext);
+	In_SetMask(&pData->freeLookCtrls.freeLookInputsMask, inputContext);
 }
 
 static void OnDebugLayerPushed(void* pUserData, void* pEventData)

@@ -29,6 +29,8 @@ gameframework/layers/UI/widgets/RadioGroupWidget.c
 gameframework/layers/UI/widgets/RootWidget.c
 gameframework/layers/UI/widgets/TextEntryWidget.c
 gameframework/layers/Game2D/Game2DLayer.c
+gameframework/layers/Game2D/FreeLookCameraMode.c
+gameframework/layers/Game2D/Camera2D.c
 vendor/glad.c
 vendor/cJSON.c
 rendering/DrawContext.c
