@@ -33,6 +33,8 @@ typedef i32 HKeyboardButtonBinding;
 
 typedef i32 HTimer;
 
+typedef i32 HEntity2D;
+
 #define NULL_HANDLE -1
 
 

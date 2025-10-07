@@ -32,6 +32,7 @@ gameframework/layers/UI/widgets/TextEntryWidget.c
 gameframework/layers/Game2D/Game2DLayer.c
 gameframework/layers/Game2D/FreeLookCameraMode.c
 gameframework/layers/Game2D/Camera2D.c
+gameframework/layers/Game2D/Entities.c
 vendor/glad.c
 vendor/cJSON.c
 rendering/DrawContext.c

@@ -340,7 +340,7 @@
         "Farm.json"
     ],
     "project": "Engine.tiled-project",
-    "property.type": "string",
+    "property.type": "object",
     "recentFiles": [
         "Farm.json",
         "Interior 2.json",

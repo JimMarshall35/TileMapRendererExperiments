@@ -4,17 +4,19 @@ project(StardewEngine)
 
 if(WIN32)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(box2d CONFIG REQUIRED)
 find_package(lua CONFIG REQUIRED)
 find_package(freetype CONFIG REQUIRED)
 find_package(libxml2 CONFIG REQUIRED)
 else()
 find_package(glfw3 REQUIRED)
-find_package(box2d)
 find_package(Lua REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibXml2 REQUIRED)
+
 endif()
+
+add_subdirectory(lib/box2d-3.1.1)
+
 
 if(Lua_FOUND AND NOT TARGET Lua::Lua)
   add_library(Lua::Lua INTERFACE IMPORTED)
@@ -35,6 +37,8 @@ target_link_libraries(StardewEngine PUBLIC
 
 target_link_libraries(StardewEngine PUBLIC glfw)
 
+target_link_libraries(StardewEngine PUBLIC box2d)
+
 add_subdirectory(lib/cglm-0.9.6 EXCLUDE_FROM_ALL)
 
 
@@ -46,15 +50,15 @@ else()
   target_include_directories(StardewEngine PUBLIC ${FREETYPE_INCLUDE_DIRS})
   target_include_directories(StardewEngine PUBLIC ${LUA_INCLUDE_DIR})
   target_include_directories(StardewEngine PUBLIC ${LIBXML2_INCLUDE_DIR})
-  target_include_directories(StardewEngine PUBLIC ${BOX2D_INCLUDE_DIR})
-endif()
+
+ endif()
 
 if(WIN32)
-target_link_libraries(StardewEngine PUBLIC LibXml2::LibXml2 box2d::box2d Freetype::Freetype lua::lua glfw)
+  target_link_libraries(StardewEngine PUBLIC LibXml2::LibXml2 Freetype::Freetype lua::lua glfw)
 else()
-target_link_libraries(StardewEngine PUBLIC ${FREETYPE_LIBRARIES})
-target_link_libraries(StardewEngine PUBLIC ${LUA_LIBRARIES})
-target_link_libraries(StardewEngine PUBLIC ${LIBXML2_LIBRARIES})
-target_link_libraries(StardewEngine PUBLIC ${BOX2D_LIBRARIES})
-target_link_libraries(StardewEngine PUBLIC Lua::Lua) 
+  target_link_libraries(StardewEngine PUBLIC ${FREETYPE_LIBRARIES})
+  target_link_libraries(StardewEngine PUBLIC ${LUA_LIBRARIES})
+  target_link_libraries(StardewEngine PUBLIC ${LIBXML2_LIBRARIES})
+  target_link_libraries(StardewEngine PUBLIC Lua::Lua) 
 endif()
+

@@ -13,6 +13,7 @@
 #include "XMLUIGameLayer.h"
 #include "FreeLookCameraMode.h"
 
+int gTilesRendered = 0;
 
 static void LoadTilesUncompressedV1(struct TileMapLayer* pLayer, struct BinarySerializer* pBS)
 {
@@ -89,8 +90,8 @@ static void PublishDebugMessage(struct GameLayer2DData* pData)
 {
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, &pData->camera, pData->windowW, pData->windowH);
-	sprintf(pData->debugMsg, "Cam: x:%.2f y:%.2f zoom:%.2f tlx:%.2f tly:%.2f brx:%.2f bry:%.2f",
-		gDebugWSX, gDebugWSY, pData->camera.scale[0],
+	sprintf(pData->debugMsg, "Tiles: %i zoom:%.2f tlx:%.2f tly:%.2f brx:%.2f bry:%.2f",
+		gTilesRendered, pData->camera.scale[0],
 		tl[0], tl[1],
 		br[0], br[1]
 	);
@@ -234,6 +235,7 @@ static void OutputTilemapLayerVertices(
 			hSprite sprite = At_TilemapIndexToSprite(atlas, tile);
 			AtlasSprite* pSprite = At_GetSprite(sprite, atlas);
 			OutputSpriteVertices(pSprite, &outVert, &outInd, pNextIndex, col, row);
+			gTilesRendered++;
 		}
 	}
 
@@ -254,7 +256,7 @@ static void OutputTilemapVertices(
 	
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
-
+	gTilesRendered = 0;
 	VertIndexT nextIndexVal = 0;
 	for (int i = 0; i < VectorSize(pData->layers); i++)
 	{
