@@ -4,6 +4,8 @@
 #include "Game2DLayer.h"
 #include "XMLUIGameLayer.h"
 #include "DynArray.h"
+#include "Entities.h"
+#include "WfEntities.h"
 
 void GameInit(InputContext* pIC, DrawContext* pDC)
 {
@@ -19,6 +21,8 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     printf("done\n");
     printf("pushing framework layer\n");
     GF_PushGameFrameworkLayer(&testLayer);*/
+
+    Et2D_Init(&WfRegisterEntityTypes);
     struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct Game2DLayerOptions options;

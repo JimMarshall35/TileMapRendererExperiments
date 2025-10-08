@@ -33,6 +33,8 @@ gameframework/layers/Game2D/Game2DLayer.c
 gameframework/layers/Game2D/FreeLookCameraMode.c
 gameframework/layers/Game2D/Camera2D.c
 gameframework/layers/Game2D/Entities.c
+gameframework/layers/Game2D/StaticColliderEntity.c
+gameframework/layers/Game2D/Physics2D.c
 vendor/glad.c
 vendor/cJSON.c
 rendering/DrawContext.c

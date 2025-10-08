@@ -35,6 +35,12 @@ typedef i32 HTimer;
 
 typedef i32 HEntity2D;
 
+typedef i32 HPhysicsWorld;
+
+typedef i32 HStaticBody;
+
+typedef i32 HKinematicBody;
+
 #define NULL_HANDLE -1
 
 
