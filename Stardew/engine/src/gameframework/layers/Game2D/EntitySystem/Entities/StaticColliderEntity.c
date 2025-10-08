@@ -3,6 +3,8 @@
 #include "Physics2D.h"
 #include "AssertLib.h"
 
+
+
 void DeSerialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
     float w, h;

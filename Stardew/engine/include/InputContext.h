@@ -131,7 +131,7 @@ struct TextInputState
 	bool shiftModifier;
 };
 
-typedef struct
+typedef struct InputContext
 {
 	/*InputMapping AxisMappings[MAX_MAPPINGS];
 	InputMapping ButtonMapping[MAX_MAPPINGS];*/

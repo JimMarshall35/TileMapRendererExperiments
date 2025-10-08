@@ -3,17 +3,20 @@
 
 #include "Game2DLayer.h"
 #include "HandleDefs.h"
-
+#include "DynArray.h"
+#include "DrawContext.h"
 #include <box2d/box2d.h>
+#include <stdbool.h>
 
 struct Entity2D;
 
-typedef void (*Entity2DOnInitFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
+typedef void (*Entity2DOnInitFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer);
 typedef void (*Entity2DUpdateFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
 typedef void (*Entity2DUpdatePostPhysicsFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
-typedef void (*Entity2DDrawFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* context);
+typedef void (*Entity2DDrawFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex);
 typedef void (*Entity2DInputFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, InputContext* context);
 typedef void (*Entity2DOnDestroyFn)(struct Entity2D* pEnt);
+typedef void (*Entity2DGetBoundingBoxFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR);
 
 
 typedef void(*EntityDeserializeFn)(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData);
@@ -43,44 +46,55 @@ enum ComponentType
     ETE_Last
 };
 
+struct Sprite
+{
+    hSprite sprite;
+    struct Transform2D transform;
+};
+
+struct StaticCollider
+{
+    HStaticBody id;
+};
+
+struct KinematicCollider
+{
+    HKinematicBody id;
+};
+
+struct TextSprite
+{
+    char* content;
+    HFont font;
+    float fSizePts;
+    hAtlas atlas;
+    float r, g, b, a;
+};
+
+struct AnimatedSprite
+{
+    float timer;
+    hSprite* pSprites;
+    int numSprites;
+    int onSprite;
+    float fps;
+    bool bRepeat;
+};
+
 struct Component2D
 {
     enum ComponentType type;
     union
     {
-        struct Sprite
-        {
-            hSprite sprite;
-        }sprite;
+        struct Sprite sprite;
 
-        struct StaticCollider
-        {
-            HStaticBody id;
-        }staticCollider;
+        struct StaticCollider staticCollider;
 
-        struct KinematicCollider
-        {
-            HKinematicBody id;
-        }kinematicCollider;
+        struct KinematicCollider kinematicCollider;
 
-        struct TextSprite
-        {
-            char* content;
-            HFont font;
-            float fSizePts;
-            hAtlas atlas;
-            float r, g, b, a;
-        }textSprite;
+        struct TextSprite textSprite;
         
-        struct AnimatedSprite
-        {
-            float timer;
-            hSprite* pSprites;
-            int numSprites;
-            int onSprite;
-            float fps;
-            bool bRepeat;
-        }spriteAnimator;
+        struct AnimatedSprite spriteAnimator;
     }data;
 };
 
@@ -114,6 +128,7 @@ struct Entity2D
     Entity2DDrawFn draw;
     Entity2DInputFn input;
     Entity2DOnDestroyFn onDestroy;
+    Entity2DGetBoundingBoxFn getBB;
 
     struct Transform2D transform;
     EntityType type;
@@ -123,6 +138,8 @@ struct Entity2D
 
     int numComponents;
     struct Component2D components[MAX_COMPONENTS];
+
+    bool bKeepInQuadtree;
 };
 
 #endif

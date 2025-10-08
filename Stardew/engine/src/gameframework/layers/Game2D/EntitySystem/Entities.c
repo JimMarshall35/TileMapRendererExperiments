@@ -1,6 +1,5 @@
 #include "Entities.h"
 #include "ObjectPool.h"
-#include "DynArray.h"
 #include "AssertLib.h"
 #include "BinarySerializer.h"
 #include "StaticColliderEntity.h"
@@ -192,6 +191,7 @@ void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEn
         BS_DeSerializeFloat(&pOutEnt->transform.scale[0], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.scale[1], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.rotation, bs);
+        BS_DeSerializeU8(&pOutEnt->bKeepInQuadtree, bs);
         break;
     }
 }
@@ -206,4 +206,5 @@ void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
     BS_SerializeFloat(pInEnt->transform.scale[0], bs);
     BS_SerializeFloat(pInEnt->transform.scale[1], bs);
     BS_SerializeFloat(pInEnt->transform.rotation, bs);
+    BS_SerializeU8(pInEnt->bKeepInQuadtree, bs);
 }

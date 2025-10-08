@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Farm.json",
+    "activeFile": "Farm.tmj",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -273,6 +273,14 @@
                 "y": 735.3333333333334
             }
         },
+        "Farm.tmj": {
+            "scale": 0.75,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 2647.333333333333,
+                "y": 576.6666666666665
+            }
+        },
         "House.json": {
             "scale": 1.9445312499999998,
             "selectedLayer": 2,
@@ -337,11 +345,12 @@
     "map.tileWidth": 32,
     "map.width": 12,
     "openFiles": [
-        "Farm.json"
+        "Farm.tmj"
     ],
     "project": "Engine.tiled-project",
     "property.type": "object",
     "recentFiles": [
+        "Farm.tmj",
         "Farm.json",
         "Interior 2.json",
         "RoadToTown.json",
@@ -352,8 +361,7 @@
         "Soil.json",
         "soil.json",
         "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/room_builder.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/lvl1_test5.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/interior_test.json"
+        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/lvl1_test5.json"
     ],
     "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "JSON tileset files (*.json)",
