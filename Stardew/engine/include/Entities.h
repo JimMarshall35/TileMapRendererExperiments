@@ -113,6 +113,8 @@ void Et2D_Init(RegisterGameEntitiesFn registerGameEntities);
 
 HEntity2D Et2D_AddEntity(struct Entity2D* pEnt);
 
+struct Entity2D* Et2D_GetEntity(HEntity2D hEnt);
+
 /* both serialize and deserialize */
 void Et2D_SerializeEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData);
 
@@ -141,5 +143,19 @@ struct Entity2D
 
     bool bKeepInQuadtree;
 };
+
+/*
+    Default base implementations, override with own behavior and then call these at the end
+*/
+void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer);
+void Entity2DUpdate(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
+void Entity2DUpdatePostPhysics(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
+void Entity2DDraw(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex);
+void Entity2DInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, InputContext* context);
+void Entity2DOnDestroy(struct Entity2D* pEnt);
+void Entity2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR);
+
+
+
 
 #endif

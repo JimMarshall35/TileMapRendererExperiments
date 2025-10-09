@@ -9,10 +9,91 @@ static HEntity2D gEntityListHead = NULL_HANDLE;
 static HEntity2D gEntityListTail = NULL_HANDLE;
 static int gNumEnts = 0;
 
-
-
 static OBJECT_POOL(struct Entity2D) pEntityPool = NULL;
 static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
+
+
+void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+{
+    Co_InitComponents(pEnt, pLayer);
+    if(pEnt->bKeepInQuadtree)
+    {
+
+    }
+}
+
+void Entity2DUpdate(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
+{
+    Co_UpdateComponents(pEnt, pLayer, deltaT);
+}
+
+void Entity2DUpdatePostPhysics(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
+{
+    Co_Entity2DUpdatePostPhysicsFn(pEnt, pLayer, deltaT);
+}
+
+void Entity2DDraw(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex)
+{
+    Co_DrawComponents(pEnt, pLayer, pCam, outVerts, outIndices, pNextIndex);
+}
+
+void Entity2DInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, InputContext* context)
+{
+    Co_InputComponents(pEnt, pLayer, context);
+}
+
+void Entity2DOnDestroy(struct Entity2D* pEnt)
+{
+    Co_DestroyComponents(pEnt);
+}
+
+
+void Entity2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR)
+{
+    vec2 bbtl  = {99999999999, 9999999999999};
+    vec2 bbbr  = {-99999999999, -9999999999999};
+    bool bSet = false;
+    for(int i=0; i < pEnt->numComponents; i++)
+    {
+        struct Component2D* pComponent = &pEnt->components[i];
+        if(pComponent->type == ETE_Sprite)
+        {
+            vec2 tl, br;
+            bSet = true;
+            SpriteComp_GetBoundingBox(pEnt, &pComponent->data.sprite, pLayer, tl, br);
+            if(tl[0] < bbtl[0])
+            {
+                bbtl[0] = tl[0];
+            }
+            if(tl[1] < bbtl[1])
+            {
+                bbtl[1] = tl[1];
+            }
+            if(br[0] > bbbr[0])
+            {
+                br[0] = bbbr[0];
+            }
+            if(br[1] > bbbr[1])
+            {
+                br[1] = bbbr[1];
+            }
+        }
+    }
+    if(!bSet)
+    {
+        outTL[0] = 0;
+        outTL[1] = 0;
+        outBR[0] = 0;
+        outBR[1] = 0;
+    }
+    else
+    {
+        outTL[0] = bbtl[0];
+        outTL[1] = bbtl[1];
+        outBR[0] = bbbr[0];
+        outBR[1] = bbbr[1];
+    }
+}
 
 
 void Et2D_Init(RegisterGameEntitiesFn registerGameEntities)
@@ -191,7 +272,15 @@ void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEn
         BS_DeSerializeFloat(&pOutEnt->transform.scale[0], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.scale[1], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.rotation, bs);
-        BS_DeSerializeU8(&pOutEnt->bKeepInQuadtree, bs);
+        u8 d = (u8)pOutEnt->bKeepInQuadtree;
+        BS_DeSerializeU8(&d, bs);
+        pOutEnt->init = &Entity2DOnInit;
+        pOutEnt->update = &Entity2DUpdate;
+        pOutEnt->postPhys = &Entity2DUpdatePostPhysics;
+        pOutEnt->draw = &Entity2DDraw;
+        pOutEnt->input = &Entity2DInput;
+        pOutEnt->onDestroy = &Entity2DOnDestroy;
+        pOutEnt->getBB = &Entity2DGetBoundingBox;
         break;
     }
 }
@@ -200,7 +289,7 @@ void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEn
 void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
 {
     u32 version = 1;
-    BS_SerializeI32(&version, bs);
+    BS_SerializeI32(version, bs);
     BS_SerializeFloat(pInEnt->transform.position[0], bs);
     BS_SerializeFloat(pInEnt->transform.position[1], bs);
     BS_SerializeFloat(pInEnt->transform.scale[0], bs);
@@ -208,3 +297,9 @@ void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
     BS_SerializeFloat(pInEnt->transform.rotation, bs);
     BS_SerializeU8(pInEnt->bKeepInQuadtree, bs);
 }
+
+struct Entity2D* Et2D_GetEntity(HEntity2D hEnt)
+{
+    return &pEntityPool[hEnt];
+}
+

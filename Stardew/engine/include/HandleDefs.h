@@ -41,6 +41,10 @@ typedef i32 HStaticBody;
 
 typedef i32 HKinematicBody;
 
+typedef i32 HEntity2DQuadtreeNode;
+
+typedef i32 HEntity2DQuadtreeEntityRef;
+
 #define NULL_HANDLE -1
 
 
