@@ -35,33 +35,46 @@ static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS
 	for (int i = 0; i < numLayers; i++)
 	{
 		struct TileMapLayer layer;
-		u32 width, height, x, y, compression, tw, th;
-		BS_DeSerializeU32(&width, pBS);
-		BS_DeSerializeU32(&height, pBS);
-		BS_DeSerializeU32(&x, pBS);
-		BS_DeSerializeU32(&y, pBS);
-		BS_DeSerializeU32(&tw, pBS);
-		BS_DeSerializeU32(&th, pBS);
-		BS_DeSerializeU32(&compression, pBS);
-		layer.widthTiles = width;
-		layer.heightTiles = height;
-		layer.transform.position[0] = x;
-		layer.transform.position[1] = y;
-		layer.tileWidthPx = tw;
-		layer.tileHeightPx = th;
-
-		switch (compression)
+		u32 type = 0;
+		BS_DeSerializeU32(&type, pBS);
+		switch(type)
 		{
-		case 1:         // RLE
-			LoadTilesRLEV1(&layer, pBS);
+		case 1: // tile layer
+			u32 width, height, x, y, compression, tw, th;
+			BS_DeSerializeU32(&width, pBS);
+			BS_DeSerializeU32(&height, pBS);
+			BS_DeSerializeU32(&x, pBS);
+			BS_DeSerializeU32(&y, pBS);
+			BS_DeSerializeU32(&tw, pBS);
+			BS_DeSerializeU32(&th, pBS);
+			BS_DeSerializeU32(&compression, pBS);
+			layer.widthTiles = width;
+			layer.heightTiles = height;
+			layer.transform.position[0] = x;
+			layer.transform.position[1] = y;
+			layer.tileWidthPx = tw;
+			layer.tileHeightPx = th;
+			layer.bIsObjectLayer = false;
+			switch (compression)
+			{
+			case 1:         // RLE
+				LoadTilesRLEV1(&layer, pBS);
+				break;
+			case 2:         // uncompressed
+				LoadTilesUncompressedV1(&layer, pBS);
+				break;
+			default:
+				printf("unexpected value for compression enum %i\n", compression);
+				break;
+			}
 			break;
-		case 2:         // uncompressed
-			LoadTilesUncompressedV1(&layer, pBS);
+		case 2: // object layer
+			layer.bIsObjectLayer = true;
 			break;
 		default:
-			printf("unexpected value for compression enum %i\n", compression);
-			break;
+			EASSERT(false);
 		}
+		
 		pTileMap->layers = VectorPush(pTileMap->layers, &layer);
 	}
 }
@@ -243,7 +256,7 @@ static void OutputTilemapLayerVertices(
 	*outInds = outInd;
 }
 
-static void OutputTilemapVertices(
+static void OutputVertices(
 	struct TileMap* pData, 
 	struct Transform2D* pCam, 
 	VECTOR(Worldspace2DVert)* outVerts,
@@ -256,11 +269,19 @@ static void OutputTilemapVertices(
 	
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
+	/* query the quadtree for entities here */
 	gTilesRendered = 0;
 	VertIndexT nextIndexVal = 0;
 	for (int i = 0; i < VectorSize(pData->layers); i++)
 	{
-		OutputTilemapLayerVertices(pLayerData->hAtlas, pData->layers + i, &verts, &inds, &nextIndexVal, tl, br);
+		if(pData->layers[i].bIsObjectLayer)
+		{
+			/* from the entities we've found from the quad tree, draw the ones that are in this layer */
+		}
+		else
+		{
+			OutputTilemapLayerVertices(pLayerData->hAtlas, pData->layers + i, &verts, &inds, &nextIndexVal, tl, br);
+		}
 	}
 
 	*outVerts = verts;
@@ -273,7 +294,7 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	At_SetCurrent(pData->hAtlas, context);
 	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
 	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
-	OutputTilemapVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData);
+	OutputVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData);
 	context->WorldspaceVertexBufferData(pData->vertexBuffer, pData->pWorldspaceVertices, VectorSize(pData->pWorldspaceVertices), pData->pWorldspaceIndices, VectorSize(pData->pWorldspaceIndices));
 	mat4 view;
 	glm_mat4_identity(view);

@@ -244,11 +244,13 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
             # VERSION
             f.write(struct.pack("I", TILEMAP_FILE_VERSION))
             # NUM LAYERS
-            num_tilemap_layers = count_tilemap_layers(p["layers"])
+            num_tilemap_layers = len(p["layers"])
             f.write(struct.pack("I", num_tilemap_layers))
             layerNum = 0
             for layer in p["layers"]:
                 if "data" in layer:
+                    # WRITE 1 FOR TILE LAYER
+                    f.write(struct.pack("I", 1))
                     data = layer["data"]
                     tw, th = get_tile_layer_tile_dims(data, atlas, tilesets)
                     print(f"LAYER {str(layerNum)} TILE WIDTH: {tw} TILE HEIGHT: {th} WIDTH: {layer["width"]} TILES, HEIGHT {layer["height"]} TILES.")
@@ -268,6 +270,9 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
                         f.write(struct.pack("I", 2))     # enum value to signify uncompressed
                         # UNCOMPRESSED TILES
                         write_uncompressed(f, data, atlas, tilesets)
+                else:
+                    # WRITE 2 FOR OBJECT LAYER
+                    f.write(struct.pack("I", 2))
     print("\n\n")
 
 def convert_tile_maps(args):

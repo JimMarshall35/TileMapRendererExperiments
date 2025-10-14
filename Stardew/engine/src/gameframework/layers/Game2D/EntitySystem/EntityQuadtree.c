@@ -2,6 +2,7 @@
 #include "ObjectPool.h"
 #include "Entities.h"
 #include "AssertLib.h"
+#include "Geometry.h"
 
 enum Entity2DQuadtreeQuadrant
 {
@@ -134,7 +135,7 @@ void DestroyEntity2DQuadTree(HEntity2DQuadtreeNode quadTree)
             DestroyEntity2DQuadTree(child);
         }
     }
-    FreeObjectPoolIndex(quadTree, quadTree);
+    FreeObjectPoolIndex(gNodePool, quadTree);
 }
 
 HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(HEntity2DQuadtreeNode quadTree, HEntity2D hEnt, struct GameFrameworkLayer* pLayer, int depth, int maxDepth)
@@ -216,5 +217,30 @@ void Entity2DQuadTree_Remove(HEntity2DQuadtreeNode quadTree, HEntity2DQuadtreeEn
 VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 regionTL, vec2 regionBR, VECTOR(HEntity2D) outEntities)
 {
     /* Implement me next! */
+    struct Entity2DQuadtreeNode* pNode = &gNodePool[quadTree];
+    vec2 nodeBr = {
+        pNode->tl[0] + pNode->w,
+        pNode->tl[1] + pNode->h
+    };
+    if(Ge_AABBIntersect(pNode->tl, nodeBr, regionTL, regionBR))
+    {
+        HEntity2DQuadtreeEntityRef ref = pNode->entityListHead;
+        while(ref != NULL_HANDLE)
+        {
+            struct Entity2DQuadTreeEntityRef* pRef = &gEntityRefPool[ref];
+            outEntities = VectorPush(outEntities, &pRef->hEntity);
+            ref = pRef->hNextSibling;
+        }
+        for(int i=0; i<4; i++)
+        {
+            HEntity2DQuadtreeNode child = pNode->children[i];
+            if(child != NULL_HANDLE)
+            {
+                outEntities = Entity2DQuadTree_Query(child, regionTL, regionBR, outEntities);
+            }
+        }
+    }
+    
+    return outEntities;
 }
 

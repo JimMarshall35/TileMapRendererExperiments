@@ -41,6 +41,7 @@ struct TileMapLayer
 	int tileHeightPx;
 	int widthTiles;
 	int heightTiles;
+	bool bIsObjectLayer;
 	TileIndex* Tiles;
 };
 
@@ -100,7 +101,7 @@ struct Game2DLayerOptions
 		Each entity file is an array of entities.
 		Entities in all files contribute to a single population of entities in the game.
 	*/
-	const** entitiesFilePaths;
+	const char** entitiesFilePaths;
 	int numEntityFiles;
 	
 };
