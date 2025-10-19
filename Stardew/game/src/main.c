@@ -7,6 +7,7 @@
 #include "Entities.h"
 #include "EntityQuadTree.h"
 #include "WfEntities.h"
+#include "Physics2D.h"
 
 void GameInit(InputContext* pIC, DrawContext* pDC)
 {
@@ -22,6 +23,7 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     printf("done\n");
     printf("pushing framework layer\n");
     GF_PushGameFrameworkLayer(&testLayer);*/
+    Ph_Init();
     InitEntity2DQuadtreeSystem();
     Et2D_Init(&WfRegisterEntityTypes);
     struct GameFrameworkLayer testLayer;

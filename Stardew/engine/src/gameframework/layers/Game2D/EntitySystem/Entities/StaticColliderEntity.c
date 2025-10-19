@@ -2,32 +2,76 @@
 #include "BinarySerializer.h"
 #include "Physics2D.h"
 #include "AssertLib.h"
+#include "GameFramework.h"
+
+void StaticColliderOnInitFn(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+{
+    struct GameLayer2DData* pGameLayerData = pLayer->userData;
+    EASSERT(pEnt->numComponents == 1);
+    pEnt->components[0].data.staticCollider.id = Ph_GetStaticBody2D(pGameLayerData->hPhysicsWorld, &pEnt->components[0].data.staticCollider.shape, &pEnt->transform);
+    Entity2DOnInit(pEnt, pLayer);
+}
+
+void StaticColliderUpdate(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
+{
+    Entity2DUpdate(pEnt, pLayer, deltaT);
+}
+
+void StaticColliderUpdatePostPhysics(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
+{
+    Entity2DUpdatePostPhysics(pEnt, pLayer, deltaT);
+}
+
+void StaticColliderDrawFn(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex)
+{
+    Entity2DDraw(pEnt, pLayer, pCam, outVerts, outIndices, pNextIndex);
+}
+
+void StaticColliderInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, InputContext* context)
+{
+    Entity2DInput(pEnt, pLayer, context);
+}
+
+void StaticColliderOnDestroy(struct Entity2D* pEnt)
+{
+    Entity2DOnDestroy(pEnt);
+}
+
+void StaticCollider2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR)
+{
+    Entity2DGetBoundingBox(pEnt, pLayer, outTL, outBR);
+}
+
+void SetStaticColliderCallbacks(struct Entity2D* pOutEnt)
+{
+    pOutEnt->init = &StaticColliderOnInitFn;
+    pOutEnt->update = &StaticColliderUpdate;
+    pOutEnt->draw = &StaticColliderDrawFn;
+    pOutEnt->postPhys = &StaticColliderUpdatePostPhysics;
+    pOutEnt->input = &StaticColliderInput;
+    pOutEnt->onDestroy = &StaticColliderOnDestroy;
+    pOutEnt->getBB = &StaticCollider2DGetBoundingBox;
+}
 
 void DeSerialize2DRectStaticColliderEntityV1(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
     float w, h;
     BS_DeSerializeFloat(&w, bs);
     BS_DeSerializeFloat(&h, bs);
-    vec2 tl = {
-        pOutEnt->transform.position[0],
-        pOutEnt->transform.position[1],
-    };
-    vec2 add = { w, h };
-    vec2 br;
-    glm_vec2_add(tl, add, br);
-    struct PhysicsShape2D shape = {
-        .type = PBT_Rect,
-        .data.rect = {
-            .tl = { tl[0], tl[1] },
-            .br = { br[0], br[1] }
-        }
-    };
     struct Component2D cmp = 
     {
         .type = ETE_StaticCollider,
-        .data.staticCollider.id = Ph_GetStaticBody2D(&shape)
+        .data.staticCollider.id = NULL_HANDLE,
+        .data.staticCollider.shape = {
+            .type = PBT_Rect,
+            .data.rect = {
+                .w = w,
+                .h = h
+            }
+        }
     };
     pOutEnt->components[pOutEnt->numComponents++] = cmp;
+    SetStaticColliderCallbacks(pOutEnt);
 }
 
 void DeSerialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
@@ -59,12 +103,10 @@ void Serialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Ent
         printf("SerializeStaticColliderEntity, component isn't of type static collider\n");
         return;
     }
-    struct PhysicsShape2D* pShape = Ph_GetStaticBodyShape2D(pInEnt->components[0].data.staticCollider.id);
-    float w = pShape->data.rect.br[0] - pShape->data.rect.tl[0];
-    float h = pShape->data.rect.br[1] - pShape->data.rect.tl[1];
+    //struct PhysicsShape2D* pShape = Ph_GetStaticBodyShape2D(pInEnt->components[0].data.staticCollider.id);
     BS_SerializeU32(1, bs);
-    BS_SerializeFloat(w, bs);
-    BS_SerializeFloat(h, bs);
+    BS_SerializeFloat(pInEnt->components[0].data.staticCollider.shape.data.rect.w, bs);
+    BS_SerializeFloat(pInEnt->components[0].data.staticCollider.shape.data.rect.h, bs);
 }
 
 static struct EntitySerializerPair gPairRect = 
@@ -82,19 +124,20 @@ void DeSerialize2DCircleStaticColliderEntityV1(struct BinarySerializer* bs, stru
 {
     float r;
     BS_DeSerializeFloat(&r, bs);
-    struct PhysicsShape2D shape = {
-        .type = PBT_Circle,
-        .data.circle = {
-            .center = { pOutEnt->transform.position[0], pOutEnt->transform.position[1] },
-            .radius = r
-        }
-    };
     struct Component2D cmp = 
     {
         .type = ETE_StaticCollider,
-        .data.staticCollider.id = Ph_GetStaticBody2D(&shape)
+        .data.staticCollider.id = NULL_HANDLE,
+        .data.staticCollider.shape = {
+            .type = PBT_Circle,
+            .data.circle = {
+                .center = { pOutEnt->transform.position[0], pOutEnt->transform.position[1] },
+                .radius = r
+            }
+        }
     };
     pOutEnt->components[pOutEnt->numComponents++] = cmp;
+    SetStaticColliderCallbacks(pOutEnt);
 }
 
 void DeSerialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
@@ -126,8 +169,7 @@ void Serialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct E
         printf("SerializeStaticColliderEntity, component isn't of type static collider\n");
         return;
     }
-    struct PhysicsShape2D* pShape = Ph_GetStaticBodyShape2D(pInEnt->components[0].data.staticCollider.id);
-    float r = pShape->data.circle.radius;
+    float r = pInEnt->components[0].data.staticCollider.shape.data.circle.radius;
     BS_SerializeU32(1, bs);   // version
     BS_SerializeFloat(r, bs);
 }

@@ -5,6 +5,7 @@
 #include "HandleDefs.h"
 #include "DynArray.h"
 #include "DrawContext.h"
+#include "Physics2D.h"
 #include <box2d/box2d.h>
 #include <stdbool.h>
 
@@ -55,11 +56,13 @@ struct Sprite
 struct StaticCollider
 {
     HStaticBody id;
+    struct PhysicsShape2D shape;
 };
 
 struct KinematicCollider
 {
     HKinematicBody id;
+    struct PhysicsShape2D shape;
 };
 
 struct TextSprite
@@ -96,6 +99,7 @@ struct Component2D
         
         struct AnimatedSprite spriteAnimator;
     }data;
+    
 };
 
 enum EngineBuiltinEntityType
@@ -118,6 +122,12 @@ HEntity2D Et2D_AddEntity(struct Entity2D* pEnt);
 struct Entity2D* Et2D_GetEntity(HEntity2D hEnt);
 
 /* both serialize and deserialize */
+
+/* return value == should continue iterating */
+typedef bool(*Entity2DIterator)(struct Entity2D* pEnt, int i, void* pUser);
+
+
+void Et2D_IterateEntities(Entity2DIterator itr, void* pUser);
 void Et2D_SerializeEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData);
 
 void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEnt);

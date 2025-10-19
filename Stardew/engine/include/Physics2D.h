@@ -5,11 +5,11 @@
 #include "DynArray.h"
 
 typedef vec2 Physics2DPoint;
+struct Transform2D;
 
 struct Physics2DRect
 {
-    vec2 tl;
-    vec2 br;
+    float w, h;
 };
 
 struct Physics2DPoly
@@ -47,16 +47,18 @@ struct KinematicBodyOptions
     u32 bLockRotation : 1;
 };
 
+void Ph_Init();
+
 HPhysicsWorld Ph_GetPhysicsWorld(float gravityX, float gravityY, float pixelsPerMeter);
 
-void Ph_PixelCoords2PhysicsCoords(vec2 inPixelCoords, vec2 outPhysicsCoords);
+void Ph_DestroyPhysicsWorld(HPhysicsWorld world);
 
-void Ph_PhysicsCoords2PixelCoords(vec2 inPhysicsCoords, vec2 outPixelCoords);
+void Ph_PixelCoords2PhysicsCoords(HPhysicsWorld world, vec2 inPixelCoords, vec2 outPhysicsCoords);
 
-HStaticBody Ph_GetStaticBody2D(struct PhysicsShape2D* pShape);
+void Ph_PhysicsCoords2PixelCoords(HPhysicsWorld world, vec2 inPhysicsCoords, vec2 outPixelCoords);
 
-struct PhysicsShape2D* Ph_GetStaticBodyShape2D(HStaticBody hStatic);
+HStaticBody Ph_GetStaticBody2D(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct Transform2D* pTransform);
 
-HKinematicBody GetKinematicBody(struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions);
+HKinematicBody GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform);
 
 #endif

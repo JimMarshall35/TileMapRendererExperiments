@@ -94,6 +94,13 @@ static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* p
 	}
 }
 
+static bool InitEntities(struct Entity2D* pEnt, int i, void* pUser)
+{
+	struct GameFrameworkLayer* pLayer = pUser;
+	pEnt->init(pEnt, pLayer);
+	return true;
+}
+
 static void LoadLevelData(struct TileMap* pTileMap, const char* tilemapFilePath, DrawContext* pDC, hAtlas atlas, struct GameLayer2DData* pData)
 {
 	pTileMap->layers = NEW_VECTOR(struct TileMapLayer);
@@ -112,6 +119,7 @@ static void LoadLevelData(struct TileMap* pTileMap, const char* tilemapFilePath,
 		break;
 	}
 	BS_Finish(&bs);
+
 }
 
 static void PublishDebugMessage(struct GameLayer2DData* pData)
@@ -385,12 +393,14 @@ static void OnDebugLayerPushed(void* pUserData, void* pEventData)
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
+	pData->hPhysicsWorld = Ph_GetPhysicsWorld(0, 0, 32.0f); // todo - pass these arguments in somehow
 	BindFreeLookControls(inputContext, pData);
 	ActivateFreeLookMode(inputContext, pData);
 	if (!pData->bLoaded)
 	{
 		LoadLayerAssets(pData, drawContext);
 	}
+	Et2D_IterateEntities(&InitEntities, pLayer);
 	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
 	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
@@ -400,6 +410,7 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 	struct GameLayer2DData* pData = pLayer->userData;
 	EASSERT(pData->pDebugListener);
 	Ev_UnsubscribeEvent(pData->pDebugListener);
+	Ph_DestroyPhysicsWorld(pData->hPhysicsWorld);
 }
 
 static void OnWindowDimsChange(struct GameFrameworkLayer* pLayer, int newW, int newH)

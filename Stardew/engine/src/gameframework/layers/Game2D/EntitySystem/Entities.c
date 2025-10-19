@@ -15,7 +15,7 @@ static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
 
 void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
-    Co_InitComponents(pEnt, pLayer);
+    //Co_InitComponents(pEnt, pLayer);
     if(pEnt->bKeepInQuadtree)
     {
 
@@ -312,5 +312,18 @@ void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
 struct Entity2D* Et2D_GetEntity(HEntity2D hEnt)
 {
     return &pEntityPool[hEnt];
+}
+
+void Et2D_IterateEntities(Entity2DIterator itr, void* pUser)
+{
+    HEntity2D hOnEnt = gEntityListHead;
+    int i = 0;
+    while(hOnEnt != NULL_HANDLE)
+    {
+        struct Entity2D* pEntity = Et2D_GetEntity(hOnEnt);
+        if(!itr(pEntity, i++, pUser))
+            break;
+        hOnEnt = pEntity->nextSibling;
+    }
 }
 

@@ -90,6 +90,8 @@ struct GameLayer2DData
 
 	int windowW;
 	int windowH;
+
+	HPhysicsWorld hPhysicsWorld;
 };
 
 struct Game2DLayerOptions

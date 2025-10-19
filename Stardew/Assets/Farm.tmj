@@ -651,6 +651,7 @@
                  "y":960
                 }],
          "opacity":1,
+         
          "type":"objectgroup",
          "visible":true,
          "x":0,
