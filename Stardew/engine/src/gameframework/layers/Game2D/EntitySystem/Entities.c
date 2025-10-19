@@ -106,6 +106,14 @@ void Et2D_Init(RegisterGameEntitiesFn registerGameEntities)
     Et2D_RegisterEntityType(EBET_StaticColliderRect, &scCtorRect);
     struct EntitySerializerPair scCtorCircle = Et2D_Get2DCircleStaticColliderSerializerPair();
     Et2D_RegisterEntityType(EBET_StaticColliderCircle, &scCtorCircle);
+
+
+    struct EntitySerializerPair scCtorEllipse = Et2D_Get2DEllipseStaticColliderSerializerPair();
+    struct EntitySerializerPair scCtorPoly  = Et2D_Get2DPolygonStaticColliderSerializerPair();
+
+    Et2D_RegisterEntityType(EBET_StaticColliderPoly, &scCtorPoly);
+    Et2D_RegisterEntityType(EBET_StaticColliderEllipse, &scCtorEllipse);
+
     if(registerGameEntities)
     {
         registerGameEntities();
@@ -175,6 +183,7 @@ static void DeserializeEntityV1(struct BinarySerializer* bs, struct GameLayer2DD
     memset(&ent, 0, sizeof(struct Entity2D));
     ent.nextSibling = NULL_HANDLE;
     ent.previousSibling = NULL_HANDLE;
+    ent.inDrawLayer = -1;
     ent.type = entityType;
 
     Et2D_DeserializeCommon(bs, &ent);
@@ -272,8 +281,9 @@ void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEn
         BS_DeSerializeFloat(&pOutEnt->transform.scale[0], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.scale[1], bs);
         BS_DeSerializeFloat(&pOutEnt->transform.rotation, bs);
-        u8 d = (u8)pOutEnt->bKeepInQuadtree;
-        BS_DeSerializeU8(&d, bs);
+        
+        BS_DeSerializeU32(&version, bs);
+        pOutEnt->bKeepInQuadtree = version != 0;
         pOutEnt->init = &Entity2DOnInit;
         pOutEnt->update = &Entity2DUpdate;
         pOutEnt->postPhys = &Entity2DUpdatePostPhysics;
@@ -295,7 +305,8 @@ void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
     BS_SerializeFloat(pInEnt->transform.scale[0], bs);
     BS_SerializeFloat(pInEnt->transform.scale[1], bs);
     BS_SerializeFloat(pInEnt->transform.rotation, bs);
-    BS_SerializeU8(pInEnt->bKeepInQuadtree, bs);
+    version = (u32)pInEnt->bKeepInQuadtree;
+    BS_SerializeU32(version, bs);
 }
 
 struct Entity2D* Et2D_GetEntity(HEntity2D hEnt)

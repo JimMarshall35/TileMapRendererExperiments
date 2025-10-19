@@ -12,6 +12,7 @@
 #include "Scripting.h"
 #include "XMLUIGameLayer.h"
 #include "FreeLookCameraMode.h"
+#include "EntityQuadTree.h"
 
 int gTilesRendered = 0;
 
@@ -27,8 +28,20 @@ static void LoadTilesRLEV1(struct TileMapLayer* pTileMap, struct BinarySerialize
 	EASSERT(false);
 }
 
-static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS)
+static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* pBS, struct GameLayer2DData* pData)
 {
+	float tlx, tly, brx, bry;
+	BS_DeSerializeFloat(&tlx, pBS);
+	BS_DeSerializeFloat(&tly, pBS);
+	BS_DeSerializeFloat(&brx, pBS);
+	BS_DeSerializeFloat(&bry, pBS);
+	struct Entity2DQuadTreeInitArgs initArgs = {
+		.x = tlx, .y = tly,
+		.w = brx - tlx,
+		.h = bry - tly
+	};
+	pData->hEntitiesQuadTree = GetEntity2DQuadTree(&initArgs);
+
 	u32 numLayers = 0;
 	BS_DeSerializeU32(&numLayers, pBS);
 	pTileMap->layers = VectorResize(pTileMap->layers, numLayers);
@@ -70,6 +83,8 @@ static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS
 			break;
 		case 2: // object layer
 			layer.bIsObjectLayer = true;
+			BS_DeSerializeU32((u32*)&layer.drawOrder, pBS);
+			Et2D_SerializeEntities(pBS, pData);
 			break;
 		default:
 			EASSERT(false);
@@ -79,7 +94,7 @@ static void LoadTilemapV1(struct TileMap* pTileMap, struct BinarySerializer* pBS
 	}
 }
 
-static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath, DrawContext* pDC, hAtlas atlas)
+static void LoadLevelData(struct TileMap* pTileMap, const char* tilemapFilePath, DrawContext* pDC, hAtlas atlas, struct GameLayer2DData* pData)
 {
 	pTileMap->layers = NEW_VECTOR(struct TileMapLayer);
 	struct BinarySerializer bs;
@@ -90,7 +105,7 @@ static void LoadTilemap(struct TileMap* pTileMap, const char* tilemapFilePath, D
 	switch (version)
 	{
 	case 1:
-		LoadTilemapV1(pTileMap, &bs);
+		LoadLevelDataV1(pTileMap, &bs, pData);
 		break;
 	default:
 		printf("Unexpected tilemap file version %u\n", version);
@@ -261,22 +276,41 @@ static void OutputVertices(
 	struct Transform2D* pCam, 
 	VECTOR(Worldspace2DVert)* outVerts,
 	VECTOR(VertIndexT)* outIndices,
-	struct GameLayer2DData* pLayerData
+	struct GameLayer2DData* pLayerData,
+	struct GameFrameworkLayer* pLayer
 )
 {
 	VECTOR(Worldspace2DVert) verts = *outVerts;
 	VECTOR(VertIndexT) inds = *outIndices;
+	static VECTOR(HEntity2D) sFoundEnts = NULL;
+	if(!sFoundEnts)
+	{
+		sFoundEnts = NEW_VECTOR(HEntity2D);
+	}
+	sFoundEnts = VectorClear(sFoundEnts);
 	
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
 	/* query the quadtree for entities here */
+	sFoundEnts = Entity2DQuadTree_Query(pLayerData->hEntitiesQuadTree, tl, br, sFoundEnts);
+
 	gTilesRendered = 0;
 	VertIndexT nextIndexVal = 0;
+	int onObjectLayer = 0;
 	for (int i = 0; i < VectorSize(pData->layers); i++)
 	{
 		if(pData->layers[i].bIsObjectLayer)
 		{
 			/* from the entities we've found from the quad tree, draw the ones that are in this layer */
+			for(int j=0; j<VectorSize(sFoundEnts); j++)
+			{
+				struct Entity2D* pEnt = Et2D_GetEntity(sFoundEnts[j]);
+				if(onObjectLayer == pEnt->inDrawLayer)
+				{
+					pEnt->draw(pEnt, pLayer, &pEnt->transform, outVerts, outIndices, &nextIndexVal);
+				}
+			}
+			onObjectLayer++;
 		}
 		else
 		{
@@ -294,7 +328,7 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	At_SetCurrent(pData->hAtlas, context);
 	pData->pWorldspaceVertices = VectorClear(pData->pWorldspaceVertices);
 	pData->pWorldspaceIndices = VectorClear(pData->pWorldspaceIndices);
-	OutputVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData);
+	OutputVertices(&pData->tilemap, &pData->camera, &pData->pWorldspaceVertices, &pData->pWorldspaceIndices, pData, pLayer);
 	context->WorldspaceVertexBufferData(pData->vertexBuffer, pData->pWorldspaceVertices, VectorSize(pData->pWorldspaceVertices), pData->pWorldspaceIndices, VectorSize(pData->pWorldspaceIndices));
 	mat4 view;
 	glm_mat4_identity(view);
@@ -332,7 +366,7 @@ static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
 	BS_CreateForLoad(pData->atlasFilePath, &bs);
 	At_SerializeAtlas(&bs, &pData->hAtlas, pDC);
 	BS_Finish(&bs);
-	LoadTilemap(&pData->tilemap, pData->tilemapFilePath, pDC, pData->hAtlas);
+	LoadLevelData(&pData->tilemap, pData->tilemapFilePath, pDC, pData->hAtlas, pData);
 	pData->bLoaded = true;
 }
 

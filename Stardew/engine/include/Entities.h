@@ -102,6 +102,8 @@ enum EngineBuiltinEntityType
 {
     EBET_StaticColliderRect,
     EBET_StaticColliderCircle,
+    EBET_StaticColliderPoly,
+    EBET_StaticColliderEllipse,
     EBET_Last
 };
 
@@ -142,6 +144,12 @@ struct Entity2D
     struct Component2D components[MAX_COMPONENTS];
 
     bool bKeepInQuadtree;
+
+    /* 
+        Which object layer of the scene is it in? 
+        Effects the order they are drawn in
+    */
+    int inDrawLayer;
 };
 
 /*

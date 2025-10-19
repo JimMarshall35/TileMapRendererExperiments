@@ -27,6 +27,11 @@ def do_cmd_args():
     parser.add_argument("-bmp", "--atlasBmp", type=str, default=None, help="Optional atlas debug bitmap output path")
     parser.add_argument("-iw", "--atlasIW", type=int, default=512, help="Atlas initial width.")
     parser.add_argument("-ih", "--atlasIH", type=int, default=512, help="Atlas initial height.")
+    parser.add_argument("-iqtlx", type=float, default=-999999.0)
+    parser.add_argument("-iqtly", type=float, default=-999999.0)
+    parser.add_argument("-iqbrx", type=float, default=999999.0)
+    parser.add_argument("-iqbry", type=float, default=999999.0)
+
     args = parser.parse_args()
     return args
 
@@ -230,6 +235,84 @@ def write_uncompressed(f, data, atlas, tilesets):
             converted = 0
         f.write(struct.pack("H", converted))
 
+def write_draw_order_enum(draw_order_text, file):
+    if draw_order_text == "topdown":
+        file.write(struct.pack("I", 1))
+    elif draw_order_text == "index":
+        file.write(struct.pack("I", 2))
+    else:
+        assert False
+
+
+EBET_StaticColliderRect = 0
+EBET_StaticColliderCircle = 1
+EBET_StaticColliderPoly = 2
+EBET_StaticColliderEllipse = 3
+
+def tiled_object_has_custom_prop(obj, prop_name):
+    if not ("properties" in obj):
+        return False
+    return len(filter(lambda x : x["name"] == prop_name, obj["properties"])) > 0
+
+def get_tiled_object_custom_prop(obj, prop_name):
+    return filter(lambda x : x["name"] == prop_name, obj["properties"])[0]
+
+def get_static_collider_type(obj):
+    if  tiled_object_has_custom_prop(obj, "radius"):
+        return EBET_StaticColliderCircle
+    if "polygon" in obj:
+        return EBET_StaticColliderPoly
+    if "ellipse" in obj:
+        return EBET_StaticColliderEllipse
+    return EBET_StaticColliderRect
+
+def serialize_static_collider_ent(file, obj):
+    t = get_static_collider_type(obj)
+    if t == EBET_StaticColliderRect:
+        file.write(struct.pack("I", 1))
+        file.write(struct.pack("f", obj["width"]))
+        file.write(struct.pack("f", obj["height"]))
+    elif t == EBET_StaticColliderCircle:
+        file.write(struct.pack("I", 1))
+        file.write(struct.pack("f", get_tiled_object_custom_prop(obj, "radius")))
+    elif t == EBET_StaticColliderPoly:
+        assert False
+    elif t == EBET_StaticColliderEllipse:
+        assert False
+    else:
+        assert False
+    pass
+
+
+class EntitySerializer:
+    def __init__(self, serialize_fn, get_type_fn, b_keep_in_quad):
+        self.serialze_fn = serialize_fn
+        self.get_type_fn = get_type_fn
+        self.b_keep_in_quad = b_keep_in_quad
+    def serialize_common(self, f, obj):
+        f.write(struct.pack("I", 1)) # version
+        f.write(struct.pack("f", obj["x"]))
+        f.write(struct.pack("f", obj["y"]))
+        f.write(struct.pack("f", 1))
+        f.write(struct.pack("f", 1))
+        f.write(struct.pack("f", obj["rotation"]))
+        f.write(struct.pack("I", 1 if self.b_keep_in_quad else 0))
+    def serialize(self, f, o):
+        f.write(struct.pack("I", self.get_type_fn(o)))
+        self.serialize_common(f, o)
+        self.serialze_fn(f , o)
+
+entity_binary_serializers = {
+    "StaticCollider" : EntitySerializer(serialize_static_collider_ent, get_static_collider_type, False)
+}
+
+def count_serializable_ents(entities):
+    i = 0
+    for e in entities:
+        print(e["type"])
+        if e["type"] in  entity_binary_serializers:
+            i += 1
+    return i
 def build_tilemap_binaries(args, parsed_tile_maps, atlas):
     print("outputting tilemap binary files...")
     for p in parsed_tile_maps:
@@ -243,6 +326,11 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
         with open(binaryPath, "wb") as f:
             # VERSION
             f.write(struct.pack("I", TILEMAP_FILE_VERSION))
+            # QUADTREE
+            f.write(struct.pack("f", args.iqtlx))
+            f.write(struct.pack("f", args.iqtly))
+            f.write(struct.pack("f", args.iqbrx))
+            f.write(struct.pack("f", args.iqbry))
             # NUM LAYERS
             num_tilemap_layers = len(p["layers"])
             f.write(struct.pack("I", num_tilemap_layers))
@@ -273,6 +361,20 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
                 else:
                     # WRITE 2 FOR OBJECT LAYER
                     f.write(struct.pack("I", 2))
+                    write_draw_order_enum(layer["draworder"], f)
+                    f.write(struct.pack("I", 1))
+                    num_ents = count_serializable_ents(layer["objects"])
+                    print(f"NUM_ENTS!!! {num_ents}")
+                    f.write(struct.pack("I", num_ents))
+                    for o in layer["objects"]:
+                        if o["type"] in entity_binary_serializers.keys():
+                            serializer =  entity_binary_serializers[o["type"]]
+                            print(o)
+                            serializer.serialize(f, o)
+                        else:
+                            print(f"Warning: No serializer for entity type {o["type"]}")
+                        pass
+
     print("\n\n")
 
 def convert_tile_maps(args):

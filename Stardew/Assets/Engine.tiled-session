@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Farm.tmj",
+    "activeFile": "Farm.json",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -267,10 +267,10 @@
         },
         "Farm.json": {
             "scale": 0.75,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 2592.6666666666665,
-                "y": 735.3333333333334
+                "x": 1600,
+                "y": 1599.3333333333333
             }
         },
         "Farm.tmj": {
@@ -285,13 +285,16 @@
             "scale": 1.9445312499999998,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 192.59140216954603,
-                "y": 48.5978304539976
+                "x": 174.07794294897553,
+                "y": 191.56287665729212
             }
         },
         "Interior 2.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "Interior.json": {
+            "scaleInDock": 1
         },
         "Outside Objects.json": {
             "scaleInDock": 1,
@@ -301,8 +304,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 440,
-                "y": 383
+                "x": 799.5,
+                "y": 479.5
             }
         },
         "Soil.json": {
@@ -345,23 +348,25 @@
     "map.tileWidth": 32,
     "map.width": 12,
     "openFiles": [
-        "Farm.tmj"
+        "Farm.json",
+        "House.json",
+        "RoadToTown.json"
     ],
     "project": "Engine.tiled-project",
-    "property.type": "object",
+    "property.type": "float",
     "recentFiles": [
-        "Farm.tmj",
-        "Farm.json",
-        "Interior 2.json",
         "RoadToTown.json",
+        "House.json",
+        "Farm.json",
+        "Farm.tmj",
+        "Interior 2.json",
         "Outside Objects.json",
         "Exterior Tiles.json",
         "Terrain and Outside.json",
         "tilemaptest.json",
         "Soil.json",
         "soil.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/room_builder.json",
-        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/lvl1_test5.json"
+        "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/ReacherRPG/ReacherRPG/json/room_builder.json"
     ],
     "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "JSON tileset files (*.json)",

@@ -33,6 +33,12 @@ struct Transform2D
 struct TilemapRenderData;
 struct TilemapLayerRenderData;
 
+enum ObjectLayer2DDrawOrder
+{
+	DrawOrder_TopDown,
+	DrawOrder_Index	
+};
+
 struct TileMapLayer
 {
 	struct TilemapLayerRenderData* pRenderData;
@@ -42,6 +48,7 @@ struct TileMapLayer
 	int widthTiles;
 	int heightTiles;
 	bool bIsObjectLayer;
+	enum ObjectLayer2DDrawOrder drawOrder;
 	TileIndex* Tiles;
 };
 
@@ -54,6 +61,7 @@ struct TileMap
 
 struct GameLayer2DData
 {
+	HEntity2DQuadtreeNode hEntitiesQuadTree;
 	hAtlas hAtlas;
 	struct TileMap tilemap;
 	bool bLoaded;

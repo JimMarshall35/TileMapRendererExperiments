@@ -3,9 +3,7 @@
 #include "Physics2D.h"
 #include "AssertLib.h"
 
-
-
-void DeSerialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+void DeSerialize2DRectStaticColliderEntityV1(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
     float w, h;
     BS_DeSerializeFloat(&w, bs);
@@ -32,6 +30,21 @@ void DeSerialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct E
     pOutEnt->components[pOutEnt->numComponents++] = cmp;
 }
 
+void DeSerialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+{
+    u32 version = 0;
+    BS_DeSerializeU32(&version, bs);
+    switch (version)
+    {
+    case 1:
+        DeSerialize2DRectStaticColliderEntityV1(bs,pOutEnt, pData);
+        break;
+    default:
+        break;
+    }
+    
+}
+
 void Serialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
 {
     if(pInEnt->numComponents != 1)
@@ -49,6 +62,7 @@ void Serialize2DRectStaticColliderEntity(struct BinarySerializer* bs, struct Ent
     struct PhysicsShape2D* pShape = Ph_GetStaticBodyShape2D(pInEnt->components[0].data.staticCollider.id);
     float w = pShape->data.rect.br[0] - pShape->data.rect.tl[0];
     float h = pShape->data.rect.br[1] - pShape->data.rect.tl[1];
+    BS_SerializeU32(1, bs);
     BS_SerializeFloat(w, bs);
     BS_SerializeFloat(h, bs);
 }
@@ -64,7 +78,7 @@ struct EntitySerializerPair Et2D_Get2DRectStaticColliderSerializerPair()
     return gPairRect;
 }
 
-void DeSerialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+void DeSerialize2DCircleStaticColliderEntityV1(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
     float r;
     BS_DeSerializeFloat(&r, bs);
@@ -83,6 +97,21 @@ void DeSerialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct
     pOutEnt->components[pOutEnt->numComponents++] = cmp;
 }
 
+void DeSerialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+{
+    u32 version = 0;
+    BS_DeSerializeU32(&version, bs);
+    switch(version)
+    {
+    case 1:
+        DeSerialize2DCircleStaticColliderEntityV1(bs, pOutEnt, pData);
+        break;
+    default:
+        EASSERT(false);
+    }
+    
+}
+
 void Serialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
 {
     if(pInEnt->numComponents != 1)
@@ -99,6 +128,7 @@ void Serialize2DCircleStaticColliderEntity(struct BinarySerializer* bs, struct E
     }
     struct PhysicsShape2D* pShape = Ph_GetStaticBodyShape2D(pInEnt->components[0].data.staticCollider.id);
     float r = pShape->data.circle.radius;
+    BS_SerializeU32(1, bs);   // version
     BS_SerializeFloat(r, bs);
 }
 
@@ -111,5 +141,51 @@ static struct EntitySerializerPair gPairCircle =
 struct EntitySerializerPair Et2D_Get2DCircleStaticColliderSerializerPair()
 {
     return gPairCircle;
+}
+
+
+static void DeSerializeEllipseEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+{
+
+}
+
+static void SerializeEllipseEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
+{
+
+}
+
+static struct EntitySerializerPair pPairEllipse = 
+{
+    .deserialize = &DeSerializeEllipseEntity,
+    .serialize = &SerializeEllipseEntity,
+};
+
+
+struct EntitySerializerPair Et2D_Get2DEllipseStaticColliderSerializerPair()
+{
+    return pPairEllipse;
+}
+
+
+static void DeSerializePolyEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
+{
+
+}
+
+static void SerializePolyEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
+{
+
+}
+
+static struct EntitySerializerPair pPairPoly = 
+{
+    .deserialize = &DeSerializePolyEntity,
+    .serialize = &SerializePolyEntity,
+};
+
+
+struct EntitySerializerPair Et2D_Get2DPolygonStaticColliderSerializerPair()
+{
+    return pPairPoly;
 }
 

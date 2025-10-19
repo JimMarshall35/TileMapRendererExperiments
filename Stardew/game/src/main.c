@@ -13,7 +13,7 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     /*struct GameFrameworkLayer testLayer;
     memset(&testLayer, 0, sizeof(struct GameFrameworkLayer));
     struct XMLUIGameLayerOptions options;
-    options.bLoadImmediately = false;
+    options.bLoadImmed	float tlx, tly, brx, bry;
     options.xmlPath = "./Assets/test.xml";
     options.pDc = pDC;
     testLayer.flags |= (EnableOnPush | EnableOnPop);
