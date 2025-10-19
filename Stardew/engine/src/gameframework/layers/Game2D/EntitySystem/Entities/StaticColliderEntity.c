@@ -6,9 +6,6 @@
 
 void StaticColliderOnInitFn(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
-    struct GameLayer2DData* pGameLayerData = pLayer->userData;
-    EASSERT(pEnt->numComponents == 1);
-    pEnt->components[0].data.staticCollider.id = Ph_GetStaticBody2D(pGameLayerData->hPhysicsWorld, &pEnt->components[0].data.staticCollider.shape, &pEnt->transform);
     Entity2DOnInit(pEnt, pLayer);
 }
 

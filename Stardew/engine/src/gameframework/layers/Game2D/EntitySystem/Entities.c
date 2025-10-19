@@ -15,7 +15,7 @@ static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
 
 void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
-    //Co_InitComponents(pEnt, pLayer);
+    Co_InitComponents(pEnt, pLayer);
     if(pEnt->bKeepInQuadtree)
     {
 

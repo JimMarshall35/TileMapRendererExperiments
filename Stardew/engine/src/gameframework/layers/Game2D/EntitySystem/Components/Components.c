@@ -8,6 +8,7 @@
 
 void Co_InitComponents(struct Entity2D* entity, struct GameFrameworkLayer* pLayer)
 {
+    struct GameLayer2DData* pGameLayerData = pLayer->userData;
     for(int i=0; i<entity->numComponents; i++)
     {
         switch(entity->components[i].type)
@@ -15,6 +16,7 @@ void Co_InitComponents(struct Entity2D* entity, struct GameFrameworkLayer* pLaye
         case ETE_Sprite:
             break;
         case ETE_StaticCollider:
+            entity->components[i].data.staticCollider.id = Ph_GetStaticBody2D(pGameLayerData->hPhysicsWorld, &entity->components[i].data.staticCollider.shape, &entity->transform);
             break;
         case ETE_DynamicCollider:
             break;
