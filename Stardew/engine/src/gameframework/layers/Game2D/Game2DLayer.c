@@ -84,7 +84,7 @@ static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* p
 		case 2: // object layer
 			layer.bIsObjectLayer = true;
 			BS_DeSerializeU32((u32*)&layer.drawOrder, pBS);
-			Et2D_SerializeEntities(pBS, pData);
+			Et2D_SerializeEntities(&pData->entities, pBS, pData);
 			break;
 		default:
 			EASSERT(false);
@@ -312,7 +312,7 @@ static void OutputVertices(
 			/* from the entities we've found from the quad tree, draw the ones that are in this layer */
 			for(int j=0; j<VectorSize(sFoundEnts); j++)
 			{
-				struct Entity2D* pEnt = Et2D_GetEntity(sFoundEnts[j]);
+				struct Entity2D* pEnt = Et2D_GetEntity(sFoundEnts[j], &pLayerData->entities);
 				if(onObjectLayer == pEnt->inDrawLayer)
 				{
 					pEnt->draw(pEnt, pLayer, &pEnt->transform, outVerts, outIndices, &nextIndexVal);
@@ -393,6 +393,7 @@ static void OnDebugLayerPushed(void* pUserData, void* pEventData)
 static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
+	Et2D_InitCollection(&pData->entities);
 	pData->hPhysicsWorld = Ph_GetPhysicsWorld(0, 0, 32.0f); // todo - pass these arguments in somehow
 	BindFreeLookControls(inputContext, pData);
 	ActivateFreeLookMode(inputContext, pData);
@@ -400,7 +401,7 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 	{
 		LoadLayerAssets(pData, drawContext);
 	}
-	Et2D_IterateEntities(&InitEntities, pLayer);
+	Et2D_IterateEntities(&pData->entities, &InitEntities, pLayer);
 	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
 	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
@@ -409,6 +410,7 @@ static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, I
 {
 	struct GameLayer2DData* pData = pLayer->userData;
 	EASSERT(pData->pDebugListener);
+	Et2D_DestroyCollection(&pData->entities);
 	Ev_UnsubscribeEvent(pData->pDebugListener);
 	Ph_DestroyPhysicsWorld(pData->hPhysicsWorld);
 }

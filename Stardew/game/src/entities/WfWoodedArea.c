@@ -1,15 +1,18 @@
 #include "WfWoodedArea.h"
 #include "BinarySerializer.h"
 #include "Entities.h"
-#include "Game2DLayer.h"
+#include "GameFramework.h"
 #include "AssertLib.h"
 #include "ObjectPool.h"
-
+#include "Game2DLayer.h"
+#include "Physics2D.h"
+#include "Random.h"
+#include "WfEnums.h"
 
 
 struct WfWoodedAreaData
 {
-    float conif_percent, decid_percent, density;
+    float conif_percent, decid_percent, density, widthPx, heightPx;
 };
 
 static OBJECT_POOL(struct WfWoodedAreaData) gDataObjectPool;
@@ -19,12 +22,53 @@ void WfWoodedAreaInit()
     gDataObjectPool = NEW_OBJECT_POOL(struct WfWoodedAreaData, 8);
 }
 
+enum WfTreeType
+{
+    Coniferous,
+    Deciduous
+};
+
+struct WfTreeDef
+{
+    enum WfSeason season;
+    enum WfTreeType type;
+    int subtype;
+};
+
+static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, struct WfTreeDef* def)
+{
+    float xPos = Ra_FloatBetween(xMin, xMax);
+    float yPos = Ra_FloatBetween(yMin, yMax);
+}
+
 void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
+    struct GameLayer2DData* pLayerData = pLayer->userData;
     /* spawn trees here */
+    float pixelsPerMeter = Ph_GetPixelsPerMeter(pLayerData->hPhysicsWorld);
     struct WfWoodedAreaData* pData = &gDataObjectPool[pEnt->user.hData];
+    float mWidth = pData->widthPx / pixelsPerMeter;
+    float mHeight = pData->heightPx / pixelsPerMeter;
+    float areaSquareMeters = mWidth * mHeight;
+    int numTrees = (int)(areaSquareMeters * pData->density);
+    printf("Wooded Area Area: %.2f, Num Trees: %i\n", areaSquareMeters, numTrees);
+
+    struct WfTreeDef treeDef;
+    for(int i = 0; i < numTrees; i++)
+    {
+        treeDef.season = Summer;
+        treeDef.type = Coniferous;
+        treeDef.subtype = 0;
+        AddTreeAtRandomPos(
+            pEnt->transform.position[0], 
+            pEnt->transform.position[0] + pData->widthPx, 
+            pEnt->transform.position[1], 
+            pEnt->transform.position[1] + pData->heightPx,
+            &treeDef);
+    }
+
     /* destroy the entity */
-    Et2D_DestroyEntity(pEnt->thisEntity);
+    Et2D_DestroyEntity(&pLayerData->entities, pEnt->thisEntity);
 }
 
 void WfWoodedAreaEntityOnDestroy(struct Entity2D* pEnt)
@@ -39,6 +83,9 @@ void WfDeSerializeWoodedAreaEntityV1(struct BinarySerializer* bs, struct Entity2
     BS_DeSerializeFloat(&gDataObjectPool[index].conif_percent, bs);
     BS_DeSerializeFloat(&gDataObjectPool[index].decid_percent, bs);
     BS_DeSerializeFloat(&gDataObjectPool[index].density, bs);
+    BS_DeSerializeFloat(&gDataObjectPool[index].widthPx, bs);
+    BS_DeSerializeFloat(&gDataObjectPool[index].heightPx, bs);
+
     pOutEnt->user.hData = index;
     pOutEnt->init = &WfWoodedAreaEntityOnInit;
     pOutEnt->onDestroy = &WfWoodedAreaEntityOnDestroy;

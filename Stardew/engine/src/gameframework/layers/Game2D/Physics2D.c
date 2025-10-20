@@ -55,6 +55,11 @@ HPhysicsWorld Ph_GetPhysicsWorld(float gravityX, float gravityY, float pixelsPer
     return index;
 }
 
+float Ph_GetPixelsPerMeter(HPhysicsWorld world)
+{
+    return gWorldDefPool[world].pxlPerMeter;
+}
+
 void Ph_PixelCoords2PhysicsCoords(HPhysicsWorld world, vec2 inPixelCoords, vec2 outPhysicsCoords)
 {
     struct Phys2dWorld* pPool = &gWorldDefPool[world];

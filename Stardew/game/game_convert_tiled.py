@@ -16,7 +16,8 @@ def serialize_WoodedArea(file, obj):
     file.write(struct.pack("f", get_tiled_object_custom_prop(obj, "ConiferousPercentage")["value"]))
     file.write(struct.pack("f", get_tiled_object_custom_prop(obj, "DeciduousPercentage")["value"]))
     file.write(struct.pack("f", get_tiled_object_custom_prop(obj, "PerMeterDensity")["value"]))
-    pass
+    file.write(struct.pack("f", obj["width"]))
+    file.write(struct.pack("f", obj["height"]))
 
 def get_type_WoodedArea(obj):
     return 6

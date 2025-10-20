@@ -7,6 +7,8 @@
 
 struct GameFrameworkLayer;
 
+struct Entity2DCollection;
+
 struct Entity2DQuadTreeInitArgs
 {
     int x;
@@ -21,7 +23,7 @@ HEntity2DQuadtreeNode GetEntity2DQuadTree(struct Entity2DQuadTreeInitArgs* args)
 
 void DestroyEntity2DQuadTree(HEntity2DQuadtreeNode quadTree);
 
-HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(HEntity2DQuadtreeNode quadTree, HEntity2D hEnt, struct GameFrameworkLayer* pLayer, int depth, int maxDepth);
+HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(struct Entity2DCollection* pCollection, HEntity2DQuadtreeNode quadTree, HEntity2D hEnt, struct GameFrameworkLayer* pLayer, int depth, int maxDepth);
 
 void Entity2DQuadTree_Remove(HEntity2DQuadtreeNode quadTree, HEntity2DQuadtreeEntityRef ent);
 

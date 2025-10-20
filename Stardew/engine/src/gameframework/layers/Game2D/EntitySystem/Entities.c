@@ -1,18 +1,26 @@
 #include "Entities.h"
-#include "ObjectPool.h"
 #include "AssertLib.h"
 #include "BinarySerializer.h"
 #include "StaticColliderEntity.h"
 #include "Components.h"
 #include <string.h>
+#include "Entity2DCollection.h"
 
-static HEntity2D gEntityListHead = NULL_HANDLE;
-static HEntity2D gEntityListTail = NULL_HANDLE;
-static int gNumEnts = 0;
-
-static OBJECT_POOL(struct Entity2D) pEntityPool = NULL;
 static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
 
+void Et2D_DestroyCollection(struct Entity2DCollection* pCollection)
+{
+    pCollection->pEntityPool = FreeObjectPool(pCollection->pEntityPool);
+}
+
+
+void Et2D_InitCollection(struct Entity2DCollection* pCollection)
+{
+    pCollection->gEntityListHead = NULL_HANDLE;
+    pCollection->gEntityListTail = NULL_HANDLE;
+    pCollection->gNumEnts = 0;
+    pCollection->pEntityPool = NEW_OBJECT_POOL(struct Entity2D, 512);
+}
 
 void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
@@ -99,7 +107,6 @@ void Entity2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pL
 
 void Et2D_Init(RegisterGameEntitiesFn registerGameEntities)
 {
-    pEntityPool = NEW_OBJECT_POOL(struct Entity2D, 512);
     pSerializers = NEW_VECTOR(struct EntitySerializerPair);
     pSerializers = VectorClear(pSerializers);
 
@@ -121,63 +128,63 @@ void Et2D_Init(RegisterGameEntitiesFn registerGameEntities)
     }
 }
 
-void Et2D_DestroyEntity(HEntity2D hEnt)
+void Et2D_DestroyEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt)
 {
-    struct Entity2D* pEnt = &pEntityPool[hEnt];
+    struct Entity2D* pEnt = &pCollection->pEntityPool[hEnt];
 
-    if(gEntityListHead == hEnt)
+    if(pCollection->gEntityListHead == hEnt)
     {
-        gEntityListTail = pEnt->nextSibling;
+        pCollection->gEntityListTail = pEnt->nextSibling;
     }
-    if(gEntityListTail == hEnt)
+    if(pCollection->gEntityListTail == hEnt)
     {
-        gEntityListHead = pEnt->previousSibling;
+        pCollection->gEntityListHead = pEnt->previousSibling;
     }
 
     if(pEnt->nextSibling != NULL_HANDLE)
     {
-        struct Entity2D* pNext = &pEntityPool[pEnt->nextSibling];
+        struct Entity2D* pNext = &pCollection->pEntityPool[pEnt->nextSibling];
         pNext->previousSibling = pEnt->previousSibling;
 
     }
     if(pEnt->previousSibling != NULL_HANDLE)
     {
-        struct Entity2D* pPrev = &pEntityPool[pEnt->previousSibling];
+        struct Entity2D* pPrev = &pCollection->pEntityPool[pEnt->previousSibling];
         pPrev->nextSibling = pEnt->nextSibling;
     }
 
     pEnt->onDestroy(pEnt);
-    gNumEnts--;
-    FreeObjectPoolIndex(pEntityPool, hEnt);
+    pCollection->gNumEnts--;
+    FreeObjectPoolIndex(pCollection->pEntityPool, hEnt);
 }
 
-HEntity2D Et2D_AddEntity(struct Entity2D* pEnt)
+HEntity2D Et2D_AddEntity(struct Entity2DCollection* pCollection, struct Entity2D* pEnt)
 {
     HEntity2D hEnt = NULL_HANDLE;
     pEnt->nextSibling = NULL_HANDLE;
     pEnt->previousSibling = NULL_HANDLE;
-    pEntityPool = GetObjectPoolIndex(pEntityPool, &hEnt);
+    pCollection->pEntityPool = GetObjectPoolIndex(pCollection->pEntityPool, &hEnt);
     EASSERT(hEnt != NULL_HANDLE);
-    memcpy(&pEntityPool[hEnt], pEnt, sizeof(struct Entity2D));
-    pEnt = &pEntityPool[hEnt];
+    memcpy(&pCollection->pEntityPool[hEnt], pEnt, sizeof(struct Entity2D));
+    pEnt = &pCollection->pEntityPool[hEnt];
     pEnt->thisEntity = hEnt;
-    if(gEntityListHead == NULL_HANDLE)
+    if(pCollection->gEntityListHead == NULL_HANDLE)
     {
-        gEntityListHead = hEnt;
-        gEntityListTail = hEnt;
+        pCollection->gEntityListHead = hEnt;
+        pCollection->gEntityListTail = hEnt;
     }
     else
     {
-        struct Entity2D* pLast = &pEntityPool[gEntityListTail];
+        struct Entity2D* pLast = &pCollection->pEntityPool[pCollection->gEntityListTail];
         pLast->nextSibling = hEnt;
-        pEnt->previousSibling = gEntityListTail;
-        gEntityListTail = hEnt;
+        pEnt->previousSibling = pCollection->gEntityListTail;
+        pCollection->gEntityListTail = hEnt;
     }
-    gNumEnts++;
+    pCollection->gNumEnts++;
     return hEnt;
 }
 
-static void DeserializeEntityV1(struct BinarySerializer* bs, struct GameLayer2DData* pData)
+static void DeserializeEntityV1(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData)
 {
     u32 entityType;
     BS_DeSerializeU32(&entityType, bs);
@@ -198,20 +205,20 @@ static void DeserializeEntityV1(struct BinarySerializer* bs, struct GameLayer2DD
     {
         printf("DESERIALIZE: Entity Serializer type %i out of range\n", ent.type);
     }
-    Et2D_AddEntity(&ent);
+    Et2D_AddEntity(pCollection, &ent);
 }
 
-static void LoadEntitiesV1(struct BinarySerializer* bs, struct GameLayer2DData* pData)
+static void LoadEntitiesV1(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection)
 {
     u32 numEntities = 0;
     BS_DeSerializeU32(&numEntities, bs);
     for(int i=0; i<numEntities; i++)
     {
-        DeserializeEntityV1(bs, pData);
+        DeserializeEntityV1(pCollection, bs, pData);
     }
 }
 
-static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData)
+static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection)
 {
     EASSERT(!bs->bSaving);
     u32 version = 0;
@@ -219,7 +226,7 @@ static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pD
     switch(version)
     {
     case 1:
-        LoadEntitiesV1(bs, pData);
+        LoadEntitiesV1(bs, pData, pCollection);
         break;
     default:
         printf("E2D unsupported version %i\n", version);
@@ -228,14 +235,14 @@ static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pD
     }
 }
 
-static void SaveEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData)
+static void SaveEntities(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData)
 {
     EASSERT(bs->bSaving);
-    BS_SerializeU32(gNumEnts, bs);
-    HEntity2D hOn = gEntityListHead;
+    BS_SerializeU32(pCollection->gNumEnts, bs);
+    HEntity2D hOn = pCollection->gEntityListHead;
     while(hOn != NULL_HANDLE)
     {
-        struct Entity2D* pOn = &pEntityPool[hOn];
+        struct Entity2D* pOn = &pCollection->pEntityPool[hOn];
         BS_SerializeU32(pOn->type, bs);
         Et2D_SerializeCommon(bs, pOn);
         if(pOn->type < VectorSize(pSerializers))
@@ -251,15 +258,15 @@ static void SaveEntities(struct BinarySerializer* bs, struct GameLayer2DData* pD
 }
 
 /* both serialize and deserialize */
-void Et2D_SerializeEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData)
+void Et2D_SerializeEntities(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData)
 {
     if(bs->bSaving)
     {
-        SaveEntities(bs, pData);
+        SaveEntities(bs, pData, pCollection);
     }
     else
     {
-        LoadEntities(bs, pData);
+        LoadEntities(bs, pData, pCollection);
     }
 }
 
@@ -311,18 +318,18 @@ void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt)
     BS_SerializeU32(version, bs);
 }
 
-struct Entity2D* Et2D_GetEntity(HEntity2D hEnt)
+struct Entity2D* Et2D_GetEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt)
 {
-    return &pEntityPool[hEnt];
+    return &pCollection->pEntityPool[hEnt];
 }
 
-void Et2D_IterateEntities(Entity2DIterator itr, void* pUser)
+void Et2D_IterateEntities(struct Entity2DCollection* pCollection, Entity2DIterator itr, void* pUser)
 {
-    HEntity2D hOnEnt = gEntityListHead;
+    HEntity2D hOnEnt = pCollection->gEntityListHead;
     int i = 0;
     while(hOnEnt != NULL_HANDLE)
     {
-        struct Entity2D* pEntity = Et2D_GetEntity(hOnEnt);
+        struct Entity2D* pEntity = Et2D_GetEntity(pCollection, hOnEnt);
         if(!itr(pEntity, i++, pUser))
             break;
         hOnEnt = pEntity->nextSibling;

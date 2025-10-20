@@ -3,6 +3,8 @@
 #include "Entities.h"
 #include "AssertLib.h"
 #include "Geometry.h"
+#include "Game2DLayer.h"
+#include "GameFramework.h"
 
 enum Entity2DQuadtreeQuadrant
 {
@@ -138,9 +140,11 @@ void DestroyEntity2DQuadTree(HEntity2DQuadtreeNode quadTree)
     FreeObjectPoolIndex(gNodePool, quadTree);
 }
 
-HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(HEntity2DQuadtreeNode quadTree, HEntity2D hEnt, struct GameFrameworkLayer* pLayer, int depth, int maxDepth)
+HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(struct Entity2DCollection* pCollection, HEntity2DQuadtreeNode quadTree, HEntity2D hEnt, struct GameFrameworkLayer* pLayer, int depth, int maxDepth)
 {
-    struct Entity2D* pEnt = Et2D_GetEntity(hEnt);
+    struct GameLayer2DData* pData = pLayer->userData;
+
+    struct Entity2D* pEnt = Et2D_GetEntity(pCollection, hEnt);
     struct Entity2DQuadtreeNode* pNode = &gNodePool[quadTree];
     vec2 bbtl, bbbr;
     pEnt->getBB(pEnt, pLayer, bbtl, bbbr);
@@ -158,7 +162,7 @@ HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(HEntity2DQuadtreeNode quadTre
                 NewQuadtreeNode(quadrantTL[0], quadrantTL[1], quadrantBR[0] - quadrantTL[0], quadrantBR[1] - quadrantTL[1], pChildNode);
                 pNode->children[i] = hNode;
             }
-            Entity2DQuadTree_Insert(pNode->children[i], hEnt, pLayer, depth, maxDepth);
+            Entity2DQuadTree_Insert(pCollection, pNode->children[i], hEnt, pLayer, depth, maxDepth);
         }
         else
         {

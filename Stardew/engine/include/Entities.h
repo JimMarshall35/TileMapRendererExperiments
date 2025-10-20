@@ -2,7 +2,6 @@
 #define ENTITIES_H
 
 #include "Game2DLayer.h"
-#include "HandleDefs.h"
 #include "DynArray.h"
 #include "DrawContext.h"
 #include "Physics2D.h"
@@ -10,6 +9,8 @@
 #include <stdbool.h>
 
 struct Entity2D;
+struct Entity2DCollection;
+
 
 typedef void (*Entity2DOnInitFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer);
 typedef void (*Entity2DUpdateFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
@@ -30,6 +31,13 @@ struct EntitySerializerPair
     EntityDeserializeFn deserialize;
     EntitySerializeFn serialize;
 };
+
+// static HEntity2D gEntityListHead = NULL_HANDLE;
+// static HEntity2D gEntityListTail = NULL_HANDLE;
+// static int gNumEnts = 0;
+
+// static OBJECT_POOL(struct Entity2D) pEntityPool = NULL;
+
 
 
 typedef i32 EntityType;
@@ -117,11 +125,11 @@ void Et2D_RegisterEntityType(u32 typeID, struct EntitySerializerPair* pair);
 
 void Et2D_Init(RegisterGameEntitiesFn registerGameEntities);
 
-HEntity2D Et2D_AddEntity(struct Entity2D* pEnt);
+HEntity2D Et2D_AddEntity(struct Entity2DCollection* pCollection, struct Entity2D* pEnt);
 
-void Et2D_DestroyEntity(HEntity2D hEnt);
+void Et2D_DestroyEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt);
 
-struct Entity2D* Et2D_GetEntity(HEntity2D hEnt);
+struct Entity2D* Et2D_GetEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt);
 
 /* both serialize and deserialize */
 
@@ -129,11 +137,14 @@ struct Entity2D* Et2D_GetEntity(HEntity2D hEnt);
 typedef bool(*Entity2DIterator)(struct Entity2D* pEnt, int i, void* pUser);
 
 
-void Et2D_IterateEntities(Entity2DIterator itr, void* pUser);
-void Et2D_SerializeEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData);
+void Et2D_IterateEntities(struct Entity2DCollection* pCollection, Entity2DIterator itr, void* pUser);
+void Et2D_SerializeEntities(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData);
 
 void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEnt);
 void Et2D_SerializeCommon(struct BinarySerializer* bs, struct Entity2D* pInEnt);
+
+void Et2D_InitCollection(struct Entity2DCollection* pCollection);
+void Et2D_DestroyCollection(struct Entity2DCollection* pCollection);
 
 struct Entity2D
 {

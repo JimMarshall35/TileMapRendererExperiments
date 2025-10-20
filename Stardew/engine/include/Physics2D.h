@@ -61,4 +61,6 @@ HStaticBody Ph_GetStaticBody2D(HPhysicsWorld world, struct PhysicsShape2D* pShap
 
 HKinematicBody GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform);
 
+float Ph_GetPixelsPerMeter(HPhysicsWorld world);
+
 #endif

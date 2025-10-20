@@ -8,9 +8,10 @@ extern "C" {
 #include "IntTypes.h"
 #include "DynArray.h"
 #include "HandleDefs.h"
-#include "cglm/cglm.h"
+#include <cglm/cglm.h>
 #include "InputContext.h"
 #include "FreeLookCameraMode.h"
+#include "Entity2DCollection.h"
 
 #define MAX_GAME_LAYER_ASSET_FILE_PATH_LEN 128
 
@@ -92,6 +93,8 @@ struct GameLayer2DData
 	int windowH;
 
 	HPhysicsWorld hPhysicsWorld;
+
+	struct Entity2DCollection entities;
 };
 
 struct Game2DLayerOptions
