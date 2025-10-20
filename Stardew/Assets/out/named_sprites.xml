@@ -1,0 +1,12 @@
+<atlas>
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="0" left="192" width="96" height="96" name="decid_tree_sum_top_1"/>
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="0" left="288" width="96" height="96" name="decid_tree_sum_top_2"/>
+
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="96" left="192" width="96" height="96" name="conif_tree_sum_top_1"/>
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="96" left="288" width="96" height="128" name="conif_tree_sum_top_2"/>
+
+
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="448" left="0" width="96" height="96" name="tree_trunk_sum_1"/>
+    <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="448" left="96" width="96" height="96" name="tree_trunk_sum_2"/>
+
+</atlas>

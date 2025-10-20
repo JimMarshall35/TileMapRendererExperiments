@@ -1069,7 +1069,7 @@ static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 	if (bAllSet)
 	{
 		printf("adding sprite %s\n", spritePath);
-		At_AddSprite(spritePath, top, left, width, height, spriteName);
+		At_AddSprite(spritePath, left, top, width, height, spriteName);
 		EASSERT(spritePath);
 		EASSERT(spriteName);
 		xmlFree(spritePath);

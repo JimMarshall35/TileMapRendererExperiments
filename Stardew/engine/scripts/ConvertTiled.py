@@ -75,8 +75,8 @@ class AtlasSprite:
     def get_attributes(self, counter):
         return {
             "source" : "./Assets/" + self.path,
-            "top" : str(int(self.left)),          # NOTE: This is wrong, here, but creates a map that renders properly in the engine at the moment
-            "left" : str(int(self.top)),          # URGENT TODO NEXT: Figure out where this is crossed over so these can be put into the correct order here
+            "top" : str(int(self.top)),
+            "left" : str(int(self.left)),
             "width" : str(int(self.width)),
             "height" : str(int(self.height)),
             "name" : f"{self.name}_{counter}"

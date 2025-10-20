@@ -59,7 +59,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Stardew/build/atlastool/AtlasTool",
-            "args": ["./Assets/out/atlas.xml", "-o", "out.atlas", "-bmp", "Atlas.bmp"],
+            "args": ["./Assets/out/atlascombined.xml", "-o", "out.atlas", "-bmp", "Atlas.bmp"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/Stardew",
             "environment": [],

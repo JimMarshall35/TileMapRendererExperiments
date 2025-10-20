@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Farm.json",
+    "activeFile": "Outside Objects.json",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -266,6 +266,9 @@
             "scaleInEditor": 1
         },
         "Farm.json": {
+            "expandedObjectLayers": [
+                6
+            ],
             "scale": 0.75,
             "selectedLayer": 3,
             "viewCenter": {
@@ -338,7 +341,7 @@
     },
     "last.exportedFilePath": "C:/Users/User1/source/repos/ReacherRPG/ReacherRPG/json",
     "last.externalTilesetPath": "C:/Users/User1/source/repos/TileMapRendererExperiments/Engine/Assets",
-    "last.imagePath": "C:/Users/User1/source/repos/TileMapRendererExperiments/Stardew/Assets/Image/LPC Submissions",
+    "last.imagePath": "/home/jimmarshall/Jim/TileMapRendererExperiments/Stardew/Assets/Image/LPC Submissions",
     "map.fixedSize": true,
     "map.height": 12,
     "map.lastUsedExportFilter": "JSON map files (*.json)",
@@ -350,17 +353,18 @@
     "openFiles": [
         "Farm.json",
         "House.json",
-        "RoadToTown.json"
+        "RoadToTown.json",
+        "Outside Objects.json"
     ],
     "project": "Engine.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "RoadToTown.json",
-        "House.json",
         "Farm.json",
+        "House.json",
+        "RoadToTown.json",
+        "Outside Objects.json",
         "Farm.tmj",
         "Interior 2.json",
-        "Outside Objects.json",
         "Exterior Tiles.json",
         "Terrain and Outside.json",
         "tilemaptest.json",
