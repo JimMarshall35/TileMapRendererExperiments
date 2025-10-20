@@ -9,6 +9,7 @@ add_executable( WarFarmer
     src/entities/WfRock.c
     src/entities/WfTree.c
     src/entities/WfWoodedArea.c
+    src/WfInit.c
 )
 
 target_include_directories(WarFarmer PRIVATE include)

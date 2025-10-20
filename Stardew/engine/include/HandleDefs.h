@@ -3,47 +3,51 @@
 
 #include "IntTypes.h"
 
-typedef i32 HWidget;
+typedef i32 HGeneric;
+
+typedef HGeneric HWidget;
 #define NULL_HWIDGET -1
 
-typedef i32 HImage;
+typedef HGeneric HImage;
 #define NULL_HIMAGE -1
 
-typedef i32 hAtlas;
+typedef HGeneric hAtlas;
 #define NULL_ATLAS -1
 
-typedef i32 hSprite;
+typedef HGeneric hSprite;
 #define NULL_HSPRITE -1
 
-typedef i32 hTexture;
+typedef HGeneric hTexture;
 
-typedef i32 HWorldspaceVertexBuffer;
+typedef HGeneric HWorldspaceVertexBuffer;
 
-typedef i32 HUIVertexBuffer;
+typedef HGeneric HUIVertexBuffer;
 
-typedef i32 H2DWorldspaceVertexBuffer;
+typedef HGeneric H2DWorldspaceVertexBuffer;
 
-typedef i32 HFont;
+typedef HGeneric HFont;
 
-typedef i32 HMouseAxisBinding;
+typedef HGeneric HMouseAxisBinding;
 
-typedef i32 HMouseButtonBinding;
+typedef HGeneric HMouseButtonBinding;
 
-typedef i32 HKeyboardButtonBinding;
+typedef HGeneric HKeyboardButtonBinding;
 
-typedef i32 HTimer;
+typedef HGeneric HTimer;
 
-typedef i32 HEntity2D;
+typedef HGeneric HEntity2D;
 
-typedef i32 HPhysicsWorld;
+typedef HGeneric HPhysicsWorld;
 
-typedef i32 HStaticBody;
+typedef HGeneric HStaticBody;
 
-typedef i32 HKinematicBody;
+typedef HGeneric HKinematicBody;
 
-typedef i32 HEntity2DQuadtreeNode;
+typedef HGeneric HEntity2DQuadtreeNode;
 
-typedef i32 HEntity2DQuadtreeEntityRef;
+typedef HGeneric HEntity2DQuadtreeEntityRef;
+
+
 
 #define NULL_HANDLE -1
 

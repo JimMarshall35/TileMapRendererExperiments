@@ -3,6 +3,7 @@
 #include "AssertLib.h"
 #include "BinarySerializer.h"
 #include "StaticColliderEntity.h"
+#include "Components.h"
 #include <string.h>
 
 static HEntity2D gEntityListHead = NULL_HANDLE;
@@ -159,6 +160,7 @@ HEntity2D Et2D_AddEntity(struct Entity2D* pEnt)
     EASSERT(hEnt != NULL_HANDLE);
     memcpy(&pEntityPool[hEnt], pEnt, sizeof(struct Entity2D));
     pEnt = &pEntityPool[hEnt];
+    pEnt->thisEntity = hEnt;
     if(gEntityListHead == NULL_HANDLE)
     {
         gEntityListHead = hEnt;

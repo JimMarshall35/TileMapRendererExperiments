@@ -9,4 +9,6 @@ void WfDeSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D*
 
 void WfSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData);
 
+void WfWoodedAreaInit();
+
 #endif

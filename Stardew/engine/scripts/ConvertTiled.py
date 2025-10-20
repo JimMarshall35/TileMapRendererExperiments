@@ -255,7 +255,7 @@ def tiled_object_has_custom_prop(obj, prop_name):
     return len(filter(lambda x : x["name"] == prop_name, obj["properties"])) > 0
 
 def get_tiled_object_custom_prop(obj, prop_name):
-    return filter(lambda x : x["name"] == prop_name, obj["properties"])[0]
+    return list(filter(lambda x : x["name"] == prop_name, obj["properties"]))[0]
 
 def get_static_collider_type(obj):
     if  tiled_object_has_custom_prop(obj, "radius"):
@@ -305,6 +305,10 @@ class EntitySerializer:
 entity_binary_serializers = {
     "StaticCollider" : EntitySerializer(serialize_static_collider_ent, get_static_collider_type, False)
 }
+
+def register_entity_serializer(name : str, serialize, get_type, b_keep_in_quad):
+    print(f"Registered Type {name}")
+    entity_binary_serializers.update({name : EntitySerializer(serialize, get_type, b_keep_in_quad)})
 
 def count_serializable_ents(entities):
     i = 0
@@ -364,12 +368,11 @@ def build_tilemap_binaries(args, parsed_tile_maps, atlas):
                     write_draw_order_enum(layer["draworder"], f)
                     f.write(struct.pack("I", 1))
                     num_ents = count_serializable_ents(layer["objects"])
-                    print(f"NUM_ENTS!!! {num_ents}")
+                    print(f"NUM ENTS: {num_ents}")
                     f.write(struct.pack("I", num_ents))
                     for o in layer["objects"]:
                         if o["type"] in entity_binary_serializers.keys():
                             serializer =  entity_binary_serializers[o["type"]]
-                            print(o)
                             serializer.serialize(f, o)
                         else:
                             print(f"Warning: No serializer for entity type {o["type"]}")

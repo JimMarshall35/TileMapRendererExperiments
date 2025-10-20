@@ -119,6 +119,8 @@ void Et2D_Init(RegisterGameEntitiesFn registerGameEntities);
 
 HEntity2D Et2D_AddEntity(struct Entity2D* pEnt);
 
+void Et2D_DestroyEntity(HEntity2D hEnt);
+
 struct Entity2D* Et2D_GetEntity(HEntity2D hEnt);
 
 /* both serialize and deserialize */
@@ -146,7 +148,18 @@ struct Entity2D
 
     struct Transform2D transform;
     EntityType type;
-    void* pData;
+    
+    union
+    {
+        /* data */
+        void* pData;
+        HGeneric hData;
+    }user;
+    
+    
+    /* just for convenience - this entities handle */
+    HEntity2D thisEntity;
+
     HEntity2D nextSibling;
     HEntity2D previousSibling;
 
