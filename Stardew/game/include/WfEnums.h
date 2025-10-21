@@ -7,6 +7,7 @@ enum WfSeason
     Summer,
     Autumn,
     Winter,
+    NumSeasons
 };
 
 #endif

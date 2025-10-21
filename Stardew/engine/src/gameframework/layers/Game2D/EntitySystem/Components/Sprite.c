@@ -129,6 +129,11 @@ void SpriteComp_GetBoundingBox(struct Entity2D* pEnt, struct Sprite* pSpriteComp
     };
     glm_vec2_add(pEnt->transform.position, size, br);
     glm_vec2_add(tl, pSpriteComp->transform.position, tl);
-    glm_vec2_add(tl, pSpriteComp->transform.position, br);
+    glm_vec2_add(br, pSpriteComp->transform.position, br);
+
+	outTL[0] = tl[0];
+	outTL[1] = tl[1];
+	outBR[0] = br[0];
+	outBR[1] = br[1];
 }
 

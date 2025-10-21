@@ -29,9 +29,9 @@ void StaticColliderInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLaye
     Entity2DInput(pEnt, pLayer, context);
 }
 
-void StaticColliderOnDestroy(struct Entity2D* pEnt)
+void StaticColliderOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
-    Entity2DOnDestroy(pEnt);
+    Entity2DOnDestroy(pEnt, pLayer);
 }
 
 void StaticCollider2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR)

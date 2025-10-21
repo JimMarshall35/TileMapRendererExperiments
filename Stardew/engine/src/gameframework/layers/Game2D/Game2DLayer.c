@@ -13,6 +13,7 @@
 #include "XMLUIGameLayer.h"
 #include "FreeLookCameraMode.h"
 #include "EntityQuadTree.h"
+#include "FloatingPointLib.h"
 
 int gTilesRendered = 0;
 
@@ -43,6 +44,7 @@ static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* p
 	pData->hEntitiesQuadTree = GetEntity2DQuadTree(&initArgs);
 
 	u32 numLayers = 0;
+	u32 objectLayer = 0;
 	BS_DeSerializeU32(&numLayers, pBS);
 	pTileMap->layers = VectorResize(pTileMap->layers, numLayers);
 	for (int i = 0; i < numLayers; i++)
@@ -84,7 +86,7 @@ static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* p
 		case 2: // object layer
 			layer.bIsObjectLayer = true;
 			BS_DeSerializeU32((u32*)&layer.drawOrder, pBS);
-			Et2D_SerializeEntities(&pData->entities, pBS, pData);
+			Et2D_SerializeEntities(&pData->entities, pBS, pData, objectLayer++);
 			break;
 		default:
 			EASSERT(false);
@@ -279,6 +281,29 @@ static void OutputTilemapLayerVertices(
 	*outInds = outInd;
 }
 
+/* Hack */
+static struct Entity2DCollection* gEntityCollectionCurrent = NULL;
+
+static int EntityDrawOrderCompare(const void* a, const void* b)
+{
+	HEntity2D entA = *((HEntity2D*)a);
+	HEntity2D entB = *((HEntity2D*)b);
+	struct Entity2D* pEntA = Et2D_GetEntity(gEntityCollectionCurrent, entA);
+	struct Entity2D* pEntB = Et2D_GetEntity(gEntityCollectionCurrent, entB);
+
+	float aval = pEntA->getSortPos(pEntA);
+	float bval =  pEntB->getSortPos(pEntB);
+	if(CompareFloat(aval, bval))
+	{
+		return 0;
+	}
+	if(aval < bval)
+	{
+		return -1; /* place first argument before second */
+	}
+	return 1;      /* place second argument before first */
+}
+
 static void OutputVertices(
 	struct TileMap* pData, 
 	struct Transform2D* pCam, 
@@ -296,12 +321,17 @@ static void OutputVertices(
 		sFoundEnts = NEW_VECTOR(HEntity2D);
 	}
 	sFoundEnts = VectorClear(sFoundEnts);
-	
+	int foundEnts = VectorSize(sFoundEnts);
+
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
 	/* query the quadtree for entities here */
 	sFoundEnts = Entity2DQuadTree_Query(pLayerData->hEntitiesQuadTree, tl, br, sFoundEnts);
+	/* sort the entities */
+	gEntityCollectionCurrent = &pLayerData->entities;
+	foundEnts = VectorSize(sFoundEnts);
 
+	qsort(sFoundEnts, foundEnts, sizeof(HEntity2D), &EntityDrawOrderCompare);
 	gTilesRendered = 0;
 	VertIndexT nextIndexVal = 0;
 	int onObjectLayer = 0;
@@ -312,10 +342,10 @@ static void OutputVertices(
 			/* from the entities we've found from the quad tree, draw the ones that are in this layer */
 			for(int j=0; j<VectorSize(sFoundEnts); j++)
 			{
-				struct Entity2D* pEnt = Et2D_GetEntity(sFoundEnts[j], &pLayerData->entities);
+				struct Entity2D* pEnt = Et2D_GetEntity(&pLayerData->entities, sFoundEnts[j]);
 				if(onObjectLayer == pEnt->inDrawLayer)
 				{
-					pEnt->draw(pEnt, pLayer, &pEnt->transform, outVerts, outIndices, &nextIndexVal);
+					pEnt->draw(pEnt, pLayer, &pEnt->transform, &verts, &inds, &nextIndexVal);
 				}
 			}
 			onObjectLayer++;

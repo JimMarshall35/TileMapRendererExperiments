@@ -8,42 +8,41 @@
 #include "Physics2D.h"
 #include "Random.h"
 #include "WfEnums.h"
-
+#include "Atlas.h"
+#include <string.h>
+#include "Components.h"
+#include "WfTree.h"
 
 struct WfWoodedAreaData
 {
     float conif_percent, decid_percent, density, widthPx, heightPx;
 };
 
+
+
 static OBJECT_POOL(struct WfWoodedAreaData) gDataObjectPool;
 
 void WfWoodedAreaInit()
 {
     gDataObjectPool = NEW_OBJECT_POOL(struct WfWoodedAreaData, 8);
+    WfTreeInit();
 }
 
-enum WfTreeType
-{
-    Coniferous,
-    Deciduous
-};
 
-struct WfTreeDef
-{
-    enum WfSeason season;
-    enum WfTreeType type;
-    int subtype;
-};
-
-static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, struct WfTreeDef* def)
+static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pCollection)
 {
     float xPos = Ra_FloatBetween(xMin, xMax);
     float yPos = Ra_FloatBetween(yMin, yMax);
+    WfAddTreeBasedAt(xPos, yPos, def, spritesPerSeason, pCollection);
 }
 
 void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     struct GameLayer2DData* pLayerData = pLayer->userData;
+    struct WfTreeSprites spritesPerSeason[NumSeasons];
+    WfGetTreeSprites(spritesPerSeason, pLayerData->hAtlas);
+
+
     /* spawn trees here */
     float pixelsPerMeter = Ph_GetPixelsPerMeter(pLayerData->hPhysicsWorld);
     struct WfWoodedAreaData* pData = &gDataObjectPool[pEnt->user.hData];
@@ -57,21 +56,24 @@ void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* 
     for(int i = 0; i < numTrees; i++)
     {
         treeDef.season = Summer;
-        treeDef.type = Coniferous;
+        treeDef.type = Ra_RandZeroTo(2);
         treeDef.subtype = 0;
         AddTreeAtRandomPos(
             pEnt->transform.position[0], 
             pEnt->transform.position[0] + pData->widthPx, 
             pEnt->transform.position[1], 
             pEnt->transform.position[1] + pData->heightPx,
-            &treeDef);
+            &treeDef,
+            spritesPerSeason,
+            &pLayerData->entities
+        );
     }
 
     /* destroy the entity */
-    Et2D_DestroyEntity(&pLayerData->entities, pEnt->thisEntity);
+    Et2D_DestroyEntity(pLayer, &pLayerData->entities, pEnt->thisEntity);
 }
 
-void WfWoodedAreaEntityOnDestroy(struct Entity2D* pEnt)
+void WfWoodedAreaEntityOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
 {
     FreeObjectPoolIndex(gDataObjectPool, pEnt->user.hData);
 }
@@ -108,5 +110,5 @@ void WfDeSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D*
 
 void WfSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
 {
-
+    EASSERT(false);
 }

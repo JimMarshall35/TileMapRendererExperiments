@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Outside Objects.json",
+    "activeFile": "Farm.json",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -269,11 +269,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 0.75,
+            "scale": 0.1746,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1600,
-                "y": 1599.3333333333333
+                "x": 1597.9381443298969,
+                "y": 1600.8018327605955
             }
         },
         "Farm.tmj": {
@@ -359,10 +359,10 @@
     "project": "Engine.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "Farm.json",
-        "House.json",
-        "RoadToTown.json",
         "Outside Objects.json",
+        "RoadToTown.json",
+        "House.json",
+        "Farm.json",
         "Farm.tmj",
         "Interior 2.json",
         "Exterior Tiles.json",

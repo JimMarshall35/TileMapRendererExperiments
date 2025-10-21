@@ -9,6 +9,7 @@
 #include "WfEntities.h"
 #include "Physics2D.h"
 #include "WfInit.h"
+#include "Random.h"
 
 void GameInit(InputContext* pIC, DrawContext* pDC)
 {
@@ -24,6 +25,8 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
     printf("done\n");
     printf("pushing framework layer\n");
     GF_PushGameFrameworkLayer(&testLayer);*/
+    unsigned int seed = Ra_SeedFromTime();
+    printf("seed: %u\n", seed);
     WfInit();
     Ph_Init();
     InitEntity2DQuadtreeSystem();

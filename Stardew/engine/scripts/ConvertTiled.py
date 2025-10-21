@@ -27,10 +27,10 @@ def do_cmd_args():
     parser.add_argument("-bmp", "--atlasBmp", type=str, default=None, help="Optional atlas debug bitmap output path")
     parser.add_argument("-iw", "--atlasIW", type=int, default=512, help="Atlas initial width.")
     parser.add_argument("-ih", "--atlasIH", type=int, default=512, help="Atlas initial height.")
-    parser.add_argument("-iqtlx", type=float, default=-999999.0)
-    parser.add_argument("-iqtly", type=float, default=-999999.0)
-    parser.add_argument("-iqbrx", type=float, default=999999.0)
-    parser.add_argument("-iqbry", type=float, default=999999.0)
+    parser.add_argument("-iqtlx", type=float, default=-200)
+    parser.add_argument("-iqtly", type=float, default=-200)
+    parser.add_argument("-iqbrx", type=float, default=10200.0)
+    parser.add_argument("-iqbry", type=float, default=10200.0)
 
     args = parser.parse_args()
     return args

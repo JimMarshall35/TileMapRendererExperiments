@@ -5,6 +5,8 @@
 #include "Components.h"
 #include <string.h>
 #include "Entity2DCollection.h"
+#include "GameFramework.h"
+#include "EntityQuadTree.h"
 
 static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
 
@@ -25,9 +27,10 @@ void Et2D_InitCollection(struct Entity2DCollection* pCollection)
 void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     Co_InitComponents(pEnt, pLayer);
+    struct GameLayer2DData* pData = pLayer->userData;
     if(pEnt->bKeepInQuadtree)
     {
-
+        pEnt->hQuadTreeRef = Entity2DQuadTree_Insert(&pData->entities, pData->hEntitiesQuadTree, pEnt->thisEntity, pLayer, 0, 6);
     }
 }
 
@@ -51,7 +54,7 @@ void Entity2DInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, Inp
     Co_InputComponents(pEnt, pLayer, context);
 }
 
-void Entity2DOnDestroy(struct Entity2D* pEnt)
+void Entity2DOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     Co_DestroyComponents(pEnt);
 }
@@ -80,11 +83,11 @@ void Entity2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pL
             }
             if(br[0] > bbbr[0])
             {
-                br[0] = bbbr[0];
+                bbbr[0] = br[0];
             }
             if(br[1] > bbbr[1])
             {
-                br[1] = bbbr[1];
+                bbbr[1] = br[1];
             }
         }
     }
@@ -128,7 +131,7 @@ void Et2D_Init(RegisterGameEntitiesFn registerGameEntities)
     }
 }
 
-void Et2D_DestroyEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt)
+void Et2D_DestroyEntity(struct GameFrameworkLayer* pLayer, struct Entity2DCollection* pCollection, HEntity2D hEnt)
 {
     struct Entity2D* pEnt = &pCollection->pEntityPool[hEnt];
 
@@ -153,7 +156,7 @@ void Et2D_DestroyEntity(struct Entity2DCollection* pCollection, HEntity2D hEnt)
         pPrev->nextSibling = pEnt->nextSibling;
     }
 
-    pEnt->onDestroy(pEnt);
+    pEnt->onDestroy(pEnt, pLayer);
     pCollection->gNumEnts--;
     FreeObjectPoolIndex(pCollection->pEntityPool, hEnt);
 }
@@ -184,7 +187,7 @@ HEntity2D Et2D_AddEntity(struct Entity2DCollection* pCollection, struct Entity2D
     return hEnt;
 }
 
-static void DeserializeEntityV1(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData)
+static void DeserializeEntityV1(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData, int objectLayer)
 {
     u32 entityType;
     BS_DeSerializeU32(&entityType, bs);
@@ -192,7 +195,7 @@ static void DeserializeEntityV1(struct Entity2DCollection* pCollection, struct B
     memset(&ent, 0, sizeof(struct Entity2D));
     ent.nextSibling = NULL_HANDLE;
     ent.previousSibling = NULL_HANDLE;
-    ent.inDrawLayer = -1;
+    ent.inDrawLayer = objectLayer;
     ent.type = entityType;
 
     Et2D_DeserializeCommon(bs, &ent);
@@ -208,17 +211,17 @@ static void DeserializeEntityV1(struct Entity2DCollection* pCollection, struct B
     Et2D_AddEntity(pCollection, &ent);
 }
 
-static void LoadEntitiesV1(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection)
+static void LoadEntitiesV1(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection, int objectLayer)
 {
     u32 numEntities = 0;
     BS_DeSerializeU32(&numEntities, bs);
     for(int i=0; i<numEntities; i++)
     {
-        DeserializeEntityV1(pCollection, bs, pData);
+        DeserializeEntityV1(pCollection, bs, pData, objectLayer);
     }
 }
 
-static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection)
+static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pData, struct Entity2DCollection* pCollection, int objectLayer)
 {
     EASSERT(!bs->bSaving);
     u32 version = 0;
@@ -226,7 +229,7 @@ static void LoadEntities(struct BinarySerializer* bs, struct GameLayer2DData* pD
     switch(version)
     {
     case 1:
-        LoadEntitiesV1(bs, pData, pCollection);
+        LoadEntitiesV1(bs, pData, pCollection, objectLayer);
         break;
     default:
         printf("E2D unsupported version %i\n", version);
@@ -258,7 +261,7 @@ static void SaveEntities(struct Entity2DCollection* pCollection, struct BinarySe
 }
 
 /* both serialize and deserialize */
-void Et2D_SerializeEntities(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData)
+void Et2D_SerializeEntities(struct Entity2DCollection* pCollection, struct BinarySerializer* bs, struct GameLayer2DData* pData, int objectLayer)
 {
     if(bs->bSaving)
     {
@@ -266,7 +269,7 @@ void Et2D_SerializeEntities(struct Entity2DCollection* pCollection, struct Binar
     }
     else
     {
-        LoadEntities(bs, pData, pCollection);
+        LoadEntities(bs, pData, pCollection, objectLayer);
     }
 }
 
@@ -293,13 +296,7 @@ void Et2D_DeserializeCommon(struct BinarySerializer* bs, struct Entity2D* pOutEn
         
         BS_DeSerializeU32(&version, bs);
         pOutEnt->bKeepInQuadtree = version != 0;
-        pOutEnt->init = &Entity2DOnInit;
-        pOutEnt->update = &Entity2DUpdate;
-        pOutEnt->postPhys = &Entity2DUpdatePostPhysics;
-        pOutEnt->draw = &Entity2DDraw;
-        pOutEnt->input = &Entity2DInput;
-        pOutEnt->onDestroy = &Entity2DOnDestroy;
-        pOutEnt->getBB = &Entity2DGetBoundingBox;
+        Et2D_PopulateCommonHandlers(pOutEnt);
         break;
     }
 }
@@ -336,3 +333,19 @@ void Et2D_IterateEntities(struct Entity2DCollection* pCollection, Entity2DIterat
     }
 }
 
+float Entity2DGetSortVal(struct Entity2D* pEnt)
+{
+    return pEnt->transform.position[1];
+}
+
+void Et2D_PopulateCommonHandlers(struct Entity2D* pEnt)
+{
+    pEnt->init = &Entity2DOnInit;
+    pEnt->update = &Entity2DUpdate;
+    pEnt->postPhys = &Entity2DUpdatePostPhysics;
+    pEnt->draw = &Entity2DDraw;
+    pEnt->input = &Entity2DInput;
+    pEnt->onDestroy = &Entity2DOnDestroy;
+    pEnt->getBB = &Entity2DGetBoundingBox;
+    pEnt->getSortPos = &Entity2DGetSortVal;
+}

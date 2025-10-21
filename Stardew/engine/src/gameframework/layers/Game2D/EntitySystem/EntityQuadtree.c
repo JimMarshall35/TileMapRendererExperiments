@@ -109,6 +109,7 @@ static void NewQuadTreeEntityRef(HEntity2D hEnt, struct Entity2DQuadTreeEntityRe
 {
     pRef->hNextSibling = NULL_HANDLE;
     pRef->hPrevSibling = NULL_HANDLE;
+    pRef->hParentNode = NULL_HANDLE;
     pRef->hEntity = hEnt;
 }
 
@@ -148,11 +149,12 @@ HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(struct Entity2DCollection* pC
     struct Entity2DQuadtreeNode* pNode = &gNodePool[quadTree];
     vec2 bbtl, bbbr;
     pEnt->getBB(pEnt, pLayer, bbtl, bbbr);
+    HEntity2DQuadtreeEntityRef ref = NULL_HANDLE;
     for(int i=0; i<4; i++)
     {
         vec2 quadrantTL, quadrantBR;
-        GetQuadtreeNodeQuadrant(pNode, (enum Entity2DQuadtreeQuadrant)i, bbtl, bbbr);
-        if(IsContainedWithin(quadrantTL, quadrantBR, bbtl, bbbr) && ++depth < maxDepth)
+        GetQuadtreeNodeQuadrant(pNode, (enum Entity2DQuadtreeQuadrant)i, quadrantTL, quadrantBR);
+        if(IsContainedWithin(quadrantTL, quadrantBR, bbtl, bbbr) && depth < maxDepth)
         {
             if(pNode->children[i] == NULL_HANDLE)
             {
@@ -162,29 +164,30 @@ HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(struct Entity2DCollection* pC
                 NewQuadtreeNode(quadrantTL[0], quadrantTL[1], quadrantBR[0] - quadrantTL[0], quadrantBR[1] - quadrantTL[1], pChildNode);
                 pNode->children[i] = hNode;
             }
-            Entity2DQuadTree_Insert(pCollection, pNode->children[i], hEnt, pLayer, depth, maxDepth);
+            ref = Entity2DQuadTree_Insert(pCollection, pNode->children[i], hEnt, pLayer, depth + 1, maxDepth);
+        }
+        
+    }
+    if(ref == NULL_HANDLE)
+    {
+        gEntityRefPool = GetObjectPoolIndex(gEntityRefPool, &ref);
+        struct Entity2DQuadTreeEntityRef* pRef = &gEntityRefPool[ref];
+        NewQuadTreeEntityRef(hEnt, pRef);
+        if(pNode->numEntities == 0)
+        {
+            pNode->entityListHead = ref;
+            pNode->entityListTail = ref;
         }
         else
         {
-            HEntity2DQuadtreeEntityRef hRef;
-            gEntityRefPool = GetObjectPoolIndex(gEntityRefPool, &hRef);
-            struct Entity2DQuadTreeEntityRef* pRef = &gEntityRefPool[hRef];
-            NewQuadTreeEntityRef(hEnt, pRef);
-            if(pNode->numEntities == 0)
-            {
-                pNode->entityListHead = hRef;
-                pNode->entityListTail = hRef;
-            }
-            else
-            {
-                struct Entity2DQuadTreeEntityRef* pTail = &gEntityRefPool[pNode->entityListTail];
-                pTail->hNextSibling = hRef;
-                pRef->hPrevSibling = pNode->entityListTail;
-                pNode->entityListTail = hRef;
-            }
-            pNode->numEntities++;
+            struct Entity2DQuadTreeEntityRef* pTail = &gEntityRefPool[pNode->entityListTail];
+            pTail->hNextSibling = ref;
+            pRef->hPrevSibling = pNode->entityListTail;
+            pNode->entityListTail = ref;
         }
+        pNode->numEntities++;
     }
+    return ref;
 }
 
 void Entity2DQuadTree_Remove(HEntity2DQuadtreeNode quadTree, HEntity2DQuadtreeEntityRef ent)
