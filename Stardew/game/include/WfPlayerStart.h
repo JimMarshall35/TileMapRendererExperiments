@@ -9,4 +9,6 @@ void WfDeSerializePlayerStartEntity(struct BinarySerializer* bs, struct Entity2D
 
 void WfSerializePlayerStartEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData);
 
+void WfInitPlayerStart();
+
 #endif

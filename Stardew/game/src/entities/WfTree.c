@@ -20,12 +20,42 @@ void WfTreeInit()
 
 void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
-
+    
+    struct WfTreeSprites sprites;
+    WfGetTreeSprites(&sprites, pData->hAtlas);
+    u32 version = 0;
+    BS_DeSerializeU32(&version, bs); // version
+    switch (version)
+    {
+    case 1:
+        /* code */
+        {
+            struct WfTreeEntityData entData;
+            BS_DeSerializeI32((i32*)&entData.def.season, bs);
+            BS_DeSerializeI32((i32*)&entData.def.type, bs);
+            BS_DeSerializeI32((i32*)&entData.def.subtype, bs);
+            BS_DeSerializeFloat(&entData.groundContactPoint[0], bs);
+            BS_DeSerializeFloat(&entData.groundContactPoint[1], bs);
+            // HEntity2D hTree = WfAddTreeBasedAt(entData.groundContactPoint[0], entData.groundContactPoint[1], &entData.def, &sprites, &pData->entities);
+            // struct Entity2D* pTree = Et2D_GetEntity(&pData->entities, hTree);
+            // pTree->init(pTree, pData->pLayer);
+        }
+        break;
+    
+    default:
+        break;
+    }
 }
 
 void WfSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
 {
-
+    struct WfTreeEntityData* pEntData = &gTreeDataObjectPool[pInEnt->user.hData];
+    BS_SerializeU32(1, bs); // version
+    BS_SerializeI32((i32)pEntData->def.season, bs);
+    BS_SerializeI32((i32)pEntData->def.type, bs);
+    BS_SerializeI32((i32)pEntData->def.subtype, bs);
+    BS_SerializeFloat(pEntData->groundContactPoint[0], bs);
+    BS_SerializeFloat(pEntData->groundContactPoint[1], bs);
 }
 
 static void TreeOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
@@ -40,7 +70,9 @@ static float TreeGetPreDrawSortValue(struct Entity2D* pEnt)
     return pData->groundContactPoint[1];
 }
 
-void WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pEntityCollection)
+
+
+HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pEntityCollection)
 {
     struct Entity2D ent;
     memset(&ent, 0, sizeof(struct Entity2D));
@@ -101,7 +133,7 @@ void WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSpri
     ent.onDestroy = &TreeOnDestroy;
     ent.getSortPos = &TreeGetPreDrawSortValue;
 
-    Et2D_AddEntity(pEntityCollection, &ent);
+    return Et2D_AddEntity(pEntityCollection, &ent);
 }
 
 void WfGetTreeSprites(struct WfTreeSprites* spritesPerSeason, hAtlas atlas)

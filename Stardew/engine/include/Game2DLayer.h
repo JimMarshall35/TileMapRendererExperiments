@@ -51,6 +51,7 @@ struct TileMapLayer
 	bool bIsObjectLayer;
 	enum ObjectLayer2DDrawOrder drawOrder;
 	TileIndex* Tiles;
+	u32 type;
 };
 
 struct TileMap
@@ -62,6 +63,8 @@ struct TileMap
 
 struct GameLayer2DData
 {
+	/* for convenience, a reference back to the layer */
+	struct GameFrameworkLayer* pLayer;
 	HEntity2DQuadtreeNode hEntitiesQuadTree;
 	hAtlas hAtlas;
 	struct TileMap tilemap;
@@ -108,14 +111,7 @@ struct Game2DLayerOptions
 
 	const char* atlasFilePath;
 	
-	const char* tilemapFilePath;
-	
-	/*
-		Each entity file is an array of entities.
-		Entities in all files contribute to a single population of entities in the game.
-	*/
-	const char** entitiesFilePaths;
-	int numEntityFiles;
+	const char* levelFilePath;
 	
 };
 
@@ -124,6 +120,8 @@ struct DrawContext;
 typedef struct DrawContext DrawContext;
 
 void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions, DrawContext* pDC);
+
+void Game2DLayer_SaveLevelFile(struct GameLayer2DData* pData, const char* outputFilePath);
 
 #ifdef __cplusplus
 }

@@ -47,6 +47,7 @@ extern "c" {
 	void BS_DeSerializeFloat(float* val, struct BinarySerializer* pSerializer);
 	void BS_DeSerializeDouble(double* val, struct BinarySerializer* pSerializer);
 	void BS_DeSerializeString(char** val, struct BinarySerializer* pSerializer);
+	void BS_DeSerializeStringInto(char* buf, struct BinarySerializer* pSerializer);
 	void BS_BytesRead(struct BinarySerializer* pSerializer, u32 numBytes, char* pDst);
 
 #ifdef __cplusplus

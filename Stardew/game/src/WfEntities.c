@@ -22,16 +22,7 @@
 #include "WfLog.h"
 
 /* Player */
-
-static void DeSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
-{
-
-}
-
-static void SerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
-{
-
-}
+#include "WfPlayer.h"
 
 static struct EntitySerializerPair gPlayerStartSerializer = { .serialize = &WfSerializePlayerStartEntity, .deserialize = &WfDeSerializePlayerStartEntity };
 static struct EntitySerializerPair gExitSerializer        = { .serialize = &WfSerializeExitEntity,        .deserialize = &WfDeSerializeExitEntity };
@@ -41,7 +32,7 @@ static struct EntitySerializerPair gDebrisFieldSerializer = { .serialize = &WfSe
 static struct EntitySerializerPair gTreeSerializer        = { .serialize = &WfSerializeTreeEntity, .deserialize = &WfDeSerializeTreeEntity };
 static struct EntitySerializerPair gRockSerializer        = { .serialize = &WfSerializeLogEntity,   .deserialize = &WfDeSerializeRockEntity }; 
 static struct EntitySerializerPair gLogSerializer         = { .serialize = &WfSerializeLogEntity,    .deserialize = &WfDeSerializeLogEntity };
-static struct EntitySerializerPair gPlayerSerializer      = { .serialize = &SerializePlayerEntity, .deserialize = &DeSerializePlayerEntity };
+static struct EntitySerializerPair gPlayerSerializer      = { .serialize = &WfSerializePlayerEntity, .deserialize = &WfDeSerializePlayerEntity };
 
 void WfRegisterEntityTypes()
 {

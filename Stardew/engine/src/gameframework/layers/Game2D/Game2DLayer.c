@@ -52,6 +52,7 @@ static void LoadLevelDataV1(struct TileMap* pTileMap, struct BinarySerializer* p
 		struct TileMapLayer layer;
 		u32 type = 0;
 		BS_DeSerializeU32(&type, pBS);
+		layer.type = type;
 		switch(type)
 		{
 		case 1: // tile layer
@@ -326,7 +327,7 @@ static void OutputVertices(
 	vec2 tl, br;
 	GetViewportWorldspaceTLBR(tl, br, pCam, pLayerData->windowW, pLayerData->windowH);
 	/* query the quadtree for entities here */
-	sFoundEnts = Entity2DQuadTree_Query(pLayerData->hEntitiesQuadTree, tl, br, sFoundEnts);
+	sFoundEnts = Entity2DQuadTree_Query(pLayerData->hEntitiesQuadTree, tl, br, sFoundEnts, &pLayerData->entities, pLayer);
 	/* sort the entities */
 	gEntityCollectionCurrent = &pLayerData->entities;
 	foundEnts = VectorSize(sFoundEnts);
@@ -457,11 +458,13 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	pLayer->userData = malloc(sizeof(struct GameLayer2DData));
 	memset(pLayer->userData, 0, sizeof(struct GameLayer2DData));
 	struct GameLayer2DData* pData = pLayer->userData;
+
+	pData->pLayer = pLayer;
 	pData->tilemap.layers = NEW_VECTOR(struct TileMapLayer);
 
 	EASSERT(strlen(pData->tilemapFilePath) < 128);
 	EASSERT(strlen(pData->atlasFilePath) < 128);
-	strcpy(pData->tilemapFilePath, pOptions->tilemapFilePath);
+	strcpy(pData->tilemapFilePath, pOptions->levelFilePath);
 	strcpy(pData->atlasFilePath, pOptions->atlasFilePath);
 
 	pLayer->update = &Update;
@@ -483,5 +486,55 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	if (pOptions->loadImmediatly)
 	{
 		LoadLayerAssets(pData, pDC);
+	}
+}
+
+void Game2DLayer_SaveLevelFile(struct GameLayer2DData* pData, const char* outputFilePath)
+{
+	struct BinarySerializer bs;
+	memset(&bs, 0, sizeof(struct BinarySerializer));
+	BS_CreateForSave(outputFilePath, &bs);
+	BS_SerializeU32(1, &bs);
+
+	vec2 tl, br;
+	vec3 dims;
+	glm_vec2_add(tl, dims, br);
+	Entity2DQuadTree_GetDims(pData->hEntitiesQuadTree, tl, &dims[0], &dims[1]);
+	
+	
+	/* data needed to init quadtree */
+	BS_SerializeFloat(tl[0], &bs);
+	BS_SerializeFloat(tl[1], &bs);
+	BS_SerializeFloat(br[0], &bs);
+	BS_SerializeFloat(br[1], &bs);
+
+	int numLayers = VectorSize(pData->tilemap.layers);
+	BS_SerializeU32(numLayers, &bs);
+	int onObjectLayer = 0;
+	for(int i=0; i<numLayers; i++)
+	{
+		BS_SerializeU32(pData->tilemap.layers[i].type, &bs); // type of layer
+		struct TileMapLayer* pLayer = &pData->tilemap.layers[i];
+		switch(pLayer->type)
+		{
+		case 1: // tile layer
+			BS_SerializeU32(pLayer->widthTiles, &bs);
+			BS_SerializeU32(&pLayer->heightTiles, &bs);
+			BS_SerializeU32(&pLayer->transform.position[1], &bs);
+			BS_SerializeU32(&pLayer->transform.position[1], &bs);
+			BS_SerializeU32(&pLayer->tileWidthPx, &bs);
+			BS_SerializeU32(&pLayer->tileWidthPx, &bs);
+			BS_SerializeU32(2, &bs); // no compression
+
+			// serialize the layer tiles
+			BS_SerializeBytes(pLayer->Tiles, pLayer->widthTiles * pLayer->heightTiles * sizeof(TileIndex), &bs);
+			break;
+		case 2: // object layer
+			BS_SerializeU32(pLayer->drawOrder, &bs);
+			Et2D_SerializeEntities(&pData->entities, &bs, pData, onObjectLayer++);
+			break;
+		default:
+			EASSERT(false);
+		}
 	}
 }

@@ -27,7 +27,9 @@ HEntity2DQuadtreeEntityRef Entity2DQuadTree_Insert(struct Entity2DCollection* pC
 
 void Entity2DQuadTree_Remove(HEntity2DQuadtreeNode quadTree, HEntity2DQuadtreeEntityRef ent);
 
-VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 regionTL, vec2 regionBR, VECTOR(HEntity2D) outEntities);
+VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 regionTL, vec2 regionBR, VECTOR(HEntity2D) outEntities, struct Entity2DCollection* pCollection, struct GameFrameworkLayer* pLayer);
+
+void Entity2DQuadTree_GetDims(HEntity2DQuadtreeNode quadTree, vec2 tl, float* w, float* h);
 
 #endif
 

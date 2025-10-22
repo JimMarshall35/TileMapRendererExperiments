@@ -36,7 +36,7 @@ void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutE
 
 void WfSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData);
 
-void WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pEntityCollection);
+HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pEntityCollection);
 
 void WfTreeInit();
 

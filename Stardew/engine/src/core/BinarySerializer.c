@@ -222,6 +222,17 @@ void BS_DeSerializeDouble(double* val, struct BinarySerializer* pSerializer)
 	pSerializer->pReadPtr += sizeof(float);
 }
 
+void BS_DeSerializeStringInto(char* buf, struct BinarySerializer* pSerializer)
+{
+	u32 len = 0;
+	BS_DeSerializeU32(&len, pSerializer);
+	for(int i=0; i<len; i++)
+	{
+		BS_DeSerializeI8(buf++, pSerializer);
+	}
+	*buf = '\0';
+}
+
 void BS_DeSerializeString(char** val, struct BinarySerializer* pSerializer)
 {
 	u32 len = 0;
@@ -231,6 +242,7 @@ void BS_DeSerializeString(char** val, struct BinarySerializer* pSerializer)
 	(*val)[len] = '\0';
 	pSerializer->pReadPtr += len;
 }
+
 
 void BS_BytesRead(struct BinarySerializer* pSerializer, u32 numBytes, char* pDst)
 {

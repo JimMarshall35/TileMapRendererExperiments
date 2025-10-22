@@ -221,7 +221,7 @@ void Entity2DQuadTree_Remove(HEntity2DQuadtreeNode quadTree, HEntity2DQuadtreeEn
     FreeObjectPoolIndex(gEntityRefPool, ent);
 }
 
-VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 regionTL, vec2 regionBR, VECTOR(HEntity2D) outEntities)
+VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 regionTL, vec2 regionBR, VECTOR(HEntity2D) outEntities, struct Entity2DCollection* pCollection, struct GameFrameworkLayer* pLayer)
 {
     /* Implement me next! */
     struct Entity2DQuadtreeNode* pNode = &gNodePool[quadTree];
@@ -235,7 +235,13 @@ VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 re
         while(ref != NULL_HANDLE)
         {
             struct Entity2DQuadTreeEntityRef* pRef = &gEntityRefPool[ref];
-            outEntities = VectorPush(outEntities, &pRef->hEntity);
+            struct Entity2D* pEnt = Et2D_GetEntity(pCollection, pRef->hEntity);
+            vec2 etl, ebr;
+            pEnt->getBB(pEnt, pLayer, etl, ebr);
+            if(Ge_AABBIntersect(regionTL, regionBR, etl, ebr))
+            {
+                outEntities = VectorPush(outEntities, &pRef->hEntity);
+            }
             ref = pRef->hNextSibling;
         }
         for(int i=0; i<4; i++)
@@ -243,7 +249,7 @@ VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 re
             HEntity2DQuadtreeNode child = pNode->children[i];
             if(child != NULL_HANDLE)
             {
-                outEntities = Entity2DQuadTree_Query(child, regionTL, regionBR, outEntities);
+                outEntities = Entity2DQuadTree_Query(child, regionTL, regionBR, outEntities, pCollection, pLayer);
             }
         }
     }
@@ -251,3 +257,10 @@ VECTOR(HEntity2D) Entity2DQuadTree_Query(HEntity2DQuadtreeNode quadTree, vec2 re
     return outEntities;
 }
 
+void Entity2DQuadTree_GetDims(HEntity2DQuadtreeNode quadTree, vec2 tl, float* w, float* h)
+{
+    tl[0] = gNodePool[quadTree].tl[0];
+    tl[1] = gNodePool[quadTree].tl[1];
+    *w = gNodePool[quadTree].w;
+    *h = gNodePool[quadTree].h;
+}

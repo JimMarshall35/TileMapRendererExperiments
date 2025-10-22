@@ -11,6 +11,10 @@ print(os.path.abspath("../Stardew/engine/scripts"))
 sys.path.insert(1, os.path.abspath("../Stardew/engine/scripts"))  # add Folder_2 path to search list
 from ConvertTiled import main, register_entity_serializer, get_tiled_object_custom_prop
 
+
+
+########################################### wooded area
+
 def serialize_WoodedArea(file, obj):
     file.write(struct.pack("I", 1)) # version
     file.write(struct.pack("f", get_tiled_object_custom_prop(obj, "ConiferousPercentage")["value"]))
@@ -22,6 +26,25 @@ def serialize_WoodedArea(file, obj):
 def get_type_WoodedArea(obj):
     return 6
 
+########################################### player start
+
+def serialize_string(file, string):
+    file.write(struct.pack("I", len(string)))
+    for c in string:
+        file.write(struct.pack("c", c))
+
+def serialize_PlayerStart(file, obj):
+    file.write(struct.pack("I", 1)) # version
+    stringVal = get_tiled_object_custom_prop(obj, "from")["value"]
+    serialize_string(file, stringVal)
+    pass
+
+def get_type_PlayerStart(obj):
+    return 4
+
+########################################### registration
+
 register_entity_serializer("WoodedArea", serialize_WoodedArea, get_type_WoodedArea, False)
+register_entity_serializer("PlayerStart", serialize_PlayerStart, get_type_PlayerStart, False)
 
 main()
