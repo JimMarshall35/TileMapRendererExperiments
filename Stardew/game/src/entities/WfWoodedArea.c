@@ -29,18 +29,18 @@ void WfWoodedAreaInit()
 }
 
 
-static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pCollection)
+static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, struct WfTreeDef* def, struct GameLayer2DData* pLayerData)
 {
     float xPos = Ra_FloatBetween(xMin, xMax);
     float yPos = Ra_FloatBetween(yMin, yMax);
-    WfAddTreeBasedAt(xPos, yPos, def, spritesPerSeason, pCollection);
+    WfAddTreeBasedAt(xPos, yPos, def, pLayerData);
 }
 
 void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     struct GameLayer2DData* pLayerData = pLayer->userData;
-    struct WfTreeSprites spritesPerSeason[NumSeasons];
-    WfGetTreeSprites(spritesPerSeason, pLayerData->hAtlas);
+    //struct WfTreeSprites spritesPerSeason[NumSeasons];
+    //WfGetTreeSprites(spritesPerSeason, pLayerData->hAtlas);
 
 
     /* spawn trees here */
@@ -64,8 +64,7 @@ void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* 
             pEnt->transform.position[1], 
             pEnt->transform.position[1] + pData->heightPx,
             &treeDef,
-            spritesPerSeason,
-            &pLayerData->entities
+            pLayerData
         );
     }
 

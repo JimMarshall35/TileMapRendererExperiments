@@ -10,6 +10,10 @@ add_executable( WarFarmer
     src/entities/WfTree.c
     src/entities/WfWoodedArea.c
     src/WfInit.c
+    src/WfGame.c
+    src/WfGameLayerData.c
+    src/WfSprites.c
+
 )
 
 target_include_directories(WarFarmer PRIVATE include)

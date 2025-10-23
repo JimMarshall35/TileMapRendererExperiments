@@ -19,6 +19,10 @@ typedef struct InputMapping InputMapping;
 
 struct GameFrameworkEventListener;
 
+struct GameLayer2DData;
+
+typedef void (*PreFirstInitFn)(struct GameLayer2DData* pGameLayerData);
+
 // the real type of this should be hSprite ie u32 but i want to save memory so u16 it is - that 
 // should be enough for anyone - just store the tiles in the first 16 bits worth of indexes
 
@@ -65,9 +69,17 @@ struct GameLayer2DData
 {
 	/* for convenience, a reference back to the layer */
 	struct GameFrameworkLayer* pLayer;
+
+	/* The top node of a quad tree that holds references to static sprites for culling */
 	HEntity2DQuadtreeNode hEntitiesQuadTree;
+
+	/* handle to atlas containing sprite data */
 	hAtlas hAtlas;
+
+	/* tilemap comprised of a list of tilemap layers */
 	struct TileMap tilemap;
+
+	/* mostly pointless */
 	bool bLoaded;
 
 	/*
@@ -77,37 +89,80 @@ struct GameLayer2DData
 	*/
 	bool bFreeLookMode;
 
+	/* the one and only camera */
 	struct Transform2D camera;
 
+	/*
+		controls for free look mode
+	*/
 	struct FreeLookCameraModeControls freeLookCtrls;
 
+	/*
+		buffers of vertices and indices populated each frame
+	*/
 	VECTOR(struct Worldspace2DVert) pWorldspaceVertices;
 	VECTOR(VertIndexT) pWorldspaceIndices;
 	H2DWorldspaceVertexBuffer vertexBuffer;
 
+	/*
+		Path of loaded atlas file
+	*/
 	char atlasFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
+	
+	/*
+		path of loaded level file
+	*/
 	char tilemapFilePath[MAX_GAME_LAYER_ASSET_FILE_PATH_LEN];
 
+	/*
+		flag for whether the debug overlay is pushed on top of the game
+	*/
 	bool bDebugLayerAttatched;
+
+	/*
+		A message to display on the screen when the debug overlay is on top of the game2dlayer
+	*/
 	char debugMsg[256];
+
+	/*
+		Listens for the debug overlay game framework layer being pushed
+	*/
 	struct GameFrameworkEventListener* pDebugListener;
 
+	/*
+		Window width
+	*/
 	int windowW;
+
+	/*
+		Window height
+	*/
 	int windowH;
 
+	/*
+		Physics world handle
+	*/
 	HPhysicsWorld hPhysicsWorld;
 
+	/*
+		Entities collection
+	*/
 	struct Entity2DCollection entities;
+
+	/*
+		Game specifi data
+	*/
+	void* pUserData;
+
+	/* 
+		a callback called when the layer is pushed, and the level and all entities are loaded, but have not had their init methods called yet. 
+		An opportunity for your game to load sprite handles from the atlas that the entities will use in their init methods.
+	*/
+	PreFirstInitFn preFirstInitCallback;
 };
 
 struct Game2DLayerOptions
 {
-	/* 
-		if true, the data for the layer will load immediately,
-		as soon as Game2DLayer_Get is called, if false it will
-		load when the layer is pushed.
-	*/
-	bool loadImmediatly;
 
 	const char* atlasFilePath;
 	
@@ -122,6 +177,10 @@ typedef struct DrawContext DrawContext;
 void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOptions* pOptions, DrawContext* pDC);
 
 void Game2DLayer_SaveLevelFile(struct GameLayer2DData* pData, const char* outputFilePath);
+
+void GameLayer2D_OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext);
+
+void Game2DLayer_OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext);
 
 #ifdef __cplusplus
 }

@@ -4,6 +4,7 @@
 #include "Game2DLayer.h"
 #include "Components.h"
 #include "Atlas.h"
+#include "WfGameLayerData.h"
 
 struct WfTreeEntityData
 {
@@ -21,8 +22,8 @@ void WfTreeInit()
 void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
     
-    struct WfTreeSprites sprites;
-    WfGetTreeSprites(&sprites, pData->hAtlas);
+    // struct WfTreeSprites sprites;
+    // WfGetTreeSprites(&sprites, pData->hAtlas);
     u32 version = 0;
     BS_DeSerializeU32(&version, bs); // version
     switch (version)
@@ -72,8 +73,11 @@ static float TreeGetPreDrawSortValue(struct Entity2D* pEnt)
 
 
 
-HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTreeSprites* spritesPerSeason, struct Entity2DCollection* pEntityCollection)
+HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct GameLayer2DData* pGameLayerData)
 {
+    struct WfSprites* pSprites = &((struct WfGameLayerData*)pGameLayerData->pUserData)->sprites;
+
+
     struct Entity2D ent;
     memset(&ent, 0, sizeof(struct Entity2D));
     const float trunkOffsetPx = 64.0f; /* Y offset from the top of the tree top sprite to the top of the trunk sprite */
@@ -92,7 +96,8 @@ HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTre
 
     struct Component2D* pComponent1 = &ent.components[ent.numComponents++];
     struct Component2D* pComponent2 = &ent.components[ent.numComponents++];
-    struct WfTreeSprites* pFoundSeason = &spritesPerSeason[def->season];
+    
+    struct WfTreeSprites* pFoundSeason = &pSprites->treeSpritesPerSeason[def->season];
     hSprite topSprite = NULL_HANDLE;
     hSprite trunkSprite = NULL_HANDLE;
     switch (def->type)
@@ -133,38 +138,6 @@ HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct WfTre
     ent.onDestroy = &TreeOnDestroy;
     ent.getSortPos = &TreeGetPreDrawSortValue;
 
-    return Et2D_AddEntity(pEntityCollection, &ent);
+    return Et2D_AddEntity(&pGameLayerData->entities, &ent);
 }
 
-void WfGetTreeSprites(struct WfTreeSprites* spritesPerSeason, hAtlas atlas)
-{
-    
-    spritesPerSeason[Spring].coniferousTop1 = At_FindSprite("conif_tree_sum_top_1", atlas);
-    spritesPerSeason[Spring].coniferousTop2 = At_FindSprite("conif_tree_sum_top_2", atlas);
-    spritesPerSeason[Spring].deciduousTop1 = At_FindSprite("decid_tree_sum_top_1", atlas);
-    spritesPerSeason[Spring].deciduousTop2 = At_FindSprite("decid_tree_sum_top_2", atlas);
-    spritesPerSeason[Spring].trunk1 = At_FindSprite("tree_trunk_sum_1", atlas);
-    spritesPerSeason[Spring].trunk2 = At_FindSprite("tree_trunk_sum_2", atlas);
-
-    spritesPerSeason[Summer].coniferousTop1 = At_FindSprite("conif_tree_sum_top_1", atlas);
-    spritesPerSeason[Summer].coniferousTop2 = At_FindSprite("conif_tree_sum_top_2", atlas);
-    spritesPerSeason[Summer].deciduousTop1 = At_FindSprite("decid_tree_sum_top_1", atlas);
-    spritesPerSeason[Summer].deciduousTop2 = At_FindSprite("decid_tree_sum_top_2", atlas);
-    spritesPerSeason[Summer].trunk1 = At_FindSprite("tree_trunk_sum_1", atlas);
-    spritesPerSeason[Summer].trunk2 = At_FindSprite("tree_trunk_sum_2", atlas);
-
-    spritesPerSeason[Autumn].coniferousTop1 = At_FindSprite("conif_tree_aut_top_1", atlas);
-    spritesPerSeason[Autumn].coniferousTop2 = At_FindSprite("conif_tree_aut_top_2", atlas);
-    spritesPerSeason[Autumn].deciduousTop1 = At_FindSprite("decid_tree_aut_top_1", atlas);
-    spritesPerSeason[Autumn].deciduousTop2 = At_FindSprite("decid_tree_aut_top_2", atlas);
-    spritesPerSeason[Autumn].trunk1 = At_FindSprite("tree_trunk_sum_1", atlas);
-    spritesPerSeason[Autumn].trunk2 = At_FindSprite("tree_trunk_sum_2", atlas);
-
-    spritesPerSeason[Autumn].coniferousTop1 = At_FindSprite("conif_tree_wint_top_1", atlas);
-    spritesPerSeason[Autumn].coniferousTop2 = At_FindSprite("conif_tree_wint_top_2", atlas);
-    spritesPerSeason[Autumn].deciduousTop1 = At_FindSprite("decid_tree_wint_top_1", atlas);
-    spritesPerSeason[Autumn].deciduousTop2 = At_FindSprite("decid_tree_wint_top_2", atlas);
-    spritesPerSeason[Autumn].trunk1 = At_FindSprite("tree_trunk_sum_1", atlas);
-    spritesPerSeason[Autumn].trunk2 = At_FindSprite("tree_trunk_sum_2", atlas);
-
-}

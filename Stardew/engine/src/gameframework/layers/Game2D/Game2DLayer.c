@@ -421,7 +421,7 @@ static void OnDebugLayerPushed(void* pUserData, void* pEventData)
 	pData->bDebugLayerAttatched = true;
 }
 
-static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
+void GameLayer2D_OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
 	Et2D_InitCollection(&pData->entities);
@@ -432,12 +432,14 @@ static void OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, 
 	{
 		LoadLayerAssets(pData, drawContext);
 	}
+	if(pData->preFirstInitCallback)
+		pData->preFirstInitCallback(pData);
 	Et2D_IterateEntities(&pData->entities, &InitEntities, pLayer);
 	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
 	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
 
-static void OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
+void Game2DLayer_OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
 	EASSERT(pData->pDebugListener);
@@ -470,7 +472,8 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 	pLayer->update = &Update;
 	pLayer->draw = &Draw;
 	pLayer->input = &Input;
-	pLayer->onPush = &OnPush;
+	pLayer->onPush = &GameLayer2D_OnPush;
+	pLayer->onPop = &Game2DLayer_OnPop;
 	pLayer->onWindowDimsChanged = &OnWindowDimsChange;
 
 	pData->camera.scale[0] = 1;
@@ -482,11 +485,6 @@ void Game2DLayer_Get(struct GameFrameworkLayer* pLayer, struct Game2DLayerOption
 
 	pData->windowH = pDC->screenHeight;
 	pData->windowW = pDC->screenWidth;
-
-	if (pOptions->loadImmediatly)
-	{
-		LoadLayerAssets(pData, pDC);
-	}
 }
 
 void Game2DLayer_SaveLevelFile(struct GameLayer2DData* pData, const char* outputFilePath)
