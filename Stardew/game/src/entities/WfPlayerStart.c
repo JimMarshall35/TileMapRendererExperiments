@@ -20,6 +20,7 @@ void WfInitPlayerStart()
 void WfPlayerStartEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     Entity2DOnInit(pEnt, pLayer);
+    
 }
 
 void WfPlayerStartEntityOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
@@ -32,6 +33,8 @@ void WfDeSerializePlayerStartEntityV1(struct BinarySerializer* bs, struct Entity
 {
     gPlayerStartDataPool = GetObjectPoolIndex(gPlayerStartDataPool, &pOutEnt->user.hData);
     BS_DeSerializeStringInto(gPlayerStartDataPool[pOutEnt->user.hData].from, bs);
+    HGeneric hPlayer = pOutEnt->user.hData;
+    pOutEnt->init = &WfPlayerStartEntityOnInit;
 }
 
 void WfDeSerializePlayerStartEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)

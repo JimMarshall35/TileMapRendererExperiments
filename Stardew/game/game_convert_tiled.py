@@ -29,9 +29,11 @@ def get_type_WoodedArea(obj):
 ########################################### player start
 
 def serialize_string(file, string):
+    print(f"SERIALIZING STRING {string}")
     file.write(struct.pack("I", len(string)))
     for c in string:
-        file.write(struct.pack("c", c))
+        print(c.encode())
+        file.write(struct.pack("c", c.encode()))
 
 def serialize_PlayerStart(file, obj):
     file.write(struct.pack("I", 1)) # version

@@ -13,7 +13,7 @@ add_executable( WarFarmer
     src/WfGame.c
     src/WfGameLayerData.c
     src/WfSprites.c
-
+    src/WfWorld.c
 )
 
 target_include_directories(WarFarmer PRIVATE include)

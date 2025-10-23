@@ -21,9 +21,6 @@ void WfTreeInit()
 
 void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
-    
-    // struct WfTreeSprites sprites;
-    // WfGetTreeSprites(&sprites, pData->hAtlas);
     u32 version = 0;
     BS_DeSerializeU32(&version, bs); // version
     switch (version)
