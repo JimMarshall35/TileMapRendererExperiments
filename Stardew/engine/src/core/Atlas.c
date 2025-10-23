@@ -17,6 +17,7 @@
 
 #include "BinarySerializer.h"
 #include "BitField2D.h"
+#include "StringKeyHashMap.h"
 
 FT_Library  gFTLib;
 static int gSpriteId = 1;
@@ -38,6 +39,12 @@ struct AtlasFont
 	float fSizePts;
 };
 
+struct AtlasAnimation
+{
+	VECTOR(hSprite) frames;
+	float fps;
+};
+
 typedef struct
 {
 	bool bActive;
@@ -49,6 +56,7 @@ typedef struct
 	VECTOR(struct AtlasFont) fonts;
 	int tilesetIndexBegin;  // inclusive
 	int tilesetIndexEnd;    // exclusive
+	struct HashMap animations; /* holds struct AtlasAnimation objects  */
 }Atlas;
 
 static VECTOR(Atlas) gAtlases = NULL;
@@ -111,6 +119,7 @@ void At_BeginAtlas()
 	atlas->sprites = NEW_VECTOR(AtlasSprite);
 	atlas->fonts = NEW_VECTOR(struct AtlasFont);
 	atlas->texture = NULL_HANDLE;
+	HashmapInit(&atlas->animations, 64, sizeof(struct AtlasAnimation));
 	atlas->tilesetIndexBegin = -1;
 	atlas->tilesetIndexEnd = -1;
 }
@@ -949,6 +958,18 @@ void At_DestroyAtlas(hAtlas atlas, struct DrawContext* pDC)
 
 	DestoryVector(gAtlases[atlas].sprites);
 	DestoryVector(gAtlases[atlas].fonts);
+
+	struct HashmapKeyIterator itr = GetKeyIterator(&gAtlases[atlas].animations);
+	char* key = NextHashmapKey(&itr);
+	while(key)
+	{
+		struct AtlasAnimation* pAnim = HashmapSearch(&gAtlases[atlas].animations, key);
+		DestoryVector(pAnim->frames);
+		key = NextHashmapKey(&itr);
+	}
+
+	HashmapDeInit(&gAtlases[atlas].animations);
+
 	free(gAtlases[atlas].atlasBytes);
 }
 
@@ -985,7 +1006,8 @@ hTexture At_GetAtlasTexture(hAtlas atlas)
 	return pAtlas->texture;
 }
 
-static void LoadAtlasSprite(xmlNode* pChild, int onChild)
+
+static hSprite LoadAtlasSprite(xmlNode* pChild, int onChild)
 {
 	bool bNameset = false;
 	bool bPathSet = false;
@@ -1002,6 +1024,7 @@ static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 	xmlChar* spritePath = NULL;
 	xmlChar* spriteName = NULL;
 	xmlChar* attribute = NULL;
+	hSprite rVal = NULL_HANDLE;
 	if (attribute = xmlGetProp(pChild, "source"))
 	{
 		spritePath = attribute;
@@ -1069,7 +1092,7 @@ static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 	if (bAllSet)
 	{
 		printf("adding sprite %s\n", spritePath);
-		At_AddSprite(spritePath, left, top, width, height, spriteName);
+		rVal = At_AddSprite(spritePath, left, top, width, height, spriteName);
 		EASSERT(spritePath);
 		EASSERT(spriteName);
 		xmlFree(spritePath);
@@ -1077,7 +1100,36 @@ static void LoadAtlasSprite(xmlNode* pChild, int onChild)
 
 		printf("done\n");
 	}
+	return rVal;
 }
+
+static void LoadAnimationFrames(xmlNode* child0, int* pOnChild)
+{
+	Atlas* pAtlas = GetCurrentAtlas();
+	struct AtlasAnimation anim;
+	anim.frames = NEW_VECTOR(hSprite);
+	xmlChar* attribute = NULL;
+
+	for (xmlNode* pChild = child0->children; pChild; pChild = pChild->next)
+	{
+		if (strcmp(pChild->name, "sprite") == 0)
+		{
+			hSprite hSprite = LoadAtlasSprite(pChild, *pOnChild);
+			(*pOnChild)++;
+			anim.frames = VectorPush(anim.frames, &hSprite);
+		}
+	}
+	if (attribute = xmlGetProp(child0, "fps"))
+	{
+		anim.fps = atof(attribute);
+	}
+	if (attribute = xmlGetProp(child0, "name"))
+	{
+		HashmapInsert(&pAtlas->animations, attribute, &anim);
+	}
+
+}
+
 
 static void LoadAtlasFont(xmlNode* pChild)
 {
@@ -1202,12 +1254,17 @@ hAtlas At_LoadAtlasEx(xmlNode* child0, DrawContext* pDC, struct EndAtlasOptions*
 		else if (strcmp(pChild->name, "sprite") == 0)
 		{
 			LoadAtlasSprite(pChild, onChild);
+			onChild++;
 		}
 		else if (strcmp(pChild->name, "font") == 0)
 		{
 			LoadAtlasFont(pChild);
+			onChild++;
 		}
-		onChild++;
+		else if(strcmp(pChild->name, "animation-frames") == 0)
+		{
+			LoadAnimationFrames(pChild, &onChild);
+		}
 	}
 	return At_EndAtlasEx(pDC, pOptions);
 }
@@ -1266,7 +1323,7 @@ static void DeserializeAtlasSpriteV1(AtlasSprite* pSprite, struct BinarySerializ
 	BS_DeSerializeI32(&pSprite->id, pSerializer);
 }
 
-static DeserializeAtlasFontV1(struct AtlasFont* pFont, struct BinarySerializer* pSerializer)
+static void DeserializeAtlasFontV1(struct AtlasFont* pFont, struct BinarySerializer* pSerializer)
 {
 	u32 size = 0;
 	BS_DeSerializeU32(&size, pSerializer);
@@ -1282,6 +1339,66 @@ static DeserializeAtlasFontV1(struct AtlasFont* pFont, struct BinarySerializer* 
 	BS_DeSerializeFloat(&pFont->fSizePts, pSerializer);
 }
 
+
+static void SerializeAnimations(Atlas* pAtlas, struct BinarySerializer* pSerializer)
+{
+	BS_SerializeU32(1, pSerializer); // version
+	BS_SerializeU32(pAtlas->animations.size, pSerializer);
+	struct HashmapKeyIterator itr = GetKeyIterator(&pAtlas->animations);
+	char* key = NextHashmapKey(&itr);
+	while(key)
+	{
+		BS_SerializeString(key, pSerializer);
+		struct AtlasAnimation* pAnim = HashmapSearch(&pAtlas->animations, key);
+		BS_SerializeFloat(pAnim->fps, pSerializer);
+		BS_SerializeU32(VectorSize(pAnim->frames), pSerializer);
+		for(int i=0; i<VectorSize(pAnim->frames); i++)
+		{
+			BS_SerializeI32(pAnim->frames[i], pSerializer);
+		}
+		key = NextHashmapKey(&itr);
+	}
+}
+
+static void DeserializeAnimationsV1(Atlas* pAtlas, struct BinarySerializer* pSerializer)
+{
+	u32 version = 0;
+	BS_DeSerializeU32(&version, pSerializer);
+	switch (version)
+	{
+	case 1:
+		/* code */
+		{
+			u32 numAnims = 0;
+			BS_DeSerializeU32(&numAnims, pSerializer);
+			for(int i=0; i<numAnims; i++)
+			{
+				char animNameBuf[256];
+				BS_DeSerializeStringInto(&animNameBuf[0], pSerializer);
+				struct AtlasAnimation newAnim;
+				BS_DeSerializeFloat(&newAnim.fps, pSerializer);
+				u32 numFrames = 0;
+				BS_DeSerializeU32(&numFrames, pSerializer);
+				newAnim.frames = NEW_VECTOR(hSprite);
+				newAnim.frames = VectorResize(newAnim.frames, numFrames);
+				newAnim.frames = VectorClear(newAnim.frames);
+				for(int j=0; j<numFrames; j++)
+				{
+					hSprite hs;
+					BS_DeSerializeI32(&hs, pSerializer);
+					newAnim.frames = VectorPush(newAnim.frames, &hs);
+				}
+				HashmapInsert(&pAtlas->animations, animNameBuf, &newAnim);
+			}
+		}
+		break;
+	
+	default:
+		break;
+	}
+}
+
+
 static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct DrawContext* pDC)
 {
 	EASSERT(!pSerializer->bSaving);
@@ -1294,6 +1411,7 @@ static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct Dr
 	pAtlas->fonts = NEW_VECTOR(struct AtlasFont);
 	pAtlas->texture = NULL_HANDLE;
 	pAtlas->bActive = true;
+	HashmapInit(&pAtlas->animations, 64, sizeof(struct AtlasAnimation));
 
 	// width and height
 	BS_DeSerializeI32(&pAtlas->atlasHeight, pSerializer);
@@ -1325,6 +1443,8 @@ static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct Dr
 		pAtlas->fonts = VectorPush(pAtlas->fonts, &font);
 	}
 
+	DeserializeAnimationsV1(pAtlas, pSerializer);
+
 	u32 size = 0;
 	BS_DeSerializeU32(&size, pSerializer);
 	pAtlas->atlasBytes = malloc(size);
@@ -1338,6 +1458,7 @@ static hAtlas DeserializeAtlasV1(struct BinarySerializer* pSerializer, struct Dr
 
 void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, struct DrawContext* pDC)
 {
+	
 	
 	if (pSerializer->bSaving)
 	{
@@ -1367,6 +1488,9 @@ void At_SerializeAtlas(struct BinarySerializer* pSerializer, hAtlas* atlas, stru
 		{
 			SerializeAtlasFont(&pAtlas->fonts[i], pSerializer);
 		}
+
+		// animations
+		SerializeAnimations(pAtlas, pSerializer);
 
 		BS_SerializeBytes(pAtlas->atlasBytes, pAtlas->atlasWidth * pAtlas->atlasHeight * 4, pSerializer);
 	}

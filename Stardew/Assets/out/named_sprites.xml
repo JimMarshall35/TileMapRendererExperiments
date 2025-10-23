@@ -17,4 +17,15 @@
     <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="320" left="192" width="96" height="96" name="conif_tree_aut_top_1"/>
     <sprite source="./Assets/Image/LPC Submissions/Outside Objects.png" top="320" left="288" width="96" height="128" name="conif_tree_aut_top_2"/>
 
+    <animation-frames name="walk-base-female-up">
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="0" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="64" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="128" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="192" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="256" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="320" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="384" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="448" width="64" height="64" name="female_walk_cycle1"/>
+        <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="0" left="512" width="64" height="64" name="female_walk_cycle1"/>
+    </animation-frames>
 </atlas>

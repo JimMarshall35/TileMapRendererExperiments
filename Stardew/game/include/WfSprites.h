@@ -6,6 +6,10 @@
 
 struct GameLayer2DData;
 
+struct WfBasePlayerSprites
+{
+
+};
 
 struct WfTreeSprites
 {

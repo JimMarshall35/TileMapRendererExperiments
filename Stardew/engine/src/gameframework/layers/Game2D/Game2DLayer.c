@@ -141,6 +141,16 @@ static void PublishDebugMessage(struct GameLayer2DData* pData)
 	Ev_FireEvent("DebugMessage", &args);
 }
 
+struct UpdateEntityContext
+{
+	float deltaT;
+	struct GameFrameworkLayer* pLayer;
+};
+
+static void UpdateEntities(struct Entity2D* pEnt, int i, void* pUser)
+{
+}
+
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
@@ -148,6 +158,13 @@ static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
 	{
 		PublishDebugMessage(pData);
 	}
+	struct UpdateEntityContext ctx = 
+	{
+		.deltaT = deltaT,
+		.pLayer = pLayer
+	};
+
+	Et2D_IterateEntities(&pData->entities, &UpdateEntities, &ctx);
 }
 
 void OutputSpriteVertices(
@@ -389,6 +406,19 @@ static void Draw(struct GameFrameworkLayer* pLayer, DrawContext* context)
 	context->DrawWorldspaceVertexBuffer(pData->vertexBuffer, VectorSize(pData->pWorldspaceIndices), view);
 }
 
+
+struct InputEntityContext
+{
+	struct GameFrameworkLayer* pLayer;
+	InputContext* inputCtx;
+};
+
+static bool InputEntities(struct Entity2D* pEnt, int i, void* pUser)
+{
+	struct InputEntityContext* pCtx = pUser;
+	pEnt->input(pEnt, pCtx->pLayer, pCtx->inputCtx);
+}
+
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
 {
 	struct GameLayer2DData* pData = pLayer->userData;
@@ -396,6 +426,12 @@ static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
 	{
 		FreeLookMode2DInput(pLayer, context);
 	}
+	struct InputEntityContext ctx =
+	{
+		.pLayer = pLayer,
+		.inputCtx = context
+	};
+	Et2D_IterateEntities(&pData->entities, &InputEntities, &ctx);
 }
 
 static void LoadLayerAssets(struct GameLayer2DData* pData, DrawContext* pDC)
@@ -436,7 +472,7 @@ void GameLayer2D_OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawCont
 		pData->preFirstInitCallback(pData);
 	Et2D_IterateEntities(&pData->entities, &InitEntities, pLayer);
 	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
-	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
+	//XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
 
 void Game2DLayer_OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)

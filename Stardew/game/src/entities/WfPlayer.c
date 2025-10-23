@@ -38,12 +38,15 @@ static void OnInputPlayer(struct Entity2D* pEnt, struct GameFrameworkLayer* pLay
 
 void WfDeSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)
 {
-    HGeneric data = NULL_HANDLE;
-    GetObjectPoolIndex(gPlayerEntDataPool, &data);
-    pOutEnt->user.hData = data;
 }
 
 void WfSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
 {
+}
+
+
+void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData)
+{
+    struct Component2D* pComponent1 = &pEnt->components[pEnt->numComponents++];
 
 }

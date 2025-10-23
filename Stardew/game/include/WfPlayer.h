@@ -12,5 +12,6 @@ void WfDeSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pOu
 
 void WfSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData);
 
+void WfMakeIntoPlayerEntity(struct Entity2D* pInEnt, struct GameLayer2DData* pData);
 
 #endif
