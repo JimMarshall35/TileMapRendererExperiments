@@ -37,9 +37,8 @@ void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutE
             BS_DeSerializeI32((i32*)&entData.def.subtype, bs);
             BS_DeSerializeFloat(&entData.groundContactPoint[0], bs);
             BS_DeSerializeFloat(&entData.groundContactPoint[1], bs);
-            // HEntity2D hTree = WfAddTreeBasedAt(entData.groundContactPoint[0], entData.groundContactPoint[1], &entData.def, &sprites, &pData->entities);
-            // struct Entity2D* pTree = Et2D_GetEntity(&pData->entities, hTree);
-            // pTree->init(pTree, pData->pLayer);
+            
+            WfMakeEntityIntoTreeBasedAt(pOutEnt, entData.groundContactPoint[0], entData.groundContactPoint[1], &entData.def, pData);
         }
         break;
     
@@ -48,16 +47,6 @@ void WfDeSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pOutE
     }
 }
 
-void WfSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
-{
-    struct WfTreeEntityData* pEntData = &gTreeDataObjectPool[pInEnt->user.hData];
-    BS_SerializeU32(1, bs); // version
-    BS_SerializeI32((i32)pEntData->def.season, bs);
-    BS_SerializeI32((i32)pEntData->def.type, bs);
-    BS_SerializeI32((i32)pEntData->def.subtype, bs);
-    BS_SerializeFloat(pEntData->groundContactPoint[0], bs);
-    BS_SerializeFloat(pEntData->groundContactPoint[1], bs);
-}
 
 static void TreeOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
 {
@@ -72,14 +61,11 @@ static float TreeGetPreDrawSortValue(struct Entity2D* pEnt)
 }
 
 
-
-HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct GameLayer2DData* pGameLayerData)
+void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct WfTreeDef* def, struct GameLayer2DData* pGameLayerData)
 {
     struct WfSprites* pSprites = &((struct WfGameLayerData*)pGameLayerData->pUserData)->sprites;
 
-
-    struct Entity2D ent;
-    memset(&ent, 0, sizeof(struct Entity2D));
+    memset(pEnt, 0, sizeof(struct Entity2D));
     const float trunkOffsetPx = 64.0f; /* Y offset from the top of the tree top sprite to the top of the trunk sprite */
     const float spriteHeight = 96.0f;
     const float combinedTreeSpriteHeight = trunkOffsetPx + spriteHeight;
@@ -87,15 +73,15 @@ HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct GameL
     const float bottomOfTrunkSpriteToBase = 34.0f;
 
     // xPos and YPos are where the base of the tree is
-    ent.transform.position[0] = x - combinedSpriteWidth / 2.0f; // center it
-    ent.transform.position[1] = y - (combinedTreeSpriteHeight - bottomOfTrunkSpriteToBase);
-    ent.transform.scale[0] = 1.0f;
-    ent.transform.scale[1] = 1.0f;
-    ent.transform.rotation = 0.0f;
-    ent.bKeepInQuadtree = true;
+    pEnt->transform.position[0] = x - combinedSpriteWidth / 2.0f; // center it
+    pEnt->transform.position[1] = y - (combinedTreeSpriteHeight - bottomOfTrunkSpriteToBase);
+    pEnt->transform.scale[0] = 1.0f;
+    pEnt->transform.scale[1] = 1.0f;
+    pEnt->transform.rotation = 0.0f;
+    pEnt->bKeepInQuadtree = true;
 
-    struct Component2D* pComponent1 = &ent.components[ent.numComponents++];
-    struct Component2D* pComponent2 = &ent.components[ent.numComponents++];
+    struct Component2D* pComponent1 = &pEnt->components[pEnt->numComponents++];
+    struct Component2D* pComponent2 = &pEnt->components[pEnt->numComponents++];
     
     struct WfTreeSprites* pFoundSeason = &pSprites->treeSpritesPerSeason[def->season];
     hSprite topSprite = NULL_HANDLE;
@@ -133,11 +119,27 @@ HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct GameL
     gTreeDataObjectPool[hTreeData].def = *def;
     gTreeDataObjectPool[hTreeData].groundContactPoint[0] = x;
     gTreeDataObjectPool[hTreeData].groundContactPoint[1] = y;
-    ent.user.hData = hTreeData;
-    Et2D_PopulateCommonHandlers(&ent);
-    ent.onDestroy = &TreeOnDestroy;
-    ent.getSortPos = &TreeGetPreDrawSortValue;
+    pEnt->user.hData = hTreeData;
+    Et2D_PopulateCommonHandlers(pEnt);
+    pEnt->onDestroy = &TreeOnDestroy;
+    pEnt->getSortPos = &TreeGetPreDrawSortValue;
+}
 
+void WfSerializeTreeEntity(struct BinarySerializer* bs, struct Entity2D* pInEnt, struct GameLayer2DData* pData)
+{
+    struct WfTreeEntityData* pEntData = &gTreeDataObjectPool[pInEnt->user.hData];
+    BS_SerializeU32(1, bs); // version
+    BS_SerializeI32((i32)pEntData->def.season, bs);
+    BS_SerializeI32((i32)pEntData->def.type, bs);
+    BS_SerializeI32((i32)pEntData->def.subtype, bs);
+    BS_SerializeFloat(pEntData->groundContactPoint[0], bs);
+    BS_SerializeFloat(pEntData->groundContactPoint[1], bs);
+}
+
+HEntity2D WfAddTreeBasedAt(float x, float y, struct WfTreeDef* def, struct GameLayer2DData* pGameLayerData)
+{
+    struct Entity2D ent;
+    WfMakeEntityIntoTreeBasedAt(&ent, x, y, def, pGameLayerData);
     return Et2D_AddEntity(&pGameLayerData->entities, &ent);
 }
 
