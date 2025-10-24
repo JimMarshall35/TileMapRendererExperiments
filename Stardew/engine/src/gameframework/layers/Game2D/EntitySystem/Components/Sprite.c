@@ -5,6 +5,7 @@
 #include "DrawContext.h"
 #include "Atlas.h"
 #include "Game2DLayer.h"
+#include "Game2DVertexOutputHelpers.h"
 
 void SpriteComp_OnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
 {
@@ -18,75 +19,6 @@ void SpriteComp_Update(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer,
 void SpriteComp_UpdatePostPhysics(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)
 {
     
-}
-
-void OutputSpriteVerticesBase(
-	AtlasSprite* pSprite,
-	VECTOR(Worldspace2DVert)* pOutVert,
-	VECTOR(VertIndexT)* pOutInd,
-	VertIndexT* pNextIndex,
-	vec2 tlPos,
-	vec2 brPos
-)
-{
-	VECTOR(Worldspace2DVert) outVert = *pOutVert;
-	VECTOR(VertIndexT) outInd = *pOutInd;
-
-	VertIndexT base = *pNextIndex;
-	*pNextIndex += 4;
-	ivec2 dims = {
-		brPos[0] - tlPos[0],
-		brPos[1] - tlPos[1]
-	};
-
-	vec2 trPos = {brPos[0], tlPos[1]};
-	vec2 blPos = {tlPos[0], brPos[1]};
-
-	Worldspace2DVert vert = {
-		tlPos[0], tlPos[1],
-		pSprite->topLeftUV_U, pSprite->topLeftUV_V
-	};
-
-	// top left
-	VertIndexT tl = base;
-	outVert = VectorPush(outVert, &vert);
-	
-	vert.x = trPos[0]; 
-	vert.y = trPos[1];
-	vert.u = pSprite->bottomRightUV_U;
-	vert.v = pSprite->topLeftUV_V;
-	
-	// top right
-	VertIndexT tr = base + 1;
-	outVert = VectorPush(outVert, &vert);
-
-	vert.x = blPos[0];
-	vert.y = blPos[1];
-	vert.u = pSprite->topLeftUV_U;
-	vert.v = pSprite->bottomRightUV_V;
-
-	// bottom left
-	VertIndexT bl = base + 2;
-	outVert = VectorPush(outVert, &vert);
-
-	vert.x = brPos[0];
-	vert.y = brPos[1];
-	vert.u = pSprite->bottomRightUV_U;
-	vert.v = pSprite->bottomRightUV_V;
-
-	// bottom right
-	VertIndexT br = base + 3;
-	outVert = VectorPush(outVert, &vert);
-
-	outInd = VectorPush(outInd, &tl);
-	outInd = VectorPush(outInd, &tr);
-	outInd = VectorPush(outInd, &bl);
-	outInd = VectorPush(outInd, &tr);
-	outInd = VectorPush(outInd, &br);
-	outInd = VectorPush(outInd, &bl);
-
-	*pOutVert = outVert;
-	*pOutInd = outInd;
 }
 
 

@@ -5,6 +5,7 @@
 #include "InputContext.h"
 #include "Game2DLayer.h"
 #include "Sprite.h"
+#include "AnimatedSprite.h"
 
 void Co_InitComponents(struct Entity2D* entity, struct GameFrameworkLayer* pLayer)
 {
@@ -19,10 +20,12 @@ void Co_InitComponents(struct Entity2D* entity, struct GameFrameworkLayer* pLaye
             entity->components[i].data.staticCollider.id = Ph_GetStaticBody2D(pGameLayerData->hPhysicsWorld, &entity->components[i].data.staticCollider.shape, &entity->transform);
             break;
         case ETE_DynamicCollider:
+            entity->components[i].data.kinematicCollider.id = Ph_GetKinematicBody(pGameLayerData->hPhysicsWorld, &entity->components[i].data.kinematicCollider.shape, &entity->components[i].data.kinematicCollider.options, &entity->transform);
             break;
         case ETE_TextSprite:
             break;
         case ETE_SpriteAnimator:
+            AnimatedSprite_OnInit(&entity->components[i].data.spriteAnimator, entity, pLayer, 0.0f);
             break;
         default:
             EASSERT(false);
@@ -44,7 +47,7 @@ void Co_UpdateComponents(struct Entity2D* entity, struct GameFrameworkLayer* pLa
             break;
         case ETE_TextSprite:
             break;
-        case ETE_SpriteAnimator:
+        case ETE_SpriteAnimator: AnimatedSprite_OnUpdate(&entity->components[i].data.spriteAnimator, entity, pLayer, deltaT);
             break;
         default:
             EASSERT(false);
@@ -131,6 +134,15 @@ void Co_DrawComponents(
         case ETE_TextSprite:
             break;
         case ETE_SpriteAnimator:
+            AnimatedSprite_Draw(
+                &entity->components[i].data.spriteAnimator,
+                entity,
+                pLayer,
+                pCam,
+                outVerts,
+                outIndices,
+                pNextIndex
+            );
             break;
         default:
             EASSERT(false);

@@ -39,12 +39,6 @@ struct AtlasFont
 	float fSizePts;
 };
 
-struct AtlasAnimation
-{
-	VECTOR(hSprite) frames;
-	float fps;
-};
-
 typedef struct
 {
 	bool bActive;
@@ -1670,5 +1664,10 @@ void At_EndTileset(int endI)
 	pAtlas->tilesetIndexEnd = endI;
 	printf("ending tileset %i\n", pAtlas->tilesetIndexBegin);
 
+}
+
+struct AtlasAnimation* At_FindAnim(hAtlas atlas, const char* name)
+{
+	return (struct AtlasAnimation*)HashmapSearch(&gAtlases[atlas].animations, name);
 }
 

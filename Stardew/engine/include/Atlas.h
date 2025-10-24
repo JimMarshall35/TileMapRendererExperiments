@@ -11,6 +11,8 @@ typedef struct DrawContext DrawContext;
 typedef struct _xmlNode xmlNode;
 struct BinarySerializer;
 
+#define VECTOR(a) a*
+
 typedef struct _AtlasSprite
 {
 	hAtlas atlas;
@@ -40,6 +42,13 @@ typedef struct _AtlasSprite
 #define MAX_FONT_PATH_SIZE 256
 
 #define MAX_NUM_FONT_SIZES 32
+
+struct AtlasAnimation
+{
+	VECTOR(hSprite) frames;
+	float fps;
+};
+
 
 struct FontSize
 {
@@ -105,6 +114,8 @@ void At_BeginTileset(int beginI);
 void At_EndTileset(int endI);
 
 void At_SetCurrent(hAtlas atlas, DrawContext* pDC);
+
+struct AtlasAnimation* At_FindAnim(hAtlas atlas, const char* name);
 
 HFont Fo_FindFont(hAtlas hAtlas, const char* fontName, float sizePts);
 float Fo_CharWidth(hAtlas hAtlas, HFont hFont, char c);

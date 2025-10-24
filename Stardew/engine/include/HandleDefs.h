@@ -39,7 +39,7 @@ typedef HGeneric HEntity2D;
 
 typedef HGeneric HPhysicsWorld;
 
-typedef HGeneric HStaticBody;
+typedef HGeneric H2DBody;
 
 typedef HGeneric HKinematicBody;
 

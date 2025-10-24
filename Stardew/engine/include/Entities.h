@@ -67,7 +67,7 @@ struct Sprite
 
 struct StaticCollider
 {
-    HStaticBody id;
+    H2DBody id;
     struct PhysicsShape2D shape;
 };
 
@@ -75,6 +75,7 @@ struct KinematicCollider
 {
     HKinematicBody id;
     struct PhysicsShape2D shape;
+    struct KinematicBodyOptions options;
 };
 
 struct TextSprite
@@ -88,12 +89,15 @@ struct TextSprite
 
 struct AnimatedSprite
 {
+    const char* animationName;
     float timer;
     hSprite* pSprites;
     int numSprites;
     int onSprite;
     float fps;
     bool bRepeat;
+    bool bIsAnimating;
+    struct Transform2D transform;
 };
 
 struct Component2D

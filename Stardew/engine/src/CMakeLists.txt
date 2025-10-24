@@ -33,13 +33,14 @@ gameframework/layers/UI/widgets/TextEntryWidget.c
 gameframework/layers/Game2D/Game2DLayer.c
 gameframework/layers/Game2D/FreeLookCameraMode.c
 gameframework/layers/Game2D/Camera2D.c
+gameframework/layers/Game2D/Game2DVertexOutputHelpers.c
 gameframework/layers/Game2D/EntitySystem/Entities.c
 gameframework/layers/Game2D/EntitySystem/EntityQuadtree.c
 gameframework/layers/Game2D/EntitySystem/Entities/StaticColliderEntity.c
 gameframework/layers/Game2D/EntitySystem/Components/Components.c
 gameframework/layers/Game2D/EntitySystem/Components/DynamicCollider.c
 gameframework/layers/Game2D/EntitySystem/Components/Sprite.c
-gameframework/layers/Game2D/EntitySystem/Components/SpriteAnimator.c
+gameframework/layers/Game2D/EntitySystem/Components/AnimatedSprite.c
 gameframework/layers/Game2D/EntitySystem/Components/StaticCollider.c
 gameframework/layers/Game2D/EntitySystem/Components/TextSprite.c
 gameframework/layers/Game2D/Physics2D.c

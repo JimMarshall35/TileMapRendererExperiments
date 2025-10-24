@@ -74,6 +74,45 @@ The good thing about this is one openGL texture can be used to draw the whole ga
 
 In order to eliminate bleeding of texels from adjacent sprites the sprites in the atlas have a 1 pixel border that mimics GL_CLAMP_TO_EDGE texture clamping
 
+# ExpandAnimations.py
+
+Expands </animation> nodes in xml files. You can write an animation node like this in an atlas xml file:
+
+```xml
+<animation name="walk-base-female-down"
+            fps="10.0"
+            source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png"
+            startx="0"
+            starty="0"
+            incx="64"
+            incy="64"
+            width="64"
+            height="64"
+            numFrames="9"/>
+```
+
+And this script will expand it like so:
+
+```xml
+<animation-frames name="walk-base-female-down" fps="10.0">
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="0" width="64" height="64" name="walk-base-female-down0" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="64" width="64" height="64" name="walk-base-female-down1" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="128" width="64" height="64" name="walk-base-female-down2" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="192" width="64" height="64" name="walk-base-female-down3" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="256" width="64" height="64" name="walk-base-female-down4" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="320" width="64" height="64" name="walk-base-female-down5" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="384" width="64" height="64" name="walk-base-female-down6" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="448" width="64" height="64" name="walk-base-female-down7" />
+    <sprite source="./Assets/Image/lpc_base_assets/LPC Base Assets/sprites/people/female_walkcycle.png" top="128" left="512" width="64" height="64" name="walk-base-female-down8" />
+</animation-frames>
+```
+
+Example usage:
+
+```bash
+python3 ./engine/scripts/ExpandAnimations.py -o ./expanded_test.xml ./Assets/out/named_sprites.xml
+```
+
 # Example Compile Assets Script
 
 I recommend you create and maintain a compile assets script as you add assets to the game. For example:
@@ -82,13 +121,18 @@ I recommend you create and maintain a compile assets script as you add assets to
 # convert jsons from the Tiled editor to binary files containing tilemaps and entities + an atlas.xml file of the tiles used
 python3 game/game_convert_tiled.py ./Assets/out -m ./Assets/Farm.json ./Assets/House.json ./Assets/RoadToTown.json 
 
+# expand animation nodes
+python3 ./engine/scripts/ExpandAnimations.py -o ./Assets/out/expanded_named_sprites.xml ./Assets/out/named_sprites.xml
+
 # merge the list of named sprites into the ones used by the tilemap
-python3 engine/scripts/MergeAtlases.py ./Assets/out/atlas.xml ./Assets/out/named_sprites.xml > ./Assets/out/atlascombined.xml
+python3 engine/scripts/MergeAtlases.py ./Assets/out/atlas.xml ./Assets/out/expanded_named_sprites.xml > ./Assets/out/atlascombined.xml
 
 # compile the atlascombined.xml into a binary atlas file
 ./build/atlastool/AtlasTool ./Assets/out/atlascombined.xml -o ./Assets/out/main.atlas -bmp Atlas.bmp
 
-# compile a manually created atlas file containing sprites and fonts for the games UI 
+# compile another atlas file containing sprites and fonts for the games UI 
 ./build/atlastool/AtlasTool ./Assets/ui_atlas.xml -o ./Assets/ui_atlas.atlas -bmp UIAtlas.bmp
+
 ```
-A make file would be better.
+A make file would be even better.
+
