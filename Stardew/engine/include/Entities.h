@@ -4,6 +4,7 @@
 #include "Game2DLayer.h"
 #include "DynArray.h"
 #include "DrawContext.h"
+#include "InputContext.h"
 #include "Physics2D.h"
 #include <box2d/box2d.h>
 #include <stdbool.h>
@@ -12,7 +13,7 @@ struct Entity2D;
 struct Entity2DCollection;
 struct GameFrameworkLayer;
 
-typedef void (*Entity2DOnInitFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer);
+typedef void (*Entity2DOnInitFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx);
 typedef void (*Entity2DUpdateFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
 typedef void (*Entity2DUpdatePostPhysicsFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
 typedef void (*Entity2DDrawFn)(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex);
@@ -71,9 +72,9 @@ struct StaticCollider
     struct PhysicsShape2D shape;
 };
 
-struct KinematicCollider
+struct DynamicCollider
 {
-    HKinematicBody id;
+    H2DBody id;
     struct PhysicsShape2D shape;
     struct KinematicBodyOptions options;
 };
@@ -109,7 +110,7 @@ struct Component2D
 
         struct StaticCollider staticCollider;
 
-        struct KinematicCollider kinematicCollider;
+        struct DynamicCollider kinematicCollider;
 
         struct TextSprite textSprite;
         
@@ -211,7 +212,7 @@ struct Entity2D
 /*
     Default base implementations, override with own behavior and then call these at the end
 */
-void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer);
+void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx);
 void Entity2DUpdate(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
 void Entity2DUpdatePostPhysics(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT);
 void Entity2DDraw(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex);

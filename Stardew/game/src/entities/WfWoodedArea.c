@@ -12,6 +12,8 @@
 #include <string.h>
 #include "Components.h"
 #include "WfTree.h"
+#include "DrawContext.h"
+#include "InputContext.h"
 
 struct WfWoodedAreaData
 {
@@ -36,7 +38,7 @@ static void AddTreeAtRandomPos(float xMin, float xMax, float yMin, float yMax, s
     WfAddTreeBasedAt(xPos, yPos, def, pLayerData);
 }
 
-void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx)
 {
     struct GameLayer2DData* pLayerData = pLayer->userData;
     //struct WfTreeSprites spritesPerSeason[NumSeasons];
@@ -92,6 +94,7 @@ void WfDeSerializeWoodedAreaEntityV1(struct BinarySerializer* bs, struct Entity2
     pOutEnt->onDestroy = &WfWoodedAreaEntityOnDestroy;
     pOutEnt->bKeepInDynamicList = false;
     pOutEnt->bKeepInQuadtree = false;
+    pOutEnt->bSerialize = false;
 }
 
 void WfDeSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)

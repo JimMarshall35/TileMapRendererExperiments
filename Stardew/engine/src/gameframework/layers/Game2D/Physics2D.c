@@ -31,7 +31,7 @@ struct Body2D
 
 static OBJECT_POOL(struct Phys2dWorld) gWorldDefPool = NULL;
 
-static OBJECT_POOL(struct Body2D) gStaticBodyPool = NULL;
+static OBJECT_POOL(struct Body2D) g2DPhysBodyPool = NULL;
 
 
 
@@ -44,7 +44,7 @@ void Ph_DestroyPhysicsWorld(HPhysicsWorld world)
 void Ph_Init()
 {
     gWorldDefPool = NEW_OBJECT_POOL(struct Phys2dWorld, 32);
-    gStaticBodyPool = NEW_OBJECT_POOL(struct Body2D, 256);
+    g2DPhysBodyPool = NEW_OBJECT_POOL(struct Body2D, 256);
 }
 
 HPhysicsWorld Ph_GetPhysicsWorld(float gravityX, float gravityY, float pixelsPerMeter)
@@ -59,6 +59,12 @@ HPhysicsWorld Ph_GetPhysicsWorld(float gravityX, float gravityY, float pixelsPer
     gWorldDefPool[index].pxlPerMeter = pixelsPerMeter;
     gWorldDefPool[index].id = b2CreateWorld(&def);
     return index;
+}
+
+void Ph_PhysicsWorldStep(HPhysicsWorld hWorld, float timestep, int substepCount)
+{
+    b2World_Step(gWorldDefPool[hWorld].id, timestep, substepCount);
+    //b2Body_SetLinearVelocity
 }
 
 float Ph_GetPixelsPerMeter(HPhysicsWorld world)
@@ -83,8 +89,8 @@ void Ph_PhysicsCoords2PixelCoords(HPhysicsWorld world, vec2 inPhysicsCoords, vec
 static H2DBody GetBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct Transform2D* pTransform, b2BodyType type)
 {
     H2DBody hStatic = -1;
-    gStaticBodyPool = GetObjectPoolIndex(gStaticBodyPool, &hStatic);
-    gStaticBodyPool[hStatic].type = type;
+    g2DPhysBodyPool = GetObjectPoolIndex(g2DPhysBodyPool, &hStatic);
+    g2DPhysBodyPool[hStatic].type = type;
     
 
     switch (pShape->type)
@@ -109,12 +115,12 @@ static H2DBody GetBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struc
             bodyDef.position = (b2Vec2){physicsPos[0], physicsPos[1]};
             b2BodyId id = b2CreateBody(gWorldDefPool[world].id, &bodyDef);
 
-            gStaticBodyPool[hStatic].bodyID = id;
-            gStaticBodyPool[hStatic].shapedef = b2DefaultShapeDef();
+            g2DPhysBodyPool[hStatic].bodyID = id;
+            g2DPhysBodyPool[hStatic].shapedef = b2DefaultShapeDef();
 
             
-            gStaticBodyPool[hStatic].shape.poly = b2MakeBox(physicsDims[0] / 2.0f, physicsDims[1] / 2.0f);
-            gStaticBodyPool[hStatic].shapeID = b2CreatePolygonShape(id, &gStaticBodyPool[hStatic].shapedef, &gStaticBodyPool[hStatic].shape.poly);
+            g2DPhysBodyPool[hStatic].shape.poly = b2MakeBox(physicsDims[0] / 2.0f, physicsDims[1] / 2.0f);
+            g2DPhysBodyPool[hStatic].shapeID = b2CreatePolygonShape(id, &g2DPhysBodyPool[hStatic].shapedef, &g2DPhysBodyPool[hStatic].shape.poly);
         }
         break;
     case PBT_Circle:
@@ -128,15 +134,15 @@ static H2DBody GetBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struc
             bodyDef.position = (b2Vec2){physicsPos[0], physicsPos[1]};
             b2BodyId id = b2CreateBody(gWorldDefPool[world].id, &bodyDef);
 
-            gStaticBodyPool[hStatic].bodyID = id;
-            gStaticBodyPool[hStatic].shapedef = b2DefaultShapeDef();
+            g2DPhysBodyPool[hStatic].bodyID = id;
+            g2DPhysBodyPool[hStatic].shapedef = b2DefaultShapeDef();
 
             
-            gStaticBodyPool[hStatic].shape.circle.center.x = physicsPos[0];
-            gStaticBodyPool[hStatic].shape.circle.center.y = physicsPos[1];
-            gStaticBodyPool[hStatic].shape.circle.radius = physicsRadius;
+            g2DPhysBodyPool[hStatic].shape.circle.center.x = 0.0f;//physicsPos[0];
+            g2DPhysBodyPool[hStatic].shape.circle.center.y = 0.0f;//physicsPos[1];
+            g2DPhysBodyPool[hStatic].shape.circle.radius = physicsRadius;
 
-            gStaticBodyPool[hStatic].shapeID = b2CreateCircleShape(id, &gStaticBodyPool[hStatic].shapedef, &gStaticBodyPool[hStatic].shape.circle);
+            g2DPhysBodyPool[hStatic].shapeID = b2CreateCircleShape(id, &g2DPhysBodyPool[hStatic].shapedef, &g2DPhysBodyPool[hStatic].shape.circle);
         }
         break;
     case PBT_Ellipse:
@@ -148,6 +154,7 @@ static H2DBody GetBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struc
     default:
         break;
     }
+    return hStatic;
 }
 
 H2DBody Ph_GetStaticBody2D(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct Transform2D* pTransform)
@@ -155,7 +162,29 @@ H2DBody Ph_GetStaticBody2D(HPhysicsWorld world, struct PhysicsShape2D* pShape, s
     return GetBody(world, pShape, pTransform, b2_staticBody);
 }
 
-HKinematicBody Ph_GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform)
+H2DBody Ph_GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform)
 {
-    return GetBody(world, pShape, pTransform, b2_kinematicBody);
+    return GetBody(world, pShape, pTransform, b2_dynamicBody);
+}
+
+void Ph_SetDynamicBodyVelocity(H2DBody hBody, vec2 velocity)
+{
+    //EASSERT(g2DPhysBodyPool[hBody].type == b2_kinematicBody);
+    b2Vec2 b2Vec = {.x = velocity[0], .y = velocity[1]};
+    b2Body_SetLinearVelocity(g2DPhysBodyPool[hBody].bodyID, b2Vec);
+}
+
+void Ph_GetDynamicBodyVelocity(H2DBody hBody, vec2 outVelocity)
+{
+    EASSERT(g2DPhysBodyPool[hBody].type == b2_kinematicBody);
+    b2Vec2 b2Vec = b2Body_GetLinearVelocity(g2DPhysBodyPool[hBody].bodyID);
+    outVelocity[0] = b2Vec.x;
+    outVelocity[1] = b2Vec.y;
+}
+
+void Ph_GetDymaicBodyPosition(H2DBody hBody, vec2 outPos)
+{
+    b2Vec2 b2Vec = b2Body_GetPosition(g2DPhysBodyPool[hBody].bodyID);
+    outPos[0] = b2Vec.x;
+    outPos[1] = b2Vec.y;
 }

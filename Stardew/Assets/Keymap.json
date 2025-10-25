@@ -9,6 +9,10 @@
 			{ "moveLeft" : 68 }, 
 			{ "moveDown" : 83 }, 
 			{ "moveRight" : 65 },
+			{ "playerMoveUp" : 265},
+			{ "playerMoveDown" : 264},
+			{ "playerMoveLeft" : 263},
+			{ "playerMoveRight" : 262},
 			{ "useTool" : 32 },
 			{ "nextTool" : 69 },
 			{ "prevTool" : 81 }

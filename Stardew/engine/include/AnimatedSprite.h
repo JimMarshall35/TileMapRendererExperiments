@@ -12,5 +12,6 @@ void AnimatedSprite_OnUpdate(struct AnimatedSprite* pAnimatedSprite, struct Enti
 void AnimatedSprite_GetBoundingBox(struct Entity2D* pEnt, struct AnimatedSprite* pAnimatedSprite, struct GameFrameworkLayer* pLayer, vec2 outTL, vec2 outBR);
 void AnimatedSprite_Draw(struct AnimatedSprite* pSpriteComp, struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, struct Transform2D* pCam, VECTOR(Worldspace2DVert)* outVerts, VECTOR(VertIndexT)* outIndices, VertIndexT* pNextIndex);
 void AnimatedSprite_OnDestroy(struct Entity2D* pEnt);
+void AnimatedSprite_SetAnimation(struct GameFrameworkLayer* pLayer, struct AnimatedSprite* pSpriteComp, const char* animName, bool bResetOnFrame, bool bResetTimer);
 
 #endif

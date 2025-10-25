@@ -80,7 +80,8 @@ void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct
 
     struct Component2D* pComponent1 = &pEnt->components[pEnt->numComponents++];
     struct Component2D* pComponent2 = &pEnt->components[pEnt->numComponents++];
-    
+    // struct Component2D* pComponent3 = &pEnt->components[pEnt->numComponents++];
+
     struct WfTreeSprites* pFoundSeason = &pSprites->treeSpritesPerSeason[def->season];
     hSprite topSprite = NULL_HANDLE;
     hSprite trunkSprite = NULL_HANDLE;
@@ -111,6 +112,9 @@ void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct
     pComponent1->data.sprite.transform.position[1] = trunkOffsetPx;
     pComponent1->data.sprite.transform.scale[0] = 1.0f;
     pComponent1->data.sprite.transform.scale[1] = 1.0f;
+
+    // pComponent3->type = ETE_StaticCollider;
+    // pComponent3->data.staticCollider.
 
     HGeneric hTreeData = NULL_HANDLE;
     gTreeDataObjectPool = GetObjectPoolIndex(gTreeDataObjectPool, &hTreeData);

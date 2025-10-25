@@ -17,6 +17,25 @@ void AnimatedSprite_OnInit(struct AnimatedSprite* pAnimatedSprite, struct Entity
 
 }
 
+void AnimatedSprite_SetAnimation(struct GameFrameworkLayer* pLayer, struct AnimatedSprite* pSpriteComp, const char* animName, bool bResetOnFrame, bool bResetTimer)
+{
+    struct GameLayer2DData* pData = pLayer->userData;
+    pSpriteComp->animationName = animName;
+    struct AtlasAnimation* pAnim = At_FindAnim(pData->hAtlas, pSpriteComp->animationName);
+    pSpriteComp->pSprites = pAnim->frames;
+    pSpriteComp->numSprites = VectorSize(pAnim->frames);
+    pSpriteComp->fps = pAnim->fps;
+    if(bResetOnFrame)
+    {
+        pSpriteComp->onSprite = 0;
+    }
+    if(bResetTimer)
+    {
+        pSpriteComp->timer = 0.0f;
+    }
+
+}
+
 void AnimatedSprite_OnDestroy(struct Entity2D* pEnt)
 {
 

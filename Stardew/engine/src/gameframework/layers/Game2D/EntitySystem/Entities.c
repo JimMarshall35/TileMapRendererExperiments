@@ -32,7 +32,7 @@ void Et2D_InitCollection(struct Entity2DCollection* pCollection)
     pCollection->dynamicEntities.pDynamicListItemPool = NEW_OBJECT_POOL(struct DynamicEntityListItem, 256);
 }
 
-void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx)
 {
     Co_InitComponents(pEnt, pLayer);
     struct GameLayer2DData* pData = pLayer->userData;

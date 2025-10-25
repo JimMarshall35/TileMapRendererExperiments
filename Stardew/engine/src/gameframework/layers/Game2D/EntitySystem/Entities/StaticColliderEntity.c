@@ -3,10 +3,12 @@
 #include "Physics2D.h"
 #include "AssertLib.h"
 #include "GameFramework.h"
+#include "DrawContext.h"
+#include "InputContext.h"
 
-void StaticColliderOnInitFn(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+void StaticColliderOnInitFn(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx)
 {
-    Entity2DOnInit(pEnt, pLayer);
+    Entity2DOnInit(pEnt, pLayer, pDrawCtx, pInputCtx);
 }
 
 void StaticColliderUpdate(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, float deltaT)

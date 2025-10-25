@@ -21,10 +21,10 @@ void WfInitPlayerStart()
     gPlayerStartDataPool = NEW_OBJECT_POOL(struct WfPlayerStartData, 32);
 }
 
-void WfPlayerStartEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
+void WfPlayerStartEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, DrawContext* pDrawCtx, InputContext* pInputCtx)
 {
     struct GameLayer2DData* pLayerData = pLayer->userData;
-    Entity2DOnInit(pEnt, pLayer);
+    Entity2DOnInit(pEnt, pLayer, pDrawCtx, pInputCtx);
     
     if(strcmp(WfWorld_GetCurrentLocationName(), gPlayerStartDataPool[pEnt->user.hData].from) == 0)
     {

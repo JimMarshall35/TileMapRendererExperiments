@@ -51,6 +51,8 @@ void Ph_Init();
 
 HPhysicsWorld Ph_GetPhysicsWorld(float gravityX, float gravityY, float pixelsPerMeter);
 
+void Ph_PhysicsWorldStep(HPhysicsWorld hWorld, float timestep, int substepCount);
+
 void Ph_DestroyPhysicsWorld(HPhysicsWorld world);
 
 void Ph_PixelCoords2PhysicsCoords(HPhysicsWorld world, vec2 inPixelCoords, vec2 outPhysicsCoords);
@@ -59,8 +61,14 @@ void Ph_PhysicsCoords2PixelCoords(HPhysicsWorld world, vec2 inPhysicsCoords, vec
 
 H2DBody Ph_GetStaticBody2D(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct Transform2D* pTransform);
 
-HKinematicBody Ph_GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform);
+H2DBody Ph_GetKinematicBody(HPhysicsWorld world, struct PhysicsShape2D* pShape, struct KinematicBodyOptions* pOptions, struct Transform2D* pTransform);
 
 float Ph_GetPixelsPerMeter(HPhysicsWorld world);
+
+void Ph_SetDynamicBodyVelocity(H2DBody hBody, vec2 velocity);
+
+void Ph_GetDynamicBodyVelocity(H2DBody hBody, vec2 outVelocity);
+
+void Ph_GetDymaicBodyPosition(H2DBody hBody, vec2 outPos);
 
 #endif

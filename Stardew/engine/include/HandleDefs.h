@@ -41,8 +41,6 @@ typedef HGeneric HPhysicsWorld;
 
 typedef HGeneric H2DBody;
 
-typedef HGeneric HKinematicBody;
-
 typedef HGeneric HEntity2DQuadtreeNode;
 
 typedef HGeneric HEntity2DQuadtreeEntityRef;
