@@ -76,6 +76,7 @@ void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct
     pEnt->transform.scale[1] = 1.0f;
     pEnt->transform.rotation = 0.0f;
     pEnt->bKeepInQuadtree = true;
+    pEnt->bKeepInDynamicList = false;
 
     struct Component2D* pComponent1 = &pEnt->components[pEnt->numComponents++];
     struct Component2D* pComponent2 = &pEnt->components[pEnt->numComponents++];

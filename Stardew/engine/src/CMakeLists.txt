@@ -35,6 +35,7 @@ gameframework/layers/Game2D/FreeLookCameraMode.c
 gameframework/layers/Game2D/Camera2D.c
 gameframework/layers/Game2D/Game2DVertexOutputHelpers.c
 gameframework/layers/Game2D/EntitySystem/Entities.c
+gameframework/layers/Game2D/EntitySystem/Entities2DCollection.c
 gameframework/layers/Game2D/EntitySystem/EntityQuadtree.c
 gameframework/layers/Game2D/EntitySystem/Entities/StaticColliderEntity.c
 gameframework/layers/Game2D/EntitySystem/Components/Components.c

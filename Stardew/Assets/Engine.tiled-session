@@ -266,14 +266,11 @@
             "scaleInEditor": 1
         },
         "Farm.json": {
-            "expandedObjectLayers": [
-                6
-            ],
-            "scale": 0.1746,
+            "scale": 0.5841,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1597.9381443298969,
-                "y": 1600.8018327605955
+                "x": 2923.300804656737,
+                "y": 680.5341551104264
             }
         },
         "Farm.tmj": {
@@ -285,11 +282,14 @@
             }
         },
         "House.json": {
+            "expandedObjectLayers": [
+                5
+            ],
             "scale": 1.9445312499999998,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 174.07794294897553,
-                "y": 191.56287665729212
+                "x": 140.65086380072322,
+                "y": 244.53194053836884
             }
         },
         "Interior 2.json": {
@@ -304,11 +304,14 @@
             "scaleInEditor": 1
         },
         "RoadToTown.json": {
+            "expandedObjectLayers": [
+                3
+            ],
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 799.5,
-                "y": 479.5
+                "x": 928.5,
+                "y": 507.5
             }
         },
         "Soil.json": {
@@ -357,7 +360,7 @@
         "Outside Objects.json"
     ],
     "project": "Engine.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
         "Outside Objects.json",
         "RoadToTown.json",

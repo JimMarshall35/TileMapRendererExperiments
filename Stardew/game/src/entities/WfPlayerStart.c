@@ -5,10 +5,13 @@
 #include "ObjectPool.h"
 #include "WfPlayer.h"
 #include "GameFramework.h"
+#include "WfWorld.h"
+#include "string.h"
 
 struct WfPlayerStartData
 {
-    char from[32];
+    char from[64];
+    char thisLocation[64];
 };
 
 static OBJECT_POOL(struct WfPlayerStartData) gPlayerStartDataPool;
@@ -22,10 +25,15 @@ void WfPlayerStartEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer*
 {
     struct GameLayer2DData* pLayerData = pLayer->userData;
     Entity2DOnInit(pEnt, pLayer);
-    struct Entity2D ent;
     
-    WfMakeIntoPlayerEntity(&ent, pLayer->userData, pEnt->transform.position);
-    Et2D_AddEntity(&pLayerData->entities, &ent);
+    if(strcmp(WfWorld_GetCurrentLocationName(), gPlayerStartDataPool[pEnt->user.hData].from) == 0)
+    {
+        
+        struct Entity2D ent;
+        WfMakeIntoPlayerEntity(&ent, pLayer->userData, pEnt->transform.position);
+        Et2D_AddEntity(&pLayerData->entities, &ent);
+        WfWorld_SetCurrentLocationName(gPlayerStartDataPool[pEnt->user.hData].thisLocation);
+    }
 }
 
 void WfPlayerStartEntityOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
@@ -38,8 +46,12 @@ void WfDeSerializePlayerStartEntityV1(struct BinarySerializer* bs, struct Entity
 {
     gPlayerStartDataPool = GetObjectPoolIndex(gPlayerStartDataPool, &pOutEnt->user.hData);
     BS_DeSerializeStringInto(gPlayerStartDataPool[pOutEnt->user.hData].from, bs);
+
+    BS_DeSerializeStringInto(gPlayerStartDataPool[pOutEnt->user.hData].thisLocation, bs);
     HGeneric hPlayer = pOutEnt->user.hData;
     pOutEnt->init = &WfPlayerStartEntityOnInit;
+    pOutEnt->bKeepInDynamicList = false;
+    pOutEnt->bKeepInQuadtree = false;
 }
 
 void WfDeSerializePlayerStartEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)

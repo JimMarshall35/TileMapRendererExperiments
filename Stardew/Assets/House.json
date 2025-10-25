@@ -179,6 +179,11 @@
                          "name":"from",
                          "type":"string",
                          "value":"Farm"
+                        }, 
+                        {
+                         "name":"thisLocation",
+                         "type":"string",
+                         "value":"House"
                         }],
                  "rotation":0,
                  "type":"PlayerStart",
@@ -186,6 +191,29 @@
                  "width":0,
                  "x":192,
                  "y":344
+                }, 
+                {
+                 "height":0,
+                 "id":13,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"from",
+                         "type":"string",
+                         "value":"Bed"
+                        }, 
+                        {
+                         "name":"thisLocation",
+                         "type":"string",
+                         "value":"House"
+                        }],
+                 "rotation":0,
+                 "type":"PlayerStart",
+                 "visible":true,
+                 "width":0,
+                 "x":255.074327038971,
+                 "y":170.73523503415
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -240,7 +268,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":13,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.1-99-gec89c545",

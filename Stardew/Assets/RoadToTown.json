@@ -119,6 +119,11 @@
                          "name":"from",
                          "type":"string",
                          "value":"Farm"
+                        }, 
+                        {
+                         "name":"thisLocation",
+                         "type":"string",
+                         "value":"RoadToTown"
                         }],
                  "rotation":0,
                  "type":"PlayerStart",

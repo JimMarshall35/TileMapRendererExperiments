@@ -24,4 +24,6 @@ const char* WfWorld_GetCurrentLocationName();
 
 void WfWorld_SetCurrentLocationName(const char* name);
 
+void WfWorldInit();
+
 #endif

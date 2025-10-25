@@ -8,8 +8,11 @@
 #include "GameFramework.h"
 #include "EntityQuadTree.h"
 #include "AnimatedSprite.h"
+#include "ObjectPool.h"
 
 static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
+
+static OBJECT_POOL(struct DynamicEntityListItem) gDynamicListPool = NULL;
 
 void Et2D_DestroyCollection(struct Entity2DCollection* pCollection)
 {
@@ -21,8 +24,12 @@ void Et2D_InitCollection(struct Entity2DCollection* pCollection)
 {
     pCollection->gEntityListHead = NULL_HANDLE;
     pCollection->gEntityListTail = NULL_HANDLE;
+    pCollection->dynamicEntities.hDynamicListHead = NULL_HANDLE;
+    pCollection->dynamicEntities.hDynamicListTail = NULL_HANDLE;
+    pCollection->dynamicEntities.nDynamicListSize = 0;
     pCollection->gNumEnts = 0;
     pCollection->pEntityPool = NEW_OBJECT_POOL(struct Entity2D, 512);
+    pCollection->dynamicEntities.pDynamicListItemPool = NEW_OBJECT_POOL(struct DynamicEntityListItem, 256);
 }
 
 void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
@@ -32,6 +39,10 @@ void Entity2DOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
     if(pEnt->bKeepInQuadtree)
     {
         pEnt->hQuadTreeRef = Entity2DQuadTree_Insert(&pData->entities, pData->hEntitiesQuadTree, pEnt->thisEntity, pLayer, 0, 6);
+    }
+    if(pEnt->bKeepInDynamicList)
+    {
+        pEnt->hDynamicListRef = DynL_AddEntity(&pData->entities.dynamicEntities, pEnt->thisEntity);
     }
 }
 
@@ -58,6 +69,11 @@ void Entity2DInput(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, Inp
 void Entity2DOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
     Co_DestroyComponents(pEnt);
+    struct GameLayer2DData* pData = pLayer->userData;
+    if(pEnt->bKeepInDynamicList)
+    {
+        DynL_RemoveItem(&pData->entities.dynamicEntities, pEnt->hDynamicListRef);
+    }
 }
 
 
@@ -165,6 +181,7 @@ void Et2D_DestroyEntity(struct GameFrameworkLayer* pLayer, struct Entity2DCollec
     pEnt->onDestroy(pEnt, pLayer);
     pCollection->gNumEnts--;
     FreeObjectPoolIndex(pCollection->pEntityPool, hEnt);
+    FreeObjectPool(pCollection->dynamicEntities.pDynamicListItemPool);
 }
 
 HEntity2D Et2D_AddEntity(struct Entity2DCollection* pCollection, struct Entity2D* pEnt)

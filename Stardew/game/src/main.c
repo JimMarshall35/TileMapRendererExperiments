@@ -12,6 +12,28 @@
 #include "Random.h"
 #include "WfGameLayerData.h"
 #include "WfGameLayer.h"
+#include "WfWorld.h"
+
+void WfInitWorldLevels()
+{
+    struct WfLocation farm = {
+        .bIsInterior = false,
+        .levelFilePath = "./Assets/out/Farm.tilemap"
+    };
+    struct WfLocation roadToTown = {
+        .bIsInterior = false,
+        .levelFilePath = "./Assets/out/RoadToTown.tilemap"
+    };
+    struct WfLocation house = {
+        .bIsInterior = true,
+        .levelFilePath = "./Assets/out/House.tilemap"
+    };
+    WfWorld_AddLocation(&house, "House");
+    WfWorld_AddLocation(&roadToTown, "RoadToTown");
+    WfWorld_AddLocation(&farm, "Farm");
+
+    WfWorld_SetCurrentLocationName("House");
+}
 
 void WfEngineInit()
 {
@@ -26,7 +48,8 @@ void GameInit(InputContext* pIC, DrawContext* pDC)
 {
     WfEngineInit();
     WfInit();
-    WfPushGameLayer(pDC, "./Assets/out/Farm.tilemap");
+    WfInitWorldLevels(); /* temporary - a world will be loaded as part of a game file, to be implemented in WfGame.c */
+    WfWorld_LoadLocation("Farm", pDC);
     printf("done\n");
 }
 

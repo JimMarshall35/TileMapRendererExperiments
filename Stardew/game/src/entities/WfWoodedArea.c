@@ -90,6 +90,8 @@ void WfDeSerializeWoodedAreaEntityV1(struct BinarySerializer* bs, struct Entity2
     pOutEnt->user.hData = index;
     pOutEnt->init = &WfWoodedAreaEntityOnInit;
     pOutEnt->onDestroy = &WfWoodedAreaEntityOnDestroy;
+    pOutEnt->bKeepInDynamicList = false;
+    pOutEnt->bKeepInQuadtree = false;
 }
 
 void WfDeSerializeWoodedAreaEntity(struct BinarySerializer* bs, struct Entity2D* pOutEnt, struct GameLayer2DData* pData)

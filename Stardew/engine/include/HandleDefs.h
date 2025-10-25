@@ -47,7 +47,7 @@ typedef HGeneric HEntity2DQuadtreeNode;
 
 typedef HGeneric HEntity2DQuadtreeEntityRef;
 
-
+typedef HGeneric HDynamicEntityListItem;
 
 #define NULL_HANDLE -1
 

@@ -192,11 +192,20 @@ struct Entity2D
     /*  */
     HEntity2DQuadtreeEntityRef hQuadTreeRef;
 
+    /* keep in the dynamic list of brute force culled entities */
+    bool bKeepInDynamicList;
+
+    /**/
+    HDynamicEntityListItem hDynamicListRef;
+
     /* 
         Which object layer of the scene is it in? 
         Effects the order they are drawn in
     */
     int inDrawLayer;
+
+    /* do we serialize when the level is serialized? (TODO: IMPLEMENT)*/
+    bool bSerialize;
 };
 
 /*

@@ -100,5 +100,6 @@ void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData
     Et2D_PopulateCommonHandlers(pEnt);
     pEnt->init = &OnInitPlayer;
     pEnt->update = &OnUpdatePlayer;
-    pEnt->bKeepInQuadtree = true; // TO TEST, REMOVE!
+    pEnt->bKeepInQuadtree = false;
+    pEnt->bKeepInDynamicList = true;
 }

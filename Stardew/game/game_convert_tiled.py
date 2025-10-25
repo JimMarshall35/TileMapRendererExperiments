@@ -39,6 +39,9 @@ def serialize_PlayerStart(file, obj):
     file.write(struct.pack("I", 1)) # version
     stringVal = get_tiled_object_custom_prop(obj, "from")["value"]
     serialize_string(file, stringVal)
+    stringVal = get_tiled_object_custom_prop(obj, "thisLocation")["value"]
+    serialize_string(file, stringVal)
+
     pass
 
 def get_type_PlayerStart(obj):
