@@ -7,6 +7,7 @@
 #include "Entity2DCollection.h"
 #include "GameFramework.h"
 #include "EntityQuadTree.h"
+#include "AnimatedSprite.h"
 
 static VECTOR(struct EntitySerializerPair) pSerializers = NULL;
 
@@ -68,27 +69,32 @@ void Entity2DGetBoundingBox(struct Entity2D* pEnt, struct GameFrameworkLayer* pL
     for(int i=0; i < pEnt->numComponents; i++)
     {
         struct Component2D* pComponent = &pEnt->components[i];
+        vec2 tl, br;
         if(pComponent->type == ETE_Sprite)
         {
-            vec2 tl, br;
             bSet = true;
             SpriteComp_GetBoundingBox(pEnt, &pComponent->data.sprite, pLayer, tl, br);
-            if(tl[0] < bbtl[0])
-            {
-                bbtl[0] = tl[0];
-            }
-            if(tl[1] < bbtl[1])
-            {
-                bbtl[1] = tl[1];
-            }
-            if(br[0] > bbbr[0])
-            {
-                bbbr[0] = br[0];
-            }
-            if(br[1] > bbbr[1])
-            {
-                bbbr[1] = br[1];
-            }
+        }
+        else if(pComponent->type == ETE_SpriteAnimator)
+        {
+            bSet = true;
+            AnimatedSprite_GetBoundingBox(pEnt,&pComponent->data.spriteAnimator, pLayer, tl, br);
+        }
+        if(tl[0] < bbtl[0])
+        {
+            bbtl[0] = tl[0];
+        }
+        if(tl[1] < bbtl[1])
+        {
+            bbtl[1] = tl[1];
+        }
+        if(br[0] > bbbr[0])
+        {
+            bbbr[0] = br[0];
+        }
+        if(br[1] > bbbr[1])
+        {
+            bbbr[1] = br[1];
         }
     }
     if(!bSet)
@@ -181,6 +187,7 @@ HEntity2D Et2D_AddEntity(struct Entity2DCollection* pCollection, struct Entity2D
         struct Entity2D* pLast = &pCollection->pEntityPool[pCollection->gEntityListTail];
         pLast->nextSibling = hEnt;
         pEnt->previousSibling = pCollection->gEntityListTail;
+        pEnt->nextSibling = NULL_HANDLE;
         pCollection->gEntityListTail = hEnt;
     }
     pCollection->gNumEnts++;
@@ -331,6 +338,7 @@ void Et2D_IterateEntities(struct Entity2DCollection* pCollection, Entity2DIterat
             break;
         hOnEnt = pEntity->nextSibling;
     }
+    volatile int e = 0;
 }
 
 float Entity2DGetSortVal(struct Entity2D* pEnt)

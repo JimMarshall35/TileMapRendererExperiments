@@ -1,7 +1,7 @@
 #ifndef WFPLAYER_H
 #define WFPLAYER_H
 
-
+#include <cglm/cglm.h>
 struct BinarySerializer;
 struct Entity2D;
 struct GameLayer2DData;

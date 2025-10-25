@@ -69,7 +69,7 @@ void WfWoodedAreaEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* 
     }
 
     /* destroy the entity */
-    Et2D_DestroyEntity(pLayer, &pLayerData->entities, pEnt->thisEntity);
+    //Et2D_DestroyEntity(pLayer, &pLayerData->entities, pEnt->thisEntity);
 }
 
 void WfWoodedAreaEntityOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)

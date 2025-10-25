@@ -3,7 +3,8 @@
 #include "BinarySerializer.h"
 #include "Game2DLayer.h"
 #include "ObjectPool.h"
-
+#include "WfPlayer.h"
+#include "GameFramework.h"
 
 struct WfPlayerStartData
 {
@@ -19,8 +20,12 @@ void WfInitPlayerStart()
 
 void WfPlayerStartEntityOnInit(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer)
 {
+    struct GameLayer2DData* pLayerData = pLayer->userData;
     Entity2DOnInit(pEnt, pLayer);
+    struct Entity2D ent;
     
+    WfMakeIntoPlayerEntity(&ent, pLayer->userData, pEnt->transform.position);
+    Et2D_AddEntity(&pLayerData->entities, &ent);
 }
 
 void WfPlayerStartEntityOnDestroy(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)

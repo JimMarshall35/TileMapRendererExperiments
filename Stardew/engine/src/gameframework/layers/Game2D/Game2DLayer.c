@@ -147,8 +147,11 @@ struct UpdateEntityContext
 	struct GameFrameworkLayer* pLayer;
 };
 
-static void UpdateEntities(struct Entity2D* pEnt, int i, void* pUser)
+static bool UpdateEntities(struct Entity2D* pEnt, int i, void* pUser)
 {
+	struct UpdateEntityContext* pCTX = pUser;
+	pEnt->update(pEnt, pCTX->pLayer, pCTX->deltaT);
+	return true;
 }
 
 static void Update(struct GameFrameworkLayer* pLayer, float deltaT)
@@ -417,6 +420,7 @@ static bool InputEntities(struct Entity2D* pEnt, int i, void* pUser)
 {
 	struct InputEntityContext* pCtx = pUser;
 	pEnt->input(pEnt, pCtx->pLayer, pCtx->inputCtx);
+	return true;
 }
 
 static void Input(struct GameFrameworkLayer* pLayer, InputContext* context)
@@ -472,7 +476,7 @@ void GameLayer2D_OnPush(struct GameFrameworkLayer* pLayer, DrawContext* drawCont
 		pData->preFirstInitCallback(pData);
 	Et2D_IterateEntities(&pData->entities, &InitEntities, pLayer);
 	Ev_SubscribeEvent("onDebugLayerPushed", &OnDebugLayerPushed, pData);
-	//XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
+	XMLUI_PushGameFrameworkLayer("./Assets/debug_overlay.xml");
 }
 
 void Game2DLayer_OnPop(struct GameFrameworkLayer* pLayer, DrawContext* drawContext, InputContext* inputContext)

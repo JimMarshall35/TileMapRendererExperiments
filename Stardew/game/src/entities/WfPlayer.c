@@ -61,9 +61,12 @@ void WfSerializePlayerEntity(struct BinarySerializer* bs, struct Entity2D* pInEn
 
 void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData, vec2 spawnAtGroundPos)
 {
+    pEnt->nextSibling = NULL_HANDLE;
+    pEnt->previousSibling = NULL_HANDLE;
     GetObjectPoolIndex(gPlayerEntDataPool, &pEnt->user.hData);
     gPlayerEntDataPool[pEnt->user.hData].groundColliderCenter2EntTransform[0] = -32;
-    gPlayerEntDataPool[pEnt->user.hData].groundColliderCenter2EntTransform[1] = 60;
+    gPlayerEntDataPool[pEnt->user.hData].groundColliderCenter2EntTransform[1] = -60;
+    pEnt->numComponents = 0;
     /*
         Animated Sprite
     */
@@ -75,6 +78,7 @@ void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData
     pAnimatedSprite->bRepeat = true;
     pAnimatedSprite->transform.scale[0] = 1.0f;
     pAnimatedSprite->transform.scale[1] = 1.0f;
+    pAnimatedSprite->bIsAnimating = true;
 
     /*
         Ground Collider
@@ -86,4 +90,15 @@ void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData
     pComponent2->data.kinematicCollider.shape.data.circle.center[1] = spawnAtGroundPos[1];
     pComponent2->data.kinematicCollider.shape.data.circle.radius = 4;
 
+    glm_vec2_add(spawnAtGroundPos, gPlayerEntDataPool[pEnt->user.hData].groundColliderCenter2EntTransform, pEnt->transform.position);
+    pEnt->transform.scale[0] = 1.0;
+    pEnt->transform.scale[1] = 1.0;
+    
+
+    pEnt->inDrawLayer = 0;
+
+    Et2D_PopulateCommonHandlers(pEnt);
+    pEnt->init = &OnInitPlayer;
+    pEnt->update = &OnUpdatePlayer;
+    pEnt->bKeepInQuadtree = true; // TO TEST, REMOVE!
 }
