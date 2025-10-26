@@ -35,7 +35,10 @@ struct WfPlayerEntData
     struct ButtonBinding moveRightBinding;
     struct ActiveInputBindingsMask playerControlsMask;
     /* value I set this to is NOT meters per second, TODO: fix */
-    float metersPerSecondMoveSpeed;
+    float metersPerSecondWalkSpeedBase;
+
+    float speedMultiplier;
+
     vec2 movementVector;
 
     /* flags section */
@@ -66,7 +69,8 @@ static void OnInitPlayer(struct Entity2D* pEnt, struct GameFrameworkLayer* pLaye
     In_ActivateButtonBinding(pPlayerEntData->moveRightBinding, &pPlayerEntData->playerControlsMask);
     In_SetMask(&pPlayerEntData->playerControlsMask, pInputCtx);
     pPlayerEntData->bMovingThisFrame = false;
-    pPlayerEntData->metersPerSecondMoveSpeed = 100.0f;
+    pPlayerEntData->metersPerSecondWalkSpeedBase = 100.0f;
+    pPlayerEntData->speedMultiplier = 3.0f;
 }
 
 static void OnDestroyPlayer(struct Entity2D* pEnt, struct GameFrameworkLayer* pData)
@@ -86,21 +90,25 @@ static void SetPlayerAnimation(struct GameFrameworkLayer* pLayer, struct WfPlaye
     {
         // moving down
         AnimatedSprite_SetAnimation(pLayer, pSprite, WALKING_DOWN_MALE, false, false);
+        pSprite->fps *= pPlayerEntData->speedMultiplier;
     }
     else if(pPlayerEntData->movementVector[1] < -1e-5f)
     {
         // moving up
         AnimatedSprite_SetAnimation(pLayer, pSprite, WALKING_UP_MALE, false, false);
+        pSprite->fps *= pPlayerEntData->speedMultiplier;
     }
     else if(pPlayerEntData->movementVector[0] > 1e-5f)
     {
         // moving right
         AnimatedSprite_SetAnimation(pLayer, pSprite, WALKING_RIGHT_MALE, false, false);
+        pSprite->fps *= pPlayerEntData->speedMultiplier;
     }
     else if(pPlayerEntData->movementVector[0] < -1e-5f)
     {
         // moving left
         AnimatedSprite_SetAnimation(pLayer, pSprite, WALKING_LEFT_MALE, false, false);
+        pSprite->fps *= pPlayerEntData->speedMultiplier;
     }
 }
 
@@ -108,8 +116,8 @@ static void OnUpdatePlayer(struct Entity2D* pEnt, struct GameFrameworkLayer* pLa
 {
     struct WfPlayerEntData* pPlayerEntData = &gPlayerEntDataPool[pEnt->user.hData];
     vec2 scaledMovement;
-    scaledMovement[0] = pPlayerEntData->movementVector[0] * pPlayerEntData->metersPerSecondMoveSpeed * deltaT;
-    scaledMovement[1] = pPlayerEntData->movementVector[1] * pPlayerEntData->metersPerSecondMoveSpeed * deltaT;
+    scaledMovement[0] = pPlayerEntData->movementVector[0] * pPlayerEntData->metersPerSecondWalkSpeedBase * deltaT * pPlayerEntData->speedMultiplier;
+    scaledMovement[1] = pPlayerEntData->movementVector[1] * pPlayerEntData->metersPerSecondWalkSpeedBase * deltaT * pPlayerEntData->speedMultiplier;
     Ph_SetDynamicBodyVelocity(
         pEnt->components[PLAYER_COLLIDER_COMP_INDEX].data.dynamicCollider.id,
         scaledMovement
