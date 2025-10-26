@@ -111,7 +111,7 @@ static void OnUpdatePlayer(struct Entity2D* pEnt, struct GameFrameworkLayer* pLa
     scaledMovement[0] = pPlayerEntData->movementVector[0] * pPlayerEntData->metersPerSecondMoveSpeed * deltaT;
     scaledMovement[1] = pPlayerEntData->movementVector[1] * pPlayerEntData->metersPerSecondMoveSpeed * deltaT;
     Ph_SetDynamicBodyVelocity(
-        pEnt->components[PLAYER_COLLIDER_COMP_INDEX].data.kinematicCollider.id,
+        pEnt->components[PLAYER_COLLIDER_COMP_INDEX].data.dynamicCollider.id,
         scaledMovement
     );
     SetPlayerAnimation(pLayer, pPlayerEntData, pEnt);
@@ -172,7 +172,7 @@ void WfPlayerPostPhys(struct Entity2D* pEnt, struct GameFrameworkLayer* pLayer, 
     struct GameLayer2DData* pLayerData = pLayer->userData;
     Entity2DUpdatePostPhysics(pEnt, pLayer, deltaT);
     vec2 pixelsPos, physPos;
-    struct DynamicCollider* pCollider = &pEnt->components[PLAYER_COLLIDER_COMP_INDEX].data.kinematicCollider;
+    struct DynamicCollider* pCollider = &pEnt->components[PLAYER_COLLIDER_COMP_INDEX].data.dynamicCollider;
     
     Ph_GetDymaicBodyPosition(pCollider->id, physPos);
     Ph_PhysicsCoords2PixelCoords(pLayerData->hPhysicsWorld, physPos, pixelsPos);
@@ -207,10 +207,10 @@ void WfMakeIntoPlayerEntity(struct Entity2D* pEnt, struct GameLayer2DData* pData
     */
     struct Component2D* pComponent2 = &pEnt->components[pEnt->numComponents++];
     pComponent2->type = ETE_DynamicCollider;
-    pComponent2->data.kinematicCollider.shape.type = PBT_Circle;
-    pComponent2->data.kinematicCollider.shape.data.circle.center[0] = spawnAtGroundPos[0];
-    pComponent2->data.kinematicCollider.shape.data.circle.center[1] = spawnAtGroundPos[1];
-    pComponent2->data.kinematicCollider.shape.data.circle.radius = 10;
+    pComponent2->data.dynamicCollider.shape.type = PBT_Circle;
+    pComponent2->data.dynamicCollider.shape.data.circle.center[0] = spawnAtGroundPos[0];
+    pComponent2->data.dynamicCollider.shape.data.circle.center[1] = spawnAtGroundPos[1];
+    pComponent2->data.dynamicCollider.shape.data.circle.radius = 10;
 
     glm_vec2_add(spawnAtGroundPos, gPlayerEntDataPool[pEnt->user.hData].groundColliderCenter2EntTransform, pEnt->transform.position);
     pEnt->transform.scale[0] = 1.0;

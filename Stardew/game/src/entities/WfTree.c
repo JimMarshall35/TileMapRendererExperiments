@@ -80,7 +80,7 @@ void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct
 
     struct Component2D* pComponent1 = &pEnt->components[pEnt->numComponents++];
     struct Component2D* pComponent2 = &pEnt->components[pEnt->numComponents++];
-    // struct Component2D* pComponent3 = &pEnt->components[pEnt->numComponents++];
+    struct Component2D* pComponent3 = &pEnt->components[pEnt->numComponents++];
 
     struct WfTreeSprites* pFoundSeason = &pSprites->treeSpritesPerSeason[def->season];
     hSprite topSprite = NULL_HANDLE;
@@ -113,8 +113,16 @@ void WfMakeEntityIntoTreeBasedAt(struct Entity2D* pEnt, float x, float y, struct
     pComponent1->data.sprite.transform.scale[0] = 1.0f;
     pComponent1->data.sprite.transform.scale[1] = 1.0f;
 
-    // pComponent3->type = ETE_StaticCollider;
-    // pComponent3->data.staticCollider.
+    vec2 transform2Ground = {
+        combinedSpriteWidth / 2.0f,
+        (combinedTreeSpriteHeight - bottomOfTrunkSpriteToBase)
+    };
+
+    pComponent3->type = ETE_StaticCollider;
+    pComponent3->data.staticCollider.shape.type = PBT_Circle;
+    pComponent3->data.staticCollider.shape.data.circle.center[0] = x;//transform2Ground[0];
+    pComponent3->data.staticCollider.shape.data.circle.center[1] = y;//transform2Ground[1];
+    pComponent3->data.staticCollider.shape.data.circle.radius = 6;
 
     HGeneric hTreeData = NULL_HANDLE;
     gTreeDataObjectPool = GetObjectPoolIndex(gTreeDataObjectPool, &hTreeData);

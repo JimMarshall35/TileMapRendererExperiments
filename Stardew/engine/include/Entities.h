@@ -110,7 +110,7 @@ struct Component2D
 
         struct StaticCollider staticCollider;
 
-        struct DynamicCollider kinematicCollider;
+        struct DynamicCollider dynamicCollider;
 
         struct TextSprite textSprite;
         
